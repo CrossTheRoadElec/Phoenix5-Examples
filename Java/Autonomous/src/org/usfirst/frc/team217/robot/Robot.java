@@ -45,10 +45,10 @@ public class Robot extends IterativeRobot {
 	ServoParameters turning = new ServoParameters();
 	
 /////////////////////////////////////////////////////////////////////////////////////	
-ServoStraightDistanceWithImu firstSegment = new ServoStraightDistanceWithImu(p, drive, Smart.PercentOutput, drivingStraight, drivingForward, 0f, 50f, 1f, 1f);
-ServoZeroTurnWithImu turnToAirship = new ServoZeroTurnWithImu(p, drive, Basic.PercentOutput, 30, 0.25f, turning);
-ServoStraightDistanceWithImu toAirship = new ServoStraightDistanceWithImu(p, drive, Smart.PercentOutput, drivingStraight, drivingForward, 30f, 55, 1f, 1f);
-ServoStraightDistanceWithImu backUp = new ServoStraightDistanceWithImu(p, drive, Smart.PercentOutput, drivingStraight, drivingForward, 30, -20, 1f, 1f);
+ServoStraightDistanceWithImu firstSegment = new ServoStraightDistanceWithImu(p, drive, Smart.PercentOutput, drivingStraight, drivingForward, 0f, 50f);
+ServoZeroTurnWithImu turnToAirship = new ServoZeroTurnWithImu(p, drive, Basic.PercentOutput, 30, turning);
+ServoStraightDistanceWithImu toAirship = new ServoStraightDistanceWithImu(p, drive, Smart.PercentOutput, drivingStraight, drivingForward, 30f, 55);
+ServoStraightDistanceWithImu backUp = new ServoStraightDistanceWithImu(p, drive, Smart.PercentOutput, drivingStraight, drivingForward, 30, -20);
 	
 	@Override
 	public void robotInit()
@@ -86,11 +86,6 @@ ServoStraightDistanceWithImu backUp = new ServoStraightDistanceWithImu(p, drive,
 			s.start();
 			auton.Process();
 			if(auton.Iterated())drive.SetPosition(0);
-			try
-			{
-				//Thread.sleep(10);
-			}
-			catch(Exception e){}
 			while(s.getDurationMs() < 10) {}
 			if(j.getRawButton(1)) break;
 		}
@@ -106,17 +101,20 @@ ServoStraightDistanceWithImu backUp = new ServoStraightDistanceWithImu(p, drive,
 		drivingStraight.P = .03f;
 		drivingStraight.I = 0.002f;
 		drivingStraight.IZone = 1f;
-		drivingStraight.IMax = 0.07f;
-		drivingStraight.allowedError = 0.5f;
+		drivingStraight.IMax = 0.12f;
 		drivingStraight.D = 0.00f;
 		drivingStraight.maxOut = 0.15f;
-				
+		drivingStraight.timeToDone = 0.2f;
+		drivingStraight.allowedError = 0.5f;
+		
 		drivingForward.P = .05f;
 		drivingForward.I = 0.001f;
 		drivingForward.IZone = 2f;
 		drivingForward.IMax = 0.1f;
-		drivingForward.D = 0.017f;
+		drivingForward.D = 0.04f;
 		drivingForward.maxOut = 0.5f;
+		drivingForward.timeToDone = 0.2f;
+		drivingForward.allowedError = 0.5f;
 		
 		turning.P = .05f;
 		turning.I = .004f;
@@ -124,6 +122,8 @@ ServoStraightDistanceWithImu backUp = new ServoStraightDistanceWithImu(p, drive,
 		turning.IMax = 1f;
 		turning.D = .003f;
 		turning.maxOut = .2f;
+		turning.timeToDone = 0.2f;
+		turning.allowedError = 0.5f;
 		
 		auton.Start();
 	}
