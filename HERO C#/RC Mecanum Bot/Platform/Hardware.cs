@@ -33,7 +33,6 @@ namespace HERO_Mecanum_Drive_Example.Platform
                                                         CTRE.Drive.Styles.Basic.PercentOutput,
                                                         ParametersHoldHeading,
                                                         0,
-                                                        0,
                                                         0.2f);
     }
 }
