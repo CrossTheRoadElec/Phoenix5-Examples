@@ -25,11 +25,11 @@ namespace HERO_Mecanum_Drive_Example
             Hardware.ServoHoldHeading.ServoParameters.D = 0.001f;
 
             /* poll RC radio */
-            float forward = Hardware.Futaba3Ch.GetDutyCyclePerc(CTRE.RCRadio_Futaba3Ch.Channel.Channel2);
-            float turn = Hardware.Futaba3Ch.GetDutyCyclePerc(CTRE.RCRadio_Futaba3Ch.Channel.Channel1);
+            float forward = Hardware.Futaba3Ch.GetDutyCyclePerc(CTRE.RCRadio3Ch.Channel.Channel2);
+            float turn = Hardware.Futaba3Ch.GetDutyCyclePerc(CTRE.RCRadio3Ch.Channel.Channel1);
             float strafe = 0;
 
-            bool toggleSwitch = Hardware.Futaba3Ch.GetSwitchValue(CTRE.RCRadio_Futaba3Ch.Channel.Channel3);
+            bool toggleSwitch = Hardware.Futaba3Ch.GetSwitchValue(CTRE.RCRadio3Ch.Channel.Channel3);
 
             CTRE.Util.Deadband(ref forward);
             CTRE.Util.Deadband(ref turn);

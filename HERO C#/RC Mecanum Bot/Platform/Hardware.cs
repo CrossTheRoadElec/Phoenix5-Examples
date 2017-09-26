@@ -20,7 +20,7 @@ namespace HERO_Mecanum_Drive_Example.Platform
 
         public static CTRE.CANifier canifier_LedStrip_RCRADIO = new CTRE.CANifier(0);
 
-        public static CTRE.RCRadio_Futaba3Ch Futaba3Ch = new CTRE.RCRadio_Futaba3Ch(canifier_LedStrip_RCRADIO);
+        public static CTRE.RCRadio3Ch Futaba3Ch = new CTRE.RCRadio3Ch(canifier_LedStrip_RCRADIO);
 
         /** Pigeon is plugged into the left rear Talon via ribbon cable. */
         public static CTRE.PigeonImu Pigeon = new CTRE.PigeonImu(leftRear);

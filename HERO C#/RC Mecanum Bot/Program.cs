@@ -1,6 +1,6 @@
 ﻿/**
  * IMPORTANT: This example requires the version of the SDK from the
- * Installer version 5.0.2.1 or higher.  There were several changes
+ * Installer version 5.0.3.2 or higher.  There were several changes
  * and additions to multiple files in the SDK, and these are required
  * for this example
  * 

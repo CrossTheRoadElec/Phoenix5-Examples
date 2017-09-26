@@ -32,12 +32,9 @@
   </PropertyGroup>
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
-    <Compile Include="Framework\CANifier.cs" />
     <Compile Include="Framework\ConcurrentScheduler.cs" />
     <Compile Include="Framework\HsvToRgb.cs" />
     <Compile Include="Framework\Mecanum.cs" />
-    <Compile Include="Framework\RCRadio_Futaba3Ch.cs" />
-    <Compile Include="Framework\LowLevel_CANifier.cs" />
     <Compile Include="Framework\ServoHoldHeadingWithImu.cs" />
     <Compile Include="Platform\Schedulers.cs" />
     <Compile Include="Platform\Tasks.cs" />
@@ -45,14 +42,15 @@
     <Compile Include="Tasks\TaskLowBatteryDetect.cs" />
     <Compile Include="Tasks\TaskLEDStrip.cs" />
     <Compile Include="Tasks\TaskTeleopDriveWithRC.cs" />
-    <Compile Include="Framework\LinearInterpolation.cs" />
     <Compile Include="Tasks\TaskTeleopDriveWithXbox.cs" />
     <Compile Include="Platform\Hardware.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CTRE, Version=4.4.0.26, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="CTRE, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="ctre_netmf_native">
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>

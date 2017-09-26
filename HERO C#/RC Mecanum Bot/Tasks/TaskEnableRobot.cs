@@ -27,7 +27,7 @@ namespace HERO_Mecanum_Drive_Example
                 Platform.Schedulers.PeriodicTasks.Stop(Platform.Tasks.TeleopDriveWithRC);
                 Platform.Schedulers.PeriodicTasks.Start(Platform.Tasks.TeleopDriveWithXbox);
             }
-            else if (Hardware.Futaba3Ch.CurrentStatus == CTRE.RCRadio_Futaba3Ch.Status.Ok)
+            else if (Hardware.Futaba3Ch.CurrentStatus == CTRE.RCRadio3Ch.Status.Ok)
             {
                 CTRE.Watchdog.Feed();
 
