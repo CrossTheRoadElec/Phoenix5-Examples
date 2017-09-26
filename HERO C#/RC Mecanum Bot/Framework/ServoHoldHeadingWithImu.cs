@@ -7,14 +7,13 @@ using CTRE.MotorControllers;
 
 namespace CTRE.Motion
 {
-    public class ServoHoldHeadingWithImu : ILoopable
+    public class ServoHoldHeadingWithImu
     {
         PigeonImu _pidgey;
         IDrivetrain _driveTrain;
         Styles.Basic _selectedStyle;
         ServoParameters _servoParams = new ServoParameters();
 
-        float _Y;
         float _targetHeading;
         float _maxOutput;
 
@@ -31,12 +30,11 @@ namespace CTRE.Motion
         }
 
         /** Go Straight using the IMU */
-        public ServoHoldHeadingWithImu(PigeonImu pigeonImu, IDrivetrain driveTrain, Styles.Basic selectedStyle, ServoParameters parameters, float Y, float targetHeading, float maxOutput)
+        public ServoHoldHeadingWithImu(PigeonImu pigeonImu, IDrivetrain driveTrain, Styles.Basic selectedStyle, ServoParameters parameters, float targetHeading, float maxOutput)
         {
             _pidgey = pigeonImu;
             _driveTrain = driveTrain;
             _selectedStyle = selectedStyle;
-            _Y = Y;
             _targetHeading = targetHeading;
             _servoParams = parameters;
             _maxOutput = maxOutput;
@@ -50,16 +48,23 @@ namespace CTRE.Motion
             _selectedStyle = selectedStyle;
         }
 
-        public void Set(float Y)
-        {
-            _Y = Y;
-        }
 
         /** Return the heading from the Pigeon*/
         public float GetImuHeading()
         {
             _pidgey.GetYawPitchRoll(YPR);
             return YPR[0];
+        }
+        /**
+         * Uses forward, strafe, and turn (Mecanum drive)
+         * 
+         * @param   forward     Y direction of robot
+         * @param   strafe      X direction of robot
+         */
+        public void Set(Styles.Basic mode, float forward, float strafe)
+        {
+            Enable(true);
+            GoStraight(forward, _targetHeading);
         }
 
         private void GoStraight(float Y, float targetHeading)
@@ -110,15 +115,7 @@ namespace CTRE.Motion
             }
 
             /* Select control mode based on selected style */
-            switch (_selectedStyle)
-            {
-                case Styles.Basic.PercentOutput:
-                    _driveTrain.Set(Styles.Basic.PercentOutput, Y, x_correction);
-                    break;
-                case Styles.Basic.Voltage:
-                    _driveTrain.Set(Styles.Basic.Voltage, Y, x_correction);
-                    break;
-            }
+            _driveTrain.Set(_selectedStyle, Y, x_correction);
         }
 
         public bool IsCompensating
@@ -132,7 +129,7 @@ namespace CTRE.Motion
         /**
          * Caller can directly enable/disable the feaure if a scheduler is not in use 
          */
-        public void Enable(bool enable)
+        private void Enable(bool enable)
         {
             if (enable == false)
             {
@@ -159,32 +156,9 @@ namespace CTRE.Motion
             }
         }
 
-        /** ILoopable */
-        public void OnStart()
-        {
-            Enable(true);
-            ///* resync to current heading */
-            //_targetHeading = GetImuHeading();
-            //_enableCompensating = true;
-        }
-
-        public void OnStop()
+        public void Disable()
         {
             Enable(false);
-            //_driveTrain.Set(Styles.Basic.PercentOutput, 0, 0);
-            //_isCompensating = false;
-            //_enableCompensating = false;
-        }
-
-        public bool IsDone()
-        {
-            /* this servo is never done, this is a continuous motion */
-            return false;
-        }
-
-        public void OnLoop()
-        {
-            GoStraight(_Y, _targetHeading);
         }
     }
 }

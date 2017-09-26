@@ -20,7 +20,11 @@ namespace HERO_Mecanum_Drive_Example
 
         public void OnLoop()
         {
+            /* gains */
+            Hardware.ServoHoldHeading.ServoParameters.P = 0.01f;
+            Hardware.ServoHoldHeading.ServoParameters.D = 0.001f;
 
+            /* poll RC radio */
             float forward = Hardware.Futaba3Ch.GetDutyCyclePerc(CTRE.RCRadio_Futaba3Ch.Channel.Channel2);
             float turn = Hardware.Futaba3Ch.GetDutyCyclePerc(CTRE.RCRadio_Futaba3Ch.Channel.Channel1);
             float strafe = 0;
@@ -40,15 +44,11 @@ namespace HERO_Mecanum_Drive_Example
 
             if (toggleSwitch && (turn == 0) )
             {
-                Hardware.ServoHoldHeading.ServoParameters.P = 0.01f;
-                Hardware.ServoHoldHeading.ServoParameters.D = 0.001f;
-                Hardware.ServoHoldHeading.Set(forward);
-                Hardware.ServoHoldHeading.Enable(true);
-                Hardware.ServoHoldHeading.OnLoop();
+                Hardware.ServoHoldHeading.Set(CTRE.Drive.Styles.Basic.PercentOutput, forward, strafe);
             }
             else
             {
-                Hardware.ServoHoldHeading.Enable(false);
+                Hardware.ServoHoldHeading.Disable(); /* let the servo know that we've stopped using it */
                 Hardware.drivetrain.Set(CTRE.Drive.Styles.Basic.PercentOutput, forward, strafe, turn);
             }
         }
