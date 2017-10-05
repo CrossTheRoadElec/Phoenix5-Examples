@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <AssemblyName>Talon_Tach_Demo</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Top</RootNamespace>
+    <ProjectTypeGuids>{b69e3092-b931-443c-abe7-7e7b65f2a37f};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FD578599-D937-45DE-8426-8A0496775D6B}</ProjectGuid>
+    <TargetFrameworkVersion>v4.4</TargetFrameworkVersion>
+    <NetMfTargetsBaseDir Condition="'$(NetMfTargetsBaseDir)'==''">$(MSBuildExtensionsPath32)\Microsoft\.NET Micro Framework\</NetMfTargetsBaseDir>
+    <DeployDevice>Cross Link HERO .NETMF_Mini-USB</DeployDevice>
+    <DeployTransport>USB</DeployTransport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
+  <ItemGroup>
+    <Compile Include="Framework\ConcurrentScheduler.cs" />
+    <Compile Include="Framework\SensoredGearbox.cs" />
+    <Compile Include="Framework\ServoParameters.cs" />
+    <Compile Include="Framework\VersaPlanetaryWithMagEnc.cs" />
+    <Compile Include="Platform\Platform.cs" />
+    <Compile Include="RemoveDiscontinuityMagEncoder.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Subsystem\SubSystemWheel.cs" />
+    <Compile Include="Tasks\TaskDirectControlWheel.cs" />
+    <Compile Include="Tasks\TaskServoWheelSpeed.cs" />
+    <Compile Include="Tasks\TaskServoArmPos.cs" />
+    <Compile Include="Tasks\TaskDisplay.cs" />
+    <Compile Include="Tasks\TaskEnableRobot.cs" />
+    <Compile Include="Tasks\TaskOnceAbsoluteArmSensor.cs" />
+    <Compile Include="Tasks\TaskLowBatteryDetect.cs" />
+    <Compile Include="Subsystem\SubSystemArm.cs" />
+    <Compile Include="Tasks\TaskDirectControlArm.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CTRE, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="ctre_netmf_native">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.SPOT.Graphics" />
+    <Reference Include="Microsoft.SPOT.Hardware" />
+    <Reference Include="Microsoft.SPOT.Native" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nina14.tinyfnt" />
+    <None Include="Resources\NinaB.tinyfnt" />
+    <None Include="Resources\ninabd18ppem.tinyfnt" />
+    <None Include="Resources\small.tinyfnt" />
+  </ItemGroup>
+</Project>
