@@ -4,70 +4,70 @@ namespace CTRE {
 namespace Tasking{
 namespace Schedulers {
 
-ConcurrentScheduler::ConcurrentScheduler(int timeout) {
-	_timeout = timeout;
+ConcurrentScheduler::ConcurrentScheduler() {
 }
 ConcurrentScheduler::~ConcurrentScheduler(){}
-void ConcurrentScheduler::Add(ILoopable *aLoop) {
-	for(auto loop : _loops){
-		if(loop == aLoop)
-		{
-			return;	//Already have loop
-		}
-	}
-	//We add another loop and enable state
-	_loops.insert(aLoop);
-	_enabs.insert(true);
+void ConcurrentScheduler::Add(ILoopable *aLoop, bool enable) {
+	_loops.push_back(aLoop);
+	_enabs.push_back(enable);
 }
 void ConcurrentScheduler::RemoveAll() {
 	_loops.clear();
+	_enabs.clear();
 }
 void ConcurrentScheduler::Start(ILoopable* toStart) {
-//	auto iter = _loops.find(toStart);
-//	ILoopable* loop = *iter;
-//	loop->OnStart();
-	for(auto loop : _loops){
-		if(loop == toStart)
-		{
-			return;	//Already have loop
-		}
-	}
-	_loops.insert(toStart);	//Just throw it back in
-}
+	for (int i = 0; i < (int)_loops.size(); ++i) {
+		ILoopable* lp = (ILoopable*) _loops[i];
 
-void ConcurrentScheduler::Stop(ILoopable* toStop) {
-//	auto iter = _loops.find(toStop);
-//	ILoopable* loop = *iter;
-//	loop->OnStop();
-	for(auto loop : _loops){
-		if(loop == toStop)
-		{
-			_loops.erase(toStop);	//remove from the set, would this remove persistent stuff?
+		if (lp == toStart) {
+			_enabs[i] = true;
+			lp->OnStart();
+			return;
 		}
 	}
-	return;
+
+}
+void ConcurrentScheduler::Stop(ILoopable* toStop) {
+	for (int i = 0; i < (int)_loops.size(); ++i) {
+		ILoopable* lp = (ILoopable*) _loops[i];
+
+		if (lp == toStop) {
+			_enabs[i] = false;
+			lp->OnStop();
+			return;
+		}
+	}
 }
 void ConcurrentScheduler::StartAll() {	//All Loops
 	for(auto loop : _loops){
 		loop->OnStart();
 	}
-	_running = true;
+	for(auto enable : _enabs){
+		enable = true;
+	}
 }
 void ConcurrentScheduler::StopAll() {	//All Loops
 	for(auto loop : _loops){
 		loop->OnStop();
 	}
-	_running = false;
+	for(auto enable : _enabs){
+		enable = false;
+	}
 }
 void ConcurrentScheduler::Process() {
-	for(auto loop : _loops){
-		loop->OnLoop();
+	for(int i = 0; i< (int)_loops.size(); ++i){
+		ILoopable* loop = (ILoopable*)_loops[i];
+		bool en = (bool)_enabs[i];
+		if(en){
+			loop->OnLoop();
+		}
+		else
+		{
+			/* Current ILoopable is turned off, don't call OnLoop for it */
+		}
 	}
 }
 /* ILoopable */
-bool ConcurrentScheduler::Iterated() {
-	return _iterated;
-}
 void ConcurrentScheduler::OnStart() {
 	ConcurrentScheduler::StartAll();
 }
@@ -78,9 +78,6 @@ void ConcurrentScheduler::OnStop() {
 	ConcurrentScheduler::StopAll();
 }
 bool ConcurrentScheduler::IsDone() {
-	if (_running == false)
-		return true;
-	else
 		return false;
 }
 }}}

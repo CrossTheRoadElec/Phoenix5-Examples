@@ -57,8 +57,8 @@ public:
 		/* Insert periodic tasks into a concurrent scheduler */
 		Schedulers::PeriodicTasks->Add(Tasks::EnableRobot);
 		Schedulers::PeriodicTasks->Add(Tasks::LEDStrip);
-		Schedulers::PeriodicTasks->Add(Tasks::TeleopDriveWithRC);
-		Schedulers::PeriodicTasks->Add(Tasks::TeleopDriveWithGamepad);
+		Schedulers::PeriodicTasks->Add(Tasks::TeleopDriveWithRC, true);
+		Schedulers::PeriodicTasks->Add(Tasks::TeleopDriveWithGamepad, false);
 		Schedulers::PeriodicTasks->Add(Tasks::LowBatteryDetect);
 	}
 

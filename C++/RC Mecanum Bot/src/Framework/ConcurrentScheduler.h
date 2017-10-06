@@ -1,6 +1,6 @@
 #pragma once
 
-#include "set"
+#include <vector>
 #include "ctrlib/Tasking/ILoopable.h"
 #include "ctrlib/Tasking/IProcessable.h"
 
@@ -10,15 +10,12 @@ namespace Schedulers {
 
 class ConcurrentScheduler: public ILoopable, public IProcessable{
 public:
-	bool _running = true;
-	int _timeout;
-	bool _iterated = false;
-	std::set<ILoopable*> _loops;
-	std::set<bool> _enabs;
+	std::vector<ILoopable*> _loops;
+	std::vector<bool> _enabs;
 
-	ConcurrentScheduler(int timeout);
+	ConcurrentScheduler();
 	virtual ~ConcurrentScheduler();
-	void Add(ILoopable *aLoop);
+	void Add(ILoopable *aLoop, bool enable = true);
 	void RemoveAll();
 	void Start(ILoopable *toStart);
 	void Stop(ILoopable *toStop);
