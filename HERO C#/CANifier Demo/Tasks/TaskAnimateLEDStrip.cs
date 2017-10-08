@@ -5,41 +5,26 @@ using CTRE;
 
 public class TaskAnimateLEDStrip : CTRE.Tasking.ILoopable
 {
-    /* HSV values, @see https://en.wikipedia.org/wiki/HSL_and_HSV  */
-    private float _theta;
-    private float _saturation;
-    private float _value = 0.05f; /* hardcode the brightness */
-
-    private float _r, _g, _b;
-
-    private bool _running;
+    private float _hue;
 
     public void OnLoop()
     {
         /* just ramp through the outer rim of the HSV color wheel */
-        _saturation = 1;
-        _theta += 1;
-        if (_theta >= 360) { _theta = 0; }
+        _hue += 1;
+        if (_hue >= 360) { _hue = 0; }
 
-        /* push saturation to the outter rim of the HSV color wheel */
-        _saturation *= 3.0f;
-        if (_saturation > 1) { _saturation = 1; }
-
-        /* convert to rgb */
-        HsvToRgb.Convert(_theta, _saturation, _value, out _r, out _g, out _b);
-
-        /* update CANifier's LED strip */
-        Platform.Hardware.canifier.SetLEDOutput(_r, CTRE.CANifier.LEDChannel.LEDChannelA);
-        Platform.Hardware.canifier.SetLEDOutput(_g, CTRE.CANifier.LEDChannel.LEDChannelB);
-        Platform.Hardware.canifier.SetLEDOutput(_b, CTRE.CANifier.LEDChannel.LEDChannelC);
+        /* update HSV target */
+        Platform.Tasks.taskHSV_ControlLedStrip.Hue = _hue;
+        Platform.Tasks.taskHSV_ControlLedStrip.Saturation = 1.0f; /* outer rim of HSV color wheel */
+        Platform.Tasks.taskHSV_ControlLedStrip.Value = 0.05f; /* hardcode the brightness */
     }
 
     public override string ToString()
     {
-        return "AnimateLEDStrip:" + (_running ? "1" : "0") + ":" + _r + ":" + _g + ":" + _b;
+        return "AnimateLEDStrip:" + _hue;
     }
 
-    public void OnStart() { _running = true; }
-    public void OnStop() { _running = false; }
+    public void OnStart() {}
+    public void OnStop() {}
     public bool IsDone() { return false; }
 }

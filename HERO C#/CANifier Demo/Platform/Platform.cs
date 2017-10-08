@@ -55,11 +55,6 @@ namespace Platform
         public static ConcurrentScheduler PeriodicTasks = new ConcurrentScheduler(10);
     }
 
-    public static class Subsystems
-    {
-        /* none */
-    }
-
     public static class Tasks
     {
         /* Subsystem tasks.  A task could be all the functionality of a substem like a robot arm, 
@@ -70,6 +65,11 @@ namespace Platform
         public static TaskAnimateLEDStrip taskAnimateLEDStrip = new TaskAnimateLEDStrip();
         public static TaskDirectControlLEDStrip taskDirectControlArm = new TaskDirectControlLEDStrip();
         public static TaskPWMmotorController taskPWMmotorController = new TaskPWMmotorController();
+        public static TaskMeasurePulseSensors taskMeasurePulseSensors = new TaskMeasurePulseSensors();
+        public static TaskLIDAR_ControlLEDStrip taskLIDAR_ControlLEDStrip = new TaskLIDAR_ControlLEDStrip();
+        public static TaskHSV taskHSV_ControlLedStrip = new TaskHSV();
+
+        
 
         public static TaskMainLoop taskMainLoop = new TaskMainLoop();
 
@@ -79,6 +79,9 @@ namespace Platform
             taskAnimateLEDStrip,
             taskDirectControlArm,
             taskPWMmotorController,
+            taskMeasurePulseSensors,
+            taskLIDAR_ControlLEDStrip,
+            taskHSV_ControlLedStrip,
             taskMainLoop,
         };
     }

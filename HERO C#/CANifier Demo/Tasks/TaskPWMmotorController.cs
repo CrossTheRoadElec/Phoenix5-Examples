@@ -7,7 +7,7 @@ using Platform;
 public class TaskPWMmotorController : CTRE.Tasking.ILoopable
 {
     float _percentOut;
-    bool _running;
+    bool _running; //!< Track if we are running so TaskMainLoop can keep "starting" this task with no extra init work.
 
     public void OnLoop()
     {

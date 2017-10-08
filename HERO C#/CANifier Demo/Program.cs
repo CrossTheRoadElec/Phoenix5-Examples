@@ -31,8 +31,9 @@ namespace CANifier_Demo
                 Schedulers.PeriodicTasks.Process();
 
                 /* dump some tasks and subsystems into the console output */
-                Debug.Print(Platform.Tasks.taskDirectControlArm.ToString() + " " +
-                            Platform.Tasks.taskAnimateLEDStrip.ToString());
+               // Debug.Print(Platform.Tasks.taskDirectControlArm.ToString() + " " +
+                //            Platform.Tasks.taskAnimateLEDStrip.ToString());
+                Debug.Print(Platform.Tasks.taskMeasurePulseSensors.ToString());
 
                 Thread.Sleep(5);
             }

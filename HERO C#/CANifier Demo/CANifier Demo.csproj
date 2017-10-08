@@ -36,6 +36,9 @@
     <Compile Include="Framework\ConcurrentScheduler.cs" />
     <Compile Include="Framework\LowLevel_CANifier.cs" />
     <Compile Include="Platform\Platform.cs" />
+    <Compile Include="Tasks\TaskLIDAR_ControlLEDStrip.cs" />
+    <Compile Include="Tasks\TaskMeasurePulseSensors.cs" />
+    <Compile Include="Tasks\TaskHSV.cs" />
     <Compile Include="Tasks\TaskPWMmotorController.cs" />
     <Compile Include="Tasks\TaskAnimateLEDStrip.cs" />
     <Compile Include="Tasks\TaskMainLoop.cs" />
