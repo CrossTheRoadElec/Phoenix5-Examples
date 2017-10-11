@@ -16,14 +16,14 @@ bool TaskMainLoop::IsDone() {
 	return false;
 }
 void TaskMainLoop::OnLoop() {
-	bool controllerState = true;
+	bool controllerState = false;
 
 	/* No method of determining if controller is connected */
 	if (controllerState == false){
         Schedulers::PeriodicTasks->Stop(Tasks::taskPWMmotorController);
 	}
 	else{
-		//Just for testing, can be enabled by user by changing controllerState to true */
+		/* Just for testing, can be enabled by user by changing controllerState to true */
         Schedulers::PeriodicTasks->Start(Tasks::taskPWMmotorController);
 	}
 

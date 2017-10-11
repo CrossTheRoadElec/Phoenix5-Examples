@@ -28,13 +28,13 @@ bool TaskPWMmotorController::IsDone() {
 	return false;
 }
 void TaskPWMmotorController::OnLoop(){
-    /* just grab three axis and direct control the components */
+    /* Grab the axis and direct control the components */
     float axis = Hardware::gamepad->GetRawAxis(Constants::Gamepad_y);
-    /* scale to typical PWM widths */
+    /* Scale to typical PWM widths */
     float pulseUs = CTRE::LinearInterpolation::Calculate(axis, -1, 1000, +1, 2000); /* [-1,+1] => [1000,2000]us */
-    /* scale to period */
+    /* Scale to period */
     float periodUs = 4200; // hard-coded for now, this will be settable in future firmware update.
     _percentOutput = pulseUs / periodUs;
-    /* set it */
+    /* Set it */
     Hardware::canifier->SetPWMOutput(Constants::MotorControllerCh, _percentOutput);
 }

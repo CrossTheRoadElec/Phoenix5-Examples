@@ -23,14 +23,14 @@ void TaskHSV::OnLoop() {
 	if (Value < 0)
 		Value = 0;
 
-	/* convert to rgb */
+	/* Convert to RGB */
 	CTRE::HsvToRgb::Convert(Hue, Saturation, Value, &_r, &_g, &_b);
 
 	_r = _averageR->Process(_r);
 	_g = _averageG->Process(_g);
 	_b = _averageB->Process(_b);
 
-	/* update CANifier's LED strip */
+	/* Update CANifier's LED strip */
 	Hardware::canifier->SetLEDOutput(_r,
 			CTRE::CANifier::LEDChannel::LEDChannelA);
 	Hardware::canifier->SetLEDOutput(_g,
