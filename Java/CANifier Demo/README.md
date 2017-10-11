@@ -20,7 +20,7 @@ For retrieving signals, the project has a LIDAR Lite V3 Distance Sensor communic
 
 The CANifier can then be connected to the RoboRIO through CAN. Once all connections to the CANifier has been made, it is recommended that it be insulted in a 1" heat shrink tubing as seen below in the Figure 3.
 
-### Figure 3: Heat shrink to insulate CANifier from shorts
+#### Figure 3: Heat shrink to insulate CANifier from shorts
 ![alt text][Insulation]
 
 ##### Further instructions on how to use and wire the CANifier can be found within the documentation, which can be found here. [http://www.ctr-electronics.com/can-can-canifier-driver-led-driver-gpio.html#product_tabs_technical_resources]
@@ -59,7 +59,7 @@ By default, the code has the PWM motor controller disabled for safety but can be
             Schedulers.PeriodicTasks.Stop(Tasks.taskPWMmotorController);
         }
 ```
-#### Figure 5: PWM motor controller going forward is backwards as shown by the LED colors (It is a talon used as a PWM motor controller)
+#### Figure 6: PWM motor controller going forward is backwards as shown by the LED colors (It is a talon used as a PWM motor controller)
 ![alt text][Final Image]
 
 The new Phoenix Framework has been designed to allow users to create tasks to enter them within a scheduler to create a more organized workspace. Take notice that all tasks were created under the Task package and entered into a list under the Platform package as seen in the code below. TaskMainLoop was the task in charge of selecting which LED strip mode to operate in. 
@@ -110,7 +110,7 @@ Once all tasks were added to the concurrent scheduler, we then continuously proc
 ### Why is the PWM motor controller not working?
 As explained in documentation, the PWM motor controller is disabled by default for safety. It can be re-enabled by changing the state from false to true as shown in the code block above
 
-### CANifier/Gamepad is not recognized
+### CANifier or Gamepad not recognized?
 This may be due to having mismatched device ID's to the software. Users have two options. They may change the device ID to match the software or provide the correct device ID within the Hardware class under the Platform package. 
 ```java
 
