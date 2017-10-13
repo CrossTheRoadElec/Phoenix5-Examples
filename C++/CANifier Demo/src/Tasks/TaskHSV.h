@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ctre/phoenix/Tasking/ILoopable.h"
-#include "ctre/phoenix/signals/MovingAverage.h"
+#include "Framework/MovingAverage.h"
 
 class TaskHSV : public CTRE::Tasking::ILoopable{
 public:

@@ -18,7 +18,7 @@
 
 class Constants{
 public:
-	static const float GamepadDeadband = 0.03;
+	const float GamepadDeadband = 0.03;
 
 	static const int Gamepad_x = 0;
 	static const int Gamepad_y = 1;
