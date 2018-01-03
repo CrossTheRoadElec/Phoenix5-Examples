@@ -3,10 +3,10 @@
 
 class MecanumDefaultCode : public IterativeRobot
 {
-	TalonSRX *lf = new TalonSRX(0); /*left front */
-	TalonSRX *lr = new TalonSRX(1);/*left rear */
-	TalonSRX *rf = new TalonSRX(2); /*right front */
-	TalonSRX *rr = new TalonSRX(3); /*right rear */
+	WPI_TalonSRX *lf = new WPI_TalonSRX(0); /*left front */
+	WPI_TalonSRX *lr = new WPI_TalonSRX(1);/*left rear */
+	WPI_TalonSRX *rf = new WPI_TalonSRX(2); /*right front */
+	WPI_TalonSRX *rr = new WPI_TalonSRX(3); /*right rear */
 public:
 	MecanumDrive *m_robotDrive;		// RobotDrive object using PWM 1-4 for drive motors
 	Joystick *m_driveStick;			// Joystick object on USB port 1 (mecanum drive)public:
@@ -23,13 +23,11 @@ public:
 		rr->Set(ControlMode::PercentOutput, 0);
 
 		//Invert Right Side
-		rf->GetWPILIB_SpeedController().SetInverted(true);
-		rr->GetWPILIB_SpeedController().SetInverted(true);
+		rf->SetInverted(true);
+		rr->SetInverted(true);
 
 		// Create a RobotDrive object using PWMS 1, 2, 3, and 4
-		m_robotDrive = new MecanumDrive(lf->GetWPILIB_SpeedController(),
-				lr->GetWPILIB_SpeedController(), rf->GetWPILIB_SpeedController(),
-				rr->GetWPILIB_SpeedController());
+		m_robotDrive = new MecanumDrive(*lf, *lr, *rf, *rr);
 		m_robotDrive->SetExpiration(0.5);
 		m_robotDrive->SetSafetyEnabled(false);
 		// Define joystick being used at USB port #0 on the Drivers Station

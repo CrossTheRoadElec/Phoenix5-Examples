@@ -17,18 +17,17 @@ import com.ctre.phoenix.motorcontrol.*;
 public class Robot extends IterativeRobot {
 
 	/* talons for arcade drive */
-	TalonSRX _frontLeftMotor = new TalonSRX(11); 		/* device IDs here (1 of 2) */
-	TalonSRX _frontRightMotor = new TalonSRX(14);
+	WPI_TalonSRX _frontLeftMotor = new WPI_TalonSRX(11); 		/* device IDs here (1 of 2) */
+	WPI_TalonSRX _frontRightMotor = new WPI_TalonSRX(14);
 
 	/* extra talons for six motor drives */
-	VictorSPX _leftSlave1 = new VictorSPX(13);
-	VictorSPX _rightSlave1 = new VictorSPX(15);
-	VictorSPX _leftSlave2 = new VictorSPX(16);
-	VictorSPX _rightSlave2 = new VictorSPX(17);
+	WPI_VictorSPX _leftSlave1 = new WPI_VictorSPX(13);
+	WPI_VictorSPX _rightSlave1 = new WPI_VictorSPX(15);
+	WPI_VictorSPX _leftSlave2 = new WPI_VictorSPX(16);
+	WPI_VictorSPX _rightSlave2 = new WPI_VictorSPX(17);
 	
 	
-	DifferentialDrive _drive = new DifferentialDrive(_frontLeftMotor.getWPILIB_SpeedController(), 
-			_frontRightMotor.getWPILIB_SpeedController());
+	DifferentialDrive _drive = new DifferentialDrive(_frontLeftMotor, _frontRightMotor);
 	
 	Joystick _joy = new Joystick(0);
     /**
