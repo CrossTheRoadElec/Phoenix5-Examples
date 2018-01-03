@@ -20,9 +20,6 @@ package org.usfirst.frc.team217.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Joystick.*;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -36,7 +33,8 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		/* first choose the sensor */
 		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
-		_talon.setInverted(true);
+		_talon.setSensorPhase(true);
+		_talon.setInverted(false);
 		// _talon.configEncoderCodesPerRev(XXX), // if using
 		// FeedbackDevice.QuadEncoder
 		// _talon.configPotentiometerTurns(XXX), // if using
@@ -46,16 +44,19 @@ public class Robot extends IterativeRobot {
 		_talon.configNominalOutputForward(0, 10);
 		_talon.configNominalOutputReverse(0, 10);
 		_talon.configPeakOutputForward(1, 10);
+		_talon.configPeakOutputReverse(-1, 10);
 		
 		/* set closed loop gains in slot0 - see documentation */
 		_talon.selectProfileSlot(0, 10);
-		_talon.config_kF(0, 0, 10);
-		_talon.config_kP(0, 0, 10);
+		_talon.config_kF(0, .2, 10);
+		_talon.config_kP(0, 0.2, 10);
 		_talon.config_kI(0, 0, 10);
 		_talon.config_kD(0, 0, 10);
 		/* set acceleration and vcruise velocity - see documentation */
-		_talon.configMotionCruiseVelocity(0, 10);
-		_talon.configMotionAcceleration(0, 10);
+		_talon.configMotionCruiseVelocity(15000, 10);
+		_talon.configMotionAcceleration(6000, 10);
+		
+		_talon.setSelectedSensorPosition(0, 0, 10);
 	}
 
 	/**
@@ -63,7 +64,7 @@ public class Robot extends IterativeRobot {
 	 */
 	public void teleopPeriodic() {
 		/* get gamepad axis - forward stick is positive */
-		double leftYstick = -1.0 * _joy.getAxis(AxisType.kY);
+		double leftYstick = -1.0 * _joy.getRawAxis(1);
 		/* calculate the percent motor output */
 		double motorOutput = _talon.getMotorOutputVoltage() / _talon.getBusVoltage();
 		/* prepare line to print */
@@ -75,7 +76,7 @@ public class Robot extends IterativeRobot {
 		if (_joy.getRawButton(1)) {
 			/* Motion Magic */
 			double targetPos = leftYstick
-					* 10.0; /* 10 Rotations in either direction */
+					* 1023 * 10.0; /* 10 Rotations in either direction */
 			_talon.set(ControlMode.MotionMagic, targetPos); 
 
 			/* append more signals to print when in speed mode. */
