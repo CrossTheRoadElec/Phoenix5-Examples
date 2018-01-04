@@ -31,32 +31,29 @@ public class Robot extends IterativeRobot {
 	StringBuilder _sb = new StringBuilder();
 
 	public void robotInit() {
+		
 		/* first choose the sensor */
 		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 		_talon.setSensorPhase(true);
 		_talon.setInverted(false);
-		// _talon.configEncoderCodesPerRev(XXX), // if using
-		// FeedbackDevice.QuadEncoder
-		// _talon.configPotentiometerTurns(XXX), // if using
-		// FeedbackDevice.AnalogEncoder or AnalogPot
 
 		/* set the peak and nominal outputs, 12V means full */
-		_talon.configNominalOutputForward(0, 10);
-		_talon.configNominalOutputReverse(0, 10);
-		_talon.configPeakOutputForward(1, 10);
-		_talon.configPeakOutputReverse(-1, 10);
+		_talon.configNominalOutputForward(0, Constants.kTimeoutMs);
+		_talon.configNominalOutputReverse(0, Constants.kTimeoutMs);
+		_talon.configPeakOutputForward(1, Constants.kTimeoutMs);
+		_talon.configPeakOutputReverse(-1, Constants.kTimeoutMs);
 		
 		/* set closed loop gains in slot0 - see documentation */
-		_talon.selectProfileSlot(0, 10);
-		_talon.config_kF(0, .2, 10);
-		_talon.config_kP(0, 0.2, 10);
-		_talon.config_kI(0, 0, 10);
-		_talon.config_kD(0, 0, 10);
+		_talon.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
+		_talon.config_kF(0, 0.2, Constants.kTimeoutMs);
+		_talon.config_kP(0, 0.2, Constants.kTimeoutMs);
+		_talon.config_kI(0, 0, Constants.kTimeoutMs);
+		_talon.config_kD(0, 0, Constants.kTimeoutMs);
 		/* set acceleration and vcruise velocity - see documentation */
-		_talon.configMotionCruiseVelocity(15000, 10);
-		_talon.configMotionAcceleration(6000, 10);
-		
-		_talon.setSelectedSensorPosition(0, 0, 10);
+		_talon.configMotionCruiseVelocity(15000, Constants.kTimeoutMs);
+		_talon.configMotionAcceleration(6000, Constants.kTimeoutMs);
+		/* zero the sensor */
+		_talon.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 	}
 
 	/**
@@ -66,17 +63,17 @@ public class Robot extends IterativeRobot {
 		/* get gamepad axis - forward stick is positive */
 		double leftYstick = -1.0 * _joy.getRawAxis(1);
 		/* calculate the percent motor output */
-		double motorOutput = _talon.getMotorOutputVoltage() / _talon.getBusVoltage();
+		double motorOutput = _talon.getMotorOutputPercent();
 		/* prepare line to print */
-		_sb.append("\tout:");
+		_sb.append("\tOut%:");
 		_sb.append(motorOutput);
-		_sb.append("\tspd:");
-		_sb.append(_talon.getSelectedSensorVelocity(0));
+		_sb.append("\tVel:");
+		_sb.append(_talon.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
 
 		if (_joy.getRawButton(1)) {
 			/* Motion Magic */
 			double targetPos = leftYstick
-					* 1023 * 10.0; /* 10 Rotations in either direction */
+					* 4096 * 10.0; /* 10 Rotations in either direction */
 			_talon.set(ControlMode.MotionMagic, targetPos); 
 
 			/* append more signals to print when in speed mode. */
