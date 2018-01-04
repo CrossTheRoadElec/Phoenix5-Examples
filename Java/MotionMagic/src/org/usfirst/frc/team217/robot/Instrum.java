@@ -6,18 +6,28 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 public class Instrum {
 
 	private static int _loops = 0;
+	private static int _timesInMotionMagic = 0;
 	
 	public static void Process(TalonSRX tal, StringBuilder sb)
 	{
 		/* smart dash plots */
-    	SmartDashboard.putNumber("RPM", tal.getSelectedSensorVelocity(0));
-    	SmartDashboard.putNumber("Pos",  tal.getSelectedSensorPosition(0));
-    	SmartDashboard.putNumber("AppliedThrottle", (tal.getMotorOutputVoltage()/tal.getBusVoltage())*1023);
-    	SmartDashboard.putNumber("ClosedLoopError", tal.getClosedLoopError(0));
+    	SmartDashboard.putNumber("SensorVel", tal.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
+    	SmartDashboard.putNumber("SensorPos",  tal.getSelectedSensorPosition(Constants.kPIDLoopIdx));
+    	SmartDashboard.putNumber("MotorOutputPercent", tal.getMotorOutputPercent());
+    	SmartDashboard.putNumber("ClosedLoopError", tal.getClosedLoopError(Constants.kPIDLoopIdx));
+    	//SmartDashboard.putNumber("ClosedLoopTarget", tal.getClosedLoopTarget(Constants.kPIDLoopIdx)); // will be added in future update.
+    	
+    	/* check if we are motion-magic-ing */
     	if (tal.getControlMode() == ControlMode.MotionMagic) {
-			//These API calls will be added in our next release.
+    		++_timesInMotionMagic;
+    	} else {
+    		_timesInMotionMagic = 0;
+    	}
+    	if (_timesInMotionMagic > 10){
+			/* print the Active Trajectory Point Motion Magic is servoing towards */
     		SmartDashboard.putNumber("ActTrajVelocity", tal.getActiveTrajectoryVelocity());
     		SmartDashboard.putNumber("ActTrajPosition", tal.getActiveTrajectoryPosition());
+    		SmartDashboard.putNumber("ActTrajHeading", tal.getActiveTrajectoryHeading());
     	}
     	/* periodically print to console */
         if(++_loops >= 10) {
