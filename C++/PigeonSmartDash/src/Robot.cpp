@@ -64,13 +64,12 @@ public:
 			/* speed up network tables, this is a test project so eat up all
 			 * of the network possible for the purpose of this test.
 			 */
-			PigeonIMU::FusionStatus * stat = new PigeonIMU::FusionStatus();
 			while (true) {
 				/* yield for a ms or so - this is not meant to be accurate */
 				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 				/* grab the last signal update from our 1ms frame update */
-				double retCode = _robot->_pidgey->GetFusedHeading(*stat);
-				SmartDashboard::PutNumber("hdng", stat->heading);
+				double heading = _robot->_pidgey->GetFusedHeading();
+				SmartDashboard::PutNumber("hdng", heading);
 			}
 		}
 	};
