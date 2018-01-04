@@ -3,9 +3,9 @@
 #include "ctre/phoenix/Tasking/ILoopable.h"
 #include "ctre/phoenix/CANifier.h"
 
-class TaskMeasurePulseSensors : public CTRE::Tasking::ILoopable{
+class TaskMeasurePulseSensors : public ctre::phoenix::tasking::ILoopable{
 public:
-	float _dutyCycleAndPeriods[4][2] =
+	double _dutyCycleAndPeriods[4][2] =
 	{
 			{ 0, 0 },
 			{ 0, 0 },
@@ -13,7 +13,7 @@ public:
 			{ 0, 0 },
 	};
 
-	float GetMeasuredPulseWidthsUs(CTRE::CANifier::PWMChannel pwmCh);
+	float GetMeasuredPulseWidthsUs(ctre::phoenix::CANifier::PWMChannel pwmCh);
 	virtual ~TaskMeasurePulseSensors();
 	/* ILoopable */
 	void OnStart();

@@ -1,5 +1,5 @@
 #include <Tasks/TaskPWMmotorController.h>
-#include "ctre/phoenix/LinearInterpolation.h"
+#include "ctre/Phoenix.h"
 #include "Platform/Platform.h"
 
 TaskPWMmotorController::~TaskPWMmotorController() {}
@@ -31,7 +31,7 @@ void TaskPWMmotorController::OnLoop(){
     /* Grab the axis and direct control the components */
     float axis = Hardware::gamepad->GetRawAxis(Constants::Gamepad_y);
     /* Scale to typical PWM widths */
-    float pulseUs = CTRE::LinearInterpolation::Calculate(axis, -1, 1000, +1, 2000); /* [-1,+1] => [1000,2000]us */
+    float pulseUs = LinearInterpolation::Calculate(axis, -1, 1000, +1, 2000); /* [-1,+1] => [1000,2000]us */
     /* Scale to period */
     float periodUs = 4200; // hard-coded for now, this will be settable in future firmware update.
     _percentOutput = pulseUs / periodUs;
