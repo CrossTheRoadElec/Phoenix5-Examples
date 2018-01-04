@@ -7,57 +7,57 @@ import org.usfirst.frc.team3539.robot.Platform.Tasks;
 
 public class TaskMainLoop implements ILoopable{
 	/* ILoopable */
-    public void OnStart()
+    public void onStart()
     {
         /* Default to LED strip animation */
-        Schedulers.PeriodicTasks.Start(Tasks.taskAnimateLEDStrip);
-        Schedulers.PeriodicTasks.Stop(Tasks.taskDirectControlArm);
-        Schedulers.PeriodicTasks.Stop(Tasks.taskLIDAR_ControlLEDStrip);
+        Schedulers.PeriodicTasks.start(Tasks.taskAnimateLEDStrip);
+        Schedulers.PeriodicTasks.stop(Tasks.taskDirectControlArm);
+        Schedulers.PeriodicTasks.stop(Tasks.taskLIDAR_ControlLEDStrip);
     }
-    public void OnStop() {
+    public void onStop() {
     	
     }
-    public boolean IsDone() {
+    public boolean isDone() {
     	return false;
     }
-	public void OnLoop()
+	public void onLoop()
     {
         boolean gamepadPresent = false;
     	/* Don't have the ability to check if game-pad is connected, manually enable */
         if (gamepadPresent)
         {
-            Schedulers.PeriodicTasks.Start(Tasks.taskPWMmotorController);
+            Schedulers.PeriodicTasks.start(Tasks.taskPWMmotorController);
         }
         else
         {
-            Schedulers.PeriodicTasks.Stop(Tasks.taskPWMmotorController);
+            Schedulers.PeriodicTasks.stop(Tasks.taskPWMmotorController);
         }
 
 
         if (Hardware.gamepad.getRawButton(6))
         {
             /* Roll through color wheel*/
-            Schedulers.PeriodicTasks.Start(Tasks.taskAnimateLEDStrip);
-            Schedulers.PeriodicTasks.Stop(Tasks.taskDirectControlArm);
-            Schedulers.PeriodicTasks.Stop(Tasks.taskLIDAR_ControlLEDStrip);
+            Schedulers.PeriodicTasks.start(Tasks.taskAnimateLEDStrip);
+            Schedulers.PeriodicTasks.stop(Tasks.taskDirectControlArm);
+            Schedulers.PeriodicTasks.stop(Tasks.taskLIDAR_ControlLEDStrip);
         }
         else if (Hardware.gamepad.getRawButton(5))
         {
             /* Let user control LED with sticks */
-            Schedulers.PeriodicTasks.Stop(Tasks.taskAnimateLEDStrip);
-            Schedulers.PeriodicTasks.Start(Tasks.taskDirectControlArm);
-            Schedulers.PeriodicTasks.Stop(Tasks.taskLIDAR_ControlLEDStrip);
+            Schedulers.PeriodicTasks.stop(Tasks.taskAnimateLEDStrip);
+            Schedulers.PeriodicTasks.start(Tasks.taskDirectControlArm);
+            Schedulers.PeriodicTasks.stop(Tasks.taskLIDAR_ControlLEDStrip);
 
-            Schedulers.PeriodicTasks.Start(Tasks.taskMeasurePulseSensors);
+            Schedulers.PeriodicTasks.start(Tasks.taskMeasurePulseSensors);
         }
         else if (Hardware.gamepad.getRawButton(7))
         {
         	/* LED's controlled with the use of LIDAR sensor */
-            Schedulers.PeriodicTasks.Stop(Tasks.taskAnimateLEDStrip);
-            Schedulers.PeriodicTasks.Stop(Tasks.taskDirectControlArm);
-            Schedulers.PeriodicTasks.Start(Tasks.taskLIDAR_ControlLEDStrip);
+            Schedulers.PeriodicTasks.stop(Tasks.taskAnimateLEDStrip);
+            Schedulers.PeriodicTasks.stop(Tasks.taskDirectControlArm);
+            Schedulers.PeriodicTasks.start(Tasks.taskLIDAR_ControlLEDStrip);
 
-            Schedulers.PeriodicTasks.Start(Tasks.taskMeasurePulseSensors);
+            Schedulers.PeriodicTasks.start(Tasks.taskMeasurePulseSensors);
         }
     }
 }

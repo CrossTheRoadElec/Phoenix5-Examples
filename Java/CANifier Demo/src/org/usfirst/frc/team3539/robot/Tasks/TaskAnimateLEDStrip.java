@@ -7,16 +7,16 @@ public class TaskAnimateLEDStrip implements ILoopable{
 	private float _hue;
 	
 	/* ILoopable */
-    public void OnStart() {
+    public void onStart() {
     	
     }
-    public void OnStop() {
+    public void onStop() {
     	
     }
-    public boolean IsDone() {
+    public boolean isDone() {
     	return false; 
     }
-    public void OnLoop()
+    public void onLoop()
     {
         /* Ramp through the outer rim of the HSV color wheel */
         _hue += 1;
@@ -28,7 +28,7 @@ public class TaskAnimateLEDStrip implements ILoopable{
         Tasks.taskHSV_ControlLedStrip.Value = 0.05f; 		/* Hard-code the brightness */
     }
 
-    public String ToString()
+    public String toString()
     {
         return "AnimateLEDStrip:" + _hue;
     }

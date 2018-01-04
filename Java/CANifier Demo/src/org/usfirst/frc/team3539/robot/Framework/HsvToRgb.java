@@ -9,7 +9,7 @@ public class HsvToRgb {
      * @param   V           Value with range of 0 to 1
      */
 	static float RGB[] = new float[3];
-    public static float[] Convert(double hDegrees, double S, double V)
+    public static float[] convert(double hDegrees, double S, double V)
     {
         double R, G, B;
         double H = hDegrees;

@@ -14,15 +14,15 @@ public class MovingAverage {
 	public MovingAverage(int capacity) {
 		_cap = capacity;
 		_d = new float[_cap];
-		Clear();
+		clear();
 	}
 
-	public float Process(float input) {
-		Push(input);
+	public float process(float input) {
+		push(input);
 		return _sum / (float) _cnt;
 	}
 
-	public void Clear() {
+	public void clear() {
 		_in = 0;
 		_ou = 0;
 		_cnt = 0;
@@ -30,13 +30,13 @@ public class MovingAverage {
 		_sum = 0;
 	}
 
-	public void Push(float d) {
+	public void push(float d) {
 		/* process it */
 		_sum += d;
 
 		/* if full, pop one */
 		if (_cnt >= _cap)
-			Pop();
+			pop();
 
 		/* push new one */
 		_d[_in] = d;
@@ -45,10 +45,10 @@ public class MovingAverage {
 		++_cnt;
 
 		/* calc new min - slow */
-		CalcMin();
+		calcMin();
 	}
 
-	public void Pop() {
+	public void pop() {
 		/* get the oldest */
 		float d = _d[_ou];
 
@@ -61,7 +61,7 @@ public class MovingAverage {
 		--_cnt;
 	}
 
-	private void CalcMin() {
+	private void calcMin() {
 		_min = Float.MAX_VALUE;
 
 		int ou = _ou;
@@ -81,15 +81,15 @@ public class MovingAverage {
 	}
 
 	// -------------- Properties --------------//
-	public float GetSum()
+	public float getSum()
 	{
 		return _sum;
 	}
-	public int GetCount()
+	public int getCount()
 	{
 		return _cnt;
 	};
-	public float GetMinimum()
+	public float getMinimum()
 	{
 		return _min;
 	};
