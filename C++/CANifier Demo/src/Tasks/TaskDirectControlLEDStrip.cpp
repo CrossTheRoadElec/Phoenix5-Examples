@@ -1,8 +1,9 @@
 #define PI 3.14159265358979
 
 #include <Tasks/TaskDirectControlLEDStrip.h>
-#include "ctre/phoenix/Utilities.h"
+#include "ctre/Phoenix.h"
 #include "Platform/Platform.h"
+#include "ctre/phoenix/Utilities.h"
 #include <math.h>
 
 TaskDirectControlLEDStrip::~TaskDirectControlLEDStrip() {}
@@ -23,7 +24,7 @@ void TaskDirectControlLEDStrip::OnLoop(){
 	float theta = (float)atan2(x,y) * 180/PI;
 	/* Cap the magnitude to '1'. This will be our saturation(How far away from white) */
     float saturation = (float)sqrt(x * x + y * y);
-    saturation = CTRE::Utilities::cap(saturation, 1);
+    saturation = Utilities::cap(saturation, 1);
     /* Select a value of '1', how afar away from black */
     Tasks::taskHSVControlLedStrip->Hue = theta;
     Tasks::taskHSVControlLedStrip->Saturation = saturation;

@@ -1,5 +1,5 @@
 #include <Tasks/TaskLIDARControlLEDStrip.h>
-#include "ctre/phoenix/LinearInterpolation.h"
+#include "ctre/Phoenix.h"
 #include "Platform/Platform.h"
 
 TaskLIDARControlLEDStrip::~TaskLIDARControlLEDStrip() {}
@@ -12,10 +12,10 @@ bool TaskLIDARControlLEDStrip::IsDone() {
 	return false;
 }
 void TaskLIDARControlLEDStrip::OnLoop(){
-    float pulse = Tasks::taskMeasurePulseSensors->GetMeasuredPulseWidthsUs(CTRE::CANifier::PWMChannel::PWMChannel3);
+    float pulse = Tasks::taskMeasurePulseSensors->GetMeasuredPulseWidthsUs(CANifier::PWMChannel::PWMChannel3);
 
     /* Scale [0,8000] us to [0,360' Hue degrees */
-    float hue = CTRE::LinearInterpolation::Calculate(pulse, 0, 0, 8000, 360);
+    float hue = LinearInterpolation::Calculate(pulse, 0, 0, 8000, 360);
 
     Tasks::taskHSVControlLedStrip->Hue = hue;
     Tasks::taskHSVControlLedStrip->Saturation = 1;

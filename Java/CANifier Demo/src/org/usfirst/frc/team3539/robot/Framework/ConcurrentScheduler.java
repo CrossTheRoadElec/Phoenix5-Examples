@@ -10,7 +10,7 @@ public class ConcurrentScheduler implements com.ctre.phoenix.ILoopable {
 	public ConcurrentScheduler() {
 	}
 
-	public void Add(ILoopable newLoop, boolean bEnabled) {
+	public void add(ILoopable newLoop, boolean bEnabled) {
 		for (ILoopable loop : _loops) {
 			if (loop == newLoop)
 				return; /* Loop exists, ignore it */
@@ -19,11 +19,11 @@ public class ConcurrentScheduler implements com.ctre.phoenix.ILoopable {
 		_enabs.add(bEnabled);
 
 		if (bEnabled)
-			Start(newLoop);
+			start(newLoop);
 	}
 
 	/* Method overloaded to provide a default state */
-	public void Add(ILoopable newLoop) {
+	public void add(ILoopable newLoop) {
 		for (ILoopable loop : _loops) {
 			if (loop == newLoop)
 				return; /* Loop exists, ignore it */
@@ -32,15 +32,15 @@ public class ConcurrentScheduler implements com.ctre.phoenix.ILoopable {
 		_enabs.add(true);
 
 		if (true)
-			Start(newLoop);
+			start(newLoop);
 	}
 
-	public void Start(ILoopable toStart) {
+	public void start(ILoopable toStart) {
 		for (int i = 0; i < _loops.size(); ++i) {
 			ILoopable lp = (ILoopable) _loops.get(i);
 
 			if (lp == toStart) {
-				lp.OnStart();
+				lp.onStart();
 				_enabs.set(i, true);
 
 				return;
@@ -49,14 +49,14 @@ public class ConcurrentScheduler implements com.ctre.phoenix.ILoopable {
 		System.out.format("CTR: Could not find object in scheduler");
 	}
 
-	public void Stop(ILoopable toStart) {
+	public void stop(ILoopable toStart) {
 		for (int i = 0; i < _loops.size(); ++i) {
 			ILoopable lp = (ILoopable) _loops.get(i);
 			boolean en = (boolean) _enabs.get(i);
 
 			if (lp == toStart) {
 				if (en == true) {
-					lp.OnStop();
+					lp.onStop();
 					_enabs.set(i, false);
 				}
 				return;
@@ -65,36 +65,36 @@ public class ConcurrentScheduler implements com.ctre.phoenix.ILoopable {
 		System.out.format("CTR: Could not find object in scheduler");
 	}
 
-	public void RemoveAll() {
+	public void removeAll() {
 		_loops.clear();
 		_enabs.clear();
 	}
 
-	public void StartAll() {
+	public void startAll() {
 		for (int i = 0; i < _loops.size(); ++i) {
 			ILoopable lp = (ILoopable) _loops.get(i);
 
-			lp.OnStart();
+			lp.onStart();
 			_enabs.set(i, true);
 		}
 	}
 
-	public void StopAll() {
+	public void stopAll() {
 		for (int i = 0; i < _loops.size(); ++i) {
 			ILoopable lp = (ILoopable) _loops.get(i);
 
-			lp.OnStop();
+			lp.onStop();
 			_enabs.set(i, false);
 		}
 	}
 
-	public void Process() {
+	public void process() {
 		for (int i = 0; i < _loops.size(); ++i) {
 			ILoopable lp = (ILoopable) _loops.get(i);
 			boolean en = (boolean) _enabs.get(i);
 
 			if (en) {
-				lp.OnLoop();
+				lp.onLoop();
 			} else {
 				/* Current ILoopable is turned off, don't call OnLoop() for it */
 			}
@@ -102,19 +102,19 @@ public class ConcurrentScheduler implements com.ctre.phoenix.ILoopable {
 	}
 
 	// --- ILoopable ---/
-	public void OnStart() {
-		StartAll();
+	public void onStart() {
+		startAll();
 	}
 
-	public void OnLoop() {
-		Process();
+	public void onLoop() {
+		process();
 	}
 
-	public boolean IsDone() {
+	public boolean isDone() {
 		return false;
 	}
 
-	public void OnStop() {
-		StopAll();
+	public void onStop() {
+		stopAll();
 	}
 }

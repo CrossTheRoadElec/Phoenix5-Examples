@@ -21,8 +21,12 @@ package org.usfirst.frc.team217.robot;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
+import java.util.concurrent.TimeUnit;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Robot extends IterativeRobot {
@@ -33,9 +37,13 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		
 		/* first choose the sensor */
-		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 		_talon.setSensorPhase(true);
 		_talon.setInverted(false);
+		
+		/* Set relevant frame periods to be at least as fast as periodic rate*/
+		_talon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);
+		_talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
 
 		/* set the peak and nominal outputs, 12V means full */
 		_talon.configNominalOutputForward(0, Constants.kTimeoutMs);
@@ -61,7 +69,7 @@ public class Robot extends IterativeRobot {
 	 */
 	public void teleopPeriodic() {
 		/* get gamepad axis - forward stick is positive */
-		double leftYstick = -1.0 * _joy.getRawAxis(1);
+		double leftYstick = -1.0 * _joy.getY();
 		/* calculate the percent motor output */
 		double motorOutput = _talon.getMotorOutputPercent();
 		/* prepare line to print */
@@ -73,12 +81,12 @@ public class Robot extends IterativeRobot {
 		if (_joy.getRawButton(1)) {
 			/* Motion Magic */
 			double targetPos = leftYstick
-					* 4096 * 10.0; /* 10 Rotations in either direction */
+					* 4096 * 10.0; /* 4096 ticks/rev * 10 Rotations in either direction */
 			_talon.set(ControlMode.MotionMagic, targetPos); 
 
 			/* append more signals to print when in speed mode. */
 			_sb.append("\terr:");
-			_sb.append(_talon.getClosedLoopError(0));
+			_sb.append(_talon.getClosedLoopError(Constants.kPIDLoopIdx));
 			_sb.append("\ttrg:");
 			_sb.append(targetPos);
 		} else {
@@ -87,5 +95,6 @@ public class Robot extends IterativeRobot {
 		}
 		/* instrumentation */
 		Instrum.Process(_talon, _sb);
+		try { TimeUnit.MILLISECONDS.sleep(10); } catch(Exception e) {}
 	}
 }

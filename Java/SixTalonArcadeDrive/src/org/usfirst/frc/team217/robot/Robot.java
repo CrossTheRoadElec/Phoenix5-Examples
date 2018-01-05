@@ -3,9 +3,7 @@ package org.usfirst.frc.team217.robot;
 import com.ctre.phoenix.motorcontrol.can.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Joystick.AxisType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import com.ctre.phoenix.motorcontrol.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -46,8 +44,8 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-    	double forward = _joy.getRawAxis(1); // logitech gampad left X, positive is forward
-    	double turn = _joy.getRawAxis(2); //logitech gampad right X, positive means turn right
+    	double forward = _joy.getY(); // logitech gampad left X, positive is forward
+    	double turn = _joy.getZ(); //logitech gampad right X, positive means turn right
     	_drive.arcadeDrive(forward, turn);
     }
 }

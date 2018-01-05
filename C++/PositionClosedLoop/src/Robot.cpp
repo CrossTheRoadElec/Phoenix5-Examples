@@ -17,6 +17,7 @@
  */
 #include "WPILib.h"
 #include "ctre/Phoenix.h"
+#include "Constants.h"
 
 class Robot: public IterativeRobot {
 private:
@@ -32,25 +33,25 @@ private:
 		/* lets grab the 360 degree position of the MagEncoder's absolute position */
 		int absolutePosition = _talon->GetSelectedSensorPosition(0) & 0xFFF; /* mask out the bottom12 bits, we don't care about the wrap arounds */
 		/* use the low level API to set the quad encoder signal */
-		_talon->SetSelectedSensorPosition(absolutePosition, 0, 10);
+		_talon->SetSelectedSensorPosition(absolutePosition, kPIDLoopIdx, kTimeoutMs);
 
 		/* choose the sensor and sensor direction */
-		_talon->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, 0);
+		_talon->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, kPIDLoopIdx, kTimeoutMs);
 		_talon->SetSensorPhase(true);
 		//_talon->ConfigEncoderCodesPerRev(XXX), // if using FeedbackDevice.QuadEncoder
 		//_talon->ConfigPotentiometerTurns(XXX), // if using FeedbackDevice.AnalogEncoder or AnalogPot
 
 		/* set the peak and nominal outputs, 12V means full */
-		_talon->ConfigNominalOutputForward(0, 10);
-		_talon->ConfigNominalOutputReverse(0, 10);
-		_talon->ConfigPeakOutputForward(1, 10);
-		_talon->ConfigPeakOutputReverse(-1, 10);
+		_talon->ConfigNominalOutputForward(0, kTimeoutMs);
+		_talon->ConfigNominalOutputReverse(0, kTimeoutMs);
+		_talon->ConfigPeakOutputForward(1, kTimeoutMs);
+		_talon->ConfigPeakOutputReverse(-1, kTimeoutMs);
 
 		/* set closed loop gains in slot0 */
-		_talon->Config_kF(0, 0.0, 10);
-		_talon->Config_kP(0, 0.1, 10);
-		_talon->Config_kI(0, 0.0, 10);
-		_talon->Config_kD(0, 0.0, 10);
+		_talon->Config_kF(kPIDLoopIdx, 0.0, kTimeoutMs);
+		_talon->Config_kP(kPIDLoopIdx, 0.1, kTimeoutMs);
+		_talon->Config_kI(kPIDLoopIdx, 0.0, kTimeoutMs);
+		_talon->Config_kD(kPIDLoopIdx, 0.0, kTimeoutMs);
 	}
 
 	/**
@@ -58,15 +59,15 @@ private:
 	 */
 	void TeleopPeriodic() {
 		/* get gamepad axis */
-		double leftYstick = _joy->GetAxis(Joystick::kYAxis);
-		double motorOutput = _talon->GetMotorOutputVoltage() / _talon->GetBusVoltage();
+		double leftYstick = _joy->GetY();
+		double motorOutput = _talon->GetMotorOutputPercent();
 		bool button1 = _joy->GetRawButton(1);
 		bool button2 = _joy->GetRawButton(2);
 		/* prepare line to print */
 		_sb.append("\tout:");
 		_sb.append(std::to_string(motorOutput));
 		_sb.append("\tpos:");
-		_sb.append(std::to_string(_talon->GetSelectedSensorPosition(0)));
+		_sb.append(std::to_string(_talon->GetSelectedSensorPosition(kPIDLoopIdx)));
 		/* on button1 press enter closed-loop mode on target position */
 		if (!_lastButton1 && button1) {
 			/* Position mode - button just pressed */
@@ -83,7 +84,7 @@ private:
 		if (_talon->GetControlMode() == ControlMode::Position) {
 			/* append more signals to print when in speed mode. */
 			_sb.append("\terrNative:");
-			_sb.append(std::to_string(_talon->GetClosedLoopError(0)));
+			_sb.append(std::to_string(_talon->GetClosedLoopError(kPIDLoopIdx)));
 			_sb.append("\ttrg:");
 			_sb.append(std::to_string(targetPositionRotations));
 		}

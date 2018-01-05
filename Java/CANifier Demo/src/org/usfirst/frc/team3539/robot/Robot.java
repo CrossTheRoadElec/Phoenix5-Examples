@@ -13,8 +13,7 @@ package org.usfirst.frc.team3539.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import com.ctre.phoenix.ILoopable;
-import org.usfirst.frc.team3539.robot.Platform.Schedulers;
-import org.usfirst.frc.team3539.robot.Platform.Tasks;
+import org.usfirst.frc.team3539.robot.Platform.*;
 
 public class Robot extends IterativeRobot {
 	@Override
@@ -25,7 +24,7 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 		/* Add each task to the concurrent scheduler */
 		for(ILoopable loop : Tasks.FullList){
-			Schedulers.PeriodicTasks.Add(loop);
+			Schedulers.PeriodicTasks.add(loop);
 		}
 	}
 
@@ -34,6 +33,6 @@ public class Robot extends IterativeRobot {
 		/** Run forever */
 		
 		/* Process the concurrent scheduler which will process our tasks */
-		Schedulers.PeriodicTasks.Process();
+		Schedulers.PeriodicTasks.process();
 	}
 }

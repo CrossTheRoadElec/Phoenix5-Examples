@@ -17,6 +17,7 @@
  */
 #include "WPILib.h"
 #include "ctre/Phoenix.h"
+#include "Constants.h"
 
 class Robot: public IterativeRobot {
 private:
@@ -31,15 +32,15 @@ private:
 		_talon->SetSensorPhase(true);
 
 		/* set the peak and nominal outputs, 12V means full */
-		_talon->ConfigNominalOutputForward(0, 10);
-		_talon->ConfigNominalOutputReverse(0, 10);
-		_talon->ConfigPeakOutputForward(1, 10);
-		_talon->ConfigPeakOutputReverse(-1, 10);
+		_talon->ConfigNominalOutputForward(0, kTimeoutMs);
+		_talon->ConfigNominalOutputReverse(0, kTimeoutMs);
+		_talon->ConfigPeakOutputForward(1, kTimeoutMs);
+		_talon->ConfigPeakOutputReverse(-1, kTimeoutMs);
 		/* set closed loop gains in slot0 */
-		_talon->Config_kF(0, 0.1097, 10);
-		_talon->Config_kP(0, 0.22, 10);
-		_talon->Config_kI(0, 0.0, 10);
-		_talon->Config_kD(0, 0.0, 10);
+		_talon->Config_kF(kPIDLoopIdx, 0.1097, kTimeoutMs);
+		_talon->Config_kP(kPIDLoopIdx, 0.22, kTimeoutMs);
+		_talon->Config_kI(kPIDLoopIdx, 0.0, kTimeoutMs);
+		_talon->Config_kD(kPIDLoopIdx, 0.0, kTimeoutMs);
 	}
 	/**
 	 * This function is called periodically during operator control
@@ -47,21 +48,22 @@ private:
 	void TeleopPeriodic() {
 		/* get gamepad axis */
 		double leftYstick = _joy->GetY();
-		double motorOutput = _talon->GetMotorOutputVoltage() / _talon->GetBusVoltage();
+		double motorOutput = _talon->GetMotorOutputPercent();
 		/* prepare line to print */
 		_sb.append("\tout:");
 		_sb.append(std::to_string(motorOutput));
 		_sb.append("\tspd:");
-		_sb.append(std::to_string(_talon->GetSelectedSensorVelocity(0)));
+		_sb.append(std::to_string(_talon->GetSelectedSensorVelocity(kPIDLoopIdx)));
 		/* while button1 is held down, closed-loop on target velocity */
 		if (_joy->GetRawButton(1)) {
         	/* Speed mode */
-			double targetSpeed = leftYstick * 1500.0; /* 1500 RPM in either direction */
+			/* 1500 RPM * 4096 units/rev / 600 100ms/min in either direction: velocity control is units/100ms */
+			double targetSpeed = leftYstick * 1500.0 * 4096 / 600;
         	_talon->Set(ControlMode::Velocity, targetSpeed); /* 1500 RPM in either direction */
 
 			/* append more signals to print when in speed mode. */
 			_sb.append("\terrNative:");
-			_sb.append(std::to_string(_talon->GetClosedLoopError(0)));
+			_sb.append(std::to_string(_talon->GetClosedLoopError(kPIDLoopIdx)));
 			_sb.append("\ttrg:");
 			_sb.append(std::to_string(targetSpeed));
         } else {

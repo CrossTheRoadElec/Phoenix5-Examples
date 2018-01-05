@@ -3,7 +3,7 @@
 #include "ctre/phoenix/Tasking/ILoopable.h"
 #include "Framework/MovingAverage.h"
 
-class TaskHSV : public CTRE::Tasking::ILoopable{
+class TaskHSV : public ctre::phoenix::tasking::ILoopable{
 public:
 	float Hue;
 	float Saturation;

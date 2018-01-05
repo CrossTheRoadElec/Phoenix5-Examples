@@ -1,11 +1,12 @@
 #include <Platform/Platform.h>
+#include "ctre/Phoenix.h"
 
 /* Hardware */
-CTRE::CANifier* Hardware::canifier = new CTRE::CANifier(0);
+CANifier* Hardware::canifier = new CANifier(0);
 frc::Joystick* Hardware::gamepad = new frc::Joystick(0);
 
 /* Schedulers */
-CTRE::Tasking::Schedulers::ConcurrentScheduler* Schedulers::PeriodicTasks = new CTRE::Tasking::Schedulers::ConcurrentScheduler();
+ConcurrentScheduler* Schedulers::PeriodicTasks = new ConcurrentScheduler();
 
 /* Tasks */
 TaskAnimateLEDStrip* Tasks::taskAnimateLEDStrip = new TaskAnimateLEDStrip();
@@ -17,7 +18,7 @@ TaskHSV* Tasks::taskHSVControlLedStrip = new TaskHSV();
 TaskMainLoop* Tasks::taskMainLoop = new TaskMainLoop();
 
 /* TaskList */
-std::vector<CTRE::Tasking::ILoopable*> Tasks::FullList = {
+std::vector<ILoopable*> Tasks::FullList = {
 		taskAnimateLEDStrip,
 		taskDirectControlArm,
 		taskPWMmotorController,

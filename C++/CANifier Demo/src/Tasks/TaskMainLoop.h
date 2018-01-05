@@ -2,7 +2,7 @@
 
 #include "ctre/phoenix/Tasking/ILoopable.h"
 
-class TaskMainLoop : public CTRE::Tasking::ILoopable{
+class TaskMainLoop : public ctre::phoenix::tasking::ILoopable{
 public:
 	virtual ~TaskMainLoop();
 	/* ILoopable */

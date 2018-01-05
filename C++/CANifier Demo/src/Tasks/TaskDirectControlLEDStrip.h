@@ -2,7 +2,7 @@
 
 #include "ctre/phoenix/Tasking/ILoopable.h"
 
-class TaskDirectControlLEDStrip : public CTRE::Tasking::ILoopable{
+class TaskDirectControlLEDStrip : public ctre::phoenix::tasking::ILoopable{
 public:
 	virtual ~TaskDirectControlLEDStrip();
 	/* ILoopable */

@@ -42,11 +42,11 @@ public:
 	 * Constructor for this class.
 	 */
 	Robot() {
-		_leftFront = new TalonSRX(2);
-		_rightFront = new TalonSRX(4);
-		_leftRear = new TalonSRX(3);
-		_rightRear = new TalonSRX(6);
-		//_spareTalon = new TalonSRX(2);
+		_leftFront = new TalonSRX(0);
+		_rightFront = new TalonSRX(1);
+		_leftRear = new TalonSRX(2);
+		_rightRear = new TalonSRX(3);
+		_spareTalon = new TalonSRX(4);
 
 		/* choose which cabling method for Pigeon */
 		//_pidgey = new PigeonImu(0); /* Pigeon is on CANBus (powered from ~12V, and has a device ID of zero */
