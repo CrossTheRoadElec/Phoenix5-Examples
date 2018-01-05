@@ -38,9 +38,7 @@ private:
 		/* choose the sensor and sensor direction */
 		_talon->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, kPIDLoopIdx, kTimeoutMs);
 		_talon->SetSensorPhase(true);
-		//_talon->ConfigEncoderCodesPerRev(XXX), // if using FeedbackDevice.QuadEncoder
-		//_talon->ConfigPotentiometerTurns(XXX), // if using FeedbackDevice.AnalogEncoder or AnalogPot
-
+		
 		/* set the peak and nominal outputs, 12V means full */
 		_talon->ConfigNominalOutputForward(0, kTimeoutMs);
 		_talon->ConfigNominalOutputReverse(0, kTimeoutMs);
