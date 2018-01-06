@@ -42,9 +42,7 @@ public class Robot extends IterativeRobot {
         /* choose the sensor and sensor direction */
         _talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
         _talon.setSensorPhase(true);
-        //_talon.configEncoderCodesPerRev(XXX), // if using FeedbackDevice.QuadEncoder
-        //_talon.configPotentiometerTurns(XXX), // if using FeedbackDevice.AnalogEncoder or AnalogPot
-
+        
         /* set the peak and nominal outputs, 12V means full */
         _talon.configNominalOutputForward(0, Constants.kTimeoutMs);
         _talon.configNominalOutputReverse(0, Constants.kTimeoutMs);
