@@ -55,12 +55,9 @@ public:
 		_talon.Config_kI(0, 0.0, kTimeoutMs);
 		_talon.Config_kD(0, 0.0, kTimeoutMs);
 
-		//_talon.ConfigVelocityMeasurementPeriod(VelocityMeasPeriod::Period_1Ms, kTimeoutMs);
-		//_talon.ConfigVelocityMeasurementWindow(1, kTimeoutMs);
-
 		_talon.ConfigNeutralDeadband(0.001, kTimeoutMs); //Ensure motor gives output at all levels
 
-		_talon.SetStatusFramePeriod(StatusFrame::Status_13_Base_PIDF0_, 10, kTimeoutMs);
+		_talon.ConfigMotionProfileTrajectoryPeriod(10, kTimeoutMs); //Our profile uses 10 ms timing
 	}
 	/**  function is called periodically during operator control */
 	void TeleopPeriodic()

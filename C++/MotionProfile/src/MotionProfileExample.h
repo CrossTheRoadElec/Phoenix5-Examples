@@ -274,8 +274,6 @@ public:
 		 */
 		_talon.ClearMotionProfileTrajectories();
 
-		_talon.ConfigMotionProfileTrajectoryPeriod(0, kTimeoutMs); /* select a base duration in milliseconds, this is added to point.timeDur  */
-
 		/* This is fast since it's just into our TOP buffer */
 		for(int i=0;i<totalCnt;++i){
 
@@ -289,7 +287,8 @@ public:
 			point.position = -1.0 * positionRot * Constants::kSensorUnitsPerRotation ;
 			point.velocity = -1.0 * velocityRPM * Constants::kSensorUnitsPerRotation / 600.0;
 			point.headingDeg = 0; /* future feature - not used in this example*/
-			point.timeDur = (TrajectoryDuration) profile[i][2]; /* choose from {5,10,15,20,30,40,50,100} ms. see TrajectoryDuration */
+			point.timeDur = TrajectoryDuration::TrajectoryDuration_0ms; /* choose from {0,5,10,20,30,40,50,100} ms on top of configured period.
+																		see TrajectoryDuration */
 			point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
 			point.profileSlotSelect1 = 0; /* future feature  - not used in this example - cascaded PID [0,1], leave zero */
 

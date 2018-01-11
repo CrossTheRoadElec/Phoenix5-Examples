@@ -267,7 +267,7 @@ public class MotionProfileExample {
 			point.velocity = -profile[i][1] * 4096 / 600; //Convert RPS to Units/100ms
 			point.profileSlotSelect0 = 0; /* which set of gains would you like to use? */
 			point.profileSlotSelect1 = 0;
-			point.timeDur = TrajectoryDuration.Trajectory_Duration_10ms; //Run at 10ms
+			point.timeDur = TrajectoryDuration.Trajectory_Duration_0ms; //Run at 0ms + 10ms global period
 			point.zeroPos = false;
 			if (i == 0)
 				point.zeroPos = true; /* set this to true on the first point */

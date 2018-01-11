@@ -31,6 +31,7 @@ import com.ctre.phoenix.motion.*;
 import com.ctre.phoenix.motorcontrol.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.hal.ConstantsJNI;
 
 public class Robot extends IterativeRobot {
 
@@ -51,6 +52,7 @@ public class Robot extends IterativeRobot {
 	public Robot() { // could also use RobotInit()
 		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 		_talon.setSensorPhase(true); /* keep sensor and motor in phase */
+		_talon.configMotionProfileTrajectoryPeriod(10, 10); //Configure motion profile period to 10ms
 	}
 	/**  function is called periodically during operator control */
     public void teleopPeriodic() {
