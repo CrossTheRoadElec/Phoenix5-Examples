@@ -26,6 +26,8 @@ package org.usfirst.frc.team217.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.*;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import com.ctre.phoenix.motion.*;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
@@ -38,6 +40,9 @@ public class MotionProfileExample {
 	 * keep one copy.
 	 */
 	private MotionProfileStatus _status = new MotionProfileStatus();
+
+	/** additional cache for holding the active trajectory point */
+	double _pos=0,_vel=0,_heading=0;
 
 	/**
 	 * reference to the talon we plan on manipulating. We will not changeMode()
@@ -156,7 +161,7 @@ public class MotionProfileExample {
 				 * something is wrong. Talon is not present, unplugged, breaker
 				 * tripped
 				 */
-				instrumentation.OnNoProgress();
+				Instrumentation.OnNoProgress();
 			} else {
 				--_loopTimeout;
 			}
@@ -228,11 +233,35 @@ public class MotionProfileExample {
 					}
 					break;
 			}
-		}
-		/* printfs and/or logging */
-		instrumentation.process(_status);
-	}
 
+			/* Get the motion profile status every loop */
+			_talon.getMotionProfileStatus(_status);
+			_heading = _talon.getActiveTrajectoryHeading();
+			_pos = _talon.getActiveTrajectoryPosition();
+			_vel = _talon.getActiveTrajectoryVelocity();
+
+			/* printfs and/or logging */
+			Instrumentation.process(_status, _pos, _vel, _heading);
+		}
+	}
+	/**
+	 * Find enum value if supported.
+	 * @param durationMs
+	 * @return enum equivalent of durationMs
+	 */
+	private TrajectoryDuration GetTrajectoryDuration(int durationMs)
+	{	 
+		/* create return value */
+		TrajectoryDuration retval = TrajectoryDuration.Trajectory_Duration_0ms;
+		/* convert duration to supported type */
+		retval = retval.valueOf(durationMs);
+		/* check that it is valid */
+		if (retval.value != durationMs) {
+			DriverStation.reportError("Trajectory Duration not supported - use configMotionProfileTrajectoryPeriod instead", false);		
+		}
+		/* pass to caller */
+		return retval;
+	}
 	/** Start filling the MPs to all of the involved Talons. */
 	private void startFilling() {
 		/* since this example only has one talon, just update that one */
@@ -247,7 +276,7 @@ public class MotionProfileExample {
 		/* did we get an underrun condition since last time we checked ? */
 		if (_status.hasUnderrun) {
 			/* better log it so we know about it */
-			instrumentation.OnUnderrun();
+			Instrumentation.OnUnderrun();
 			/*
 			 * clear the error. This flag does not auto clear, this way 
 			 * we never miss logging it.
@@ -260,14 +289,20 @@ public class MotionProfileExample {
 		 */
 		_talon.clearMotionProfileTrajectories();
 
+		/* set the base trajectory period to zero, use the individual trajectory period below */
+		_talon.configMotionProfileTrajectoryPeriod(Constants.kBaseTrajPeriodMs, Constants.kTimeoutMs);
+		
 		/* This is fast since it's just into our TOP buffer */
 		for (int i = 0; i < totalCnt; ++i) {
+			double positionRot = profile[i][0];
+			double velocityRPM = profile[i][1];
 			/* for each point, fill our structure and pass it to API */
-			point.position = -profile[i][0] * 4096; //Convert Revolutions to Units
-			point.velocity = -profile[i][1] * 4096 / 600; //Convert RPS to Units/100ms
-			point.profileSlotSelect0 = 0; /* which set of gains would you like to use? */
-			point.profileSlotSelect1 = 0;
-			point.timeDur = TrajectoryDuration.Trajectory_Duration_0ms; //Run at 0ms + 10ms global period
+			point.position = positionRot * Constants.kSensorUnitsPerRotation; //Convert Revolutions to Units
+			point.velocity = velocityRPM * Constants.kSensorUnitsPerRotation / 600.0; //Convert RPM to Units/100ms
+			point.headingDeg = 0; /* future feature - not used in this example*/
+			point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
+			point.profileSlotSelect1 = 0; /* future feature  - not used in this example - cascaded PID [0,1], leave zero */
+			point.timeDur = GetTrajectoryDuration((int)profile[i][2]);
 			point.zeroPos = false;
 			if (i == 0)
 				point.zeroPos = true; /* set this to true on the first point */
@@ -279,7 +314,6 @@ public class MotionProfileExample {
 			_talon.pushMotionProfileTrajectory(point);
 		}
 	}
-
 	/**
 	 * Called by application to signal Talon to start the buffered MP (when it's
 	 * able to).

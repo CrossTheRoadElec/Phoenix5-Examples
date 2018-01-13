@@ -31,12 +31,11 @@ import com.ctre.phoenix.motion.*;
 import com.ctre.phoenix.motorcontrol.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.hal.ConstantsJNI;
 
 public class Robot extends IterativeRobot {
 
 	/** The Talon we want to motion profile. */
-	TalonSRX _talon = new TalonSRX(3);
+	TalonSRX _talon = new TalonSRX(Constants.kTalonID);
 	
 	/** some example logic on how one can manage an MP */
 	MotionProfileExample _example = new MotionProfileExample(_talon);
@@ -49,10 +48,22 @@ public class Robot extends IterativeRobot {
 	boolean [] _btnsLast = {false,false,false,false,false,false,false,false,false,false};
 
 
-	public Robot() { // could also use RobotInit()
+
+	/** run once after booting/enter-disable */
+	public void disabledInit() { 
+
 		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 		_talon.setSensorPhase(true); /* keep sensor and motor in phase */
-		_talon.configMotionProfileTrajectoryPeriod(10, 10); //Configure motion profile period to 10ms
+		_talon.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
+
+		_talon.config_kF(0, 0.076, Constants.kTimeoutMs);
+		_talon.config_kP(0, 2.000, Constants.kTimeoutMs);
+		_talon.config_kI(0, 0.0, Constants.kTimeoutMs);
+		_talon.config_kD(0,20.0, Constants.kTimeoutMs);
+
+		_talon.configMotionProfileTrajectoryPeriod(10, Constants.kTimeoutMs); //Our profile uses 10 ms timing
+		/* status 10 provides the trajectory target for motion profile AND motion magic */
+		_talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
 	}
 	/**  function is called periodically during operator control */
     public void teleopPeriodic() {
@@ -92,6 +103,8 @@ public class Robot extends IterativeRobot {
 			 * This will signal the robot to start a MP */
 			if( (btns[6] == true) && (_btnsLast[6] == false) ) {
 				/* user just tapped button 6 */
+
+				//------------ We could start an MP if MP isn't already running ------------//
 				_example.startMotionProfile();
 			}
 		}

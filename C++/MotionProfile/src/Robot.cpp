@@ -16,14 +16,18 @@
  * Logitech Gamepad mapping, use left y axis to drive Talon normally.  
  * Press and hold top-left-shoulder-button5 to put Talon into motion profile control mode.
  * This will start sending Motion Profile to Talon while Talon is neutral. 
+ * 
+ * While holding top-left-shoulder-button5, tap top-right-shoulder-button6.
  * This will signal Talon to fire MP.  When MP is done, Talon will "hold" the last setpoint position
  * and wait for another button6 press to fire again.
+ * 
  * Release button5 to allow OpenVoltage control with left y axis.
  */
 #include "Instrumentation.h"
 #include "WPILib.h"
 #include "MotionProfileExample.h"
 #include "ctre/Phoenix.h"
+#include "Constants.h"
 
 class Robot: public IterativeRobot
 {
@@ -43,21 +47,25 @@ public:
 	bool _btnsLast[10] = {false,false,false,false,false,false,false,false,false,false};
 
 
-	Robot() : _talon(3), _vic(7), _example(_talon), _joy(0)
+	Robot() : _talon(Constants::kTalonID), _vic(Constants::kVictorFollower), _example(_talon), _joy(0)
 	{
+	}
+
+	/** run once after booting/enter-disable */
+	void DisabledInit() {
 		_vic.Follow(_talon);
 		_talon.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0, kTimeoutMs);
-		_talon.SetStatusFramePeriod(StatusFrameEnhanced::Status_10_MotionMagic, 10, kTimeoutMs); /* status 10 is misnamed */
 		_talon.SetSensorPhase(true);
+		_talon.ConfigNeutralDeadband(Constants::kNeutralDeadbandPercent * 0.01, Constants::kTimeoutMs);
 
-		_talon.Config_kF(0, 0.298, kTimeoutMs);
-		_talon.Config_kP(0, 0.1, kTimeoutMs);
+		_talon.Config_kF(0, 0.076, kTimeoutMs);
+		_talon.Config_kP(0, 2.000, kTimeoutMs);
 		_talon.Config_kI(0, 0.0, kTimeoutMs);
-		_talon.Config_kD(0, 0.0, kTimeoutMs);
+		_talon.Config_kD(0,20.0, kTimeoutMs);
 
-		_talon.ConfigNeutralDeadband(0.001, kTimeoutMs); //Ensure motor gives output at all levels
-
-		_talon.ConfigMotionProfileTrajectoryPeriod(10, kTimeoutMs); //Our profile uses 10 ms timing
+		_talon.ConfigMotionProfileTrajectoryPeriod(10, Constants::kTimeoutMs); //Our profile uses 10 ms timing
+		/* status 10 provides the trajectory target for motion profile AND motion magic */
+		_talon.SetStatusFramePeriod(StatusFrameEnhanced::Status_10_MotionMagic, 10, Constants::kTimeoutMs);
 	}
 	/**  function is called periodically during operator control */
 	void TeleopPeriodic()
@@ -110,7 +118,7 @@ public:
 			_btnsLast[i] = btns[i];
 
 	}
-
+	/**  function is called periodically during disable */
 	void DisabledPeriodic()
 	{
 		/* it's generally a good idea to put motor controllers back
