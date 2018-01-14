@@ -1,7 +1,7 @@
 /**
  * [1] Enable robot and use gamepad y-axis to drive Talon.
  * [2] If sensor is out of phase, self-test will show the sticky fault.
- * [3] Use button 4 to read the sensor and remove the overflow component.
+ * [3] Use button 4 to read the CTRE pulse width and seed the quadrature/relative sensor.
  * [4] Use button 1,2,3 to set the sensor position to constant values.
  */
 #include <iostream>
@@ -18,12 +18,16 @@ public:
 	Joystick *_joy = new Joystick(0);
 	std::stringstream _work;
 	bool _btn1 = false, _btn2= false, _btn3= false, _btn4= false;
+	const bool kInvert = true; /* pick this based on your preference on what positive motor output should spin to */
+	const bool kSensorPhase = false; /* pick this so self-test stops reporting sensor-out-of-phase */
 
 	/* every time we enter disable, reinit*/
 	void DisabledInit() {
-		_srx->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Absolute, 0, 10);
+		/* choose quadrature/relative which has a faster update rate */
+		_srx->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10);
 		_srx->SetStatusFramePeriod(StatusFrame::Status_1_General_, 5, 10); /* Talon will send new frame every 5ms */
-		_srx->SetSensorPhase(true);
+		_srx->SetSensorPhase(kSensorPhase);
+		_srx->SetInverted(kInvert);
 	}
 	void DisabledPeriodic() {
 		CommonLoop();
@@ -45,7 +49,12 @@ public:
 		if(!_btn3 && btn3) {			_srx->SetSelectedSensorPosition(+30, 0, 0);			_work << "set:+30.0" << std::endl;		}
 		if (!_btn4 && btn4) {
 			/* read the mag encoder sensor out */
-			int read = (int)_srx->GetSelectedSensorPosition(0);
+			int read = (int)_srx->GetSensorCollection().GetPulseWidthPosition();
+			/* flip pulse width to match selected sensor.  */
+			if (kSensorPhase)
+				read *= -1;
+			if (kInvert)
+				read *= -1;
 			/* throw out the overflows, CTRE Encoder is 4096 units per rotation => 12 bitmask (0xFFF) */
 			read = read & 0xFFF;
 			/* set the value back with no overflows */
