@@ -1,5 +1,4 @@
-#ifndef Instrumentation__h_
-#define Instrumentation__h_
+#pragma once
 /**
  * Since this example focuses on Motion Control, lets print everything related to MP in a clean 
  * format.  Expect to see something like......
@@ -29,7 +28,7 @@
 #include "WPILib.h"
 #include "ctre/Phoenix.h"
 
-class instrumentation {
+class Instrumentation {
 public:
 	static void OnNoProgress()
 	{
@@ -68,9 +67,9 @@ public:
 				count = 8;
 				/* every 8 loops, print our columns */
 				std::cout
-							<< "outputEnable" << delim
-							<< "topBufferRem" << delim
+							<< "       outEn" << delim
 							<< "topBufferCnt" << delim
+							<< "topBufferRem" << delim
 							<< "btmBufferCnt" << delim
 							<< "     IsValid" << delim
 							<< " HasUnderrun" << delim
@@ -80,16 +79,13 @@ public:
 							<< "     targVel" << delim
 							<< "    SlotSel0" << delim
 							<< "   timeDurMs" << delim
-							<< "    SlotSel1" << delim
-							<< "     heading" << delim
 
 							<< endline;
 			}
 			/* every loop, print our values */
-			std::cout
-						<< std::setw(12)<< StrOutputEnable(status.outputEnable) << delim
-						<< std::setw(12)<< status.topBufferRem << delim
+			std::cout	<< std::setw(12)<< StrOutputEnable(status.outputEnable) << delim
 						<< std::setw(12)<< status.topBufferCnt << delim
+						<< std::setw(12)<< status.topBufferRem << delim
 						<< std::setw(12)<< status.btmBufferCnt << delim
 						<< std::setw(12)<< (status.activePointValid ? "1" : " ") << delim
 						<< std::setw(12)<< (status.hasUnderrun ? "1" : " ") << delim
@@ -99,11 +95,9 @@ public:
 						<< std::setw(12)<< vel << delim
 						<< std::setw(12)<< status.profileSlotSelect0 << delim
 						<< std::setw(12)<< status.timeDurMs << delim
-						<< std::setw(12)<< status.profileSlotSelect1 << delim
-						<< std::setw(12)<< heading << delim
 
 						<< endline;
 		}
 	}
 };
-#endif // Instrumentation__h_
+

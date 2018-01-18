@@ -161,7 +161,7 @@ public:
 				 * something is wrong. Talon is not present, unplugged, breaker
 				 * tripped
 				 */
-				instrumentation::OnNoProgress();
+				Instrumentation::OnNoProgress();
 			} else {
 				--_loopTimeout;
 			}
@@ -174,6 +174,7 @@ public:
 			 * using gamepads or some other mode.
 			 */
 			_state = 0;
+			_loopTimeout = -1;
 		} else {
 			/*
 			 * we are in MP control mode. That means: starting Mps, checking Mp
@@ -240,10 +241,30 @@ public:
 			_vel = _talon.GetActiveTrajectoryVelocity();
 
 			/* printfs and/or logging */
-			instrumentation::Process(_status, _pos, _vel, _heading);
+			Instrumentation::Process(_status, _pos, _vel, _heading);
 		}
 	}
-
+	/**
+	 * Find enum value if supported.
+	 * @param durationMs
+	 * @return enum equivalent of durationMs
+	 */
+	TrajectoryDuration GetTrajectoryDuration(int durationMs)
+	{	 
+		/* lookup and return valid value */
+		switch (durationMs) {
+			case 0:		return TrajectoryDuration_0ms;
+			case 5:		return TrajectoryDuration_5ms;
+			case 10: 	return TrajectoryDuration_10ms;
+			case 20: 	return TrajectoryDuration_20ms;
+			case 30: 	return TrajectoryDuration_30ms;
+			case 40: 	return TrajectoryDuration_40ms;
+			case 50: 	return TrajectoryDuration_50ms;
+			case 100: 	return TrajectoryDuration_100ms;
+		}
+		printf("Trajectory Duration not supported - use configMotionProfileTrajectoryPeriod instead\n");
+		return TrajectoryDuration_100ms;
+	}
 	/** Start filling the MPs to all of the involved Talons. */
 	void startFilling()
 	{
@@ -259,7 +280,7 @@ public:
 		/* did we get an underrun condition since last time we checked ? */
 		if(_status.hasUnderrun){
 			/* better log it so we know about it */
-			instrumentation::OnUnderrun();
+			Instrumentation::OnUnderrun();
 			/*
 			 * clear the error. This is what seperates "has underrun" from
 			 * "is underrun", because the former is cleared by the application.
@@ -274,38 +295,32 @@ public:
 		 */
 		_talon.ClearMotionProfileTrajectories();
 
+		/* set the base trajectory period to zero, use the individual trajectory period below */
+		_talon.ConfigMotionProfileTrajectoryPeriod(Constants::kBaseTrajPeriodMs, Constants::kTimeoutMs);
+
 		/* This is fast since it's just into our TOP buffer */
 		for(int i=0;i<totalCnt;++i){
-
-			double positionRot = profile[i][0]; /*
-												 * copy the position, velocity, and
-												 * time from current row
-												 */
+			double positionRot = profile[i][0];
 			double velocityRPM = profile[i][1];
 
 			/* for each point, fill our structure and pass it to API */
-			point.position = -1.0 * positionRot * Constants::kSensorUnitsPerRotation ;
-			point.velocity = -1.0 * velocityRPM * Constants::kSensorUnitsPerRotation / 600.0;
+			point.position = positionRot * Constants::kSensorUnitsPerRotation ;  //Convert Revolutions to Units
+			point.velocity = velocityRPM * Constants::kSensorUnitsPerRotation / 600.0; //Convert RPM to Units/100ms
 			point.headingDeg = 0; /* future feature - not used in this example*/
-			point.timeDur = TrajectoryDuration::TrajectoryDuration_0ms; /* choose from {0,5,10,20,30,40,50,100} ms on top of configured period.
-																		see TrajectoryDuration */
 			point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
 			point.profileSlotSelect1 = 0; /* future feature  - not used in this example - cascaded PID [0,1], leave zero */
-
+			point.timeDur = GetTrajectoryDuration((int)profile[i][2]);
 			point.zeroPos = false;
 			if (i == 0)
 				point.zeroPos = true; /* set this to true on the first point */
 
 			point.isLastPoint = false;
-			if( (i + 1) == totalCnt )
-				point.isLastPoint = true; /*
-											 * set this to true on the last point
-											 */
+			if ((i + 1) == totalCnt)
+				point.isLastPoint = true; /* set this to true on the last point  */
 
 			_talon.PushMotionProfileTrajectory(point);
 		}
 	}
-	
 	/**
 	 * Called by application to signal Talon to start the buffered MP (when it's
 	 * able to).
