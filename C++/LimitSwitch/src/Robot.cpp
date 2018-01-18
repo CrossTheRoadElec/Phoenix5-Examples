@@ -14,7 +14,6 @@
 #include "WPILib.h"
 #include <unistd.h>
 
-
 class Robot: public frc::IterativeRobot {
 public:
 	TalonSRX *_srx = new TalonSRX(0);
@@ -34,7 +33,8 @@ public:
 
 	/* everytime we enter disable, reinit*/
 	void DisabledInit() {
-		_srx->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10); /* MagEncoder meets the requirements for Unit-Scaling */
+		_srx->ConfigSelectedFeedbackSensor(
+				FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10); /* MagEncoder meets the requirements for Unit-Scaling */
 		_srx->SetStatusFramePeriod(StatusFrame::Status_1_General_, 5, 10); /* Talon will send new frame every 5ms */
 	}
 	/* every loop */
@@ -44,11 +44,13 @@ public:
 		bool btn3 = _joy->GetRawButton(3);
 		bool btn4 = _joy->GetRawButton(4);
 		double output = -1.0 * _joy->GetY(); /* forward is positive */
-		int isFwdLimitSwitchClosed = _srx->GetSensorCollection().IsFwdLimitSwitchClosed();
-		int isRevLimitSwitchClosed = _srx->GetSensorCollection().IsRevLimitSwitchClosed();
+		int isFwdLimitSwitchClosed =
+				_srx->GetSensorCollection().IsFwdLimitSwitchClosed();
+		int isRevLimitSwitchClosed =
+				_srx->GetSensorCollection().IsRevLimitSwitchClosed();
 
 		/* on button unpress => press, change pos register */
-		if(!_btn1 && btn1) {
+		if (!_btn1 && btn1) {
 			_srx->ConfigForwardLimitSwitchSource(
 					LimitSwitchSource::LimitSwitchSource_FeedbackConnector,
 					LimitSwitchNormal::LimitSwitchNormal_NormallyOpen,
@@ -59,11 +61,15 @@ public:
 					LimitSwitchNormal::LimitSwitchNormal_NormallyOpen,
 					kTimeoutMs);
 
-			_work << "ConfigForwardLimitSwitchSource(FeedbackConnector, NormallyOpen)" << std::endl;
-			_work << "ConfigReverseLimitSwitchSource(FeedbackConnector, NormallyOpen)" << std::endl;
+			_work
+					<< "ConfigForwardLimitSwitchSource(FeedbackConnector, NormallyOpen)"
+					<< std::endl;
+			_work
+					<< "ConfigReverseLimitSwitchSource(FeedbackConnector, NormallyOpen)"
+					<< std::endl;
 		}
 		/* on button unpress => press, change pos register */
-		if(!_btn2 && btn2) {
+		if (!_btn2 && btn2) {
 			_srx->ConfigForwardLimitSwitchSource(
 					LimitSwitchSource::LimitSwitchSource_FeedbackConnector,
 					LimitSwitchNormal::LimitSwitchNormal_NormallyClosed,
@@ -74,26 +80,30 @@ public:
 					LimitSwitchNormal::LimitSwitchNormal_NormallyClosed,
 					kTimeoutMs);
 
-			_work << "ConfigForwardLimitSwitchSource(FeedbackConnector, NormallyClosed)" << std::endl;
-			_work << "ConfigReverseLimitSwitchSource(FeedbackConnector, NormallyClosed)" << std::endl;
+			_work
+					<< "ConfigForwardLimitSwitchSource(FeedbackConnector, NormallyClosed)"
+					<< std::endl;
+			_work
+					<< "ConfigReverseLimitSwitchSource(FeedbackConnector, NormallyClosed)"
+					<< std::endl;
 		}
-
 
 		/* button3 will override off the limit switches. */
-		if(_btn3 != btn3) {
+		if (_btn3 != btn3) {
 			/* only print on change */
-			_work << "OverrideLimitSwitchesEnable(" << (!btn3 ? "1" : "0") << ")" << std::endl;
+			_work << "OverrideLimitSwitchesEnable(" << (!btn3 ? "1" : "0")
+					<< ")" << std::endl;
 		}
 		_srx->OverrideLimitSwitchesEnable(!btn3);/* when button is down, force off the limit switch */
 
 		/* print any changes to limit switch input */
-		if (isFwdLimitSwitchClosed != _isFwdLimitSwitchClosed)
-		{
-			_work << "isFwdLimitSwitchClosed = " << isFwdLimitSwitchClosed << std::endl;
+		if (isFwdLimitSwitchClosed != _isFwdLimitSwitchClosed) {
+			_work << "isFwdLimitSwitchClosed = " << isFwdLimitSwitchClosed
+					<< std::endl;
 		}
-		if (isRevLimitSwitchClosed != _isRevLimitSwitchClosed)
-		{
-			_work << "isRevLimitSwitchClosed = " << isRevLimitSwitchClosed << std::endl;
+		if (isRevLimitSwitchClosed != _isRevLimitSwitchClosed) {
+			_work << "isRevLimitSwitchClosed = " << isRevLimitSwitchClosed
+					<< std::endl;
 		}
 
 		/* direct control of motor controller */

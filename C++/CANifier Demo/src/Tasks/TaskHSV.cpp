@@ -2,7 +2,8 @@
 #include "ctre/Phoenix.h"
 #include "Platform/Platform.h"
 
-TaskHSV::~TaskHSV() {}
+TaskHSV::~TaskHSV() {
+}
 /* ILoopable */
 void TaskHSV::OnStart() {
 }
@@ -31,10 +32,7 @@ void TaskHSV::OnLoop() {
 	_b = _averageB->Process(_b);
 
 	/* Update CANifier's LED strip */
-	Hardware::canifier->SetLEDOutput(_r,
-			CANifier::LEDChannel::LEDChannelA);
-	Hardware::canifier->SetLEDOutput(_g,
-			CANifier::LEDChannel::LEDChannelB);
-	Hardware::canifier->SetLEDOutput(_b,
-			CANifier::LEDChannel::LEDChannelC);
+	Hardware::canifier->SetLEDOutput(_r, CANifier::LEDChannel::LEDChannelA);
+	Hardware::canifier->SetLEDOutput(_g, CANifier::LEDChannel::LEDChannelB);
+	Hardware::canifier->SetLEDOutput(_b, CANifier::LEDChannel::LEDChannelC);
 }

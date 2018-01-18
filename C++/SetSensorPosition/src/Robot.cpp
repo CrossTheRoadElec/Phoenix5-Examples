@@ -11,20 +11,20 @@
 #include "WPILib.h"
 #include <unistd.h>
 
-
 class Robot: public frc::IterativeRobot {
 public:
 	TalonSRX *_srx = new TalonSRX(0);
 	Joystick *_joy = new Joystick(0);
 	std::stringstream _work;
-	bool _btn1 = false, _btn2= false, _btn3= false, _btn4= false;
+	bool _btn1 = false, _btn2 = false, _btn3 = false, _btn4 = false;
 	const bool kInvert = true; /* pick this based on your preference on what positive motor output should spin to */
 	const bool kSensorPhase = false; /* pick this so self-test stops reporting sensor-out-of-phase */
 
 	/* every time we enter disable, reinit*/
 	void DisabledInit() {
 		/* choose quadrature/relative which has a faster update rate */
-		_srx->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10);
+		_srx->ConfigSelectedFeedbackSensor(
+				FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10);
 		_srx->SetStatusFramePeriod(StatusFrame::Status_1_General_, 5, 10); /* Talon will send new frame every 5ms */
 		_srx->SetSensorPhase(kSensorPhase);
 		_srx->SetInverted(kInvert);
@@ -38,18 +38,28 @@ public:
 
 	/* every loop */
 	void CommonLoop() {
-		bool btn1 = _joy->GetRawButton(1);	/* get buttons */
+		bool btn1 = _joy->GetRawButton(1); /* get buttons */
 		bool btn2 = _joy->GetRawButton(2);
 		bool btn3 = _joy->GetRawButton(3);
 		bool btn4 = _joy->GetRawButton(4);
 
 		/* on button unpress => press, change pos register */
-		if(!_btn1 && btn1) {			_srx->SetSelectedSensorPosition(-10, 0, 0);			_work << "set:-10.0" << std::endl;		}
-		if(!_btn2 && btn2) {			_srx->SetSelectedSensorPosition(-20, 0, 0);			_work << "set:-20.0" << std::endl;		}
-		if(!_btn3 && btn3) {			_srx->SetSelectedSensorPosition(+30, 0, 0);			_work << "set:+30.0" << std::endl;		}
+		if (!_btn1 && btn1) {
+			_srx->SetSelectedSensorPosition(-10, 0, 0);
+			_work << "set:-10.0" << std::endl;
+		}
+		if (!_btn2 && btn2) {
+			_srx->SetSelectedSensorPosition(-20, 0, 0);
+			_work << "set:-20.0" << std::endl;
+		}
+		if (!_btn3 && btn3) {
+			_srx->SetSelectedSensorPosition(+30, 0, 0);
+			_work << "set:+30.0" << std::endl;
+		}
 		if (!_btn4 && btn4) {
 			/* read the mag encoder sensor out */
-			int read = (int)_srx->GetSensorCollection().GetPulseWidthPosition();
+			int read =
+					(int) _srx->GetSensorCollection().GetPulseWidthPosition();
 			/* flip pulse width to match selected sensor.  */
 			if (kSensorPhase)
 				read *= -1;
@@ -67,7 +77,7 @@ public:
 
 		/* call get and serialize what we get */
 		double read = _srx->GetSelectedSensorPosition(0);
-		_work << "read:" << read<< std::endl;
+		_work << "read:" << read << std::endl;
 
 		/* print any rendered strings, and clear work */
 		printf(_work.str().c_str());

@@ -34,46 +34,43 @@
 #include "Framework/MovingAverage.h"
 #include <limits>
 
-namespace CTRE { namespace Signals {
+namespace CTRE {
+namespace Signals {
 
 MovingAverage::MovingAverage(int capacity) {
 	_cap = capacity;
 	_d = new float[_cap];
 	Clear();
 }
-float MovingAverage::Process(float input)
-{
+float MovingAverage::Process(float input) {
 	Push(input);
-	return _sum / (float)_cnt;
+	return _sum / (float) _cnt;
 }
-void MovingAverage::Clear()
-{
+void MovingAverage::Clear() {
 	_in = 0;
 	_ou = 0;
 	_cnt = 0;
 
 	_sum = 0;
 }
-void MovingAverage::Push(float d)
-{
+void MovingAverage::Push(float d) {
 	/* process it */
 	_sum += d;
 
 	/* if full, pop one */
 	if (_cnt >= _cap)
-	Pop();
+		Pop();
 
 	/* push new one */
 	_d[_in] = d;
 	if (++_in >= _cap)
-	_in = 0;
+		_in = 0;
 	++_cnt;
 
 	/* calc new min - slow */
 	CalcMin();
 }
-void MovingAverage::Pop()
-{
+void MovingAverage::Pop() {
 	/* get the oldest */
 	float d = _d[_ou];
 
@@ -82,38 +79,37 @@ void MovingAverage::Pop()
 
 	/* pop it */
 	if (++_ou >= _cap)
-	_ou = 0;
+		_ou = 0;
 	--_cnt;
 }
-void MovingAverage::CalcMin()
-{
+void MovingAverage::CalcMin() {
 	_min = std::numeric_limits<float>::max();
 
 	int ou = _ou;
 	int cnt = _cnt;
-	while (cnt > 0)
-	{
+	while (cnt > 0) {
 		float d = _d[ou];
 
 		/* process sample */
 		if (_min > d)
-		_min = d;
+			_min = d;
 
 		/* iterate */
 		if (++ou >= _cnt)
-		ou = 0;
+			ou = 0;
 		--cnt;
 
 	}
 }
 //-------------- Properties --------------//
-float MovingAverage::GetSum(){
+float MovingAverage::GetSum() {
 	return _sum;
 }
-int MovingAverage::Count(){
+int MovingAverage::Count() {
 	return _cnt;
 }
-float MovingAverage::Minimum(){
+float MovingAverage::Minimum() {
 	return _min;
 }
-}}
+}
+}

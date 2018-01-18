@@ -2,7 +2,7 @@
 
 #include "ctre/phoenix/Tasking/ILoopable.h"
 
-class TaskPWMmotorController : public ctre::phoenix::tasking::ILoopable{
+class TaskPWMmotorController: public ctre::phoenix::tasking::ILoopable {
 public:
 	float _percentOutput;
 	bool _running;			//Track for TaskMainLoop

@@ -2,7 +2,7 @@
 
 #include "ctre/phoenix/Tasking/ILoopable.h"
 
-class TaskLIDARControlLEDStrip : public ctre::phoenix::tasking::ILoopable{
+class TaskLIDARControlLEDStrip: public ctre::phoenix::tasking::ILoopable {
 public:
 	virtual ~TaskLIDARControlLEDStrip();
 	/* ILoopable */

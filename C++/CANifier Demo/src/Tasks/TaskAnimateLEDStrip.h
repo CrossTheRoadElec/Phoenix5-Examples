@@ -2,7 +2,7 @@
 
 #include "ctre/phoenix/Tasking/ILoopable.h"
 
-class TaskAnimateLEDStrip : public ctre::phoenix::tasking::ILoopable{
+class TaskAnimateLEDStrip: public ctre::phoenix::tasking::ILoopable {
 public:
 	virtual ~TaskAnimateLEDStrip();
 	/* ILoopable */

@@ -23,7 +23,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		/* Add each task to the concurrent scheduler */
-		for(ILoopable loop : Tasks.FullList){
+		for (ILoopable loop : Tasks.FullList) {
 			Schedulers.PeriodicTasks.add(loop);
 		}
 	}
@@ -31,7 +31,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		/** Run forever */
-		
+
 		/* Process the concurrent scheduler which will process our tasks */
 		Schedulers.PeriodicTasks.process();
 	}

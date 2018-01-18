@@ -96,7 +96,9 @@ public class ConcurrentScheduler implements com.ctre.phoenix.ILoopable {
 			if (en) {
 				lp.onLoop();
 			} else {
-				/* Current ILoopable is turned off, don't call OnLoop() for it */
+				/*
+				 * Current ILoopable is turned off, don't call OnLoop() for it
+				 */
 			}
 		}
 	}

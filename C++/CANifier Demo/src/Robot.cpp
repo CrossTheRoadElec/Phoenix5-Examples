@@ -1,4 +1,3 @@
-
 /**
  * IMPORTANT: This example requires the version of the SDK from the
  * Installer version 5.0.3.2 or higher.  There were several changes
@@ -21,7 +20,7 @@ public:
 
 	void TeleopInit() {
 		/* Add each task to the concurrent scheduler */
-		for(auto ILoopable : Tasks::FullList){
+		for (auto ILoopable : Tasks::FullList) {
 			Schedulers::PeriodicTasks->Add(ILoopable);
 		}
 	}

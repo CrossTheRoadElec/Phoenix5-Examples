@@ -1,21 +1,20 @@
 #include "WPILib.h"
 #include "ctre/Phoenix.h"
 
-class MecanumDefaultCode : public IterativeRobot
-{
+class MecanumDefaultCode: public IterativeRobot {
 	WPI_TalonSRX *lf = new WPI_TalonSRX(0); /*left front */
 	WPI_TalonSRX *lr = new WPI_TalonSRX(1);/*left rear */
 	WPI_TalonSRX *rf = new WPI_TalonSRX(2); /*right front */
 	WPI_TalonSRX *rr = new WPI_TalonSRX(3); /*right rear */
 public:
-	MecanumDrive *m_robotDrive;		// RobotDrive object using PWM 1-4 for drive motors
-	Joystick *m_driveStick;			// Joystick object on USB port 1 (mecanum drive)public:
+	MecanumDrive *m_robotDrive;	// RobotDrive object using PWM 1-4 for drive motors
+	Joystick *m_driveStick;	// Joystick object on USB port 1 (mecanum drive)public:
 	AnalogGyro gyro;
 	/**
 	 * Constructor for this "MecanumDefaultCode" Class.
 	 */
-	MecanumDefaultCode(void) : gyro(0)
-	{
+	MecanumDefaultCode(void) :
+			gyro(0) {
 		/* Set every Talon to reset the motor safety timeout. */
 		lf->Set(ControlMode::PercentOutput, 0);
 		lr->Set(ControlMode::PercentOutput, 0);
@@ -33,34 +32,29 @@ public:
 		// Define joystick being used at USB port #0 on the Drivers Station
 		m_driveStick = new Joystick(0);
 	}
-	void TeleopInit()
-	{
+	void TeleopInit() {
 		gyro.Reset();
 	}
 	/** @return 10% deadband */
-	double Db(double axisVal)
-	{
-		if(axisVal < -0.10)
+	double Db(double axisVal) {
+		if (axisVal < -0.10)
 			return axisVal;
-		if(axisVal > +0.10)
+		if (axisVal > +0.10)
 			return axisVal;
 		return 0;
 	}
 	/**
 	 * Gets called once for each new packet from the DS.
 	 */
-	void TeleopPeriodic(void)
-	{
+	void TeleopPeriodic(void) {
 		float angle = gyro.GetAngle();
 		//std::cout << "Angle : " << angle << std::endl;
-		m_robotDrive->DriveCartesian(			Db(m_driveStick->GetX()),
-												Db(m_driveStick->GetY()),
-												Db(m_driveStick->GetZ()),
-												angle);
+		m_robotDrive->DriveCartesian(Db(m_driveStick->GetX()),
+				Db(m_driveStick->GetY()), Db(m_driveStick->GetZ()), angle);
 		/* my right side motors need to drive negative to move robot forward */
 
 		/* on button 5, reset gyro angle to zero */
-		if(m_driveStick->GetRawButton(5))
+		if (m_driveStick->GetRawButton(5))
 			gyro.Reset();
 	}
 };

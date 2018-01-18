@@ -20,8 +20,8 @@ import com.ctre.phoenix.motorcontrol.can.*;
  * project.
  */
 public class Robot extends IterativeRobot {
-	
-	//Create a talon
+
+	// Create a talon
 	TalonSRX _talon = new TalonSRX(3);
 
 	/**
@@ -30,7 +30,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		//Configure parameters to talon to see later
+		// Configure parameters to talon to see later
 		_talon.config_kP(0, 0.2, 10);
 		_talon.configForwardSoftLimitThreshold(200, 10);
 	}
@@ -40,8 +40,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopInit() {
-		//On teleop init, print the configured setting
-		System.out.println("P gain is: " + _talon.configGetParameter(ParamEnum.eProfileParamSlot_P, 0, 0));
-		System.out.println("Software limit forward is " + _talon.configGetParameter(ParamEnum.eForwardSoftLimitThreshold, 0, 0));
+		// On teleop init, print the configured setting
+		System.out.println("P gain is: " + _talon
+				.configGetParameter(ParamEnum.eProfileParamSlot_P, 0, 0));
+		System.out.println(
+				"Software limit forward is " + _talon.configGetParameter(
+						ParamEnum.eForwardSoftLimitThreshold, 0, 0));
 	}
 }

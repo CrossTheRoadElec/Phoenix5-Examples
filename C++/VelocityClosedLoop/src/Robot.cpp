@@ -27,8 +27,9 @@ private:
 	int _loops = 0;
 
 	void RobotInit() {
-        /* first choose the sensor */
-		_talon->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10);
+		/* first choose the sensor */
+		_talon->ConfigSelectedFeedbackSensor(
+				FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10);
 		_talon->SetSensorPhase(true);
 
 		/* set the peak and nominal outputs, 12V means full */
@@ -53,27 +54,28 @@ private:
 		_sb.append("\tout:");
 		_sb.append(std::to_string(motorOutput));
 		_sb.append("\tspd:");
-		_sb.append(std::to_string(_talon->GetSelectedSensorVelocity(kPIDLoopIdx)));
+		_sb.append(
+				std::to_string(_talon->GetSelectedSensorVelocity(kPIDLoopIdx)));
 		/* while button1 is held down, closed-loop on target velocity */
 		if (_joy->GetRawButton(1)) {
-        	/* Speed mode */
+			/* Speed mode */
 			/* 1500 RPM * 4096 units/rev / 600 100ms/min in either direction: velocity control is units/100ms */
 			double targetSpeed = leftYstick * 1500.0 * 4096 / 600;
-        	_talon->Set(ControlMode::Velocity, targetSpeed); /* 1500 RPM in either direction */
+			_talon->Set(ControlMode::Velocity, targetSpeed); /* 1500 RPM in either direction */
 
 			/* append more signals to print when in speed mode. */
 			_sb.append("\terrNative:");
 			_sb.append(std::to_string(_talon->GetClosedLoopError(kPIDLoopIdx)));
 			_sb.append("\ttrg:");
 			_sb.append(std::to_string(targetSpeed));
-        } else {
+		} else {
 			/* Percent voltage mode */
 			_talon->Set(ControlMode::PercentOutput, leftYstick);
 		}
 		/* print every ten loops, printing too much too fast is generally bad for performance */
 		if (++_loops >= 10) {
 			_loops = 0;
-			printf("%s\n",_sb.c_str());
+			printf("%s\n", _sb.c_str());
 		}
 		_sb.clear();
 	}

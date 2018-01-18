@@ -1,6 +1,7 @@
 #pragma once
 
-namespace CTRE{ namespace Signals {
+namespace CTRE {
+namespace Signals {
 
 class MovingAverage {
 public:
@@ -15,14 +16,15 @@ public:
 	int Count();
 	float Minimum();
 private:
-    int _in;
-    int _ou;
-    int _cnt;
-    int _cap;
-    float _sum;
-    float _min;
-    float* _d;
+	int _in;
+	int _ou;
+	int _cnt;
+	int _cap;
+	float _sum;
+	float _min;
+	float* _d;
 
-    void CalcMin();
+	void CalcMin();
 };
-}}
+}
+}

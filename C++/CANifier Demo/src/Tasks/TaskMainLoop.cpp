@@ -1,10 +1,10 @@
 #include <Tasks/TaskMainLoop.h>
 #include "Platform/Platform.h"
 
-TaskMainLoop::~TaskMainLoop(){}
+TaskMainLoop::~TaskMainLoop() {
+}
 /* ILoopable */
-void TaskMainLoop::OnStart()
-{
+void TaskMainLoop::OnStart() {
 	/* default to LED strip animation */
 	Schedulers::PeriodicTasks->Start(Tasks::taskAnimateLEDStrip);
 	Schedulers::PeriodicTasks->Stop(Tasks::taskDirectControlArm);
@@ -19,12 +19,11 @@ void TaskMainLoop::OnLoop() {
 	bool controllerState = false;
 
 	/* No method of determining if controller is connected */
-	if (controllerState == false){
-        Schedulers::PeriodicTasks->Stop(Tasks::taskPWMmotorController);
-	}
-	else{
+	if (controllerState == false) {
+		Schedulers::PeriodicTasks->Stop(Tasks::taskPWMmotorController);
+	} else {
 		/* Just for testing, can be enabled by user by changing controllerState to true */
-        Schedulers::PeriodicTasks->Start(Tasks::taskPWMmotorController);
+		Schedulers::PeriodicTasks->Start(Tasks::taskPWMmotorController);
 	}
 
 	if (Hardware::gamepad->GetRawButton(6)) {
@@ -38,14 +37,14 @@ void TaskMainLoop::OnLoop() {
 		Schedulers::PeriodicTasks->Start(Tasks::taskDirectControlArm);
 		Schedulers::PeriodicTasks->Stop(Tasks::taskLIDARControlLEDStrip);
 
-        Schedulers::PeriodicTasks->Start(Tasks::taskMeasurePulseSensors);
+		Schedulers::PeriodicTasks->Start(Tasks::taskMeasurePulseSensors);
 
-	} else if (Hardware::gamepad->GetRawButton(7)){
+	} else if (Hardware::gamepad->GetRawButton(7)) {
 		Schedulers::PeriodicTasks->Stop(Tasks::taskAnimateLEDStrip);
 		Schedulers::PeriodicTasks->Stop(Tasks::taskDirectControlArm);
 		Schedulers::PeriodicTasks->Start(Tasks::taskLIDARControlLEDStrip);
 
-        Schedulers::PeriodicTasks->Start(Tasks::taskMeasurePulseSensors);
+		Schedulers::PeriodicTasks->Start(Tasks::taskMeasurePulseSensors);
 
 	}
 }

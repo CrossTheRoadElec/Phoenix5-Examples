@@ -23,6 +23,7 @@
  * 
  */
 package org.usfirst.frc.team217.robot;
+
 import com.ctre.phoenix.motion.*;
 
 public class Instrumentation {
@@ -30,34 +31,36 @@ public class Instrumentation {
 	static double timeout = 0;
 	static int count = 0;
 
-	private static final String []_table = {" Dis "," En  ","Hold "};
-	
+	private static final String[] _table = {" Dis ", " En  ", "Hold "};
+
 	public static void OnUnderrun() {
 		System.out.format("%s\n", "UNDERRUN");
 	}
+
 	public static void OnNoProgress() {
 		System.out.format("%s\n", "NOPROGRESS");
 	}
-	static private String StrOutputEnable(SetValueMotionProfile sv)
-	{
-		if(sv == null)
+
+	static private String StrOutputEnable(SetValueMotionProfile sv) {
+		if (sv == null)
 			return "null";
-		if(sv.value > 3)
+		if (sv.value > 3)
 			return "Inval";
 		return _table[sv.value];
 	}
-	public static void process(MotionProfileStatus status, double pos, double vel,
-			double heading) {
+
+	public static void process(MotionProfileStatus status, double pos,
+			double vel, double heading) {
 		double now = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
 
-		if((now-timeout) > 0.2){
+		if ((now - timeout) > 0.2) {
 			timeout = now;
 			/* fire a loop every 200ms */
 
-			if(--count <= 0){
+			if (--count <= 0) {
 				count = 8;
 				/* every 8 loops, print our columns */
-				
+
 				System.out.format("%-9s\t", "outEn");
 				System.out.format("%-9s\t", "topCnt");
 				System.out.format("%-9s\t", "topRem");
@@ -85,7 +88,7 @@ public class Instrumentation {
 			System.out.format("%-9s\t", pos);
 			System.out.format("%-9s\t", vel);
 			System.out.format("%-9s\t", status.profileSlotSelect);
-			System.out.format("%-9s\t",  status.timeDurMs );
+			System.out.format("%-9s\t", status.timeDurMs);
 
 			System.out.format("\n");
 		}

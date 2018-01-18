@@ -20,7 +20,7 @@ class Robot: public IterativeRobot {
 	TalonSRX * _rightRear;
 	TalonSRX * _spareTalon; /* spare talon, remove if not necessary, Pigeon can be placed on CANbus or plugged into a Talon. */
 	PigeonIMU * _pidgey;
-	Joystick *_driveStick;			/* Joystick object on USB port 1 */
+	Joystick *_driveStick; /* Joystick object on USB port 1 */
 	/** state for tracking whats controlling the drivetrain */
 	enum {
 		GoStraightOff, GoStraightWithPidgeon, GoStraightSameThrottle
@@ -75,7 +75,8 @@ public:
 		PigeonIMU::FusionStatus *stat = new PigeonIMU::FusionStatus();
 		_pidgey->GetFusedHeading(*stat);
 		double currentAngle = stat->heading;
-		bool angleIsGood = (_pidgey->GetState() == PigeonIMU::Ready) ? true : false;
+		bool angleIsGood =
+				(_pidgey->GetState() == PigeonIMU::Ready) ? true : false;
 		double currentAngularRate = xyz_dps[2];
 		/* get input from gamepad */
 		bool userWantsGoStraight = _driveStick->GetRawButton(5); /* top left shoulder button */
@@ -87,50 +88,52 @@ public:
 		/* simple state machine to update our goStraight selection */
 		switch (_goStraight) {
 
-			/* go straight is off, better check gamepad to see if we should enable the feature */
-			case GoStraightOff:
-				if (userWantsGoStraight == false) {
-					/* nothing to do */
-				} else if (angleIsGood == false) {
-					/* user wants to servo but Pigeon isn't connected? */
-					_goStraight = GoStraightSameThrottle; /* just apply same throttle to both sides */
-				} else {
-					/* user wants to servo, save the current heading so we know where to servo to. */
-					_goStraight = GoStraightWithPidgeon;
-					_targetAngle = currentAngle;
-				}
-				break;
+		/* go straight is off, better check gamepad to see if we should enable the feature */
+		case GoStraightOff:
+			if (userWantsGoStraight == false) {
+				/* nothing to do */
+			} else if (angleIsGood == false) {
+				/* user wants to servo but Pigeon isn't connected? */
+				_goStraight = GoStraightSameThrottle; /* just apply same throttle to both sides */
+			} else {
+				/* user wants to servo, save the current heading so we know where to servo to. */
+				_goStraight = GoStraightWithPidgeon;
+				_targetAngle = currentAngle;
+			}
+			break;
 
 			/* we are servo-ing heading with Pigeon */
-			case GoStraightWithPidgeon:
-				if (userWantsGoStraight == false) {
-					_goStraight = GoStraightOff; /* user let go, turn off the feature */
-				} else if (angleIsGood == false) {
-					_goStraight = GoStraightSameThrottle; /* we were servoing with pidgy, but we lost connection?  Check wiring and deviceID setup */
-				} else {
-					/* user still wants to drive straight, keep doing it */
-				}
-				break;
+		case GoStraightWithPidgeon:
+			if (userWantsGoStraight == false) {
+				_goStraight = GoStraightOff; /* user let go, turn off the feature */
+			} else if (angleIsGood == false) {
+				_goStraight = GoStraightSameThrottle; /* we were servoing with pidgy, but we lost connection?  Check wiring and deviceID setup */
+			} else {
+				/* user still wants to drive straight, keep doing it */
+			}
+			break;
 
 			/* we are simply applying the same throttle to both sides, apparently Pigeon is not connected */
-			case GoStraightSameThrottle:
-				if (userWantsGoStraight == false) {
-					_goStraight = GoStraightOff; /* user let go, turn off the feature */
-				} else {
-					/* user still wants to drive straight, keep doing it */
-				}
-				break;
+		case GoStraightSameThrottle:
+			if (userWantsGoStraight == false) {
+				_goStraight = GoStraightOff; /* user let go, turn off the feature */
+			} else {
+				/* user still wants to drive straight, keep doing it */
+			}
+			break;
 		}
 
 		/* if we can servo with IMU, do the math here */
 		if (_goStraight == GoStraightWithPidgeon) {
 			/* very simple Proportional and Derivative (PD) loop with a cap,
 			 * replace with favorite close loop strategy or leverage future Talon <=> Pigeon features. */
-			turnThrottle = (_targetAngle - currentAngle) * kPgain - (currentAngularRate) * kDgain;
+			turnThrottle = (_targetAngle - currentAngle) * kPgain
+					- (currentAngularRate) * kDgain;
 			/* the max correction is the forward throttle times a scalar,
 			 * This can be done a number of ways but basically only apply small turning correction when we are moving slow
 			 * and larger correction the faster we move.  Otherwise you may need stiffer pgain at higher velocities. */
-			double maxThrot = MaxCorrection(forwardThrottle, kMaxCorrectionRatio);
+			double maxThrot = MaxCorrection(forwardThrottle,
+					kMaxCorrectionRatio);
 			turnThrottle = Cap(turnThrottle, maxThrot);
 		} else if (_goStraight == GoStraightSameThrottle) {
 			/* clear the turn throttle, just apply same throttle to both sides */
@@ -152,14 +155,15 @@ public:
 		_rightRear->Set(ControlMode::PercentOutput, -1. * right);
 
 		/* some printing for easy debugging */
-		if (++_printLoops > 50){
+		if (++_printLoops > 50) {
 			_printLoops = 0;
 			printf("------------------------------------------\n");
 			printf("error: %f\n", _targetAngle - currentAngle);
 			printf("angle: %f\n", currentAngle);
 			printf("rate: %f\n", currentAngularRate);
 			printf("noMotionBiasCount: %i\n", genStatus.noMotionBiasCount);
-			printf("tempCompensationCount: %i\n", genStatus.tempCompensationCount);
+			printf("tempCompensationCount: %i\n",
+					genStatus.tempCompensationCount);
 			printf("%s\n", angleIsGood ? "Angle is good" : "Angle is NOT GOOD");
 			printf("------------------------------------------\n");
 		}
@@ -206,12 +210,14 @@ public:
 	 */
 	double MaxCorrection(double forwardThrot, double scalor) {
 		/* make it positive */
-		if(forwardThrot < 0) {forwardThrot = -forwardThrot;}
+		if (forwardThrot < 0) {
+			forwardThrot = -forwardThrot;
+		}
 		/* max correction is the current forward throttle scaled down */
 		forwardThrot *= scalor;
 		/* ensure caller is allowed at least 10% throttle,
 		 * regardless of forward throttle */
-		if(forwardThrot < 0.10)
+		if (forwardThrot < 0.10)
 			return 0.10;
 		return forwardThrot;
 	}

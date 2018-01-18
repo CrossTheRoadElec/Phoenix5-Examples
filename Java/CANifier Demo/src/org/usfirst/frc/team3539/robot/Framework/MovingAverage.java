@@ -81,16 +81,15 @@ public class MovingAverage {
 	}
 
 	// -------------- Properties --------------//
-	public float getSum()
-	{
+	public float getSum() {
 		return _sum;
 	}
-	public int getCount()
-	{
+
+	public int getCount() {
 		return _cnt;
 	};
-	public float getMinimum()
-	{
+
+	public float getMinimum() {
 		return _min;
 	};
 

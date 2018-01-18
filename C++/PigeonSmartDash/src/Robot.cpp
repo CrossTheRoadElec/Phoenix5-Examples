@@ -7,8 +7,6 @@
 #include <SmartDashboard/SendableChooser.h>
 #include <SmartDashboard/SmartDashboard.h>
 
-
-
 #include "ctre/Phoenix.h"
 
 class Robot: public frc::IterativeRobot {
@@ -28,7 +26,6 @@ public:
 		_plotThread = NULL;
 	}
 
-
 	/*
 	 * This autonomous (along with the chooser code above) shows how to select
 	 * between different autonomous modes using the dashboard. The sendable
@@ -41,7 +38,6 @@ public:
 	 * SendableChooser make sure to add them to the chooser code above as well.
 	 */
 
-
 	void TeleopInit() {
 		_plotThread = new PlotThread(this);
 	}
@@ -53,14 +49,14 @@ public:
 	/** quick and dirty threaded plotter */
 	class PlotThread {
 	public:
-		 Robot * _robot;
-		 std::thread * _thrd;
-		 PlotThread(Robot * robot){
+		Robot * _robot;
+		std::thread * _thrd;
+		PlotThread(Robot * robot) {
 			this->_robot = robot;
 			this->_thrd = new std::thread(&PlotThread::execute, this);
-		 }
+		}
 
-		 void execute() {
+		void execute() {
 			/* speed up network tables, this is a test project so eat up all
 			 * of the network possible for the purpose of this test.
 			 */

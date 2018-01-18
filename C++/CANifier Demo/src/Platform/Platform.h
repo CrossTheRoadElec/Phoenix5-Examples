@@ -13,7 +13,7 @@
 #include "Tasks/TaskMeasurePulseSensors.h"
 #include "Tasks/TaskPWMmotorController.h"
 
-class Constants{
+class Constants {
 public:
 	const float GamepadDeadband = 0.03;
 
@@ -23,28 +23,29 @@ public:
 	static const int GamePadAxis_green = 1;
 	static const int GamePadAxis_blue = 5;
 
-	static const CANifier::PWMChannel MotorControllerCh = CANifier::PWMChannel::PWMChannel2;
+	static const CANifier::PWMChannel MotorControllerCh =
+			CANifier::PWMChannel::PWMChannel2;
 };
 
-class Hardware{
+class Hardware {
 public:
 	static CANifier* canifier;
 	static frc::Joystick* gamepad;
 };
 
-class Schedulers{
+class Schedulers {
 public:
-    /* the schedulers.  Minimally you will likely want one periodic scheduler to run the normal tasks.
-     * Additional schedulers could be ConsecutiveSchedulers for entire autonomous movements or pre-configured maneuvers.
-     * Use 'public static' because these are single objects. */
+	/* the schedulers.  Minimally you will likely want one periodic scheduler to run the normal tasks.
+	 * Additional schedulers could be ConsecutiveSchedulers for entire autonomous movements or pre-configured maneuvers.
+	 * Use 'public static' because these are single objects. */
 	static ConcurrentScheduler* PeriodicTasks;
 };
 
-class Tasks{
+class Tasks {
 public:
-    /* Subsystem tasks.  A task could be all the functionality of a subsystem like a robot arm,
-     * or could be an individual action to a subsystem, such as up reading a game-pad and applying it to the drive-train.
-     * Use 'public static' because these are single objects. */
+	/* Subsystem tasks.  A task could be all the functionality of a subsystem like a robot arm,
+	 * or could be an individual action to a subsystem, such as up reading a game-pad and applying it to the drive-train.
+	 * Use 'public static' because these are single objects. */
 	static TaskAnimateLEDStrip* taskAnimateLEDStrip;
 	static TaskDirectControlLEDStrip* taskDirectControlArm;
 	static TaskPWMmotorController* taskPWMmotorController;
@@ -54,6 +55,6 @@ public:
 
 	static TaskMainLoop* taskMainLoop;
 
-    /* Insert all Tasks below in the Full List so they get auto inserted, see Robot.java to see how this works.*/
+	/* Insert all Tasks below in the Full List so they get auto inserted, see Robot.java to see how this works.*/
 	static std::vector<ILoopable*> FullList;
 };
