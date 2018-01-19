@@ -8,7 +8,7 @@
  * to throttle the Talon manually.  This will confirm your hardware setup.
  * Be sure to confirm that when the Talon is driving forward (green) the 
  * position sensor is moving in a positive direction.  If this is not the cause
- * flip the boolena input to the setSensorPhase() call below.
+ * flip the boolean input to the setSensorPhase() call below.
  *
  * Once you've ensured your feedback device is in-phase with the motor,
  * use the button shortcuts to servo to target velocity.  
@@ -33,7 +33,7 @@ public class Robot extends IterativeRobot {
 		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.kTimeoutMs);
 		_talon.setSensorPhase(true);
 
-		/* set the peak, nominal outputs, and deadband */
+		/* set the peak, nominal outputs */
 		_talon.configNominalOutputForward(0, Constants.kTimeoutMs);
 		_talon.configNominalOutputReverse(0, Constants.kTimeoutMs);
 		_talon.configPeakOutputForward(1, Constants.kTimeoutMs);

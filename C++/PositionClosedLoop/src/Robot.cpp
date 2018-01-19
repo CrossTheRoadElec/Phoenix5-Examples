@@ -2,7 +2,7 @@
  * Example demonstrating the Position closed-loop servo.
  * Tested with Logitech F350 USB Gamepad inserted into Driver Station]
  *
- * Be sure to select the correct feedback sensor using SetFeedbackDevice() below.
+ * Be sure to select the correct feedback sensor using configSelectedFeedbackSensor() below.
  *
  * After deploying/debugging this to your RIO, first use the left Y-stick
  * to throttle the Talon manually.  This will confirm your hardware setup.
