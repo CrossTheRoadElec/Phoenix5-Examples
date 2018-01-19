@@ -2,13 +2,13 @@
  * Example demonstrating the velocity closed-loop servo.
  * Tested with Logitech F350 USB Gamepad inserted into Driver Station]
  * 
- * Be sure to select the correct feedback sensor using SetFeedbackDevice() below.
+ * Be sure to select the correct feedback sensor using configSelectedFeedbackSensor() below.
  *
  * After deploying/debugging this to your RIO, first use the left Y-stick 
  * to throttle the Talon manually.  This will confirm your hardware setup.
  * Be sure to confirm that when the Talon is driving forward (green) the 
  * position sensor is moving in a positive direction.  If this is not the cause
- * flip the boolena input to the SetSensorDirection() call below.
+ * flip the boolena input to the setSensorPhase() call below.
  *
  * Once you've ensured your feedback device is in-phase with the motor,
  * use the button shortcuts to servo to target velocity.  

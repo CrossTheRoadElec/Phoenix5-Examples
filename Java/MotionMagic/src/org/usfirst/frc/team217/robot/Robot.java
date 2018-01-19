@@ -2,7 +2,7 @@
  * Example demonstrating the motion magic control mode.
  * Tested with Logitech F710 USB Gamepad inserted into Driver Station.
  * 
- * Be sure to select the correct feedback sensor using SetFeedbackDevice() below.
+ * Be sure to select the correct feedback sensor using configSelectedFeedbackSensor() below.
  *
  * After deploying/debugging this to your RIO, first use the left Y-stick 
  * to throttle the Talon manually.  This will confirm your hardware setup/sensors
@@ -10,7 +10,7 @@
  * 
  * Be sure to confirm that when the Talon is driving forward (green) the 
  * position sensor is moving in a positive direction.  If this is not the 
- * cause, flip the boolean input to the reverseSensor() call below.
+ * cause, flip the boolean input to the setSensorPhase() call below.
  *
  * Once you've ensured your feedback device is in-phase with the motor,
  * and followed the walk-through in the Talon SRX Software Reference Manual,
@@ -45,7 +45,7 @@ public class Robot extends IterativeRobot {
 		_talon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);
 		_talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
 
-		/* set the peak and nominal outputs, 12V means full */
+		/* set the peak and nominal outputs */
 		_talon.configNominalOutputForward(0, Constants.kTimeoutMs);
 		_talon.configNominalOutputReverse(0, Constants.kTimeoutMs);
 		_talon.configPeakOutputForward(1, Constants.kTimeoutMs);

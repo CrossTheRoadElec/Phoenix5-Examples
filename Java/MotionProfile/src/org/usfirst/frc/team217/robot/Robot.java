@@ -12,6 +12,7 @@
  * 
  * The project also includes instrumentation.java which simply has debug printfs, and a MotionProfile.java which is generated
  * in @link https://docs.google.com/spreadsheets/d/1PgT10EeQiR92LNXEOEe3VGn737P7WDP4t0CQxQgC8k0/edit#gid=1813770630&vpid=A1
+ * or find Motion Profile Generator.xlsx in the Project folder.
  * 
  * Logitech Gamepad mapping, use left y axis to drive Talon normally.  
  * Press and hold top-left-shoulder-button5 to put Talon into motion profile control mode.
@@ -21,7 +22,7 @@
  * This will signal Talon to fire MP.  When MP is done, Talon will "hold" the last setpoint position
  * and wait for another button6 press to fire again.
  * 
- * Release button5 to allow OpenVoltage control with left y axis.
+ * Release button5 to allow PercentOutput control with left y axis.
  */
 
 package org.usfirst.frc.team217.robot;
