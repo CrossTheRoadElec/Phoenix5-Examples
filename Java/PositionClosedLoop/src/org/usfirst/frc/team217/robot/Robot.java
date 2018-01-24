@@ -37,13 +37,12 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 
 		/* choose the sensor and sensor direction */
-		_talon.configSelectedFeedbackSensor(	FeedbackDevice.CTRE_MagEncoder_Relative, 
-												Constants.kPIDLoopIdx,
-												Constants.kTimeoutMs);
-		
+		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx,
+				Constants.kTimeoutMs);
+
 		/* choose to ensure sensor is positive when output is positive */
 		_talon.setSensorPhase(Constants.kSensorPhase);
-		
+
 		/* choose based on what direction you want forward/positive to be.
 		 * This does not affect sensor phase. */ 
 		_talon.setInverted(Constants.kMotorInvert);
@@ -59,7 +58,7 @@ public class Robot extends IterativeRobot {
 		 * units per rotation.
 		 */
 		_talon.configAllowableClosedloopError(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-		
+
 		/* set closed loop gains in slot0, typically kF stays zero. */
 		_talon.config_kF(Constants.kPIDLoopIdx, 0.0, Constants.kTimeoutMs);
 		_talon.config_kP(Constants.kPIDLoopIdx, 0.1, Constants.kTimeoutMs);
@@ -103,18 +102,18 @@ public class Robot extends IterativeRobot {
 		}
 		/* prepare line to print */
 		_sb.append("\tout:");
-		/* cast to int to remove decimal places*/
-		_sb.append((int)(motorOutput*100));  
+		/* cast to int to remove decimal places */
+		_sb.append((int) (motorOutput * 100));
 		_sb.append("%"); /* perc */
-		
+
 		_sb.append("\tpos:");
 		_sb.append(_talon.getSelectedSensorPosition(0));
 		_sb.append("u"); /* units */
-		
+
 		/* on button1 press enter closed-loop mode on target position */
 		if (!_lastButton1 && button1) {
 			/* Position mode - button just pressed */
-			
+
 			/* 10 Rotations * 4096 u/rev in either direction */
 			targetPositionRotations = leftYstick * 10.0 * 4096;
 			_talon.set(ControlMode.Position, targetPositionRotations);
@@ -131,7 +130,7 @@ public class Robot extends IterativeRobot {
 			_sb.append("\terr:");
 			_sb.append(_talon.getClosedLoopError(0));
 			_sb.append("u"); /* units */
-			
+
 			_sb.append("\ttrg:");
 			_sb.append(targetPositionRotations);
 			_sb.append("u"); /* units */
