@@ -35,13 +35,13 @@ public class Robot extends IterativeRobot {
 	StringBuilder _sb = new StringBuilder();
 
 	public void robotInit() {
-		
+
 		/* first choose the sensor */
 		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 		_talon.setSensorPhase(true);
 		_talon.setInverted(false);
-		
-		/* Set relevant frame periods to be at least as fast as periodic rate*/
+
+		/* Set relevant frame periods to be at least as fast as periodic rate */
 		_talon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);
 		_talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
 
@@ -50,7 +50,7 @@ public class Robot extends IterativeRobot {
 		_talon.configNominalOutputReverse(0, Constants.kTimeoutMs);
 		_talon.configPeakOutputForward(1, Constants.kTimeoutMs);
 		_talon.configPeakOutputReverse(-1, Constants.kTimeoutMs);
-		
+
 		/* set closed loop gains in slot0 - see documentation */
 		_talon.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
 		_talon.config_kF(0, 0.2, Constants.kTimeoutMs);
@@ -79,10 +79,9 @@ public class Robot extends IterativeRobot {
 		_sb.append(_talon.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
 
 		if (_joy.getRawButton(1)) {
-			/* Motion Magic */
-			double targetPos = leftYstick
-					* 4096 * 10.0; /* 4096 ticks/rev * 10 Rotations in either direction */
-			_talon.set(ControlMode.MotionMagic, targetPos); 
+			/* Motion Magic - 4096 ticks/rev * 10 Rotations in either direction */
+			double targetPos = leftYstick * 4096 * 10.0;
+			_talon.set(ControlMode.MotionMagic, targetPos);
 
 			/* append more signals to print when in speed mode. */
 			_sb.append("\terr:");
@@ -95,6 +94,9 @@ public class Robot extends IterativeRobot {
 		}
 		/* instrumentation */
 		Instrum.Process(_talon, _sb);
-		try { TimeUnit.MILLISECONDS.sleep(10); } catch(Exception e) {}
+		try {
+			TimeUnit.MILLISECONDS.sleep(10);
+		} catch (Exception e) {
+		}
 	}
 }
