@@ -10,7 +10,7 @@ enum Constants {
 
 	/**
 	 * How many sensor units per rotation.
- 	 * Using CTRE Magnetic Encoder.
+	 * Using CTRE Magnetic Encoder.
 	 * @link https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor
 	 */
 	kSensorUnitsPerRotation = 4096,
@@ -20,7 +20,7 @@ enum Constants {
 	 * from 0,1,2 or 3.  Only the first two (0,1) are visible in web-based configuration.
 	 */
 	kSlotIdx = 0,
-	
+
 	/** 
 	 * Talon SRX/ Victor SPX will supported multiple (cascaded) PID loops.  
 	 * For now we just want the primary one.
@@ -31,16 +31,16 @@ enum Constants {
 	 * and report to DS if action fails.
 	 */
 	kTimeoutMs = 10,
-	
+
 	/**
 	 * Base trajectory period to add to each individual 
 	 * trajectory point's unique duration.  This can be set
 	 * to any value within [0,255]ms.
 	 */
 	kBaseTrajPeriodMs = 0,
-	
+
 	/**
 	 * Motor deadband, set to 1%.
 	 */
-	kNeutralDeadbandPercent  = 1,
+	kNeutralDeadbandPercent = 1,
 };

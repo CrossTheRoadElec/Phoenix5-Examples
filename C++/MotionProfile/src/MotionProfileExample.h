@@ -31,8 +31,7 @@
 
 using namespace ctre::phoenix::motion;
 
-class MotionProfileExample
-{
+class MotionProfileExample {
 public:
 	/**
 	 * The status of the motion profile executer and buffer inside the Talon.
@@ -42,7 +41,7 @@ public:
 	MotionProfileStatus _status;
 
 	/** additional cache for holding the active trajectory point */
-	double _pos=0,_vel=0,_heading=0;
+	double _pos = 0, _vel = 0, _heading = 0;
 	/**
 	 * reference to the talon we plan on manipulating. We will not changeMode()
 	 * or call set(), just get motion profile status and make decisions based on
@@ -95,8 +94,7 @@ public:
 	 * your trajectory points. So if they are firing every 20ms, you should call
 	 * every 10ms.
 	 */
-	void PeriodicTask()
-	{
+	void PeriodicTask() {
 		/* keep Talons happy by moving the points from top-buffer to bottom-buffer */
 		_talon.ProcessMotionProfileBuffer();
 	}
@@ -107,8 +105,8 @@ public:
 	 */
 	Notifier _notifer;
 
-	MotionProfileExample(TalonSRX & talon) : _talon(talon), _notifer(&MotionProfileExample::PeriodicTask, this)
-	{
+	MotionProfileExample(TalonSRX & talon) :
+			_talon(talon), _notifer(&MotionProfileExample::PeriodicTask, this) {
 		/*
 		 * since our MP is 10ms per point, set the control frame rate and the
 		 * notifer to half that
@@ -122,8 +120,7 @@ public:
 	 * Called to clear Motion profile buffer and reset state info during
 	 * disabled and when Talon is not in MP control mode.
 	 */
-	void reset()
-	{
+	void reset() {
 		/*
 		 * Let's clear the buffer just in case user decided to disable in the
 		 * middle of an MP, and now we have the second half of a profile just
@@ -145,8 +142,7 @@ public:
 	/**
 	 * Called every loop.
 	 */
-	void control()
-	{
+	void control() {
 
 		/*
 		 * track time, this is rudimentary but that's okay, we just want to make
@@ -168,7 +164,7 @@ public:
 		}
 
 		/* first check if we are in MP mode */
-		if(_talon.GetControlMode() != ControlMode::MotionProfile){
+		if (_talon.GetControlMode() != ControlMode::MotionProfile) {
 			/*
 			 * we are not in MP mode. We are probably driving the robot around
 			 * using gamepads or some other mode.
@@ -188,6 +184,7 @@ public:
 	
 						_setValue = SetValueMotionProfile::Disable;
 						startFilling();
+
 						/*
 						 * MP is being sent to CAN bus, wait a small amount of time
 						 */
@@ -195,10 +192,11 @@ public:
 						_loopTimeout = kNumLoopsTimeout;
 					}
 					break;
-				case 1: /*
-						 * wait for MP to stream to Talon, really just the first few
-						 * points
-						 */
+				case 1:
+					/*
+					 * wait for MP to stream to Talon, really just the first few
+					 * points
+					 */
 					/* do we have a minimum numberof points in Talon */
 					if (_status.btmBufferCnt > kMinPointsInTalon) {
 						/* start (once) the motion profile */
@@ -249,8 +247,7 @@ public:
 	 * @param durationMs
 	 * @return enum equivalent of durationMs
 	 */
-	TrajectoryDuration GetTrajectoryDuration(int durationMs)
-	{	 
+	TrajectoryDuration GetTrajectoryDuration(int durationMs) {
 		/* lookup and return valid value */
 		switch (durationMs) {
 			case 0:		return TrajectoryDuration_0ms;
@@ -266,19 +263,17 @@ public:
 		return TrajectoryDuration_100ms;
 	}
 	/** Start filling the MPs to all of the involved Talons. */
-	void startFilling()
-	{
+	void startFilling() {
 		/* since this example only has one talon, just update that one */
 		startFilling(kMotionProfile, kMotionProfileSz);
 	}
 
-	void startFilling(const double profile[][3], int totalCnt)
-	{
+	void startFilling(const double profile[][3], int totalCnt) {
 		/* create an empty point */
 		TrajectoryPoint point;
 
 		/* did we get an underrun condition since last time we checked ? */
-		if(_status.hasUnderrun){
+		if (_status.hasUnderrun) {
 			/* better log it so we know about it */
 			Instrumentation::OnUnderrun();
 			/*
@@ -299,17 +294,17 @@ public:
 		_talon.ConfigMotionProfileTrajectoryPeriod(Constants::kBaseTrajPeriodMs, Constants::kTimeoutMs);
 
 		/* This is fast since it's just into our TOP buffer */
-		for(int i=0;i<totalCnt;++i){
+		for (int i = 0; i < totalCnt; ++i) {
 			double positionRot = profile[i][0];
 			double velocityRPM = profile[i][1];
 
 			/* for each point, fill our structure and pass it to API */
-			point.position = positionRot * Constants::kSensorUnitsPerRotation ;  //Convert Revolutions to Units
+			point.position = positionRot * Constants::kSensorUnitsPerRotation; //Convert Revolutions to Units
 			point.velocity = velocityRPM * Constants::kSensorUnitsPerRotation / 600.0; //Convert RPM to Units/100ms
 			point.headingDeg = 0; /* future feature - not used in this example*/
 			point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
 			point.profileSlotSelect1 = 0; /* future feature  - not used in this example - cascaded PID [0,1], leave zero */
-			point.timeDur = GetTrajectoryDuration((int)profile[i][2]);
+			point.timeDur = GetTrajectoryDuration((int) profile[i][2]);
 			point.zeroPos = false;
 			if (i == 0)
 				point.zeroPos = true; /* set this to true on the first point */

@@ -30,18 +30,15 @@
 
 class Instrumentation {
 public:
-	static void OnNoProgress()
-	{
+	static void OnNoProgress() {
 		std::cout << "NOPROGRESS\n";
 	}
-	static void OnUnderrun()
-	{
+	static void OnUnderrun() {
 		std::cout << "UNDERRUN\n";
 	}
-	static const char * StrOutputEnable(unsigned int value)
-	{
-		static const char table[][6] = {" Dis "," En  ","Hold ","Inval"};
-		if(value > 3)
+	static const char * StrOutputEnable(unsigned int value) {
+		static const char table[][6] = { " Dis ", " En  ", "Hold ", "Inval" };
+		if (value > 3)
 			value = 3;
 		return table[value];
 	}
@@ -49,8 +46,7 @@ public:
 	 * Prints and/or logging to watch the MP signals
 	 */
 	static void Process(MotionProfileStatus & status, double pos, double vel,
-			double heading)
-	{
+			double heading) {
 		static double timeout = 0;
 		static int count = 0;
 
@@ -59,11 +55,11 @@ public:
 
 		double now = GetTime();
 
-		if((now-timeout) > 0.2){
+		if ((now - timeout) > 0.2) {
 			timeout = now;
 			/* fire a loop every 200ms */
 
-			if(--count <= 0){
+			if (--count <= 0) {
 				count = 8;
 				/* every 8 loops, print our columns */
 				std::cout

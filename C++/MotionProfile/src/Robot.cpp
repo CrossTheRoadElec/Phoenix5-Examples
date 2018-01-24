@@ -30,8 +30,7 @@
 #include "ctre/Phoenix.h"
 #include "Constants.h"
 
-class Robot: public IterativeRobot
-{
+class Robot: public IterativeRobot {
 public:
 	/** The Talon we want to motion profile. */
 	TalonSRX _talon;
@@ -39,41 +38,43 @@ public:
 
 	/** some example logic on how one can manage an MP */
 	MotionProfileExample _example;
-	
+
 	/** joystick for testing */
 	Joystick _joy;
 
 	/** cache last buttons so we can detect press events.  In a command-based project you can leverage the on-press event
 	 * but for this simple example, lets just do quick compares to prev-btn-states */
-	bool _btnsLast[10] = {false,false,false,false,false,false,false,false,false,false};
+	bool _btnsLast[10] = { false, false, false, false, false, false, false, false, false, false };
 
-
-	Robot() : _talon(Constants::kTalonID), _vic(Constants::kVictorFollower), _example(_talon), _joy(0)
-	{
+	Robot() :
+			_talon(Constants::kTalonID), _vic(Constants::kVictorFollower), _example(
+					_talon), _joy(0) {
 	}
 
 	/** run once after booting/enter-disable */
 	void DisabledInit() {
 		_vic.Follow(_talon);
-		_talon.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0, kTimeoutMs);
+		_talon.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0,
+				kTimeoutMs);
 		_talon.SetSensorPhase(true);
-		_talon.ConfigNeutralDeadband(Constants::kNeutralDeadbandPercent * 0.01, Constants::kTimeoutMs);
+		_talon.ConfigNeutralDeadband(Constants::kNeutralDeadbandPercent * 0.01,
+				Constants::kTimeoutMs);
 
 		_talon.Config_kF(0, 0.076, kTimeoutMs);
 		_talon.Config_kP(0, 2.000, kTimeoutMs);
 		_talon.Config_kI(0, 0.0, kTimeoutMs);
-		_talon.Config_kD(0,20.0, kTimeoutMs);
+		_talon.Config_kD(0, 20.0, kTimeoutMs);
 
 		_talon.ConfigMotionProfileTrajectoryPeriod(10, Constants::kTimeoutMs); //Our profile uses 10 ms timing
 		/* status 10 provides the trajectory target for motion profile AND motion magic */
-		_talon.SetStatusFramePeriod(StatusFrameEnhanced::Status_10_MotionMagic, 10, Constants::kTimeoutMs);
+		_talon.SetStatusFramePeriod(StatusFrameEnhanced::Status_10_MotionMagic,
+				10, Constants::kTimeoutMs);
 	}
 	/**  function is called periodically during operator control */
-	void TeleopPeriodic()
-	{
+	void TeleopPeriodic() {
 		/* get buttons */
 		bool btns[10];
-		for(unsigned int i=1;i<10;++i)
+		for (unsigned int i = 1; i < 10; ++i)
 			btns[i] = _joy.GetRawButton(i);
 
 		/* get the left joystick axis on Logitech Gampead */
@@ -106,7 +107,7 @@ public:
 			/* if btn is pressed and was not pressed last time,
 			 * In other words we just detected the on-press event.
 			 * This will signal the robot to start a MP */
-			if( (btns[6] == true) && (_btnsLast[6] == false) ) {
+			if ((btns[6] == true) && (_btnsLast[6] == false)) {
 				/* user just tapped button 6 */
 
 				//------------ We could start an MP if MP isn't already running ------------//
@@ -115,18 +116,17 @@ public:
 		}
 
 		/* save buttons states for on-press detection */
-		for(int i=1;i<10;++i)
+		for (int i = 1; i < 10; ++i)
 			_btnsLast[i] = btns[i];
 
 	}
 	/**  function is called periodically during disable */
-	void DisabledPeriodic()
-	{
+	void DisabledPeriodic() {
 		/* it's generally a good idea to put motor controllers back
 		 * into a known state when robot is disabled.  That way when you
 		 * enable the robot doesn't just continue doing what it was doing before.
 		 * BUT if that's what the application/testing requires than modify this accordingly */
-		_talon.Set(ControlMode::PercentOutput, 0 );
+		_talon.Set(ControlMode::PercentOutput, 0);
 		/* clear our buffer and put everything into a known state */
 		_example.reset();
 	}
