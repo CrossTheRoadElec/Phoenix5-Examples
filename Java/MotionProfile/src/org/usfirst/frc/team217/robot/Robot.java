@@ -12,6 +12,7 @@
  * 
  * The project also includes instrumentation.java which simply has debug printfs, and a MotionProfile.java which is generated
  * in @link https://docs.google.com/spreadsheets/d/1PgT10EeQiR92LNXEOEe3VGn737P7WDP4t0CQxQgC8k0/edit#gid=1813770630&vpid=A1
+ * or find Motion Profile Generator.xlsx in the Project folder.
  * 
  * Logitech Gamepad mapping, use left y axis to drive Talon normally.  
  * Press and hold top-left-shoulder-button5 to put Talon into motion profile control mode.
@@ -21,7 +22,7 @@
  * This will signal Talon to fire MP.  When MP is done, Talon will "hold" the last setpoint position
  * and wait for another button6 press to fire again.
  * 
- * Release button5 to allow OpenVoltage control with left y axis.
+ * Release button5 to allow PercentOutput control with left y axis.
  */
 
 package org.usfirst.frc.team217.robot;
@@ -48,35 +49,27 @@ public class Robot extends IterativeRobot {
 	 * project you can leverage the on-press event but for this simple example,
 	 * lets just do quick compares to prev-btn-states
 	 */
-	boolean[] _btnsLast = {false, false, false, false, false, false, false,
-			false, false, false};
+	boolean[] _btnsLast = {false, false, false, false, false, false, false, false, false, false};
 
 	/** run once after booting/enter-disable */
 	public void disabledInit() {
 
-		_talon.configSelectedFeedbackSensor(
-				FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 		_talon.setSensorPhase(true); /* keep sensor and motor in phase */
-		_talon.configNeutralDeadband(Constants.kNeutralDeadband,
-				Constants.kTimeoutMs);
+		_talon.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
 
 		_talon.config_kF(0, 0.076, Constants.kTimeoutMs);
 		_talon.config_kP(0, 2.000, Constants.kTimeoutMs);
 		_talon.config_kI(0, 0.0, Constants.kTimeoutMs);
 		_talon.config_kD(0, 20.0, Constants.kTimeoutMs);
 
-		_talon.configMotionProfileTrajectoryPeriod(10, Constants.kTimeoutMs); // Our
-																				// profile
-																				// uses
-																				// 10
-																				// ms
-																				// timing
+		/* Our profile uses 10ms timing */
+		_talon.configMotionProfileTrajectoryPeriod(10, Constants.kTimeoutMs); 
 		/*
 		 * status 10 provides the trajectory target for motion profile AND
 		 * motion magic
 		 */
-		_talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic,
-				10, Constants.kTimeoutMs);
+		_talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
 	}
 
 	/** function is called periodically during operator control */
@@ -87,8 +80,7 @@ public class Robot extends IterativeRobot {
 			btns[i] = _joy.getRawButton(i);
 
 		/* get the left joystick axis on Logitech Gampead */
-		double leftYjoystick = -1 * _joy
-				.getY(); /* multiple by -1 so joystick forward is positive */
+		double leftYjoystick = -1 * _joy.getY(); /* multiple by -1 so joystick forward is positive */
 
 		/*
 		 * call this periodically, and catch the output. Only apply it if user
@@ -96,10 +88,8 @@ public class Robot extends IterativeRobot {
 		 */
 		_example.control();
 
-		if (btns[5] == false) { /*
-								 * Check button 5 (top left shoulder on the
-								 * logitech gamead).
-								 */
+		/* Check button 5 (top left shoulder on the logitech gamead). */
+		if (btns[5] == false) {
 			/*
 			 * If it's not being pressed, just do a simple drive. This could be
 			 * a RobotDrive class or custom drivetrain logic. The point is we
@@ -129,8 +119,7 @@ public class Robot extends IterativeRobot {
 			if ((btns[6] == true) && (_btnsLast[6] == false)) {
 				/* user just tapped button 6 */
 
-				// ------------ We could start an MP if MP isn't already running
-				// ------------//
+				// --- We could start an MP if MP isn't already running ----//
 				_example.startMotionProfile();
 			}
 		}

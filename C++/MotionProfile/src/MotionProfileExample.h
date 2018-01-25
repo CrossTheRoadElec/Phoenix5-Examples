@@ -178,56 +178,58 @@ public:
 			 * do.
 			 */
 			switch (_state) {
-			case 0: /* wait for application to tell us to start an MP */
-				if (_bStart) {
-					_bStart = false;
+				case 0: /* wait for application to tell us to start an MP */
+					if (_bStart) {
+						_bStart = false;
+	
+						_setValue = SetValueMotionProfile::Disable;
+						startFilling();
 
-					_setValue = SetValueMotionProfile::Disable;
-					startFilling();
+						/*
+						 * MP is being sent to CAN bus, wait a small amount of time
+						 */
+						_state = 1;
+						_loopTimeout = kNumLoopsTimeout;
+					}
+					break;
+				case 1:
 					/*
-					 * MP is being sent to CAN bus, wait a small amount of time
+					 * wait for MP to stream to Talon, really just the first few
+					 * points
 					 */
-					_state = 1;
-					_loopTimeout = kNumLoopsTimeout;
-				}
-				break;
-			case 1: /*
-			 * wait for MP to stream to Talon, really just the first few
-			 * points
-			 */
-				/* do we have a minimum numberof points in Talon */
-				if (_status.btmBufferCnt > kMinPointsInTalon) {
-					/* start (once) the motion profile */
-					_setValue = SetValueMotionProfile::Enable;
-					/* MP will start once the control frame gets scheduled */
-					_state = 2;
-					_loopTimeout = kNumLoopsTimeout;
-				}
-				break;
-			case 2: /* check the status of the MP */
-				/*
-				 * if talon is reporting things are good, keep adding to our
-				 * timeout. Really this is so that you can unplug your talon in
-				 * the middle of an MP and react to it.
-				 */
-				if (_status.isUnderrun == false) {
-					_loopTimeout = kNumLoopsTimeout;
-				}
-				/*
-				 * If we are executing an MP and the MP finished, start loading
-				 * another. We will go into hold state so robot servo's
-				 * position.
-				 */
-				if (_status.activePointValid && _status.isLast) {
+					/* do we have a minimum numberof points in Talon */
+					if (_status.btmBufferCnt > kMinPointsInTalon) {
+						/* start (once) the motion profile */
+						_setValue = SetValueMotionProfile::Enable;
+						/* MP will start once the control frame gets scheduled */
+						_state = 2;
+						_loopTimeout = kNumLoopsTimeout;
+					}
+					break;
+				case 2: /* check the status of the MP */
 					/*
-					 * because we set the last point's isLast to true, we will
-					 * get here when the MP is done
+					 * if talon is reporting things are good, keep adding to our
+					 * timeout. Really this is so that you can unplug your talon in
+					 * the middle of an MP and react to it.
 					 */
-					_setValue = SetValueMotionProfile::Hold;
-					_state = 0;
-					_loopTimeout = -1;
-				}
-				break;
+					if (_status.isUnderrun == false) {
+						_loopTimeout = kNumLoopsTimeout;
+					}
+					/*
+					 * If we are executing an MP and the MP finished, start loading
+					 * another. We will go into hold state so robot servo's
+					 * position.
+					 */
+					if (_status.activePointValid && _status.isLast) {
+						/*
+						 * because we set the last point's isLast to true, we will
+						 * get here when the MP is done
+						 */
+						_setValue = SetValueMotionProfile::Hold;
+						_state = 0;
+						_loopTimeout = -1;
+					}
+					break;
 			}
 
 			/* Get the motion profile status every loop */
@@ -248,25 +250,16 @@ public:
 	TrajectoryDuration GetTrajectoryDuration(int durationMs) {
 		/* lookup and return valid value */
 		switch (durationMs) {
-		case 0:
-			return TrajectoryDuration_0ms;
-		case 5:
-			return TrajectoryDuration_5ms;
-		case 10:
-			return TrajectoryDuration_10ms;
-		case 20:
-			return TrajectoryDuration_20ms;
-		case 30:
-			return TrajectoryDuration_30ms;
-		case 40:
-			return TrajectoryDuration_40ms;
-		case 50:
-			return TrajectoryDuration_50ms;
-		case 100:
-			return TrajectoryDuration_100ms;
+			case 0:		return TrajectoryDuration_0ms;
+			case 5:		return TrajectoryDuration_5ms;
+			case 10: 	return TrajectoryDuration_10ms;
+			case 20: 	return TrajectoryDuration_20ms;
+			case 30: 	return TrajectoryDuration_30ms;
+			case 40: 	return TrajectoryDuration_40ms;
+			case 50: 	return TrajectoryDuration_50ms;
+			case 100: 	return TrajectoryDuration_100ms;
 		}
-		printf(
-				"Trajectory Duration not supported - use configMotionProfileTrajectoryPeriod instead\n");
+		printf("Trajectory Duration not supported - use configMotionProfileTrajectoryPeriod instead\n");
 		return TrajectoryDuration_100ms;
 	}
 	/** Start filling the MPs to all of the involved Talons. */
@@ -298,8 +291,7 @@ public:
 		_talon.ClearMotionProfileTrajectories();
 
 		/* set the base trajectory period to zero, use the individual trajectory period below */
-		_talon.ConfigMotionProfileTrajectoryPeriod(Constants::kBaseTrajPeriodMs,
-				Constants::kTimeoutMs);
+		_talon.ConfigMotionProfileTrajectoryPeriod(Constants::kBaseTrajPeriodMs, Constants::kTimeoutMs);
 
 		/* This is fast since it's just into our TOP buffer */
 		for (int i = 0; i < totalCnt; ++i) {
@@ -308,8 +300,7 @@ public:
 
 			/* for each point, fill our structure and pass it to API */
 			point.position = positionRot * Constants::kSensorUnitsPerRotation; //Convert Revolutions to Units
-			point.velocity = velocityRPM * Constants::kSensorUnitsPerRotation
-					/ 600.0; //Convert RPM to Units/100ms
+			point.velocity = velocityRPM * Constants::kSensorUnitsPerRotation / 600.0; //Convert RPM to Units/100ms
 			point.headingDeg = 0; /* future feature - not used in this example*/
 			point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
 			point.profileSlotSelect1 = 0; /* future feature  - not used in this example - cascaded PID [0,1], leave zero */

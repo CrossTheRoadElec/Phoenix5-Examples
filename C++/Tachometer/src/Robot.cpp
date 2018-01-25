@@ -33,23 +33,33 @@ public:
 		//Configure talon to read tachometer values
 		_tachTalon->ConfigSelectedFeedbackSensor(
 				FeedbackDevice::Tachometer, 0, 10);
-		//Edges per cycle = 2 (WHTIE black WHITE black)
-		_tachTalon->ConfigSetParameter((ParamEnum) 430, 2, 0, 0, 10);
-		//Cycles per rev = 1
-		_tachTalon->ConfigSetParameter((ParamEnum) 431, 1, 0, 0, 10);
+
+		/* read section 7.9 Tachometer Measurement in software reference manual */
+		//Edges per cycle = 2 (WHITE black WHITE black per revolution)
+		int edgesPerCycle = 2;
+		_tachTalon->ConfigSetParameter((ParamEnum) 430, edgesPerCycle, 0, 0, 10);
+		// additional filtering if need be.
+		int filterWindowSize = 1;
+		_tachTalon->ConfigSetParameter((ParamEnum) 431, filterWindowSize, 0, 0, 10);
 	}
 
 	void TeleopPeriodic() {
 		_magTalon->Set(ControlMode::PercentOutput, _joy->GetY());
+		/* get the velocities of two talons,
+		 * one uses quadrature (mag encoder), the other uses Talon-Tach */
+		double magVel_UnitsPer100ms = _magTalon->GetSelectedSensorVelocity(0);
+		double tachVel_UnitsPer100ms = _tachTalon->GetSelectedSensorVelocity(0);
 
-		//MagRPM = u/100ms * 600(100ms/m) / 4096(u/rev) = rev/m
-		double magRPM = _magTalon->GetSelectedSensorVelocity(0) * 600 / 4096;
-		//TachRPM = u/100ms * 600(100ms/m) / 1024(u/rev) = rev/m
-		double tachRPM = _tachTalon->GetSelectedSensorVelocity(0) * 600 / 1024;
+		/* convert to RPM */
+		// https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor
+		//MagRPM = magVel [units/kT] * 600 [kTs/minute] / 4096(units/rev), where kT = 100ms
+		double magRPM = magVel_UnitsPer100ms * 600 / 4096;
+		//TachRPM = tachVel [units/kT] * 600 [kTs/minute] / 1024(units/rev), where kT = 100ms
+		double tachRPM = tachVel_UnitsPer100ms * 600 / 1024;
 
 		//Write to DS
-		std::cout << "Mag encoder speed is: " << magRPM << "\t"
-				<< "Tach speed is: " << tachRPM << std::endl;
+		std::cout 	<< "Mag encoder speed is: " << magRPM << "\t"
+					<< "Tach speed is: " << tachRPM << std::endl;
 	}
 
 	void TestPeriodic() {

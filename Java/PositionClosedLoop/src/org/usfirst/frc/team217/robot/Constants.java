@@ -20,4 +20,11 @@ public class Constants {
 	 * report to DS if action fails.
 	 */
 	public static final int kTimeoutMs = 10;
+	
+	/* choose so that Talon does not report sensor out of phase */
+	public static boolean kSensorPhase = true;
+
+	/* choose based on what direction you want to be positive,
+		this does not affect motor invert. */
+	public static boolean kMotorInvert = false;
 }

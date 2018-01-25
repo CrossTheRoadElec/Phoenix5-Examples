@@ -62,30 +62,37 @@ public:
 			if (--count <= 0) {
 				count = 8;
 				/* every 8 loops, print our columns */
-				std::cout << "       outEn" << delim << "topBufferCnt" << delim
-						<< "topBufferRem" << delim << "btmBufferCnt" << delim
-						<< "     IsValid" << delim << " HasUnderrun" << delim
-						<< "  IsUnderrun" << delim << "      IsLast" << delim
-						<< "     targPos" << delim << "     targVel" << delim
-						<< "    SlotSel0" << delim << "   timeDurMs" << delim
+				std::cout
+							<< "       outEn" << delim
+							<< "topBufferCnt" << delim
+							<< "topBufferRem" << delim
+							<< "btmBufferCnt" << delim
+							<< "     IsValid" << delim
+							<< " HasUnderrun" << delim
+							<< "  IsUnderrun" << delim
+							<< "      IsLast" << delim
+							<< "     targPos" << delim
+							<< "     targVel" << delim
+							<< "    SlotSel0" << delim
+							<< "   timeDurMs" << delim
 
-						<< endline;
+							<< endline;
 			}
 			/* every loop, print our values */
-			std::cout << std::setw(12) << StrOutputEnable(status.outputEnable)
-					<< delim << std::setw(12) << status.topBufferCnt << delim
-					<< std::setw(12) << status.topBufferRem << delim
-					<< std::setw(12) << status.btmBufferCnt << delim
-					<< std::setw(12) << (status.activePointValid ? "1" : " ")
-					<< delim << std::setw(12)
-					<< (status.hasUnderrun ? "1" : " ") << delim
-					<< std::setw(12) << (status.isUnderrun ? "1" : " ") << delim
-					<< std::setw(12) << (status.isLast ? "1" : " ") << delim
-					<< std::setw(12) << pos << delim << std::setw(12) << vel
-					<< delim << std::setw(12) << status.profileSlotSelect0
-					<< delim << std::setw(12) << status.timeDurMs << delim
+			std::cout	<< std::setw(12)<< StrOutputEnable(status.outputEnable) << delim
+						<< std::setw(12)<< status.topBufferCnt << delim
+						<< std::setw(12)<< status.topBufferRem << delim
+						<< std::setw(12)<< status.btmBufferCnt << delim
+						<< std::setw(12)<< (status.activePointValid ? "1" : " ") << delim
+						<< std::setw(12)<< (status.hasUnderrun ? "1" : " ") << delim
+						<< std::setw(12)<< (status.isUnderrun ? "1" : " ") << delim
+						<< std::setw(12)<< (status.isLast ? "1" : " ") << delim
+						<< std::setw(12)<< pos << delim
+						<< std::setw(12)<< vel << delim
+						<< std::setw(12)<< status.profileSlotSelect0 << delim
+						<< std::setw(12)<< status.timeDurMs << delim
 
-					<< endline;
+						<< endline;
 		}
 	}
 };

@@ -2,7 +2,7 @@
  * Example demonstrating the Position closed-loop servo.
  * Tested with Logitech F350 USB Gamepad inserted into Driver Station]
  *
- * Be sure to select the correct feedback sensor using SetFeedbackDevice() below.
+ * Be sure to select the correct feedback sensor using configSelectedFeedbackSensor() below.
  *
  * After deploying/debugging this to your RIO, first use the left Y-stick
  * to throttle the Talon manually.  This will confirm your hardware setup.
@@ -68,8 +68,7 @@ private:
 		_sb.append("\tout:");
 		_sb.append(std::to_string(motorOutput));
 		_sb.append("\tpos:");
-		_sb.append(
-				std::to_string(_talon->GetSelectedSensorPosition(kPIDLoopIdx)));
+		_sb.append(std::to_string(_talon->GetSelectedSensorPosition(kPIDLoopIdx)));
 		/* on button1 press enter closed-loop mode on target position */
 		if (!_lastButton1 && button1) {
 			/* Position mode - button just pressed */

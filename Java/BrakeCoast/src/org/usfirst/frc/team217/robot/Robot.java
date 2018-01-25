@@ -12,19 +12,14 @@ public class Robot extends IterativeRobot {
 	/* our test gamepad */
 	Joystick _joy = new Joystick(0);
 	/** save buttons each loop */
-	boolean[] _btnsLast = {false, false, false, false, false, false, false,
-			false, false, false};
+	boolean[] _btnsLast = {false, false, false, false, false, false, false, false, false, false};
 	/** desired brake mode, init value assigned here */
 	boolean _brake = true;
 
 	/** c'tor Select the brake mode to start with. */
 	public Robot() {
-		_tal.setNeutralMode(_brake
-				? NeutralMode.Brake
-				: NeutralMode.Coast); /*
-										 * override brake setting
-										 * programmatically
-										 */
+		/* override brake setting programmatically */
+		_tal.setNeutralMode(_brake ? NeutralMode.Brake : NeutralMode.Coast);
 		System.out.println("brake:" + _brake); /* instrument to console */
 	}
 
@@ -38,13 +33,10 @@ public class Robot extends IterativeRobot {
 		/* flip brake when btn1 is pressed */
 		if (btns[1] && !_btnsLast[1]) {
 			_brake = !_brake;
-			_tal.setNeutralMode(_brake
-					? NeutralMode.Brake
-					: NeutralMode.Coast); /*
-											 * override brake setting
-											 * programmatically
-											 */
-			System.out.println("brake:" + _brake); /* instrument to console */
+			/* override brake setting programmatically */
+			_tal.setNeutralMode(_brake ? NeutralMode.Brake : NeutralMode.Coast);
+			/* instrument to console */
+			System.out.println("brake:" + _brake); 
 		}
 
 		/* save buttons states for on-press detection */

@@ -2,7 +2,7 @@
  * Example demonstrating the motion magic control mode.
  * Tested with Logitech F710 USB Gamepad inserted into Driver Station.
  * 
- * Be sure to select the correct feedback sensor using SetFeedbackDevice() below.
+ * Be sure to select the correct feedback sensor using configSelectedFeedbackSensor() below.
  *
  * After deploying/debugging this to your RIO, first use the left Y-stick 
  * to throttle the Talon manually.  This will confirm your hardware setup/sensors
@@ -37,19 +37,15 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 
 		/* first choose the sensor */
-		_talon.configSelectedFeedbackSensor(
-				FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx,
-				Constants.kTimeoutMs);
+		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 		_talon.setSensorPhase(true);
 		_talon.setInverted(false);
 
 		/* Set relevant frame periods to be at least as fast as periodic rate */
-		_talon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0,
-				10, Constants.kTimeoutMs);
-		_talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic,
-				10, Constants.kTimeoutMs);
+		_talon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);
+		_talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
 
-		/* set the peak and nominal outputs, 12V means full */
+		/* set the peak and nominal outputs */
 		_talon.configNominalOutputForward(0, Constants.kTimeoutMs);
 		_talon.configNominalOutputReverse(0, Constants.kTimeoutMs);
 		_talon.configPeakOutputForward(1, Constants.kTimeoutMs);
@@ -65,8 +61,7 @@ public class Robot extends IterativeRobot {
 		_talon.configMotionCruiseVelocity(15000, Constants.kTimeoutMs);
 		_talon.configMotionAcceleration(6000, Constants.kTimeoutMs);
 		/* zero the sensor */
-		_talon.setSelectedSensorPosition(0, Constants.kPIDLoopIdx,
-				Constants.kTimeoutMs);
+		_talon.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 	}
 
 	/**
@@ -84,11 +79,8 @@ public class Robot extends IterativeRobot {
 		_sb.append(_talon.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
 
 		if (_joy.getRawButton(1)) {
-			/* Motion Magic */
-			double targetPos = leftYstick * 4096
-					* 10.0; /*
-							 * 4096 ticks/rev * 10 Rotations in either direction
-							 */
+			/* Motion Magic - 4096 ticks/rev * 10 Rotations in either direction */
+			double targetPos = leftYstick * 4096 * 10.0;
 			_talon.set(ControlMode.MotionMagic, targetPos);
 
 			/* append more signals to print when in speed mode. */

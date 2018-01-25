@@ -2,13 +2,13 @@
  * Example demonstrating the velocity closed-loop servo.
  * Tested with Logitech F350 USB Gamepad inserted into Driver Station]
  *
- * Be sure to select the correct feedback sensor using SetFeedbackDevice() below.
+ * Be sure to select the correct feedback sensor using configSelectedFeedbackSensor() below.
  *
  * After deploying/debugging this to your RIO, first use the left Y-stick
  * to throttle the Talon manually.  This will confirm your hardware setup.
  * Be sure to confirm that when the Talon is driving forward (green) the
  * position sensor is moving in a positive direction.  If this is not the cause
- * flip the boolean input to the SetSensorDirection() call below.
+ * flip the boolean input to the SetSensorPhase() call below.
  *
  * Once you've ensured your feedback device is in-phase with the motor,
  * use the button shortcuts to servo to target velocity.
@@ -27,12 +27,11 @@ private:
 	int _loops = 0;
 
 	void RobotInit() {
-		/* first choose the sensor */
-		_talon->ConfigSelectedFeedbackSensor(
-				FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10);
+        /* first choose the sensor */
+		_talon->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10);
 		_talon->SetSensorPhase(true);
 
-		/* set the peak and nominal outputs, 12V means full */
+		/* set the peak and nominal outputs */
 		_talon->ConfigNominalOutputForward(0, kTimeoutMs);
 		_talon->ConfigNominalOutputReverse(0, kTimeoutMs);
 		_talon->ConfigPeakOutputForward(1, kTimeoutMs);
@@ -54,28 +53,31 @@ private:
 		_sb.append("\tout:");
 		_sb.append(std::to_string(motorOutput));
 		_sb.append("\tspd:");
-		_sb.append(
-				std::to_string(_talon->GetSelectedSensorVelocity(kPIDLoopIdx)));
+		_sb.append(std::to_string(_talon->GetSelectedSensorVelocity(kPIDLoopIdx)));
 		/* while button1 is held down, closed-loop on target velocity */
 		if (_joy->GetRawButton(1)) {
-			/* Speed mode */
-			/* 1500 RPM * 4096 units/rev / 600 100ms/min in either direction: velocity control is units/100ms */
-			double targetSpeed = leftYstick * 1500.0 * 4096 / 600;
-			_talon->Set(ControlMode::Velocity, targetSpeed); /* 1500 RPM in either direction */
+        	/* Speed mode */
+			/* Convert 500 RPM to units / 100ms.
+			 * 4096 Units/Rev * 500 RPM / 600 100ms/min in either direction:
+			 * velocity setpoint is in units/100ms
+			 */
+			double targetVelocity_UnitsPer100ms = leftYstick * 500.0 * 4096 / 600;
+			/* 500 RPM in either direction */
+        	_talon->Set(ControlMode::Velocity, targetVelocity_UnitsPer100ms); 
 
 			/* append more signals to print when in speed mode. */
 			_sb.append("\terrNative:");
 			_sb.append(std::to_string(_talon->GetClosedLoopError(kPIDLoopIdx)));
 			_sb.append("\ttrg:");
-			_sb.append(std::to_string(targetSpeed));
-		} else {
+			_sb.append(std::to_string(targetVelocity_UnitsPer100ms));
+        } else {
 			/* Percent voltage mode */
 			_talon->Set(ControlMode::PercentOutput, leftYstick);
 		}
 		/* print every ten loops, printing too much too fast is generally bad for performance */
 		if (++_loops >= 10) {
 			_loops = 0;
-			printf("%s\n", _sb.c_str());
+			printf("%s\n",_sb.c_str());
 		}
 		_sb.clear();
 	}

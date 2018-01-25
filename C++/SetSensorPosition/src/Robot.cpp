@@ -58,8 +58,7 @@ public:
 		}
 		if (!_btn4 && btn4) {
 			/* read the mag encoder sensor out */
-			int read =
-					(int) _srx->GetSensorCollection().GetPulseWidthPosition();
+			int read = (int) _srx->GetSensorCollection().GetPulseWidthPosition();
 			/* flip pulse width to match selected sensor.  */
 			if (kSensorPhase)
 				read *= -1;

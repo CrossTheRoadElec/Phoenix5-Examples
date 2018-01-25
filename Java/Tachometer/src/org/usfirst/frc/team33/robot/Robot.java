@@ -37,17 +37,18 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		// Mag Encoder to read true values
-		_magTalon.configSelectedFeedbackSensor(
-				FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+		_magTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 		
-		
+
+		/* read section 7.9 Tachometer Measurement in software reference manual */
 		// Talon Tach to read test values
-		_tachTalon.configSelectedFeedbackSensor(
-				FeedbackDevice.Tachometer, 0, 10);
+		_tachTalon.configSelectedFeedbackSensor(FeedbackDevice.Tachometer, 0, 10);
 		// 2 Edges per cycle (WHITE-black-WHITE-black)
-		_tachTalon.configSetParameter(430, 2, 0, 0, 10);
-		// 1 cycle per rotation
-		_tachTalon.configSetParameter(431, 1, 0, 0, 10);
+		int edgesPerCycle = 2;
+		_tachTalon.configSetParameter(430, edgesPerCycle, 0, 0, 10);
+		// additional filtering if need be.
+		int filterWindowSize = 1;
+		_tachTalon.configSetParameter(431, filterWindowSize, 0, 0, 10);
 	}
 
 	/**
@@ -57,14 +58,20 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		// Set talon to joystick value
 		_magTalon.set(ControlMode.PercentOutput, _joy.getY());
+		
+		/* get the velocities of two talons,
+		 * one uses quadrature (mag encoder), the other uses Talon-Tach */
+		double magVel_UnitsPer100ms = _magTalon.getSelectedSensorVelocity(0);
+		double tachVel_UnitsPer100ms = _tachTalon.getSelectedSensorVelocity(0);
 
-		// magRPM: u/100ms * 600(100ms/m) / 4096(rev/u) = rev/m
-		double magVelRPM = _magTalon.getSelectedSensorVelocity(0) * 600 / 4096;
-		// tachRPM: u/100ms * 600(100ms/m) / 1024(rev/u) = rev/m
-		double tachRPM = _tachTalon.getSelectedSensorVelocity(0) * 600 / 1024;
+		/* convert to RPM */
+		// https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor
+		//MagRPM = magVel [units/kT] * 600 [kTs/minute] / 4096(units/rev), where kT = 100ms
+		double magVelRPM = magVel_UnitsPer100ms * 600 / 4096;
+		//TachRPM = tachVel [units/kT] * 600 [kTs/minute] / 1024(units/rev), where kT = 100ms
+		double tachRPM = tachVel_UnitsPer100ms * 600 / 1024;
 
 		// Print readings
-		System.out.println("Mag encoder is: " + magVelRPM + "\t"
-				+ "Tachometer is: " + tachRPM);
+		System.out.println("Mag encoder is: " + magVelRPM + "\t" + "Tachometer is: " + tachRPM);
 	}
 }

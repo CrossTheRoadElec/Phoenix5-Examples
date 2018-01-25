@@ -18,10 +18,7 @@ public:
 private:
 	float _r, _g, _b;
 	//Will need to write moving average class....
-	CTRE::Signals::MovingAverage* _averageR = new CTRE::Signals::MovingAverage(
-			10);
-	CTRE::Signals::MovingAverage* _averageG = new CTRE::Signals::MovingAverage(
-			10);
-	CTRE::Signals::MovingAverage* _averageB = new CTRE::Signals::MovingAverage(
-			10);
+	CTRE::Signals::MovingAverage* _averageR = new CTRE::Signals::MovingAverage(10);
+	CTRE::Signals::MovingAverage* _averageG = new CTRE::Signals::MovingAverage(10);
+	CTRE::Signals::MovingAverage* _averageB = new CTRE::Signals::MovingAverage(10);
 };

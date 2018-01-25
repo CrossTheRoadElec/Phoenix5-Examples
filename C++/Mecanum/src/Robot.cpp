@@ -49,8 +49,10 @@ public:
 	void TeleopPeriodic(void) {
 		float angle = gyro.GetAngle();
 		//std::cout << "Angle : " << angle << std::endl;
-		m_robotDrive->DriveCartesian(Db(m_driveStick->GetX()),
-				Db(m_driveStick->GetY()), Db(m_driveStick->GetZ()), angle);
+		m_robotDrive->DriveCartesian(			Db(m_driveStick->GetX()),
+												Db(m_driveStick->GetY()),
+												Db(m_driveStick->GetZ()),
+												angle);
 		/* my right side motors need to drive negative to move robot forward */
 
 		/* on button 5, reset gyro angle to zero */

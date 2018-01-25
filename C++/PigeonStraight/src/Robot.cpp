@@ -75,8 +75,7 @@ public:
 		PigeonIMU::FusionStatus *stat = new PigeonIMU::FusionStatus();
 		_pidgey->GetFusedHeading(*stat);
 		double currentAngle = stat->heading;
-		bool angleIsGood =
-				(_pidgey->GetState() == PigeonIMU::Ready) ? true : false;
+		bool angleIsGood = (_pidgey->GetState() == PigeonIMU::Ready) ? true : false;
 		double currentAngularRate = xyz_dps[2];
 		/* get input from gamepad */
 		bool userWantsGoStraight = _driveStick->GetRawButton(5); /* top left shoulder button */
@@ -88,52 +87,50 @@ public:
 		/* simple state machine to update our goStraight selection */
 		switch (_goStraight) {
 
-		/* go straight is off, better check gamepad to see if we should enable the feature */
-		case GoStraightOff:
-			if (userWantsGoStraight == false) {
-				/* nothing to do */
-			} else if (angleIsGood == false) {
-				/* user wants to servo but Pigeon isn't connected? */
-				_goStraight = GoStraightSameThrottle; /* just apply same throttle to both sides */
-			} else {
-				/* user wants to servo, save the current heading so we know where to servo to. */
-				_goStraight = GoStraightWithPidgeon;
-				_targetAngle = currentAngle;
-			}
-			break;
-
+			/* go straight is off, better check gamepad to see if we should enable the feature */
+			case GoStraightOff:
+				if (userWantsGoStraight == false) {
+					/* nothing to do */
+				} else if (angleIsGood == false) {
+					/* user wants to servo but Pigeon isn't connected? */
+					_goStraight = GoStraightSameThrottle; /* just apply same throttle to both sides */
+				} else {
+					/* user wants to servo, save the current heading so we know where to servo to. */
+					_goStraight = GoStraightWithPidgeon;
+					_targetAngle = currentAngle;
+				}
+				break;
+	
 			/* we are servo-ing heading with Pigeon */
-		case GoStraightWithPidgeon:
-			if (userWantsGoStraight == false) {
-				_goStraight = GoStraightOff; /* user let go, turn off the feature */
-			} else if (angleIsGood == false) {
-				_goStraight = GoStraightSameThrottle; /* we were servoing with pidgy, but we lost connection?  Check wiring and deviceID setup */
-			} else {
-				/* user still wants to drive straight, keep doing it */
-			}
-			break;
-
+			case GoStraightWithPidgeon:
+				if (userWantsGoStraight == false) {
+					_goStraight = GoStraightOff; /* user let go, turn off the feature */
+				} else if (angleIsGood == false) {
+					_goStraight = GoStraightSameThrottle; /* we were servoing with pidgy, but we lost connection?  Check wiring and deviceID setup */
+				} else {
+					/* user still wants to drive straight, keep doing it */
+				}
+				break;
+	
 			/* we are simply applying the same throttle to both sides, apparently Pigeon is not connected */
-		case GoStraightSameThrottle:
-			if (userWantsGoStraight == false) {
-				_goStraight = GoStraightOff; /* user let go, turn off the feature */
-			} else {
-				/* user still wants to drive straight, keep doing it */
-			}
-			break;
+			case GoStraightSameThrottle:
+				if (userWantsGoStraight == false) {
+					_goStraight = GoStraightOff; /* user let go, turn off the feature */
+				} else {
+					/* user still wants to drive straight, keep doing it */
+				}
+				break;
 		}
 
 		/* if we can servo with IMU, do the math here */
 		if (_goStraight == GoStraightWithPidgeon) {
 			/* very simple Proportional and Derivative (PD) loop with a cap,
 			 * replace with favorite close loop strategy or leverage future Talon <=> Pigeon features. */
-			turnThrottle = (_targetAngle - currentAngle) * kPgain
-					- (currentAngularRate) * kDgain;
+			turnThrottle = (_targetAngle - currentAngle) * kPgain - (currentAngularRate) * kDgain;
 			/* the max correction is the forward throttle times a scalar,
 			 * This can be done a number of ways but basically only apply small turning correction when we are moving slow
 			 * and larger correction the faster we move.  Otherwise you may need stiffer pgain at higher velocities. */
-			double maxThrot = MaxCorrection(forwardThrottle,
-					kMaxCorrectionRatio);
+			double maxThrot = MaxCorrection(forwardThrottle, kMaxCorrectionRatio);
 			turnThrottle = Cap(turnThrottle, maxThrot);
 		} else if (_goStraight == GoStraightSameThrottle) {
 			/* clear the turn throttle, just apply same throttle to both sides */

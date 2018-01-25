@@ -10,8 +10,9 @@
  * This application is an IterativeRobot project to demonstrate a minimal implementation not requiring the command 
  * framework, however these code excerpts could be moved into a command-based project.
  * 
- * The project also includes instrumentation.java which simply has debug printfs, and a MotionProfile.java which is generated
+ * The project also includes Instrumentation.h which simply has debug printfs, and a MotionProfile.h which is generated
  * in @link https://docs.google.com/spreadsheets/d/1PgT10EeQiR92LNXEOEe3VGn737P7WDP4t0CQxQgC8k0/edit#gid=1813770630&vpid=A1
+ * or use the Motion Profile Generator.xlsx file in the project folder.
  * 
  * Logitech Gamepad mapping, use left y axis to drive Talon normally.  
  * Press and hold top-left-shoulder-button5 to put Talon into motion profile control mode.
@@ -43,8 +44,7 @@ public:
 
 	/** cache last buttons so we can detect press events.  In a command-based project you can leverage the on-press event
 	 * but for this simple example, lets just do quick compares to prev-btn-states */
-	bool _btnsLast[10] = { false, false, false, false, false, false, false,
-			false, false, false };
+	bool _btnsLast[10] = { false, false, false, false, false, false, false, false, false, false };
 
 	Robot() :
 			_talon(Constants::kTalonID), _vic(Constants::kVictorFollower), _example(

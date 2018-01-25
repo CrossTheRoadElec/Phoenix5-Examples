@@ -16,9 +16,9 @@
  * SmartDashboard (SD) setup.
  * [1] Open Smartdashboard (I typically (re)select the Dashboard Type in DriverStation if the SD doesn't pop up).
  * [2] Deploy software and enable.
- * [3] Find the text entry in the SD for "spd".  
+ * [3] Find the text entry in the SD for "vel".  
  * [4] View =>Editable should be checked.
- * [5] Right-click on "spd" label and "Change to..." the Line Plot.  
+ * [5] Right-click on "vel" label and "Change to..." the Line Plot.  
  * 
  * A few details regarding Smartdashboard in general...
  * [1] Constant data does not render new plot points. So if the signal being measured doesn't change value, the plot stops.
@@ -31,7 +31,7 @@
  *  
  * @author Ozrien
  */
-package org.usfirst.frc.team217.robot; // bulldogs!
+package org.usfirst.frc.team217.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -39,26 +39,38 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot {
 
-	VictorSPX _vic = new VictorSPX(1); // !< Just a follower
-	TalonSRX _tal = new TalonSRX(3);
+	/**
+	 * Just a follower, could be a Talon.
+	 */
+	VictorSPX _vic = new VictorSPX(1);
+	/**
+	 * Master Talon
+	 */
+	TalonSRX _tal = new TalonSRX(2);
+	/**
+	 * Simple thread to plot the sensor velocity
+	 */
 	PlotThread _plotThread;
-
+	/**
+	 * joystick or gamepad
+	 */
+	Joystick _joystick = new Joystick(0);
+	
 	public void teleopInit() {
-		/* Tal1 will follow Tal3 */
+		/* Victor will follow Talon */
 		_vic.follow(_tal);
 
 		/*
 		 * new frame every 1ms, since this is a test project use up as much
 		 * bandwidth as possible for the purpose of this test.
 		 */
-		_tal.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 1,
-				10);
-		_tal.configSelectedFeedbackSensor(
-				FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+		_tal.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 1, 10);
+		_tal.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 
 		/* fire the plotter */
 		_plotThread = new PlotThread(this);
@@ -67,8 +79,6 @@ public class Robot extends IterativeRobot {
 
 	public void teleopPeriodic() {
 		/*
-		 * Shooting for ~200RPM, which is ~300ms per rotation.
-		 * 
 		 * If there is mechanical deflection, eccentricity, or damage in the
 		 * sensor it should be revealed in the plot.
 		 * 
@@ -78,7 +88,10 @@ public class Robot extends IterativeRobot {
 		 * 
 		 * This can also be wired to a gamepad to test velocity sweeping.
 		 */
-		_tal.set(ControlMode.PercentOutput, 0.4);
+		if (_joystick.getRawButton(1))
+			_tal.set(ControlMode.PercentOutput, 0.25); /* 25 % output */
+		else 
+			_tal.set(ControlMode.PercentOutput, 0.0);
 	}
 
 	/** quick and dirty threaded plotter */
@@ -103,8 +116,8 @@ public class Robot extends IterativeRobot {
 				} catch (Exception e) {
 				}
 				/* grab the last signal update from our 1ms frame update */
-				double speed = this.robot._tal.getSelectedSensorVelocity(0);
-				SmartDashboard.putNumber("spd", speed);
+				double velocity = this.robot._tal.getSelectedSensorVelocity(0);
+				SmartDashboard.putNumber("vel", velocity);
 			}
 		}
 	}

@@ -42,6 +42,7 @@ public class Instrumentation {
 	}
 
 	static private String StrOutputEnable(SetValueMotionProfile sv) {
+		/* convert sv to string equiv */
 		if (sv == null)
 			return "null";
 		if (sv.value > 3)
