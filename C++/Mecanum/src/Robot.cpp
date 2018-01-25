@@ -25,7 +25,7 @@ public:
 		rf->SetInverted(true);
 		rr->SetInverted(true);
 
-		// Create a RobotDrive object using PWMS 1, 2, 3, and 4
+		// Create a RobotDrive object using our 4 TalonSRX's
 		m_robotDrive = new MecanumDrive(*lf, *lr, *rf, *rr);
 		m_robotDrive->SetExpiration(0.5);
 		m_robotDrive->SetSafetyEnabled(false);
@@ -35,7 +35,7 @@ public:
 	void TeleopInit() {
 		gyro.Reset();
 	}
-	/** @return 10% deadband */
+	/* @return 10% deadband */
 	double Db(double axisVal) {
 		if (axisVal < -0.10)
 			return axisVal;
@@ -48,7 +48,6 @@ public:
 	 */
 	void TeleopPeriodic(void) {
 		float angle = gyro.GetAngle();
-		//std::cout << "Angle : " << angle << std::endl;
 		m_robotDrive->DriveCartesian(			Db(m_driveStick->GetX()),
 												Db(m_driveStick->GetY()),
 												Db(m_driveStick->GetZ()),

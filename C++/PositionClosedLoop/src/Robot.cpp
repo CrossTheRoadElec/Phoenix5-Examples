@@ -33,13 +33,10 @@ private:
 		/* lets grab the 360 degree position of the MagEncoder's absolute position */
 		int absolutePosition = _talon->GetSelectedSensorPosition(0) & 0xFFF; /* mask out the bottom12 bits, we don't care about the wrap arounds */
 		/* use the low level API to set the quad encoder signal */
-		_talon->SetSelectedSensorPosition(absolutePosition, kPIDLoopIdx,
-				kTimeoutMs);
+		_talon->SetSelectedSensorPosition(absolutePosition, kPIDLoopIdx, kTimeoutMs);
 
 		/* choose the sensor and sensor direction */
-		_talon->ConfigSelectedFeedbackSensor(
-				FeedbackDevice::CTRE_MagEncoder_Relative, kPIDLoopIdx,
-				kTimeoutMs);
+		_talon->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, kPIDLoopIdx, kTimeoutMs);
 		_talon->SetSensorPhase(true);
 
 		/* set the peak and nominal outputs, 12V means full */

@@ -27,12 +27,10 @@ public:
 
 	void TeleopInit() {
 		//Configure talon to read magencoder values
-		_magTalon->ConfigSelectedFeedbackSensor(
-				FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10);
+		_magTalon->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10);
 
 		//Configure talon to read tachometer values
-		_tachTalon->ConfigSelectedFeedbackSensor(
-				FeedbackDevice::Tachometer, 0, 10);
+		_tachTalon->ConfigSelectedFeedbackSensor(FeedbackDevice::Tachometer, 0, 10);
 
 		/* read section 7.9 Tachometer Measurement in software reference manual */
 		//Edges per cycle = 2 (WHITE black WHITE black per revolution)

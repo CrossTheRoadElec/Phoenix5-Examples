@@ -23,8 +23,7 @@ public:
 	/* every time we enter disable, reinit*/
 	void DisabledInit() {
 		/* choose quadrature/relative which has a faster update rate */
-		_srx->ConfigSelectedFeedbackSensor(
-				FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10);
+		_srx->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10);
 		_srx->SetStatusFramePeriod(StatusFrame::Status_1_General_, 5, 10); /* Talon will send new frame every 5ms */
 		_srx->SetSensorPhase(kSensorPhase);
 		_srx->SetInverted(kInvert);

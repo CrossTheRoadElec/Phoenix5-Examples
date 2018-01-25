@@ -8,12 +8,13 @@ enum Constants {
 	 */
 	kSlotIdx = 0,
 
-	/* Talon SRX/ Victor SPX will supported multiple (cascaded) PID loops.
+	/**
+	 * Talon SRX/ Victor SPX will supported multiple (cascaded) PID loops.
 	 * For now we just want the primary one.
 	 */
 	kPIDLoopIdx = 0,
 
-	/*
+	/**
 	 * set to zero to skip waiting for confirmation, set to nonzero to wait
 	 * and report to DS if action fails.
 	 */

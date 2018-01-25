@@ -46,19 +46,15 @@ public:
 	 * but for this simple example, lets just do quick compares to prev-btn-states */
 	bool _btnsLast[10] = { false, false, false, false, false, false, false, false, false, false };
 
-	Robot() :
-			_talon(Constants::kTalonID), _vic(Constants::kVictorFollower), _example(
-					_talon), _joy(0) {
+	Robot() : _talon(Constants::kTalonID), _vic(Constants::kVictorFollower), _example(_talon), _joy(0) {
 	}
 
 	/** run once after booting/enter-disable */
 	void DisabledInit() {
 		_vic.Follow(_talon);
-		_talon.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0,
-				kTimeoutMs);
+		_talon.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0, kTimeoutMs);
 		_talon.SetSensorPhase(true);
-		_talon.ConfigNeutralDeadband(Constants::kNeutralDeadbandPercent * 0.01,
-				Constants::kTimeoutMs);
+		_talon.ConfigNeutralDeadband(Constants::kNeutralDeadbandPercent * 0.01, Constants::kTimeoutMs);
 
 		_talon.Config_kF(0, 0.076, kTimeoutMs);
 		_talon.Config_kP(0, 2.000, kTimeoutMs);
@@ -67,8 +63,7 @@ public:
 
 		_talon.ConfigMotionProfileTrajectoryPeriod(10, Constants::kTimeoutMs); //Our profile uses 10 ms timing
 		/* status 10 provides the trajectory target for motion profile AND motion magic */
-		_talon.SetStatusFramePeriod(StatusFrameEnhanced::Status_10_MotionMagic,
-				10, Constants::kTimeoutMs);
+		_talon.SetStatusFramePeriod(StatusFrameEnhanced::Status_10_MotionMagic, 10, Constants::kTimeoutMs);
 	}
 	/**  function is called periodically during operator control */
 	void TeleopPeriodic() {
@@ -95,7 +90,8 @@ public:
 
 			_example.reset();
 		} else {
-			/* Button5 is held down so switch to motion profile control mode => This is done in MotionProfileControl.
+			/*
+			 * Button5 is held down so switch to motion profile control mode => This is done in MotionProfileControl.
 			 * When we transition from no-press to press,
 			 * pass a "true" once to MotionProfileControl.
 			 */
@@ -104,9 +100,11 @@ public:
 
 			_talon.Set(ControlMode::MotionProfile, setOutput);
 
-			/* if btn is pressed and was not pressed last time,
+			/*
+			 * if btn is pressed and was not pressed last time,
 			 * In other words we just detected the on-press event.
-			 * This will signal the robot to start a MP */
+			 * This will signal the robot to start a MP
+			 */
 			if ((btns[6] == true) && (_btnsLast[6] == false)) {
 				/* user just tapped button 6 */
 
@@ -122,10 +120,12 @@ public:
 	}
 	/**  function is called periodically during disable */
 	void DisabledPeriodic() {
-		/* it's generally a good idea to put motor controllers back
+		/*
+		 * It's generally a good idea to put motor controllers back
 		 * into a known state when robot is disabled.  That way when you
 		 * enable the robot doesn't just continue doing what it was doing before.
-		 * BUT if that's what the application/testing requires than modify this accordingly */
+		 * BUT if that's what the application/testing requires than modify this accordingly
+		 */
 		_talon.Set(ControlMode::PercentOutput, 0);
 		/* clear our buffer and put everything into a known state */
 		_example.reset();

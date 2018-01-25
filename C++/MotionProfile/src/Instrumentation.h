@@ -45,8 +45,7 @@ public:
 	/**
 	 * Prints and/or logging to watch the MP signals
 	 */
-	static void Process(MotionProfileStatus & status, double pos, double vel,
-			double heading) {
+	static void Process(MotionProfileStatus & status, double pos, double vel, double heading) {
 		static double timeout = 0;
 		static int count = 0;
 
@@ -79,7 +78,7 @@ public:
 							<< endline;
 			}
 			/* every loop, print our values */
-			std::cout	<< std::setw(12)<< StrOutputEnable(status.outputEnable) << delim
+			std::cout << std::setw(12) << StrOutputEnable(status.outputEnable) << delim
 						<< std::setw(12)<< status.topBufferCnt << delim
 						<< std::setw(12)<< status.topBufferRem << delim
 						<< std::setw(12)<< status.btmBufferCnt << delim
@@ -92,7 +91,7 @@ public:
 						<< std::setw(12)<< status.profileSlotSelect0 << delim
 						<< std::setw(12)<< status.timeDurMs << delim
 
-						<< endline;
+					<< endline;
 		}
 	}
 };

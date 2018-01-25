@@ -22,8 +22,7 @@ public:
 	WPI_TalonSRX * _leftFront = new WPI_TalonSRX(6);
 	WPI_TalonSRX * _leftFollower = new WPI_TalonSRX(4);
 
-	DifferentialDrive * _diffDrive = new DifferentialDrive(*_leftFront,
-			*_rghtFront);
+	DifferentialDrive * _diffDrive = new DifferentialDrive(*_leftFront, *_rghtFront);
 
 	Joystick * _joystick = new Joystick(0);
 

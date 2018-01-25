@@ -33,10 +33,9 @@ public:
 	void TeleopInit() {
 		//Get Parameters from Talon
 		std::cout << "Talon kP is: "
-				<< _talon->ConfigGetParameter(ParamEnum::eProfileParamSlot_P, 0,
-						0) << std::endl << "Talon Forward Soft Limit is: "
-				<< _talon->ConfigGetParameter(
-						ParamEnum::eForwardSoftLimitThreshold, 0, 0)
+				<< _talon->ConfigGetParameter(ParamEnum::eProfileParamSlot_P, 0, 0)
+				<< std::endl << "Talon Forward Soft Limit is: "
+				<< _talon->ConfigGetParameter(ParamEnum::eForwardSoftLimitThreshold, 0, 0)
 				<< std::endl;
 	}
 };

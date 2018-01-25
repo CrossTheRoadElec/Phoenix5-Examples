@@ -23,11 +23,13 @@ class Robot: public IterativeRobot {
 	Joystick *_driveStick; /* Joystick object on USB port 1 */
 	/** state for tracking whats controlling the drivetrain */
 	enum {
-		GoStraightOff, GoStraightWithPidgeon, GoStraightSameThrottle
+		GoStraightOff,
+		GoStraightWithPidgeon,
+		GoStraightSameThrottle
 	} _goStraight = GoStraightOff;
 
 	/* Some gains for heading servo,
-	 * these were tweaked by using the web-based config (CAN Talon) and
+	 * these were tweaked by using the web-based config (TalonSRX) and
 	 * pressing gamepad button 6 to load them.
 	 */
 	double kPgain = 0.04; /* percent throttle per degree of error */
@@ -49,6 +51,7 @@ public:
 		_spareTalon = new TalonSRX(4);
 
 		/* choose which cabling method for Pigeon */
+
 		//_pidgey = new PigeonImu(0); /* Pigeon is on CANBus (powered from ~12V, and has a device ID of zero */
 		_pidgey = new PigeonIMU(_leftFront); /* Pigeon is ribbon cabled to the specified CANTalon. */
 
@@ -198,6 +201,9 @@ public:
 	 * storage for gains.
 	 */
 	void UpdatGains() {
+		/* Use configGetParameter to read PD values */
+		kPgain = _spareTalon->ConfigGetParameter(ParamEnum::eProfileParamSlot_P, 0, 0);
+		kDgain = _spareTalon->ConfigGetParameter(ParamEnum::eProfileParamSlot_D, 0 ,0);
 	}
 	/**
 	 * Given the robot forward throttle and ratio, return the max
