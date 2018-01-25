@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.*;
 
@@ -79,7 +78,9 @@ public class Robot extends IterativeRobot {
 		_sb.append(_talon.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
 
 		if (_joy.getRawButton(1)) {
-			/* Motion Magic - 4096 ticks/rev * 10 Rotations in either direction */
+			/*
+			 * Motion Magic - 4096 ticks/rev * 10 Rotations in either direction
+			 */
 			double targetPos = leftYstick * 4096 * 10.0;
 			_talon.set(ControlMode.MotionMagic, targetPos);
 

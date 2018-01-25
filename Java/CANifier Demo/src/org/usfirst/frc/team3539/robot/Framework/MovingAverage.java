@@ -80,7 +80,7 @@ public class MovingAverage {
 		}
 	}
 
-	// -------------- Properties --------------//
+	// -------------- Properties -------------- //
 	public float getSum() {
 		return _sum;
 	}

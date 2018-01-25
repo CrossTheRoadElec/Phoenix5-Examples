@@ -37,8 +37,7 @@ public class Robot extends IterativeRobot {
 		 * neutral within this range. See Table in Section 17.2.1 for native
 		 * units per rotation.
 		 */
-		_talon.configAllowableClosedloopError(0, Constants.kPIDLoopIdx,
-				Constants.kTimeoutMs); /* always servo */
+		_talon.configAllowableClosedloopError(0, Constants.kPIDLoopIdx,	Constants.kTimeoutMs); /* always servo */
 		/* set closed loop gains in slot0 */
 		_talon.config_kF(Constants.kPIDLoopIdx, 0.0, Constants.kTimeoutMs);
 		_talon.config_kP(Constants.kPIDLoopIdx, 0.0, Constants.kTimeoutMs);

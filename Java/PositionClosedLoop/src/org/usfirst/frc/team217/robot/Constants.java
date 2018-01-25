@@ -9,22 +9,26 @@ public class Constants {
 	 */
 	public static final int kSlotIdx = 0;
 
-	/*
+	/**
 	 * Talon SRX/ Victor SPX will supported multiple (cascaded) PID loops. For
 	 * now we just want the primary one.
 	 */
 	public static final int kPIDLoopIdx = 0;
 
-	/*
+	/**
 	 * set to zero to skip waiting for confirmation, set to nonzero to wait and
 	 * report to DS if action fails.
 	 */
 	public static final int kTimeoutMs = 10;
 	
-	/* choose so that Talon does not report sensor out of phase */
+	/** 
+	 * choose so that Talon does not report sensor out of phase 
+	 */
 	public static boolean kSensorPhase = true;
 
-	/* choose based on what direction you want to be positive,
-		this does not affect motor invert. */
+	/** 
+	 * choose based on what direction you want to be positive,
+	 * this does not affect motor invert. 
+	 */
 	public static boolean kMotorInvert = false;
 }

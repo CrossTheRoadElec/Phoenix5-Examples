@@ -30,9 +30,7 @@ public class TaskLIDAR_ControlLEDStrip implements ILoopable {
 		/* Update LEDStrip with LIDAR */
 		Tasks.taskHSV_ControlLedStrip.Hue = hue;
 		Tasks.taskHSV_ControlLedStrip.Saturation = 1;
-		Tasks.taskHSV_ControlLedStrip.Value = 0.05f; /*
-														 * hard-code the
-														 * brightness
-														 */
+		/* hard-code the brightness */
+		Tasks.taskHSV_ControlLedStrip.Value = 0.05f;
 	}
 }

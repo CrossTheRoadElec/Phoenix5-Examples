@@ -61,7 +61,9 @@ public class Robot extends IterativeRobot {
 
 		if (_joy.getRawButton(1)) {
 			/* Speed mode */
-			/* Convert 500 RPM to units / 100ms.
+			
+			/* 
+			 * Convert 500 RPM to units / 100ms.
 			 * 4096 Units/Rev * 500 RPM / 600 100ms/min in either direction:
 			 * velocity setpoint is in units/100ms
 			 */

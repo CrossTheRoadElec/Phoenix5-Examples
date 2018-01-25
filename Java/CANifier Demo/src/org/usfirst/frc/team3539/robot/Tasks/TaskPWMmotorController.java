@@ -44,13 +44,12 @@ public class TaskPWMmotorController implements ILoopable {
 		float axis = (float) Hardware.gamepad
 				.getRawAxis(Constants.GamePadAxis_y);
 		/* Scale to typical PWM widths */
-		float pulseUs = LinearInterpolation.calculate(axis, -1, 1000f, +1,
-				2000f); /* [-1,+1] => [1000,2000]us */
+		/* [-1,+1] => [1000,2000]us */
+		float pulseUs = LinearInterpolation.calculate(axis, -1, 1000f, +1, 2000f);
+		
+		
 		/* Scale to period */
-		float periodUs = 4200; /*
-								 * Hard-coded for now, this will be settable in
-								 * future firmware update.
-								 */
+		float periodUs = 4200; /* Hard-coded, will be settable in future update */
 		_percentOut = pulseUs / periodUs;
 		/* Set PWM Motor Controller */
 		Hardware.canifier.setPWMOutput(Constants.kMotorControllerCh.value,

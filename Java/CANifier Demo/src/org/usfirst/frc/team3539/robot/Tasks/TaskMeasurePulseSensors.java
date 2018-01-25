@@ -7,8 +7,12 @@ import edu.wpi.first.wpilibj.can.CANJNI;
 import java.nio.ByteBuffer;
 
 public class TaskMeasurePulseSensors implements ILoopable {
-	double[][] _dutyCycleAndPeriods = new double[][]{new double[]{0, 0},
-			new double[]{0, 0}, new double[]{0, 0}, new double[]{0, 0}};
+	double[][] _dutyCycleAndPeriods = new double[][]{
+		new double[]{0, 0},
+		new double[]{0, 0}, 
+		new double[]{0, 0}, 
+		new double[]{0, 0}
+		};
 
 	public double getMeasuredPulseWidthsUs(CANifier.PWMChannel pwmCh) {
 		return _dutyCycleAndPeriods[pwmCh.value][0];

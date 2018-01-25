@@ -22,7 +22,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.*;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Joystick.AxisType;
 
 public class Robot extends IterativeRobot {
 
@@ -31,20 +30,21 @@ public class Robot extends IterativeRobot {
 	StringBuilder _sb = new StringBuilder();
 	int _loops = 0;
 	boolean _lastButton1 = false;
-	/** save the target position to servo to */
+	/* save the target position to servo to */
 	double targetPositionRotations;
 
 	public void robotInit() {
 
 		/* choose the sensor and sensor direction */
-		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx,
-				Constants.kTimeoutMs);
+		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 
 		/* choose to ensure sensor is positive when output is positive */
 		_talon.setSensorPhase(Constants.kSensorPhase);
 
-		/* choose based on what direction you want forward/positive to be.
-		 * This does not affect sensor phase. */ 
+		/*
+		 * choose based on what direction you want forward/positive to be. This
+		 * does not affect sensor phase.
+		 */
 		_talon.setInverted(Constants.kMotorInvert);
 
 		/* set the peak and nominal outputs, 12V means full */

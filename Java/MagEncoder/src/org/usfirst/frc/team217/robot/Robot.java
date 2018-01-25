@@ -90,7 +90,7 @@ public class Robot extends IterativeRobot {
 		 */
 		if (_joystick.getRawButton(1))
 			_tal.set(ControlMode.PercentOutput, 0.25); /* 25 % output */
-		else 
+		else
 			_tal.set(ControlMode.PercentOutput, 0.0);
 	}
 

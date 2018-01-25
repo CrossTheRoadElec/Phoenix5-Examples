@@ -28,14 +28,10 @@ public class TaskAnimateLEDStrip implements ILoopable {
 
 		/* Update LEDStrip/HSV target */
 		Tasks.taskHSV_ControlLedStrip.Hue = _hue;
-		Tasks.taskHSV_ControlLedStrip.Saturation = 1.0f; /*
-															 * Outer rim of HSV
-															 * color wheel
-															 */
-		Tasks.taskHSV_ControlLedStrip.Value = 0.05f; /*
-														 * Hard-code the
-														 * brightness
-														 */
+		/* Outer rim of HSV color wheel */
+		Tasks.taskHSV_ControlLedStrip.Saturation = 1.0f;
+		/* Hard-code the brightness */
+		Tasks.taskHSV_ControlLedStrip.Value = 0.05f;
 	}
 
 	public String toString() {

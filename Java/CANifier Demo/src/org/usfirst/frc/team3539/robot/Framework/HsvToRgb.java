@@ -19,10 +19,10 @@ public class HsvToRgb {
 
 		if (H < 0) {
 			H += 360;
-		} ;
+		}
 		if (H >= 360) {
 			H -= 360;
-		} ;
+		}
 
 		if (V <= 0) {
 			R = G = B = 0;

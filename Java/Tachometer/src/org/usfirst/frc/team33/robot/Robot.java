@@ -59,14 +59,17 @@ public class Robot extends IterativeRobot {
 		// Set talon to joystick value
 		_magTalon.set(ControlMode.PercentOutput, _joy.getY());
 		
-		/* get the velocities of two talons,
-		 * one uses quadrature (mag encoder), the other uses Talon-Tach */
+		/* 
+		 * get the velocities of two talons,
+		 * one uses quadrature (mag encoder), the other uses Talon-Tach 
+		 */
 		double magVel_UnitsPer100ms = _magTalon.getSelectedSensorVelocity(0);
 		double tachVel_UnitsPer100ms = _tachTalon.getSelectedSensorVelocity(0);
 
 		/* convert to RPM */
+		// CTRL + Left Click goes to webpage
 		// https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor
-		//MagRPM = magVel [units/kT] * 600 [kTs/minute] / 4096(units/rev), where kT = 100ms
+		// MagRPM = magVel [units/kT] * 600 [kTs/minute] / 4096(units/rev), where kT = 100ms
 		double magVelRPM = magVel_UnitsPer100ms * 600 / 4096;
 		//TachRPM = tachVel [units/kT] * 600 [kTs/minute] / 1024(units/rev), where kT = 100ms
 		double tachRPM = tachVel_UnitsPer100ms * 600 / 1024;

@@ -64,7 +64,7 @@ public class Robot extends IterativeRobot {
 		_talon.config_kD(0, 20.0, Constants.kTimeoutMs);
 
 		/* Our profile uses 10ms timing */
-		_talon.configMotionProfileTrajectoryPeriod(10, Constants.kTimeoutMs); 
+		_talon.configMotionProfileTrajectoryPeriod(10, Constants.kTimeoutMs);
 		/*
 		 * status 10 provides the trajectory target for motion profile AND
 		 * motion magic

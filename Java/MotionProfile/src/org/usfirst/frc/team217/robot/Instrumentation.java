@@ -50,8 +50,7 @@ public class Instrumentation {
 		return _table[sv.value];
 	}
 
-	public static void process(MotionProfileStatus status, double pos,
-			double vel, double heading) {
+	public static void process(MotionProfileStatus status, double pos, double vel, double heading) {
 		double now = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
 
 		if ((now - timeout) > 0.2) {
