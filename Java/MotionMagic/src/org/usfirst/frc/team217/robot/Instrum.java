@@ -15,7 +15,6 @@ public class Instrum {
 		SmartDashboard.putNumber("SensorPos", tal.getSelectedSensorPosition(Constants.kPIDLoopIdx));
 		SmartDashboard.putNumber("MotorOutputPercent", tal.getMotorOutputPercent());
 		SmartDashboard.putNumber("ClosedLoopError", tal.getClosedLoopError(Constants.kPIDLoopIdx));
-		SmartDashboard.putNumber("ClosedLoopTarget", tal.getClosedLoopTarget(Constants.kPIDLoopIdx));
 		
 		/* check if we are motion-magic-ing */
 		if (tal.getControlMode() == ControlMode.MotionMagic) {
@@ -25,6 +24,7 @@ public class Instrum {
 		}
 		if (_timesInMotionMagic > 10) {
 			/* print the Active Trajectory Point Motion Magic is servoing towards */
+			SmartDashboard.putNumber("ClosedLoopTarget", tal.getClosedLoopTarget(Constants.kPIDLoopIdx));
     		SmartDashboard.putNumber("ActTrajVelocity", tal.getActiveTrajectoryVelocity());
     		SmartDashboard.putNumber("ActTrajPosition", tal.getActiveTrajectoryPosition());
     		SmartDashboard.putNumber("ActTrajHeading", tal.getActiveTrajectoryHeading());
