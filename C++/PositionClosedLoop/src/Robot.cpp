@@ -72,8 +72,8 @@ private:
 		/* on button1 press enter closed-loop mode on target position */
 		if (!_lastButton1 && button1) {
 			/* Position mode - button just pressed */
-			targetPositionRotations = leftYstick * 10.0 * 4096; /* 50 Rotations in either direction */
-			_talon->Set(ControlMode::Position, targetPositionRotations); /* 50 rotations in either direction */
+			targetPositionRotations = leftYstick * 10.0 * 4096; /* 10 Rotations in either direction */
+			_talon->Set(ControlMode::Position, targetPositionRotations); /* 10 rotations in either direction */
 
 		}
 		/* on button2 just straight drive */
