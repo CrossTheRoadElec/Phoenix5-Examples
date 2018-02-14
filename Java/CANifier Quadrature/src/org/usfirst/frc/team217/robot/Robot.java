@@ -30,14 +30,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 	
+	/* CANifier */
 	CANifier _can;
+	
+	/* TalonSRX */
 	TalonSRX _tal;
+	
+	/* Joystick */
 	Joystick _joy;
 
+	/* Variable to keep track of loop count */
 	int count = 0;
 
 	@Override
 	public void robotInit() {
+		/* Instantiate objects */
 		_can = new CANifier(0);
 		_tal = new TalonSRX(4);
 		_joy = new Joystick(0);
@@ -45,13 +52,16 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
+		/* Configure talon with feedback device to double check CANifier */
 		_tal.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 		
+		/* On Teleop Initialization, set positions to some value */
 		_tal.setSelectedSensorPosition(-745, 0, 0);
 		_can.setQuadraturePosition(-745, 10);
 		
+		/* Configure velocity measurements to be what we want */
 		_can.configVelocityMeasurementPeriod(VelocityPeriod.Period_100Ms, 0);
-		_can.configVelocityMeasurementWindow(1, 0);
+		_can.configVelocityMeasurementWindow(64, 0);
 	}
 
 	/**
@@ -59,19 +69,22 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		/* Every 20th loop print */
 		if(count++ >= 20) {
+			/* CANifier */
 			System.out.println("CANifier:\tPosition: " + _can.getQuadraturePosition() + "\tVelocity: " + _can.getQuadratureVelocity());
+			
+			/* TalonSRX */
 			System.out.println("TAlon:\tPosition: " + _tal.getSelectedSensorPosition(0) + "\tVelocity: " + _tal.getSelectedSensorVelocity(0));
+
+			/* Extra line to deliniate each loop */
 			System.out.println();
+			
+			/* Reset counter */
 			count = 0;
 		}
+		
+		/* Drive talon with joystick */
 		_tal.set(ControlMode.PercentOutput, _joy.getY());
-	}
-
-	/**
-	 * This function is called periodically during test mode.
-	 */
-	@Override
-	public void testPeriodic() {
 	}
 }

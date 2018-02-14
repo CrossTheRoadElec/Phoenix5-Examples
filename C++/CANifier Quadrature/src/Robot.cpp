@@ -18,13 +18,21 @@
 class Robot : public frc::IterativeRobot {
 public:
 
+	/* TalonSRX */
 	TalonSRX * _tal;
+
+	/* CANifier */
 	CANifier * _can;
+
+	/* Joystick */
 	Joystick * _joy;
 
+	/* Variable to keep track of loop count */
 	unsigned int count;
-	void RobotInit() {
 
+
+	void RobotInit() {
+		/* Instantiate objects */
 		_can = new CANifier(0);
 
 		_tal = new TalonSRX(4);
@@ -33,26 +41,39 @@ public:
 	}
 
 	void TeleopInit() {
+		/* Initialize count to 0 */
 		count = 0;
 
+		/* Configure sensor on talon to check CANifier */
 		_tal->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10);
 
-		_tal->SetSelectedSensorPosition(-8388000, 0, 0);
-		_can->SetQuadraturePosition(-8388000, 0);
+		/* Set sensor positions to some known position */
+		_tal->SetSelectedSensorPosition(33, 0, 0);
+		_can->SetQuadraturePosition(33, 0);
 
+		/* Configure velocity measurements to what we want */
 		_can->ConfigVelocityMeasurementPeriod(CANifierVelocityMeasPeriod::Period_100Ms, 10);
-		_can->ConfigVelocityMeasurementWindow(1, 10);
+		_can->ConfigVelocityMeasurementWindow(64, 10);
 	}
 
 	void TeleopPeriodic() {
-
+		/* Every 20th loop print */
 		if(count++ >= 20)
 		{
+			/* CANifier */
 			std::cout << "CANifier:\tPosition: " << _can->GetQuadraturePosition() << "\tVelocity" << _can->GetQuadratureVelocity() <<
+
+			/* TalonSRX */
 			std::endl << "Talon:\t\t\tPosition: " << _tal->GetSelectedSensorPosition(0) <<"\tVelocity" << _tal->GetSelectedSensorVelocity(0)
-					<< std::endl << std::endl;
+
+			/* New line to deliniate each loop */
+			<< std::endl << std::endl;
+
+			/* Reset count */
 			count = 0;
 		}
+
+		/* Run talon in PercentOutput mode always */
 		_tal->Set(ControlMode::PercentOutput, _joy->GetY());
 	}
 
