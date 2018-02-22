@@ -118,7 +118,7 @@ public class Robot extends IterativeRobot {
 			System.out.println("Using remote Talon's quadrature encoder.");
 		} else if (choice == 3) {
 			/* select a quadrature encoder connected to a CANifier */
-			_motorCntrller.configRemoteFeedbackFilter(	_canifLimits.getDeviceNumber(),
+			_motorCntrller.configRemoteFeedbackFilter(	_canifLimits.getDeviceID(),
 														RemoteSensorSource.CANifier_Quadrature,
 														Constants.REMOTE_0,
 														Constants.kTimeoutMs);
@@ -169,7 +169,7 @@ public class Robot extends IterativeRobot {
 														Constants.kTimeoutMs);
 
 			/* select a Pigeon on CAN Bus. */
-			_motorCntrller.configRemoteFeedbackFilter(	_imu.getDeviceNumber(),
+			_motorCntrller.configRemoteFeedbackFilter(	_imu.getDeviceID(),
 														RemoteSensorSource.Pigeon_Yaw,
 														Constants.REMOTE_1, /* use remote filter 1 this time */
 														Constants.kTimeoutMs);
@@ -191,7 +191,7 @@ public class Robot extends IterativeRobot {
 														Constants.kTimeoutMs);
 
 			/* select a Pigeon on CAN Bus. */
-			_motorCntrller.configRemoteFeedbackFilter(	_canifLimits.getDeviceNumber(),
+			_motorCntrller.configRemoteFeedbackFilter(	_canifLimits.getDeviceID(),
 														RemoteSensorSource.CANifier_PWMInput1,
 														Constants.REMOTE_1, /* use remote filter 1 this time */
 														Constants.kTimeoutMs);
@@ -273,20 +273,24 @@ public class Robot extends IterativeRobot {
 	}
 
 	//------------------------- Loops -------------------------------//
+	@Override
 	public void disabledInit() {
 		/* initialize hardware so that sensor phases on set before Teleop.
 		 * This makes self-test more useful. */
 		initRobot();
 	}
+	@Override
 	public void disabledPeriodic() {
 		commonLoop();
 	}
-	public void deleopInit() {
+	@Override
+	public void teleopInit() {
 		/* initialize hardware at start of teleop, just in case Talon was replaced / field-upgraded during disable.
 		 * All params are persistent except for status frame periods. */
 		initRobot();
 	}
-	public void TeleopPeriodic() {
+	@Override
+	public void teleopPeriodic() {
 		commonLoop();
 	}
 

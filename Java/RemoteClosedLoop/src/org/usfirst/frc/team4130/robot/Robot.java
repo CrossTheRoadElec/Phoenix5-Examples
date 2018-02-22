@@ -157,7 +157,7 @@ public class Robot extends IterativeRobot {
 			 * - Target param for aux PID1 is 18bits with a range of [-131072,+131072] units.
 			 * - Target for aux PID1 in motion profile is 14bits with a range of [-8192,+8192] units.
 			 *  ... so at 3600 units per 360', that ensures 0.1 deg precision in firmware closed-loop
-			 *  and motion profile trajectory points can range ±2 rotations.
+			 *  and motion profile trajectory points can range +-2 rotations.
 			 */
 			_talonRght.configSelectedFeedbackCoefficient(Constants.kTurnTravelUnitsPerRotation / Constants.kEncoderUnitsPerRotation, Constants.PID_TURN, Constants.kTimeoutMs);
 		} else {
@@ -646,7 +646,7 @@ public class Robot extends IterativeRobot {
 				neutralMotors("Target not set yet.\n");
 				zeroSensors();
 
-				_talonRght.selectProfileSlot(Constants.kSlot_MotProf, Constants.PID_PRIMARY);
+				_talonRght.selectProfileSlot(Constants.kSlot_Distanc, Constants.PID_PRIMARY);
 			}
 
 			if (bExecuteAction == ButtonEvent.ButtonOffToOn) {
@@ -675,7 +675,7 @@ public class Robot extends IterativeRobot {
 				neutralMotors("Target not set yet.\n");
 				zeroSensors();
 
-				_talonRght.selectProfileSlot(Constants.kSlot_MotProf, Constants.PID_PRIMARY);
+				_talonRght.selectProfileSlot(Constants.kSlot_Distanc, Constants.PID_PRIMARY);
 			}
 
 			if (bExecuteAction == ButtonEvent.ButtonOffToOn) {
@@ -701,7 +701,7 @@ public class Robot extends IterativeRobot {
 				System.out.println("Press Button 6 to set target. ");
 				neutralMotors("Target not set yet.\n");
 				zeroSensors();
-				_talonRght.selectProfileSlot(Constants.kSlot_MotProf, Constants.PID_PRIMARY);
+				_talonRght.selectProfileSlot(Constants.kSlot_Distanc, Constants.PID_PRIMARY);
 				_talonRght.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
 			}
 

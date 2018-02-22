@@ -76,12 +76,12 @@ public class Robot extends IterativeRobot {
 			/* use remote CANifier - use four param functions */
 			_motorCntrller.configForwardLimitSwitchSource(	RemoteLimitSwitchSource.RemoteCANifier,
 													LimitSwitchNormal.NormallyOpen,
-													_canifLimits.getDeviceNumber(),
+													_canifLimits.getDeviceID(),
 													Constants.kTimeoutMs);
 
 			_motorCntrller.configReverseLimitSwitchSource(	RemoteLimitSwitchSource.RemoteCANifier,
 													LimitSwitchNormal.NormallyOpen,
-													_canifLimits.getDeviceNumber(),
+													_canifLimits.getDeviceID(),
 													Constants.kTimeoutMs);
 
 			System.out.println("Remote Limit Switches enabled using CANifier.");

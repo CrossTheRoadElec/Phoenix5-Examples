@@ -99,7 +99,7 @@ public:
 												Constants.kTimeoutMs);
 		/* Remote 1 will be a pigeon */
 		_talonRght.ConfigRemoteFeedbackFilter(	_talonPigeon.GetDeviceID(),
-												RemoteSensorSource::RemoteSensorSource_GadgeeterPigeon_Yaw,
+												RemoteSensorSource::RemoteSensorSource_GadgeteerPigeon_Yaw,
 												Constants.REMOTE_1,
 												Constants.kTimeoutMs);
 		/* setup sum and difference signals */
@@ -413,7 +413,7 @@ public:
 
 		if (bFirstCall) {
 			printf("[00]One_Axis_PercentOutput selected, ");
-			printf("This is a basic arcade drove. ");
+			printf("This is a basic arcade drove. \n");
 		}
 
 		_talonLeft.Set(ControlMode::PercentOutput, left);
@@ -427,7 +427,7 @@ public:
 
 		if (bFirstCall) {
 			printf("[01]Two_Axis_PercentOutput selected, ");
-			printf("This is a basic arcade drove. ");
+			printf("This is a basic arcade drove. \n");
 		}
 
 		_talonLeft.Set(ControlMode::PercentOutput, joyForward, DemandType::DemandType_ArbitraryFeedForward, +joyTurn);
