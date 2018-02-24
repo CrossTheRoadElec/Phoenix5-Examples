@@ -251,12 +251,11 @@ public class Robot extends IterativeRobot {
 				_talonRght.configSetParameter(ParamEnum.ePIDLoopPeriod, closedLoopTimeMs, 0x00, Constants.PID_TURN, Constants.kTimeoutMs);
 
 				/**
-				 * 0 means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
-				 * 1 means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
+				 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
+				 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 				 */
-				int auxPidPolarity = 0;
-				_talonRght.configSetParameter(ParamEnum.ePIDLoopPolarity, auxPidPolarity, 0x00, Constants.PID_TURN, Constants.kTimeoutMs);
-
+				_talonRght.configAuxPIDPolarity(false, Constants.kTimeoutMs);
+				
 				zeroSensors();
 	}
 	
@@ -463,8 +462,8 @@ public class Robot extends IterativeRobot {
 				System.out.println("This is a basic arcade drove. ");
 			}
 
-			_talonLeft.set(ControlMode.PercentOutput, joyForward, DemandType.DemandType_ArbitraryFeedForward, +joyTurn);
-			_talonRght.set(ControlMode.PercentOutput, joyForward, DemandType.DemandType_ArbitraryFeedForward, -joyTurn);
+			_talonLeft.set(ControlMode.PercentOutput, joyForward, DemandType.ArbitraryFeedForward, +joyTurn);
+			_talonRght.set(ControlMode.PercentOutput, joyForward, DemandType.ArbitraryFeedForward, -joyTurn);
 		}
 		void one_Axis_Position(boolean bFirstCall, ButtonEvent bExecuteAction, double joyForward, double joyTurn) {
 
@@ -513,7 +512,7 @@ public class Robot extends IterativeRobot {
 			} else if (bExecuteAction == ButtonEvent.ButtonOn) {
 				_target0 = target_sensorUnits;
 				_target1 = feedFwdTerm;
-				_talonRght.set(ControlMode.Position, _target0, DemandType.DemandType_ArbitraryFeedForward, _target1);
+				_talonRght.set(ControlMode.Position, _target0, DemandType.ArbitraryFeedForward, _target1);
 				_talonLeft.follow(_talonRght);
 			} else if (bExecuteAction == ButtonEvent.ButtonOnToOff) {
 				//neutralMotors("Button let go\n");
@@ -542,8 +541,8 @@ public class Robot extends IterativeRobot {
 			} else if (bExecuteAction == ButtonEvent.ButtonOn) {
 				_target0 = target_sensorUnits;
 				_target1 = target_turn;
-				_talonRght.set(ControlMode.Position, _target0, DemandType.DemandType_AuxPID, _target1);
-				_talonLeft.follow(_talonRght, FollowerType.FollowerType_AuxOutput1);
+				_talonRght.set(ControlMode.Position, _target0, DemandType.AuxPID, _target1);
+				_talonLeft.follow(_talonRght, FollowerType.AuxOutput1);
 			} else if (bExecuteAction == ButtonEvent.ButtonOnToOff) {
 				//neutralMotors("Button let go\n");
 			}
@@ -598,7 +597,7 @@ public class Robot extends IterativeRobot {
 			} else if (bExecuteAction == ButtonEvent.ButtonOn) {
 				_target0 = target_unitsPer100ms;
 				_target1 = feedFwdTerm;
-				_talonRght.set(ControlMode.Velocity, _target0, DemandType.DemandType_ArbitraryFeedForward, _target1);
+				_talonRght.set(ControlMode.Velocity, _target0, DemandType.ArbitraryFeedForward, _target1);
 				_talonLeft.follow(_talonRght);
 			} else if (bExecuteAction == ButtonEvent.ButtonOnToOff) {
 				//neutralMotors("Button let go\n");
@@ -628,8 +627,8 @@ public class Robot extends IterativeRobot {
 			} else if (bExecuteAction == ButtonEvent.ButtonOn) {
 				_target0 = target_unitsPer100ms;
 				_target1 = heading_units;
-				_talonRght.set(ControlMode.Velocity, _target0, DemandType.DemandType_AuxPID, _target1);
-				_talonLeft.follow(_talonRght, FollowerType.FollowerType_AuxOutput1);
+				_talonRght.set(ControlMode.Velocity, _target0, DemandType.AuxPID, _target1);
+				_talonLeft.follow(_talonRght, FollowerType.AuxOutput1);
 			} else if (bExecuteAction == ButtonEvent.ButtonOnToOff) {
 				//neutralMotors("Button let go\n");
 			}
@@ -683,7 +682,7 @@ public class Robot extends IterativeRobot {
 			} else if (bExecuteAction == ButtonEvent.ButtonOn) {
 				_target0 = target_sensorUnits;
 				_target1 = feedFwdTerm;
-				_talonRght.set(ControlMode.MotionMagic, _target0, DemandType.DemandType_ArbitraryFeedForward, _target1);
+				_talonRght.set(ControlMode.MotionMagic, _target0, DemandType.ArbitraryFeedForward, _target1);
 				_talonLeft.follow(_talonRght);
 			} else if (bExecuteAction == ButtonEvent.ButtonOnToOff) {
 				//neutralMotors("Button let go\n");
@@ -711,8 +710,8 @@ public class Robot extends IterativeRobot {
 				_target0 = target_sensorUnits;
 				_target1 = heading_units;
 
-				_talonRght.set(ControlMode.MotionMagic, _target0, DemandType.DemandType_AuxPID, _target1);
-				_talonLeft.follow(_talonRght, FollowerType.FollowerType_AuxOutput1);
+				_talonRght.set(ControlMode.MotionMagic, _target0, DemandType.AuxPID, _target1);
+				_talonLeft.follow(_talonRght, FollowerType.AuxOutput1);
 			} else if (bExecuteAction == ButtonEvent.ButtonOnToOff) {
 				//neutralMotors("Button let go\n");
 			}
@@ -775,7 +774,7 @@ public class Robot extends IterativeRobot {
 
 				_talonRght.set(	ControlMode.MotionProfile,
 								_motProfExample.getSetValue().value,
-								DemandType.DemandType_ArbitraryFeedForward,
+								DemandType.ArbitraryFeedForward,
 								feedFwdTerm);
 				_talonLeft.follow(_talonRght);
 			}
@@ -806,7 +805,7 @@ public class Robot extends IterativeRobot {
 			} else if (bExecuteAction == ButtonEvent.ButtonOn) {
 
 				_talonRght.set(ControlMode.MotionProfileArc, _motProfExample.getSetValue().value);
-				_talonLeft.follow(_talonRght, FollowerType.FollowerType_AuxOutput1);
+				_talonLeft.follow(_talonRght, FollowerType.AuxOutput1);
 			}
 			/* call this periodically, and catch the output.  Only apply it if user wants to run MP. */
 			_motProfExample.control();
@@ -838,9 +837,9 @@ public class Robot extends IterativeRobot {
 			} else if (bExecuteAction == ButtonEvent.ButtonOn) {
 				_talonRght.set(	ControlMode.MotionProfileArc,
 								_motProfExample.getSetValue().value,
-								DemandType.DemandType_ArbitraryFeedForward,
+								DemandType.ArbitraryFeedForward,
 								feedFwdTerm);
-				_talonLeft.follow(_talonRght, FollowerType.FollowerType_AuxOutput1);
+				_talonLeft.follow(_talonRght, FollowerType.AuxOutput1);
 			}
 
 			/* call this periodically, and catch the output.  Only apply it if user wants to run MP. */

@@ -220,11 +220,10 @@ public:
 		_talonRght.ConfigSetParameter(ParamEnum::ePIDLoopPeriod, closedLoopTimeMs, 0x00, Constants.PID_TURN, Constants.kTimeoutMs);
 
 		/**
-		 * 0 means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
-		 * 1 means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
+		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
+		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 		 */
-		int auxPidPolarity = 0;
-		_talonRght.ConfigSetParameter(ParamEnum::ePIDLoopPolarity, auxPidPolarity, 0x00, Constants.PID_TURN, Constants.kTimeoutMs);
+		_talonRght.ConfigAuxPIDPolarity(false, Constants.kTimeoutMs);
 
 		ZeroSensors();
 	}

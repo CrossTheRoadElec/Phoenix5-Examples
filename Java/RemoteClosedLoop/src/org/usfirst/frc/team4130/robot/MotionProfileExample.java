@@ -53,7 +53,7 @@ public class MotionProfileExample {
 	 * or call set(), just get motion profile status and make decisions based on
 	 * motion profile.
 	 */
-	private TalonSRX _talon;
+	private VictorSPX _talon;
 	/**
 	 * State machine to make sure we let enough of the motion profile stream to
 	 * talon before we fire it.
@@ -114,7 +114,7 @@ public class MotionProfileExample {
 	 * @param talon
 	 *            reference to Talon object to fetch motion profile status from.
 	 */
-	public MotionProfileExample(TalonSRX talon) {
+	public MotionProfileExample(VictorSPX talon) {
 		_talon = talon;
 		/*
 		 * since our MP is 10ms per point, set the control frame rate and the

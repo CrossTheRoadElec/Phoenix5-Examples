@@ -27,6 +27,7 @@ public:
 
 	PigeonIMU & _imu = *new PigeonIMU(3);
 
+
 	/* a couple latched values to detect on-press events for buttons and POV */
 	bool _btns[Constants.kNumButtonsPlusOne];
 
@@ -134,7 +135,7 @@ public:
 		} else if (choice == 4) {
 			/* select a ribbon-cabled Pigeon that is ribbon cabled to a remote Talon. */
 			_motorCntrller.ConfigRemoteFeedbackFilter(	_talonLimits.GetDeviceID(),
-														RemoteSensorSource::RemoteSensorSource_GadgeeterPigeon_Yaw,
+														RemoteSensorSource::RemoteSensorSource_GadgeteerPigeon_Yaw,
 														Constants.REMOTE_0,
 														Constants.kTimeoutMs);
 			/* not using remote 1 */
