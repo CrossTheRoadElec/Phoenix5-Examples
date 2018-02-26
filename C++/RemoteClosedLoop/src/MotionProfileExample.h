@@ -50,7 +50,7 @@ public:
 	 * or call set(), just get motion profile status and make decisions based on
 	 * motion profile.
 	 */
-	TalonSRX & _talon;
+	IMotorController & _motorController;
 	/**
 	 * State machine to make sure we let enough of the motion profile stream to
 	 * talon before we fire it.
@@ -101,7 +101,7 @@ public:
 	 */
 	void PeriodicTask() {
 		/* keep Talons happy by moving the points from top-buffer to bottom-buffer */
-		_talon.ProcessMotionProfileBuffer();
+		_motorController.ProcessMotionProfileBuffer();
 	}
 	/**
 	 * Lets create a periodic task to funnel our trajectory points into our talon.
@@ -110,13 +110,13 @@ public:
 	 */
 	Notifier _notifer;
 
-	MotionProfileExample(TalonSRX & talon) :
-			_talon(talon), _notifer(&MotionProfileExample::PeriodicTask, this) {
+	MotionProfileExample(IMotorController & motorController) :
+			_motorController(motorController), _notifer(&MotionProfileExample::PeriodicTask, this) {
 		/*
 		 * since our MP is 10ms per point, set the control frame rate and the
 		 * notifer to half that
 		 */
-		_talon.ChangeMotionControlFramePeriod(5);
+		_motorController.ChangeMotionControlFramePeriod(5);
 
 		/* start our tasking */
 		_notifer.StartPeriodic(0.005);
@@ -131,7 +131,7 @@ public:
 		 * middle of an MP, and now we have the second half of a profile just
 		 * sitting in memory.
 		 */
-		_talon.ClearMotionProfileTrajectories();
+		_motorController.ClearMotionProfileTrajectories();
 		/* When we do re-enter motionProfile control mode, stay disabled. */
 		_setValue = SetValueMotionProfile::Disable;
 		/* When we do start running our state machine start at the beginning. */
@@ -176,7 +176,7 @@ public:
 		}
 
 		/* first check if we are in MP mode */
-		if (false == IsMotionProfile(_talon.GetControlMode())) {
+		if (false == IsMotionProfile(_motorController.GetControlMode())) {
 			/*
 			 * we are not in MP mode. We are probably driving the robot around
 			 * using gamepads or some other mode.
@@ -245,10 +245,10 @@ public:
 			}
 
 			/* Get the motion profile status every loop */
-			_talon.GetMotionProfileStatus(_status);
-			_heading = _talon.GetActiveTrajectoryHeading();
-			_pos = _talon.GetActiveTrajectoryPosition();
-			_vel = _talon.GetActiveTrajectoryVelocity();
+			_motorController.GetMotionProfileStatus(_status);
+			_heading = _motorController.GetActiveTrajectoryHeading();
+			_pos = _motorController.GetActiveTrajectoryPosition();
+			_vel = _motorController.GetActiveTrajectoryVelocity();
 
 			/* printfs and/or logging */
 			Instrumentation::Process(_status, _pos, _vel, _heading);
@@ -293,17 +293,17 @@ public:
 			 * "is underrun", because the former is cleared by the application.
 			 * That way, we never miss logging it.
 			 */
-			_talon.ClearMotionProfileHasUnderrun(Constants.kTimeoutMs);
+			_motorController.ClearMotionProfileHasUnderrun(Constants.kTimeoutMs);
 		}
 
 		/*
 		 * just in case we are interrupting another MP and there is still buffer
 		 * points in memory, clear it.
 		 */
-		_talon.ClearMotionProfileTrajectories();
+		_motorController.ClearMotionProfileTrajectories();
 
 		/* set the base trajectory period to zero, use the individual trajectory period below */
-		_talon.ConfigMotionProfileTrajectoryPeriod(Constants.kBaseTrajPeriodMs, Constants.kTimeoutMs);
+		_motorController.ConfigMotionProfileTrajectoryPeriod(Constants.kBaseTrajPeriodMs, Constants.kTimeoutMs);
 
 		/* squirell away the final target distance, we will use this for heading generation */
 		double finalPositionRot = profile[totalCnt-1][0];
@@ -331,7 +331,7 @@ public:
 			if ((i + 1) == totalCnt)
 				point.isLastPoint = true; /* set this to true on the last point  */
 
-			_talon.PushMotionProfileTrajectory(point);
+			_motorController.PushMotionProfileTrajectory(point);
 		}
 	}
 	/**

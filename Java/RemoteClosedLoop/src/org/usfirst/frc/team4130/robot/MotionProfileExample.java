@@ -24,13 +24,14 @@
 
 package org.usfirst.frc.team4130.robot;
 
-
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
+
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motion.*;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
 
@@ -53,7 +54,7 @@ public class MotionProfileExample {
 	 * or call set(), just get motion profile status and make decisions based on
 	 * motion profile.
 	 */
-	private VictorSPX _talon;
+	private IMotorController _motorController;
 	/**
 	 * State machine to make sure we let enough of the motion profile stream to
 	 * talon before we fire it.
@@ -103,7 +104,7 @@ public class MotionProfileExample {
 	 * every 10ms.
 	 */
 	class PeriodicRunnable implements java.lang.Runnable {
-	    public void run() {  _talon.processMotionProfileBuffer();    }
+	    public void run() {  _motorController.processMotionProfileBuffer();    }
 	}
 	Notifier _notifer = new Notifier(new PeriodicRunnable());
 	
@@ -114,13 +115,13 @@ public class MotionProfileExample {
 	 * @param talon
 	 *            reference to Talon object to fetch motion profile status from.
 	 */
-	public MotionProfileExample(VictorSPX talon) {
-		_talon = talon;
+	public MotionProfileExample(IMotorController motorController) {
+		_motorController = motorController;
 		/*
 		 * since our MP is 10ms per point, set the control frame rate and the
 		 * notifer to half that
 		 */
-		_talon.changeMotionControlFramePeriod(5);
+		_motorController.changeMotionControlFramePeriod(5);
 		_notifer.startPeriodic(0.005);
 	}
 
@@ -134,7 +135,7 @@ public class MotionProfileExample {
 		 * middle of an MP, and now we have the second half of a profile just
 		 * sitting in memory.
 		 */
-		_talon.clearMotionProfileTrajectories();
+		_motorController.clearMotionProfileTrajectories();
 		/* When we do re-enter motionProfile control mode, stay disabled. */
 		_setValue = SetValueMotionProfile.Disable;
 		/* When we do start running our state machine start at the beginning. */
@@ -160,7 +161,7 @@ public class MotionProfileExample {
 	 */
 	public void control() {
 		/* Get the motion profile status every loop */
-		_talon.getMotionProfileStatus(_status);
+		_motorController.getMotionProfileStatus(_status);
 
 		/*
 		 * track time, this is rudimentary but that's okay, we just want to make
@@ -182,7 +183,7 @@ public class MotionProfileExample {
 		}
 
 		/* first check if we are in MP mode */
-		if (false == IsMotionProfile(_talon.getControlMode())) {
+		if (false == IsMotionProfile(_motorController.getControlMode())) {
 			/*
 			 * we are not in MP mode. We are probably driving the robot around
 			 * using gamepads or some other mode.
@@ -249,10 +250,10 @@ public class MotionProfileExample {
 			}
 
 			/* Get the motion profile status every loop */
-			_talon.getMotionProfileStatus(_status);
-			_heading = _talon.getActiveTrajectoryHeading();
-			_pos = _talon.getActiveTrajectoryPosition();
-			_vel = _talon.getActiveTrajectoryVelocity();
+			_motorController.getMotionProfileStatus(_status);
+			_heading = _motorController.getActiveTrajectoryHeading();
+			_pos = _motorController.getActiveTrajectoryPosition();
+			_vel = _motorController.getActiveTrajectoryVelocity();
 
 			/* printfs and/or logging */
 			Instrumentation.process(_status, _pos, _vel, _heading);
@@ -295,16 +296,16 @@ public class MotionProfileExample {
 			 * clear the error. This flag does not auto clear, this way 
 			 * we never miss logging it.
 			 */
-			_talon.clearMotionProfileHasUnderrun(Constants.kTimeoutMs);
+			_motorController.clearMotionProfileHasUnderrun(Constants.kTimeoutMs);
 		}
 		/*
 		 * just in case we are interrupting another MP and there is still buffer
 		 * points in memory, clear it.
 		 */
-		_talon.clearMotionProfileTrajectories();
+		_motorController.clearMotionProfileTrajectories();
 
 		/* set the base trajectory period to zero, use the individual trajectory period below */
-		_talon.configMotionProfileTrajectoryPeriod(Constants.kBaseTrajPeriodMs, Constants.kTimeoutMs);
+		configMotionProfileTrajectoryPeriod(Constants.kBaseTrajPeriodMs, Constants.kTimeoutMs);
 		
 		/* squirell away the final target distance, we will use this for heading generation */
 		double finalPositionRot = profile[totalCnt-1][0];
@@ -331,7 +332,7 @@ public class MotionProfileExample {
 			if ((i + 1) == totalCnt)
 				point.isLastPoint = true; /* set this to true on the last point  */
 
-			_talon.pushMotionProfileTrajectory(point);
+			_motorController.pushMotionProfileTrajectory(point);
 		}
 	}
 	/**
@@ -352,5 +353,35 @@ public class MotionProfileExample {
 	 */
 	SetValueMotionProfile getSetValue() {
 		return _setValue;
+	}
+	
+	/*
+	 * Helper routine to work around interface limitation.
+	 * 
+	 * configMotionProfileTrajectoryPeriod() is missing in IMotorController, so
+	 * this helper function written below to work around the limitation.
+	 */
+	private ErrorCode configMotionProfileTrajectoryPeriod(int baseTrajDurationMs, int timeoutMs) {
+		try {
+			/* attempt Talon cast */
+			TalonSRX tal = (TalonSRX) _motorController;
+			return tal.configMotionProfileTrajectoryPeriod(baseTrajDurationMs, timeoutMs);
+		} catch (Exception excep) {
+			/* empty */
+		}
+
+		try {
+			/* attempt Victor cast */
+			VictorSPX vic = (VictorSPX) _motorController;
+			return vic.configMotionProfileTrajectoryPeriod(baseTrajDurationMs, timeoutMs);
+		} catch (Exception excep) {
+			/* empty */
+		}
+
+		/*
+		 * should not get here, there are only two CTRE/VEX CAN motor
+		 * controllers (2018 season).
+		 */
+		return ErrorCode.GeneralError;
 	}
 }
