@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.FollowerType;
+import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
@@ -285,6 +286,7 @@ public class Robot extends IterativeRobot {
 		/* grab the joystick inputs */
 		double joyFwd = -1 * _joy.getY(); /* positive stick => forward */
 		double joyTurn = +1 * _joy.getTwist(); /* positive stick => right */
+		double joyX = +1 * _joy.getX();
 		int pov = _joy.getPOV();
 		getButtons(btns);
 
@@ -404,13 +406,13 @@ public class Robot extends IterativeRobot {
 				one_Axis_MotionProfile(bFirstCall, bExecuteAction, joyFwd, joyTurn);
 				break;
 			case kone_Axis_MotionProfile_WithCustomFeedFwd:
-				one_Axis_MotionProfile_WithCustomFeedFwd(bFirstCall, bExecuteAction, joyFwd, joyTurn);
+				one_Axis_MotionProfile_WithCustomFeedFwd(bFirstCall, bExecuteAction, joyFwd, joyTurn, joyX);
 				break;
 			case ktwo_Axis_MotionProfile:
 				two_Axis_MotionProfile(bFirstCall, bExecuteAction, joyFwd, joyTurn);
 				break;
 			case ktwo_Axis_MotionProfile_WithCustomFeedFwd:
-				two_Axis_MotionProfile_WithCustomFeedFwd(bFirstCall, bExecuteAction, joyFwd, joyTurn);
+				two_Axis_MotionProfile_WithCustomFeedFwd(bFirstCall, bExecuteAction, joyFwd, joyTurn, joyX);
 				break;
 			default:
 				neutralMotors("Invalid example selected\n");
@@ -750,9 +752,10 @@ public class Robot extends IterativeRobot {
 		void one_Axis_MotionProfile_WithCustomFeedFwd(	boolean bFirstCall,
 														ButtonEvent bExecuteAction,
 														double joyForward,
-														double joyTurn) {
+														double joyTurn,
+														double joyX) {
 			/* calculate targets from gamepad inputs */
-			double feedFwdTerm = 0;
+			double feedFwdTerm = joyX * 0.25;
 			boolean bMoveForward = (joyForward >= 0) ? true : false;
 
 			if (bFirstCall) {
@@ -813,9 +816,10 @@ public class Robot extends IterativeRobot {
 		void two_Axis_MotionProfile_WithCustomFeedFwd(	boolean bFirstCall,
 														ButtonEvent bExecuteAction,
 														double joyForward,
-														double joyTurn) {
+														double joyTurn,
+														double joyX) {
 			/* calculate targets from gamepad inputs */
-			double feedFwdTerm = 0;
+			double feedFwdTerm = joyX * 0.25;
 			boolean bMoveForward = (joyForward >= 0) ? true : false;
 			double finalHeading_units = Constants.kTurnTravelUnitsPerRotation * joyTurn * -1.0; /* positive right stick => negative heading target (turn to right) */
 

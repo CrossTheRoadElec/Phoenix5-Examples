@@ -305,7 +305,7 @@ public class MotionProfileExample {
 		_motorController.clearMotionProfileTrajectories();
 
 		/* set the base trajectory period to zero, use the individual trajectory period below */
-		configMotionProfileTrajectoryPeriod(Constants.kBaseTrajPeriodMs, Constants.kTimeoutMs);
+		_motorController.configMotionProfileTrajectoryPeriod(Constants.kBaseTrajPeriodMs, Constants.kTimeoutMs);
 		
 		/* squirell away the final target distance, we will use this for heading generation */
 		double finalPositionRot = profile[totalCnt-1][0];
@@ -353,35 +353,5 @@ public class MotionProfileExample {
 	 */
 	SetValueMotionProfile getSetValue() {
 		return _setValue;
-	}
-	
-	/*
-	 * Helper routine to work around interface limitation.
-	 * 
-	 * configMotionProfileTrajectoryPeriod() is missing in IMotorController, so
-	 * this helper function written below to work around the limitation.
-	 */
-	private ErrorCode configMotionProfileTrajectoryPeriod(int baseTrajDurationMs, int timeoutMs) {
-		try {
-			/* attempt Talon cast */
-			TalonSRX tal = (TalonSRX) _motorController;
-			return tal.configMotionProfileTrajectoryPeriod(baseTrajDurationMs, timeoutMs);
-		} catch (Exception excep) {
-			/* empty */
-		}
-
-		try {
-			/* attempt Victor cast */
-			VictorSPX vic = (VictorSPX) _motorController;
-			return vic.configMotionProfileTrajectoryPeriod(baseTrajDurationMs, timeoutMs);
-		} catch (Exception excep) {
-			/* empty */
-		}
-
-		/*
-		 * should not get here, there are only two CTRE/VEX CAN motor
-		 * controllers (2018 season).
-		 */
-		return ErrorCode.GeneralError;
 	}
 }
