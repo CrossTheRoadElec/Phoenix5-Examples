@@ -204,8 +204,6 @@ public:
 												Constants.kGains_Velocit.kPeakOutput,
 												Constants.kTimeoutMs);
 
-		_talonLeft.ConfigMotionProfileTrajectoryPeriod(10, Constants.kTimeoutMs); //Our profile uses 10 ms timing
-
 		_talonLeft.SetNeutralMode(NeutralMode::Brake);
 		_talonRght.SetNeutralMode(NeutralMode::Brake);
 

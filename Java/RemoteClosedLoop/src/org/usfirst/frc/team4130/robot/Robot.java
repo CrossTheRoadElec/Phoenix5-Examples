@@ -17,6 +17,7 @@ import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -234,8 +235,6 @@ public class Robot extends IterativeRobot {
 				_talonRght.configClosedLoopPeakOutput(	Constants.kSlot_Velocit,
 														Constants.kGains_Velocit.kPeakOutput,
 														Constants.kTimeoutMs);
-
-				_talonLeft.configMotionProfileTrajectoryPeriod(10, Constants.kTimeoutMs); //Our profile uses 10 ms timing
 
 				_talonLeft.setNeutralMode(NeutralMode.Brake);
 				_talonRght.setNeutralMode(NeutralMode.Brake);
