@@ -251,6 +251,7 @@ public:
 		bool btns[Constants.kNumButtonsPlusOne];
 		double joyFwd = -1 * _joy.GetY(); /* positive stick => forward */
 		double joyTurn = +1 * _joy.GetTwist(); /* positive stick => right */
+		double joyX = +1 * _joy.GetX();
 		int pov = _joy.GetPOV();
 		GetButtons(btns);
 
@@ -370,13 +371,13 @@ public:
 				One_Axis_MotionProfile(bFirstCall, bExecuteAction, joyFwd, joyTurn);
 				break;
 			case kOne_Axis_MotionProfile_WithCustomFeedFwd:
-				One_Axis_MotionProfile_WithCustomFeedFwd(bFirstCall, bExecuteAction, joyFwd, joyTurn);
+				One_Axis_MotionProfile_WithCustomFeedFwd(bFirstCall, bExecuteAction, joyFwd, joyTurn, joyX);
 				break;
 			case kTwo_Axis_MotionProfile:
 				Two_Axis_MotionProfile(bFirstCall, bExecuteAction, joyFwd, joyTurn);
 				break;
 			case kTwo_Axis_MotionProfile_WithCustomFeedFwd:
-				Two_Axis_MotionProfile_WithCustomFeedFwd(bFirstCall, bExecuteAction, joyFwd, joyTurn);
+				Two_Axis_MotionProfile_WithCustomFeedFwd(bFirstCall, bExecuteAction, joyFwd, joyTurn, joyX);
 				break;
 			default:
 				NeutralMotors("Invalid example selected\n");
@@ -719,9 +720,10 @@ public:
 	void One_Axis_MotionProfile_WithCustomFeedFwd(	bool bFirstCall,
 													ButtonEvent bExecuteAction,
 													double joyForward,
-													double joyTurn) {
+													double joyTurn,
+													double joyX) {
 		/* calculate targets from gamepad inputs */
-		double feedFwdTerm = 0;
+		double feedFwdTerm = 0.25 * joyX;
 		bool bMoveForward = (joyForward >= 0) ? true : false;
 		(void) joyTurn; /* not used, so remove the unused warning */
 
@@ -785,9 +787,10 @@ public:
 	void Two_Axis_MotionProfile_WithCustomFeedFwd(	bool bFirstCall,
 													ButtonEvent bExecuteAction,
 													double joyForward,
-													double joyTurn) {
+													double joyTurn,
+													double joyX) {
 		/* calculate targets from gamepad inputs */
-		double feedFwdTerm = 0;
+		double feedFwdTerm = 0.25 * joyX;
 		bool bMoveForward = (joyForward >= 0) ? true : false;
 		double finalHeading_units = Constants.kTurnTravelUnitsPerRotation * joyTurn * -1.0; /* positive right stick => negative heading target (turn to right) */
 
