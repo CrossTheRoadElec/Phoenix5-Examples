@@ -320,7 +320,7 @@ public class MotionProfileExample {
 			/* for each point, fill our structure and pass it to API */
 			point.position = direction * positionRot * Constants.kSensorUnitsPerRotation * 2; //Convert Revolutions to Units
 			point.velocity = direction * velocityRPM * Constants.kSensorUnitsPerRotation / 600.0; //Convert RPM to Units/100ms
-			point.auxiliaryPos = heading; /* future feature - not used in this example*/
+			point.auxiliaryPos = heading; /* scaled such that 3600 => 360 deg */
 			point.profileSlotSelect0 = Constants.kSlot_MotProf; /* which set of gains would you like to use [0,3]? */
 			point.profileSlotSelect1 = Constants.kSlot_Turning; /* auxiliary PID [0,1], leave zero */
 			point.timeDur = GetTrajectoryDuration((int)profile[i][2]);
