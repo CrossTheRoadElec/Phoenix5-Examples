@@ -130,7 +130,7 @@ public class Robot extends IterativeRobot {
 												Constants.kTimeoutMs);
 		/* Remote 1 will be a pigeon */
 		_talonRght.configRemoteFeedbackFilter(	_talonPigeon.getDeviceID(),
-												RemoteSensorSource.Pigeon_Yaw,
+												RemoteSensorSource.GadgeteerPigeon_Yaw,
 												Constants.REMOTE_1,
 												Constants.kTimeoutMs);
 		/* setup sum and difference signals */
