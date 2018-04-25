@@ -73,75 +73,58 @@ namespace BalanceBot
         {
             /* Initialize Display */
             CTRE.Gadgeteer.Module.DisplayModule.LabelSprite titleDisplay, pitchDisplay, outputDisplay, PID_PDisplay, PID_IDisplay,
-                PID_DDisplay, PIDScalerDisplay, PIDSelectDisplay, batteryDisplay;
+                PID_DDisplay, PIDScalerDisplay, PIDSelectDisplay, batteryDisplay, trimDisplay;
 
-            /* State and battery display */
+            /* State and battery display in the 1st row */
             titleDisplay = Hardware.Display.AddLabelSprite(Hardware.bigFont, CTRE.Gadgeteer.Module.DisplayModule.Color.Red, 1, 1, 80, 15);
-            batteryDisplay = Hardware.Display.AddLabelSprite(Hardware.bigFont, CTRE.Gadgeteer.Module.DisplayModule.Color.Green, 80, 1, 80, 15);
+            batteryDisplay = Hardware.Display.AddLabelSprite(Hardware.bigFont, CTRE.Gadgeteer.Module.DisplayModule.Color.Green, 81, 1, 79, 15);
 
-            /* Pitch and output display on top right */
+            /* Pitch and output display in the 2nd row */
             pitchDisplay = Hardware.Display.AddLabelSprite(Hardware.bigFont, CTRE.Gadgeteer.Module.DisplayModule.Color.Cyan, 1, 21, 80, 15);
-            outputDisplay = Hardware.Display.AddLabelSprite(Hardware.bigFont, CTRE.Gadgeteer.Module.DisplayModule.Color.Cyan, 80, 21, 80, 15);
+			outputDisplay = Hardware.Display.AddLabelSprite(Hardware.bigFont, CTRE.Gadgeteer.Module.DisplayModule.Color.Cyan, 81, 21, 79, 15);
 
-            /* Gain Display at the bottom */
-            PIDScalerDisplay = Hardware.Display.AddLabelSprite(Hardware.bigFont, CTRE.Gadgeteer.Module.DisplayModule.Color.Yellow, 1, 41, 80, 15);
+			/* PID Scalar and angle Trim display in the 3rd row */
+			PIDScalerDisplay = Hardware.Display.AddLabelSprite(Hardware.bigFont, CTRE.Gadgeteer.Module.DisplayModule.Color.Yellow, 1, 41, 80, 15);
+			trimDisplay = Hardware.Display.AddLabelSprite(Hardware.bigFont, CTRE.Gadgeteer.Module.DisplayModule.Color.Blue, 81, 41, 79, 15);
+
+			/* Gain Display at the bottom */
 			PID_PDisplay = Hardware.Display.AddLabelSprite(Hardware.bigFont, CTRE.Gadgeteer.Module.DisplayModule.Color.White, 1, 61, 90, 15);
             PID_IDisplay = Hardware.Display.AddLabelSprite(Hardware.bigFont, CTRE.Gadgeteer.Module.DisplayModule.Color.White, 1, 81, 90, 15);
             PID_DDisplay = Hardware.Display.AddLabelSprite(Hardware.bigFont, CTRE.Gadgeteer.Module.DisplayModule.Color.White, 1, 101, 90, 15);
 			PIDSelectDisplay = Hardware.Display.AddLabelSprite(Hardware.bigFont, CTRE.Gadgeteer.Module.DisplayModule.Color.Orange, 91, 81, 60, 15);
 
+			foreach(CTRE.Phoenix.MotorControl.CAN.TalonSRX Talon in Hardware.allTalons)
+			{
+				/* Voltage Compensation on both Talons */
+				Talon.ConfigVoltageCompSaturation(10.0f, kTimeout);
+				Talon.EnableVoltageCompensation(true);
+				Talon.ConfigVoltageMeasurementFilter(32, kTimeout);
 
-			Hardware.leftTalon.ConfigVoltageCompSaturation(10.0f, kTimeout);
-			Hardware.leftTalon.EnableVoltageCompensation(true);
-			Hardware.leftTalon.ConfigVoltageMeasurementFilter(32, kTimeout);
+				Talon.ConfigNominalOutputForward(0, kTimeout);
+				Talon.ConfigNominalOutputReverse(0, kTimeout);
+				Talon.ConfigPeakOutputForward(1, kTimeout);
+				Talon.ConfigPeakOutputReverse(-1, kTimeout);
 
-			Hardware.leftTalon.ConfigNominalOutputForward(0, kTimeout);
-			Hardware.leftTalon.ConfigNominalOutputReverse(0, kTimeout);
-			Hardware.leftTalon.ConfigPeakOutputForward(1, kTimeout);
-			Hardware.leftTalon.ConfigPeakOutputReverse(-1, kTimeout);
+				/* Current limiting on both Talons */
+				Talon.ConfigContinuousCurrentLimit(15, kTimeout);  // Configured to desired amperage of current draw
+				Talon.ConfigPeakCurrentLimit(15, kTimeout);        // Peak current limit set to 0, current limit when current has excedded continout current limit value
+				Talon.ConfigPeakCurrentDuration(0, kTimeout);      // Current limit the moment peak current limit has been met by current limit
+				Talon.EnableCurrentLimit(true);                    // Enable current limiting
 
+				/* Change Velocity measurement paramters */
+				Talon.ConfigVelocityMeasurementPeriod(CTRE.Phoenix.MotorControl.VelocityMeasPeriod.Period_10Ms, kTimeout);
+				Talon.ConfigVelocityMeasurementWindow(32, kTimeout);
 
-			Hardware.rightTalon.ConfigVoltageCompSaturation(10.0f, kTimeout);
-			Hardware.rightTalon.EnableVoltageCompensation(false);
-			Hardware.rightTalon.ConfigVoltageMeasurementFilter(32, kTimeout);
+				/* Speed up Feedback status frame of both Talons */
+				Talon.SetStatusFramePeriod(CTRE.Phoenix.MotorControl.StatusFrame.Status_2_Feedback0_, 10, kTimeout);
 
-			Hardware.rightTalon.ConfigNominalOutputForward(0, kTimeout);
-			Hardware.rightTalon.ConfigNominalOutputReverse(0, kTimeout);
-			Hardware.rightTalon.ConfigPeakOutputForward(1, kTimeout);
-			Hardware.rightTalon.ConfigPeakOutputReverse(-1, kTimeout);
-
-
-			/* Current limiting on both Talons */
-			Hardware.leftTalon.ConfigContinuousCurrentLimit(20, kTimeout);// Configured to desired amperage of current draw
-			Hardware.leftTalon.ConfigPeakCurrentLimit(20, kTimeout);       // Peak current limit set to 0, current limit when current has excedded continout current limit value
-			Hardware.leftTalon.ConfigPeakCurrentDuration(0, kTimeout);    // Current limit the moment peak current limit has been met by current limit
-			Hardware.leftTalon.EnableCurrentLimit(true);        // Enable current limiting
-
-			Hardware.rightTalon.ConfigContinuousCurrentLimit(20, kTimeout);
-			Hardware.rightTalon.ConfigPeakCurrentLimit(20, kTimeout);
-			Hardware.rightTalon.ConfigPeakCurrentDuration(0, kTimeout);
-			Hardware.rightTalon.EnableCurrentLimit(true);
-
-			/* Set sensor phase of gearbox (May have to change phase of right side instead */
-			//Hardware.leftGearbox.SetSensorPhase(true);
-
-			/* Change Velocity measurement paramters */
-			Hardware.rightTalon.ConfigVelocityMeasurementPeriod(CTRE.Phoenix.MotorControl.VelocityMeasPeriod.Period_10Ms, kTimeout);
-			Hardware.rightTalon.ConfigVelocityMeasurementWindow(32, kTimeout);
-			Hardware.leftTalon.ConfigVelocityMeasurementPeriod(CTRE.Phoenix.MotorControl.VelocityMeasPeriod.Period_10Ms, kTimeout);
-			Hardware.leftTalon.ConfigVelocityMeasurementWindow(32, kTimeout);
-
-			/* Speed up Feedback status frame of both Talons */
-			Hardware.leftTalon.SetStatusFramePeriod(CTRE.Phoenix.MotorControl.StatusFrame.Status_2_Feedback0_, 10, kTimeout);
-			Hardware.rightTalon.SetStatusFramePeriod(CTRE.Phoenix.MotorControl.StatusFrame.Status_2_Feedback0_, 10, kTimeout);
+				/* Speed up Status Frame 4, which provides information about battery */
+				Talon.SetStatusFramePeriod(CTRE.Phoenix.MotorControl.StatusFrameEnhanced.Status_4_AinTempVbat, 10, kTimeout);
+			}
 
 			/* Speed up Pigeon CAN Frames that are important for the cascade PID loop to operate properly */
 			Hardware.pidgey.SetStatusFramePeriod(CTRE.Phoenix.Sensors.PigeonIMU_StatusFrame.BiasedStatus_2_Gyro, 5, kTimeout);
 			Hardware.pidgey.SetStatusFramePeriod(CTRE.Phoenix.Sensors.PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 5, kTimeout);
-
-			/* Speed up Status Frame 4, which provides information about battery */
-			Hardware.leftTalon.SetStatusFramePeriod(CTRE.Phoenix.MotorControl.StatusFrameEnhanced.Status_4_AinTempVbat, 10, kTimeout);
-			Hardware.rightTalon.SetStatusFramePeriod(CTRE.Phoenix.MotorControl.StatusFrameEnhanced.Status_4_AinTempVbat, 10, kTimeout);
 
 			/* Locals used when Gain Scheduling within Balance loop (Inner Loop) */
 			float tempP = 0;
@@ -151,6 +134,10 @@ namespace BalanceBot
 
 			float[] XYZ_Dps = new float[3];
 			Boolean lowBattery = false;
+
+			CTRE.Phoenix.Controller.GameControllerValues gamepadValues = new CTRE.Phoenix.Controller.GameControllerValues();
+			int lastGamepadPOV = 0;
+			float angleTrim = 0;
 
 			while (true)
 			{
@@ -164,6 +151,14 @@ namespace BalanceBot
 				CTRE.Phoenix.Util.Deadband(ref stick);          //Deadband
 				CTRE.Phoenix.Util.Deadband(ref turn);           //Deadband
 				turn *= 0.50f;                                  //Scale turn speed
+
+				Hardware.Gamepad.GetAllValues(ref gamepadValues);
+				if (gamepadValues.pov == 2 && lastGamepadPOV != 2)
+					angleTrim++;
+				else if (gamepadValues.pov == 6 && lastGamepadPOV != 6)
+					angleTrim--;
+				lastGamepadPOV = gamepadValues.pov;
+				trimDisplay.SetText("Trm: " + angleTrim);
 
 				/* Change operation state when Button 1 (X-Button) is pressed */
 				bool button1 = Hardware.Gamepad.GetButton(1);
@@ -183,6 +178,7 @@ namespace BalanceBot
 					/* Update current pitchoffset with new offset */
 					pitchoffset = 0;
 					pitchoffset = GetPitch();
+					angleTrim = 0;
 				}
 				lastButton2 = button2;
 
@@ -207,6 +203,7 @@ namespace BalanceBot
 				}
 				lastButton4 = button4;
 
+				/* Increase the DEC/INC Value for PID Gains by 10x, max of 10.000... when Button 10 (Start-Button) is pressed */
 				bool button10 = Hardware.Gamepad.GetButton(10);
 				if (button10 && !lastButton10)
 				{
@@ -298,27 +295,24 @@ namespace BalanceBot
                 float iValue_vel = Iaccum_velocity;
                 float angleSetpoint = pValue_vel + iValue_vel;
 
-                /* Balance PID, call 4 times per outer call */
+                /* Balance PID, call 4 times per outer call (Cascade PID control) */
                 //=============================================================================================================================================//
                 //=============================================================================================================================================//
                 for (int i = 0; i < 4; i++)
                 {
-                    Hardware.pidgey.GetRawGyro(XYZ_Dps);
-                    float currentAngularRate = XYZ_Dps[0] * 0.001f;       //Scaled down for easier gain control
+                    Hardware.pidgey.GetRawGyro(XYZ_Dps);				//Get Angular rate for pitch
+                    float currentAngularRate = XYZ_Dps[0] * 0.001f;     //Scaled down for easier gain control
 
-                    float currentPitch = GetPitch();
-                    pitchDisplay.SetText("p: " + currentPitch);
+                    float currentPitch = GetPitch();					//Get Pitch
+                    pitchDisplay.SetText("p: " + currentPitch);			//Update Display
 
-                    float targetPitch = angleSetpoint;
+                    float targetPitch = angleSetpoint + angleTrim;
                     float pitchError = targetPitch - currentPitch;
 
-                    Iaccum += pitchError;
-                    Iaccum = CTRE.Phoenix.Util.Cap(Iaccum, accummax);
-
                     float deadband = 5.0f;
-                    if (currentPitch > -deadband && currentPitch < deadband)
+                    if (currentPitch > (angleTrim - deadband) && currentPitch < (angleTrim + deadband))
                     {
-                        /* Gain schedule when within 5 degrees  of 0 */
+                        /* Gain schedule when within 5 degrees of current angleTrim */
                         tempP = BalancePID.P;
                         tempI = BalancePID.I;
                         tempD = BalancePID.D;
@@ -331,18 +325,22 @@ namespace BalanceBot
                         Iaccum = 0;
                     }
 
-                    if (currentPitch > -0.5 && currentPitch < 0.5)
-                        Iaccum = 0;     //Clear accumulator when within zone
+					Iaccum += pitchError * tempI;
+					Iaccum = CTRE.Phoenix.Util.Cap(Iaccum, accummax);
+
+					/* Clear accumulator when within zone */
+					if (currentPitch > -0.5 && currentPitch < 0.5)
+                        Iaccum = 0;
 
                     float pValue = (pitchError) * tempP;
-                    float iValue = (Iaccum) * tempI;
+                    float iValue = (Iaccum);
                     float dValue = (currentAngularRate) * tempD;
                     float Output = pValue - dValue + iValue;
 
                     /* Process output */
                     //=============================================================================================================================================//
                     //=============================================================================================================================================//
-                    Output = CTRE.Phoenix.Util.Cap(Output, maxOutput);  //cap value from [-1, 1]
+                    Output = CTRE.Phoenix.Util.Cap(Output, maxOutput);  //cap value to [-1, 1]
 
                     if (lowBattery)
                     {
@@ -429,8 +427,8 @@ namespace BalanceBot
 
             /* Straight drive PD */
             float X = (angleToHold - GetYaw()) * KpGain - (yawRate) * KdGain;
-            float MaxThrottle = MaxCorrection(fset, KMaxCorrectionRatio);       // Scale correction output based on throttle
-            X = CTRE.Phoenix.Util.Cap(X, MaxThrottle);
+            float MaxThrottle = MaxCorrection(fset, KMaxCorrectionRatio);       // Scale correction output based on throttle with at least 1 percent correction enforced
+            X = CTRE.Phoenix.Util.Cap(X, MaxThrottle);							// Cap the output of the correction to the output
             X *= -1;                                                            // For our robot, invert the correction
 
             /* Selects which variable to use for our turn value */

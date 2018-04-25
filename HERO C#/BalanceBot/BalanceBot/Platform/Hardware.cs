@@ -7,6 +7,7 @@ namespace BalanceBot.Platform
         //Create our two motors
         public static CTRE.Phoenix.MotorControl.CAN.TalonSRX rightTalon = new CTRE.Phoenix.MotorControl.CAN.TalonSRX(0);
         public static CTRE.Phoenix.MotorControl.CAN.TalonSRX leftTalon = new CTRE.Phoenix.MotorControl.CAN.TalonSRX(1);
+		public static CTRE.Phoenix.MotorControl.CAN.TalonSRX[] allTalons = {rightTalon, leftTalon};
         public static CTRE.Phoenix.Mechanical.SensoredGearbox rightGearbox = new CTRE.Phoenix.Mechanical.SensoredGearbox(4096, rightTalon, CTRE.Phoenix.MotorControl.FeedbackDevice.CTRE_MagEncoder_Relative);
         public static CTRE.Phoenix.Mechanical.SensoredGearbox leftGearbox = new CTRE.Phoenix.Mechanical.SensoredGearbox(4096, leftTalon, CTRE.Phoenix.MotorControl.FeedbackDevice.CTRE_MagEncoder_Relative);
 
