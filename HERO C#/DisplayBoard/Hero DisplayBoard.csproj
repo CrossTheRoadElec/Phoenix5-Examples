@@ -34,9 +34,7 @@
   <ItemGroup>
     <Compile Include="Battery.cs" />
     <Compile Include="ColorSequencer.cs" />
-    <Compile Include="DisplayModule.cs" />
     <Compile Include="HorizGauge.cs" />
-    <Compile Include="HsvToRgb.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -65,10 +63,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\background.jpg" />
-    <None Include="Resources\nina14.tinyfnt" />
     <None Include="Resources\NinaB.tinyfnt" />
-    <None Include="Resources\ninabd18ppem.tinyfnt" />
     <None Include="Resources\small.tinyfnt" />
   </ItemGroup>
   <ItemGroup>

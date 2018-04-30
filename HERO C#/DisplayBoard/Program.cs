@@ -493,12 +493,16 @@ namespace Hero_DisplayBoard
             float Value = 1.0f;
 
             /* Output after HSV to RGB conversion */
-            uint R, G, B;
+            float R, G, B;
             /* Convert HSV to RGB */
-            HsvToRgb.Convert(HueDeg, Saturation, Value, out R, out G, out B);
+            CTRE.Phoenix.HsvToRgb.Convert(HueDeg, Saturation, Value, out R, out G, out B);
+			R = Clamp((int)(R * 255.0));
+			G = Clamp((int)(G * 255.0));
+			B = Clamp((int)(B * 255.0));
 
-            /* Modify RGB values based on brightness */
-            float Red = R * 1f / 255f * Brightness;
+
+			/* Modify RGB values based on brightness */
+			float Red = R * 1f / 255f * Brightness;
             float Green = G * 1f / 255f * Brightness;
             float Blue = B * 1f / 255f * Brightness;
 
@@ -527,12 +531,15 @@ namespace Hero_DisplayBoard
             /* Constant value */
             float Value = 1;
             /* Output after HSV to RGB conversion */
-            uint R, G, B;
+            float R, G, B;
             /* Convert HSV to RGB */
-            HsvToRgb.Convert(HueDeg, Saturation, Value, out R, out G, out B);
+            CTRE.Phoenix.HsvToRgb.Convert(HueDeg, Saturation, Value, out R, out G, out B);
+			R = Clamp((int)(R * 255.0));
+			G = Clamp((int)(G * 255.0));
+			B = Clamp((int)(B * 255.0));
 
-            /* Modify RGB values based on brightness */
-            float Red = R * 1f / 255f * Brightness;
+			/* Modify RGB values based on brightness */
+			float Red = R * 1f / 255f * Brightness;
             float Green = G * 1f / 255f * Brightness;
             float Blue = B * 1f / 255f * Brightness;
 
@@ -592,5 +599,13 @@ namespace Hero_DisplayBoard
             }
             return -1;
         }
-    }
+
+		/** Clamp a value to 0 - 255 */
+		private static uint Clamp(int i)
+		{
+			if (i < 0) return 0;
+			if (i > 255) return 255;
+			return (uint)i;
+		}
+	}
 }

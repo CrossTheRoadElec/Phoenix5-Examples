@@ -34,18 +34,15 @@ namespace Hero_DisplayBoard.Properties
             return ((byte[])(Microsoft.SPOT.ResourceUtility.GetObject(ResourceManager, id)));
         }
         [System.SerializableAttribute()]
-        internal enum BinaryResources : short
-        {
-            background = 4557,
-            ch2 = 27490,
-        }
-        [System.SerializableAttribute()]
         internal enum FontResources : short
         {
             small = 13070,
             NinaB = 18060,
-            nina14 = 19188,
-            ninabd18ppem = 31399,
+        }
+        [System.SerializableAttribute()]
+        internal enum BinaryResources : short
+        {
+            ch2 = 27490,
         }
     }
 }

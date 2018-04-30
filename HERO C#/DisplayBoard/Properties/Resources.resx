@@ -118,20 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="background" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\background.jpg;System.Byte[], mscorlib, Version=4.4.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
   <data name="ch2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ch2.jpg;System.Byte[], mscorlib, Version=4.4.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="nina14" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\nina14.tinyfnt;System.Byte[], mscorlib, Version=4.4.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
   <data name="NinaB" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\NinaB.tinyfnt;System.Byte[], mscorlib, Version=4.4.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="ninabd18ppem" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ninabd18ppem.tinyfnt;System.Byte[], mscorlib, Version=4.4.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\small.tinyfnt;System.Byte[], mscorlib, Version=4.4.0.0, Culture=neutral, PublicKeyToken=null</value>
