@@ -8,20 +8,20 @@ This example comes with a few options as you can go basic using only a HERO, Dri
 For the complete setup, a HERO is connected to both a Talon SRX and a Pigeon IMU through CAN. We then used a ribbon cable to connect the Driver Module to the Talon SRX's data port. We used channels 4 to 6 on the Driver Module, one for each of the RGB values, to connect the LED strip along with 12V power from a [Power Distribution Breakout](http://www.ctr-electronics.com/power-distribution-breakout.html). If you look at the image below, you can see that channels 4 to 6 are connected to the LED Strip where P4 is red, P5 is green, and P6 is blue. The Driver Module also has ground supplied to it for its low side output. We used the power distribution breakout to supply power to the Talon SRX and the HERO as well. **Note:** To use the Talon SRX directly with the Driver Module, you must flash your Talon SRX with the firmware included in this repository under "Talon Firmware". If using a Talon SRX to control both a Driver Module and Motor at the same time, you must disable the limit switching.
 
 ###### LED Strip: P4 is red, P5 is green, and P6 is blue; all connected to LED Strip. 12V power from power distribution breakout supplied to LED strip and ground supplied to Driver Module.
-![alt text](https://github.com/ozrien/ctre-gia/blob/master/Hero%20DisplayBoard/README%20Images/DriverStrip.jpg)
+![alt text](https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/blob/Worlds_Demo_Examples/HERO%20C%23/DisplayBoard/README%20Images/DriverStrip.jpg)
 
 ###### Driver Module option 1: Use a ribbon cable to connect the Driver Module to a Talon SRX. Talon SRX connects to HERO with CAN.
-![alt text](https://github.com/ozrien/ctre-gia/blob/master/Hero%20DisplayBoard/README%20Images/TalonDriver.jpg)
+![alt text](https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/blob/Worlds_Demo_Examples/HERO%20C%23/DisplayBoard/README%20Images/TalonDriver.jpg)
 ###### Driver Module option 2: Use a ribbon cable to connect the Driver Module to port 3 of HERO labeled "PY".
-![alt text](https://github.com/ozrien/ctre-gia/blob/master/Hero%20DisplayBoard/README%20Images/HeroDriver.jpg)
+![alt text](https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/blob/Worlds_Demo_Examples/HERO%20C%23/DisplayBoard/README%20Images/HeroDriver.jpg)
 
 ###### CAN: If you are using a Pigeon IMU or Talon SRX within your build, wire them through CAN and set the I.D. of both devices to 0.
-![alt text](https://github.com/ozrien/ctre-gia/blob/master/Hero%20DisplayBoard/README%20Images/CAN.jpg)
+![alt text](https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/blob/Worlds_Demo_Examples/HERO%20C%23/DisplayBoard/README%20Images/CAN.jpg)
 
 ### Example Setup
 When assembled, your build should have three wires from the Driver Module along with 12V power connecting to the LED Strip (see *Full Setup*). Ground should be supplied to 'GND' on the Driver Module. The Driver Module is then connected to either a Talon SRX or a HERO (Port 3) with a ribbon cable. If using a Talon SRX, it should be connected to HERO through CAN. If using a Pigeon IMU, it should be connected through CAN as well. The code was written so that both the Talon SRX and Pigeon IMU has the I.D. of 0. This can be changed in LifeBoat, or you may modify the code lines where the Talon SRX and Pigeon IMU objects are created. 12V power can be supplied through a battery or power supply, which then can be distributed with a power distribution breakout to the HERO, Talon SRX, and LED strip
 ###### Example Setup:
-![alt text](https://github.com/ozrien/ctre-gia/blob/master/Hero%20DisplayBoard/README%20Images/Setup.jpg)
+![alt text](https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/blob/Worlds_Demo_Examples/HERO%20C%23/DisplayBoard/README%20Images/Setup.jpg)
 
 # How to Use DisplayBoard
 Once you have assembled your Display Board and flashed it, you may see one of three things. If the LED strip is cycling through colors automatically, it means DisplayBoard is in Controller Mode and your example is ready to use. If the LED strip is holding one color (typically Purple/Magenta), it means DisplayBoard is in Pigeon IMU Mode and your example is ready to use. If the LED strip is flashing on and off, it means DisplayBoard is in Pigeon IMU Mode and your Pigeon has not finished calibration or a Pigeon could not be found.
