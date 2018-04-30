@@ -37,7 +37,6 @@
     <Compile Include="Battery.cs" />
     <Compile Include="ColorSequencer.cs" />
     <Compile Include="DisplayBot.cs" />
-    <Compile Include="HsvToRgb.cs" />
     <Compile Include="PixyBot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
