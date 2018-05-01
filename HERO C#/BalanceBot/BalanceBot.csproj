@@ -45,7 +45,7 @@
   <ItemGroup>
     <Reference Include="CTRE, Version=5.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Phoenix-netmf-lib\CTRE\bin\Debug\CTRE.dll</HintPath>
+      <HintPath>..\..\..\Phoenix-netmf-lib\CTRE\bin\Debug\CTRE.dll</HintPath>
     </Reference>
     <Reference Include="ctre_netmf_native, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SPOT.Graphics" />

@@ -1,4 +1,62 @@
-﻿using CTRE;
+﻿/**
+ *  Software License Agreement
+ *
+ * Copyright (C) Cross The Road Electronics.  All rights
+ * reserved.
+ * 
+ * Cross The Road Electronics (CTRE) licenses to you the right to 
+ * use, publish, and distribute copies of CRF (Cross The Road) firmware files (*.crf) and Software
+ * API Libraries ONLY when in use with Cross The Road Electronics hardware products.
+ * 
+ * THE SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS" WITHOUT
+ * WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT
+ * LIMITATION, ANY WARRANTY OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT SHALL
+ * CROSS THE ROAD ELECTRONICS BE LIABLE FOR ANY INCIDENTAL, SPECIAL, 
+ * INDIRECT OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, COST OF
+ * PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR SERVICES, ANY CLAIMS
+ * BY THIRD PARTIES (INCLUDING BUT NOT LIMITED TO ANY DEFENSE
+ * THEREOF), ANY CLAIMS FOR INDEMNITY OR CONTRIBUTION, OR OTHER
+ * SIMILAR COSTS, WHETHER ASSERTED ON THE BASIS OF CONTRACT, TORT
+ * (INCLUDING NEGLIGENCE), BREACH OF WARRANTY, OR OTHERWISE
+ */
+
+/****************************************************************************************************/
+/***************************************** VERSION **************************************************/
+/****************************************************************************************************/
+/**
+/* Installer:		5.4.1.0
+ * CTRE.dll:		5.1.1.0
+ * HERO:			1.1.0.0
+ * Talon SRX:		11.8.0
+ * Pigeon IMU:		0.41
+ * CANifier			0.42
+ */
+
+/** 
+* Example that uses the Pigeon IMU and Magnetic Encoders to assist the two wheeled robotic system balance.
+* The ability to balance relies on the on the cascaded control loop that we have implemented, where the outer
+* loop, Velocity, is runnning once every time the inner loop, Balance, excutes 4 times. This allows the outter loop
+* to process data. 
+* 
+* Controls
+* Button 1 (X-Button) - Toggle enable/disable the Balance Closed Loop
+* Button 2 (A-Button) - Tares the pitch reading of the Balance Bot to 0 at current position (Also resets Trim)
+* Button 3 (B-Button) - Cycles between the current PID Set's PID Values [P,I,D]
+* Button 4 (Y-Button) - cycles between the various PID Sets [Balance, Drive, Velocity]
+* Button 5 (Left-Bumper) - Decrease current PID Value by inc/dec value
+* Button 6 (Right-Bumper) - Increase current PID Value by inc/dec value
+* Button 10 (Start) - Increase the inc/dec value by 10x, resets to 0.001 after 100
+* POV 6 (Left-Dpad) - Decrease Trim by 1;
+* PoV 2 (Right-Dpad) - Increase Trim by 1;
+* 
+* Gain Tuning....
+* TO BE DOCUMENTED ONCE PROCEDURE IS FOUND
+*/
+
+
+
+using CTRE;
 using System;
 using System.Threading;
 using Microsoft;
@@ -7,10 +65,10 @@ using BalanceBot.Platform;
 
 namespace BalanceBot
 {
-    public class Program
-    {
-        /* Constants */
-        const float maxOutput = 1;					// Max output is 0, percent output is [-1, 1]
+   public class Program
+   {
+	   /* Constants */
+		const float maxOutput = 1;					// Max output is 0, percent output is [-1, 1]
         const float DegToRad = 0.01745329252f;		// Scalor to convert Degrees to Radians
         const float RadToDeg = 57.2957795131f;		// Scalor to convert Radians to Degrees
 		const int kTimeout = 10;                    // Timeout of 10ms for sets and configs
