@@ -21,6 +21,16 @@
  * (INCLUDING NEGLIGENCE), BREACH OF WARRANTY, OR OTHERWISE
  */
 
+/****************************************************************************************************/
+/***************************************** VERSION **************************************************/
+/****************************************************************************************************/
+/* Installer:		5.4.1.0
+ * CTRE.dll:		5.1.0.0
+ * HERO:			1.1.0.0
+ * Talon SRX:		11.8.0
+ * Pigeon IMU:		0.41
+ */
+
 ///**
 // * Example using both the Pixy Camera and Display Module to demonstate how PixyCamera can be used to follow either
 // *  single colored or color coded objects. This example works best with 2 robots which we will call Pixybot and DisplayBot.
