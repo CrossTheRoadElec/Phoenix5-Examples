@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <AssemblyName>Hero PixyDrive</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Hero_PixyDrive</RootNamespace>
+    <ProjectTypeGuids>{b69e3092-b931-443c-abe7-7e7b65f2a37f};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{68409F39-5C85-410C-8425-A9936F076F19}</ProjectGuid>
+    <TargetFrameworkVersion>v4.4</TargetFrameworkVersion>
+    <NetMfTargetsBaseDir Condition="'$(NetMfTargetsBaseDir)'==''">$(MSBuildExtensionsPath32)\Microsoft\.NET Micro Framework\</NetMfTargetsBaseDir>
+    <DeployDevice>Cross Link HERO .NETMF_Mini-USB</DeployDevice>
+    <DeployTransport>USB</DeployTransport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE,MF_FRAMEWORK_VERSION_V_,MF_FRAMEWORK_VERSION_V_</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PixyBot|AnyCPU'">
+    <OutputPath>bin\PixyBot\</OutputPath>
+    <DefineConstants>DEBUG;CTRE_PIXYBOT,TRACE,MF_FRAMEWORK_VERSION_V_,MF_FRAMEWORK_VERSION_V_</DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DisplayBot|AnyCPU'">
+    <OutputPath>bin\DisplayBot\</OutputPath>
+    <DefineConstants>DEBUG;CTRE_DISPLAYBOT,TRACE,MF_FRAMEWORK_VERSION_V_,MF_FRAMEWORK_VERSION_V_</DefineConstants>
+  </PropertyGroup>
+  <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
+  <ItemGroup>
+    <Compile Include="Battery.cs" />
+    <Compile Include="ColorSequencer.cs" />
+    <Compile Include="DisplayBot.cs" />
+    <Compile Include="PixyBot.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CTRE, Version=5.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Phoenix-netmf-lib\CTRE\bin\Debug\CTRE.dll</HintPath>
+    </Reference>
+    <Reference Include="ctre_netmf_native, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SPOT.Graphics" />
+    <Reference Include="Microsoft.SPOT.Hardware" />
+    <Reference Include="Microsoft.SPOT.Hardware.PWM" />
+    <Reference Include="Microsoft.SPOT.Native" />
+    <Reference Include="System" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,16 @@
+PART,Description,Link
+Driver Module,Control the LED strip,http://www.ctr-electronics.com/gadgeteer-driver-module.html
+Pigeon IMU,Pigeon IMU Mode for tilt control,http://www.ctr-electronics.com/gadgeteer-imu-module-pigeon.html
+Talon SRX,Method of wiring the Driver Module,http://www.ctr-electronics.com/talon-srx.html
+HERO Development Board,Robot controller,http://www.ctr-electronics.com/hro.html
+Power Distribution Breakout,"Distributes power to HERO, Talon SRX, and LED strip",http://www.ctr-electronics.com/power-distribution-breakout.html
+CAN Connectors,CAN connection for Talon  SRX and Pigeon IMU,http://www.ctr-electronics.com/can-connector-5-pack.html
+Ribbon Cables,Communication between Driver Module and a HERO or a Talon SRX,http://www.ctr-electronics.com/talon-srx-data-cable-4-pack.html
+Orange Ferrules,Inserts for 20 AWG wires,http://www.ctr-electronics.com/ferrule-20-awg.html
+White Ferrules,Inserts for 18 AWG wires,http://www.ctr-electronics.com/ferrule-18-awg.html
+,,
+Logitech F710 Gamepad,Controller Mode for gamepad controls,https://www.amazon.com/Logitech-940-000117-Gamepad-F710/dp/B0041RR0TW/ref=sr_1_1?ie=UTF8&qid=1494953942&sr=8-1&keywords=Logitech+f709
+12V RGB LED strip,LEDs controlled by Driver Module,
+Red & Black 18  AWG wires,"Wires used to connect power to LED strip, HERO and Talon SRX",
+Red & Black 12  AWG wires,Wires used to connect power source to Power Distribution Breakout,
+Assorted 20 AWG wires,"Wires used for CAN, and connecting the Driver Module to the LED strip",

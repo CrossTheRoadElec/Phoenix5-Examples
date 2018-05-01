@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hero PixyDrive", "Hero PixyDrive.csproj", "{68409F39-5C85-410C-8425-A9936F076F19}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		CTRE_DisplayBot|Any CPU = CTRE_DisplayBot|Any CPU
+		CTRE_PixyBot|Any CPU = CTRE_PixyBot|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{68409F39-5C85-410C-8425-A9936F076F19}.CTRE_DisplayBot|Any CPU.ActiveCfg = DisplayBot|Any CPU
+		{68409F39-5C85-410C-8425-A9936F076F19}.CTRE_DisplayBot|Any CPU.Build.0 = DisplayBot|Any CPU
+		{68409F39-5C85-410C-8425-A9936F076F19}.CTRE_DisplayBot|Any CPU.Deploy.0 = DisplayBot|Any CPU
+		{68409F39-5C85-410C-8425-A9936F076F19}.CTRE_PixyBot|Any CPU.ActiveCfg = PixyBot|Any CPU
+		{68409F39-5C85-410C-8425-A9936F076F19}.CTRE_PixyBot|Any CPU.Build.0 = PixyBot|Any CPU
+		{68409F39-5C85-410C-8425-A9936F076F19}.CTRE_PixyBot|Any CPU.Deploy.0 = PixyBot|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
