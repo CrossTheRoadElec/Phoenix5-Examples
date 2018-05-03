@@ -89,11 +89,11 @@ namespace Hero_Position_Servo_Example
             /* use slot0 for closed-looping */
             _talon.SelectProfileSlot(0, 0);
 
-            /* set the peak and nominal outputs, 12V means full */
+            /* set the peak and nominal outputs, 1.0 means full */
             _talon.ConfigNominalOutputForward(0.0f, 50);
 			_talon.ConfigNominalOutputReverse(0.0f, 50);
-			_talon.ConfigPeakOutputForward(+3.0f, 50);
-			_talon.ConfigPeakOutputReverse(-3.0f, 50);
+            _talon.ConfigPeakOutputForward(+1.0f, 50);
+            _talon.ConfigPeakOutputReverse(-1.0f, 50);
 
 			/* how much error is allowed?  This defaults to 0. */
 			_talon.ConfigAllowableClosedloopError(0,0, 50);
@@ -170,17 +170,17 @@ namespace Hero_Position_Servo_Example
             {
                 if (_btns[1])
                 {
-                    _targetPosition = _talon.GetSelectedSensorPosition(0) ; /* twenty rotations forward */
+                    _targetPosition = _talon.GetSelectedSensorPosition(0); /* current position */
                     EnableClosedLoop();
                 }
                 else if(_btns[4])
                 {
-                    _targetPosition = +10.0f; /* twenty rotations forward */
+                    _targetPosition = +40960.0f; /* ten rotations forward */
                     EnableClosedLoop();
                 }
                 else if (_btns[2])
                 {
-                    _targetPosition = -10.0f; /* twenty rotations reverese */
+                    _targetPosition = -40960.0f; /* ten rotations reverse */
                     EnableClosedLoop();
                 }
             }

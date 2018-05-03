@@ -41,6 +41,7 @@ namespace Hero_Motion_Profile_Example
         StringBuilder _sb = new StringBuilder();
         int _timeToPrint = 0;
         int _timeToColumns= 0;
+        const int kTicksPerRotation = 4096;
 
         MotionProfileStatus _motionProfileStatus = new MotionProfileStatus();
 
@@ -56,11 +57,12 @@ namespace Hero_Motion_Profile_Example
             _talon.Config_kD(0, 0f);
             _talon.Config_kF(0, 0.09724488664269079041176191004297f);
             _talon.SelectProfileSlot(0, 0);
-            _talon.ConfigNominalOutputForward(0f, 0);
-			_talon.ConfigNominalOutputReverse(0f, 0);
-			_talon.ConfigPeakOutputForward(+1.0f, 0);
-			_talon.ConfigPeakOutputForward(-1.0f, 0);
+            _talon.ConfigNominalOutputForward(0f, 50);
+            _talon.ConfigNominalOutputReverse(0f, 50);
+            _talon.ConfigPeakOutputForward(+1.0f, 50);
+            _talon.ConfigPeakOutputReverse(-1.0f, 50);
 			_talon.ChangeMotionControlFramePeriod(5);
+            _talon.ConfigMotionProfileTrajectoryPeriod(0, 50);
 
             /* loop forever */
             while (true)
@@ -109,7 +111,7 @@ namespace Hero_Motion_Profile_Example
 
             _talon.ProcessMotionProfileBuffer();
 
-            /* button handler, if btn5 pressed launch MP, if btn7 pressed, enter voltage mode */
+            /* button handler, if btn5 pressed launch MP, if btn7 pressed, enter percent output mode */
             if (_btns[5] && !_btnsLast[5])
             {
                 /* disable MP to clear IsLast */
@@ -122,11 +124,13 @@ namespace Hero_Motion_Profile_Example
                 _talon.ClearMotionProfileTrajectories();
                 for (uint i = 0; i < MotionProfile.kNumPoints; ++i)
                 {
-                    point.position = (float)MotionProfile.Points[i][0];
-                    point.velocity = (float)MotionProfile.Points[i][1];
+                    point.position = (float)MotionProfile.Points[i][0] * kTicksPerRotation; //convert  from rotations to sensor units
+                    point.velocity = (float)MotionProfile.Points[i][1] * kTicksPerRotation / 600;  //convert from RPM to sensor units per 100 ms.
+                    point.headingDeg = 0; //not used in this example
                     point.isLastPoint = (i + 1 == MotionProfile.kNumPoints) ? true : false;
                     point.zeroPos = (i == 0) ? true : false;
                     point.profileSlotSelect0 = 0;
+                    point.profileSlotSelect1 = 0; //not used in this example
 					point.timeDur = TrajectoryPoint.TrajectoryDuration.TrajectoryDuration_10ms;
                     _talon.PushMotionProfileTrajectory(point);
                 }

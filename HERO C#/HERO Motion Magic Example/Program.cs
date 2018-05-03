@@ -2,7 +2,7 @@
  * Example using the Motion Magic Control Mode of Talon SRX and the Magnetic Encoder.  Other sensors can be used by
  * changing the selected sensor type below.
 
- * MotionMagic control mode requires Talon firmware 11.1 or greater.
+ * MotionMagic control mode requires Talon firmware 11.8 or greater.
 
  * The test setup is ...
  *      A single Talon SRX (Device ID 0) http://www.ctr-electronics.com/talon-srx.html
