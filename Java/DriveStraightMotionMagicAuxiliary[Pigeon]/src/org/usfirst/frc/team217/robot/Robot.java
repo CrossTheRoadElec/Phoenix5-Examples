@@ -30,18 +30,18 @@ public class Robot extends IterativeRobot {
 	PigeonIMU _pidgey = new PigeonIMU(3);
 	Joystick _gamepad = new Joystick(0);
 	
-	/** A couple latched values to detect on-press events for buttons */
+	/** Latched values to detect on-press events for buttons */
 	boolean[] _btns = new boolean[Constants.kNumButtonsPlusOne];
 	boolean[] btns = new boolean[Constants.kNumButtonsPlusOne];
 	
 	/** Tracking variables */
-	boolean bFirstCall = false;
+	boolean _firstCall = false;
 	boolean _state = false;
 	double _targetAngle = 0;
 
 	@Override
 	public void robotInit() {
-		/* Don't use this for now */
+		/* Not in use */
 	}
 
 	@Override
@@ -56,28 +56,28 @@ public class Robot extends IterativeRobot {
 		
 		/** Feedback Sensor Configuration */
 		
-		/* Configure the left Talon's sensor to be the CTRE Mag Encoder */
-		_leftMaster.configSelectedFeedbackSensor(	FeedbackDevice.CTRE_MagEncoder_Relative,// Local Feedback Source
+		/* Configure the left Talon's selected sensor as local QuadEncoder */
+		_leftMaster.configSelectedFeedbackSensor(	FeedbackDevice.QuadEncoder,				// Local Feedback Source
 													Constants.PID_PRIMARY,					// PID Slot for Source [0, 1]
 													Constants.kTimeoutMs);					// Configuration Timeout
 
-		/* Configure the Remote Talon to one of two Remote Slots on the Right Talon */
+		/* Configure the Remote Talon's selected sensor as a remote sensor for the right Talon */
 		_rightMaster.configRemoteFeedbackFilter(_leftMaster.getDeviceID(),					// Device ID of Source
 												RemoteSensorSource.TalonSRX_SelectedSensor,	// Remote Feedback Source
 												Constants.REMOTE_0,							// Source number [0, 1]
 												Constants.kTimeoutMs);						// Configuration Timeout
 		
-		/* Configure the Pigeon IMU to the other of two Remote Slots on the Right Talon */
+		/* Configure the Pigeon IMU to the other remote slot available on the right Talon */
 		_rightMaster.configRemoteFeedbackFilter(_pidgey.getDeviceID(),
 												RemoteSensorSource.Pigeon_Yaw,
 												Constants.REMOTE_1,	
 												Constants.kTimeoutMs);
 		
-		/* Setup Sum signal to be used for Distance when performing Drive Straight with Pigeon */
+		/* Setup Sum signal to be used for Distance */
 		_rightMaster.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);				// Feedback Device of Remote Talon
 		_rightMaster.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTimeoutMs);	// Quadrature Encoder of current Talon
 		
-		/* First sensor marked as 0 used in distance */
+		/* Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index */
 		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.SensorSum, 
 													Constants.PID_PRIMARY,
 													Constants.kTimeoutMs);
@@ -87,7 +87,7 @@ public class Robot extends IterativeRobot {
 														Constants.PID_PRIMARY,		// PID Slot of Source 
 														Constants.kTimeoutMs);		// Configuration Timeout
 		
-		/* Configure the Remote Talon to the Selected Feedback Sensor */
+		/* Configure Remote 1 [Pigeon IMU's Yaw] to be used for Auxiliary PID Index */
 		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.RemoteSensor1,
 													Constants.PID_TURN,
 													Constants.kTimeoutMs);
@@ -103,17 +103,13 @@ public class Robot extends IterativeRobot {
 		_rightMaster.setInverted(true);
 		_rightMaster.setSensorPhase(true);
 		
-		//------------ Telemetry-----------------//
-		/* Main PID telemetry */
+		/* Set status frame periods to ensure we don't have stale data */
 		_rightMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
 		_rightMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
 		_rightMaster.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
 		_rightMaster.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
-		
-		/* Speed up the left since we are polling it's sensor */
 		_leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
 		_pidgey.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR , 5, Constants.kTimeoutMs);
-
 
 		/* Configure neutral deadband */
 		_rightMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
@@ -123,8 +119,8 @@ public class Robot extends IterativeRobot {
 		_rightMaster.configMotionAcceleration(2000, Constants.kTimeoutMs);
 		_rightMaster.configMotionCruiseVelocity(2000, Constants.kTimeoutMs);
 
-		/* max out the peak output (for all modes).  However you can
-		 * limit the output of a given PID object with configClosedLoopPeakOutput().
+		/* Max out the peak output (for all modes).  
+		 * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
 		 */
 		_leftMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
 		_leftMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
@@ -135,13 +131,10 @@ public class Robot extends IterativeRobot {
 		_rightMaster.config_kP(Constants.kSlot_Distanc, Constants.kGains_Distanc.kP, Constants.kTimeoutMs);
 		_rightMaster.config_kI(Constants.kSlot_Distanc, Constants.kGains_Distanc.kI, Constants.kTimeoutMs);
 		_rightMaster.config_kD(Constants.kSlot_Distanc, Constants.kGains_Distanc.kD, Constants.kTimeoutMs);
-		_leftMaster.config_kF(Constants.kSlot_Distanc, Constants.kGains_Distanc.kF, Constants.kTimeoutMs);
+		_rightMaster.config_kF(Constants.kSlot_Distanc, Constants.kGains_Distanc.kF, Constants.kTimeoutMs);
 		_rightMaster.config_IntegralZone(Constants.kSlot_Distanc, (int)Constants.kGains_Distanc.kIzone, Constants.kTimeoutMs);
-		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Distanc,				//Slot
-												Constants.kGains_Distanc.kPeakOutput,	//PercentOut	
-												Constants.kTimeoutMs);					//Timeout
+		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Distanc, Constants.kGains_Distanc.kPeakOutput, Constants.kTimeoutMs);
 		_rightMaster.configAllowableClosedloopError(Constants.kSlot_Distanc, 0, Constants.kTimeoutMs);
-
 
 		/* FPID Gains for turn servo */
 		_rightMaster.config_kP(Constants.kSlot_Turning, Constants.kGains_Turning.kP, Constants.kTimeoutMs);
@@ -149,9 +142,7 @@ public class Robot extends IterativeRobot {
 		_rightMaster.config_kD(Constants.kSlot_Turning, Constants.kGains_Turning.kD, Constants.kTimeoutMs);
 		_rightMaster.config_kF(Constants.kSlot_Turning, Constants.kGains_Turning.kF, Constants.kTimeoutMs);
 		_rightMaster.config_IntegralZone(Constants.kSlot_Turning, (int)Constants.kGains_Turning.kIzone, Constants.kTimeoutMs);
-		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Turning,
-												Constants.kGains_Turning.kPeakOutput,
-												Constants.kTimeoutMs);
+		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Turning, Constants.kGains_Turning.kPeakOutput, Constants.kTimeoutMs);
 		_rightMaster.configAllowableClosedloopError(Constants.kSlot_Turning, 0, Constants.kTimeoutMs);
 		
 		/* 1ms per loop.  PID loop can be slowed down if need be.
@@ -170,9 +161,10 @@ public class Robot extends IterativeRobot {
 		 */
 		_rightMaster.configAuxPIDPolarity(false, Constants.kTimeoutMs);
 
+		/* Initialize */
+		_firstCall = true;
+		_state = false;
 		zeroSensors();
-		
-		bFirstCall = true;
 	}
 	
 	@Override
@@ -180,76 +172,62 @@ public class Robot extends IterativeRobot {
 		/* Gamepad processing */
 		double forward = -1 * _gamepad.getY();
 		double turn = _gamepad.getTwist();
-		forward *= 0.75f;
-		turn *= 0.75f;
 		forward = Deadband(forward);
 		turn = Deadband(turn);
 	
 		/* Button processing for state toggle and sensor zeroing */
 		getButtons(btns, _gamepad);
 		if(btns[2] && !_btns[2]){
-			_state = !_state; 	// Toggle State
-			bFirstCall = true;	// Mode Change, Do first call operation
+			_state = !_state; 		// Toggle state
+			_firstCall = true;		// State change, do first call operation
 			_targetAngle = _rightMaster.getSelectedSensorPosition(1);
 		}else if (btns[1] && !_btns[1]) {
-			zeroSensors();		//Zero Sensors
-		}else{
-			/* Do nothing */
+			zeroSensors();			// Zero Sensors
 		}
-		CopyButtons(_btns, btns);
+		System.arraycopy(btns, 0, _btns, 0, Constants.kNumButtonsPlusOne);
 				
 		if(!_state){
-			/* Arcade Drive with turn enabled */
-			one_Axis_PercentOutput(bFirstCall, forward, turn);
-		}else{
-			/* Position Closed Loop mode for forward/reverse throttle, but go straight in current angle/yaw */
-			two_Axis_MotionMagic(bFirstCall, forward, _targetAngle);
-		}
-		bFirstCall = false;
-	}
-	
-	void one_Axis_PercentOutput(boolean bFirstCall, double joyY, double joyTurn) {
-		double left = joyY + joyTurn;
-		double rght = joyY - joyTurn;
-
-		if (bFirstCall) {
-			System.out.println("This is a basic arcade drive.\n");
-		}
-
-		_leftMaster.set(ControlMode.PercentOutput, left);
-		_rightMaster.set(ControlMode.PercentOutput, rght);
-	}
-	
-	void two_Axis_MotionMagic(boolean bFirstCall, double joyY, double targetAngle) {		
-		if (bFirstCall) {
-			System.out.println("This is Drive Straight Motion Magic with the Auxiliary feature using the Pigeon.");
-			zeroDistance();
+			if (_firstCall)
+				System.out.println("This is a basic arcade drive.\n");
 			
-			/* Determine which slot affects which PID */
-			_rightMaster.selectProfileSlot(Constants.kSlot_Distanc, Constants.PID_PRIMARY);
-			_rightMaster.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
+			_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
+			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
+		}else{
+			if (_firstCall) {
+				System.out.println("This is Drive Straight Motion Magic with the Auxiliary feature using the Pigeon.");
+				System.out.println("Travel [-6,6] rotations while also maintaining a straight heading.\n");
+				zeroDistance();
+				
+				/* Determine which slot affects which PID */
+				_rightMaster.selectProfileSlot(Constants.kSlot_Distanc, Constants.PID_PRIMARY);
+				_rightMaster.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
+			}
+			
+			/* Calculate targets from gamepad inputs */
+			double target_sensorUnits = forward * Constants.kSensorUnitsPerRotation * Constants.kRotationsToTravel;
+			double target_turn = _targetAngle;
+			
+			/* Configured for MotionMagic on Quad Encoders' Sum and Auxiliary PID on Pigeon */
+			_rightMaster.set(ControlMode.MotionMagic, target_sensorUnits, DemandType.AuxPID, target_turn);
+			_leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
 		}
-		
-		/* calculate targets from gamepad inputs */
-		double target_sensorUnits = joyY * Constants.kSensorUnitsPerRotation * Constants.kRotationsToTravel;
-		double target_turn = targetAngle;
-		
-		_rightMaster.set(ControlMode.MotionMagic, target_sensorUnits, DemandType.AuxPID, target_turn);
-		_leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
+		_firstCall = false;
 	}
 	
+	/** Zero all sensors, both Talons and Pigeon */
 	void zeroSensors() {
 		_leftMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		_rightMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		_pidgey.setYaw(0, Constants.kTimeoutMs);
 		_pidgey.setAccumZAngle(0, Constants.kTimeoutMs);
-		System.out.println("        [Sensors] All sensors are zeroed.\n");
+		System.out.println("[Sensors] All sensors are zeroed.\n");
 	}
 	
+	/** Zero QuadEncoders, used to reset position when initializing Motion Magic */
 	void zeroDistance(){
 		_leftMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		_rightMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
-		System.out.println("        [Sensors] All encoders are zeroed.\n");
+		System.out.println("[QuadEncoders] All encoders are zeroed.\n");
 	}
 	
 	/** Deadband 5 percent, used on the gamepad */
@@ -270,13 +248,6 @@ public class Robot extends IterativeRobot {
 	void getButtons(boolean[] btns, Joystick gamepad) {
 		for (int i = 1; i < Constants.kNumButtonsPlusOne; ++i) {
 			btns[i] = gamepad.getRawButton(i);
-		}
-	}
-	
-	/** Store the values of current buttons into a last button state array */
-	void CopyButtons(boolean[] destination, boolean[] source) {
-		for (int i = 1; i < Constants.kNumButtonsPlusOne; ++i) {
-			destination[i] = source[i];
 		}
 	}
 }

@@ -36,11 +36,9 @@ public class Robot extends IterativeRobot {
 		_leftMaster.setNeutralMode(NeutralMode.Brake);
 		_rightMaster.setNeutralMode(NeutralMode.Brake);
 		
-		/* Configure output and sensor direction */
+		/* Configure output direction */
 		_leftMaster.setInverted(false);
-		_leftMaster.setSensorPhase(true);
 		_rightMaster.setInverted(true);
-		_rightMaster.setSensorPhase(true);
 		
 		System.out.println("This is a basic arcade drive using Arbitrary Feed Forward.");
 	}
@@ -53,7 +51,7 @@ public class Robot extends IterativeRobot {
 		forward = Deadband(forward);
 		turn = Deadband(turn);
 
-		/* Create basic Arcade Drive using PercentOutput along with Arbitrary FeedForward supplied by turn */
+		/* Basic Arcade Drive using PercentOutput along with Arbitrary FeedForward supplied by turn */
 		_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
 		_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
 	}

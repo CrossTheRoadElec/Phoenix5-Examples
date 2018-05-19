@@ -17,7 +17,6 @@ import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
@@ -28,18 +27,18 @@ public class Robot extends IterativeRobot {
 	TalonSRX _rightMaster = new TalonSRX(1);
 	Joystick _gamepad = new Joystick(0);
 	
-	/** A couple latched values to detect on-press events for buttons */
+	/** Latched values to detect on-press events for buttons */
 	boolean[] _btns = new boolean[Constants.kNumButtonsPlusOne];
 	boolean[] btns = new boolean[Constants.kNumButtonsPlusOne];
 	
 	/** Tracking variables */
-	boolean bFirstCall = false;
+	boolean _firstCall = false;
 	boolean _state = false;
 	double _targetAngle = 0;
 
 	@Override
 	public void robotInit() {
-		/* Don't use this for now */
+		/* Not in use */
 	}
 	
 	@Override
@@ -54,45 +53,48 @@ public class Robot extends IterativeRobot {
 		
 		/** Closed loop configuration */
 		
-		/* Drivetrain's left side Feedback Sensor is the Quadrature Encoder */
-		_leftMaster.configSelectedFeedbackSensor(	FeedbackDevice.CTRE_MagEncoder_Relative,// Local Feedback Source
-													Constants.PID_PRIMARY,					// PID Slot for Source [0, 1]
-													Constants.kTimeoutMs);					// Configuration Timeout
+		/* Configure the drivetrain's left side Feedback Sensor as a Quadrature Encoder */
+		_leftMaster.configSelectedFeedbackSensor(	FeedbackDevice.QuadEncoder,			// Local Feedback Source
+													Constants.PID_PRIMARY,				// PID Slot for Source [0, 1]
+													Constants.kTimeoutMs);				// Configuration Timeout
 
-		/* Drivetrain's left side two sensors, the Quadrature Encoder and Pigeon IMU */
+		/* Configure the left Talon's Selected Sensor to be a remote sensor for the right Talon */
 		_rightMaster.configRemoteFeedbackFilter(_leftMaster.getDeviceID(),					// Device ID of Source
 												RemoteSensorSource.TalonSRX_SelectedSensor,	// Remote Feedback Source
 												Constants.REMOTE_0,							// Source number [0, 1]
 												Constants.kTimeoutMs);						// Configuration Timeout
 		
 		/* Setup difference signal to be used for turn when performing Drive Straight with encoders */
-		_rightMaster.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);			// Feedback Device of Remote Talon
-		_rightMaster.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTimeoutMs);	// Quadrature Encoder of current Talon
+		_rightMaster.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);	// Feedback Device of Remote Talon
+		_rightMaster.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.QuadEncoder, Constants.kTimeoutMs);		// Quadrature Encoder of current Talon
 		
-		/* Second sensor marked as 1, used in turn PID */
+		/* Difference term calculated by right Talon configured to be selected sensor of turn PID */
 		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.SensorDifference, 
 													Constants.PID_TURN, 
 													Constants.kTimeoutMs);
 		
 		/* Scale the Feedback Sensor using a coefficient */
+		/**
+		 * Heading units should be scaled to ~4000 per 360 deg, due to the following limitations...
+		 * - Target param for aux PID1 is 18bits with a range of [-131072,+131072] units.
+		 * - Target for aux PID1 in motion profile is 14bits with a range of [-8192,+8192] units.
+		 *  ... so at 3600 units per 360', that ensures 0.1 degree precision in firmware closed-loop
+		 *  and motion profile trajectory points can range +-2 rotations.
+		 */
 		_rightMaster.configSelectedFeedbackCoefficient(	Constants.kTurnTravelUnitsPerRotation / Constants.kEncoderUnitsPerRotation,	// Coefficient
 														Constants.PID_TURN, 														// PID Slot of Source
 														Constants.kTimeoutMs);														// Configuration Timeout
+		
 		/* Configure output and sensor direction */
 		_leftMaster.setInverted(false);
 		_leftMaster.setSensorPhase(true);
 		_rightMaster.setInverted(true);
 		_rightMaster.setSensorPhase(true);
 		
-		//------------ telemetry-----------------//
-		/* Main PID telemetry */
+		/* Set status frame periods */
 		_rightMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
-		_rightMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
 		_rightMaster.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
-		_rightMaster.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
-		
-		/* Speed up the left since we are polling it's sensor */
-		_leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
+		_leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);		//Used remotely by right Talon, speed up
 
 		/* Configure neutral deadband */
 		_rightMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
@@ -112,9 +114,7 @@ public class Robot extends IterativeRobot {
 		_rightMaster.config_kD(Constants.kSlot_Turning, Constants.kGains_Turning.kD, Constants.kTimeoutMs);
 		_rightMaster.config_kF(Constants.kSlot_Turning, Constants.kGains_Turning.kF, Constants.kTimeoutMs);
 		_rightMaster.config_IntegralZone(Constants.kSlot_Turning, (int)Constants.kGains_Turning.kIzone, Constants.kTimeoutMs);
-		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Turning,
-												Constants.kGains_Turning.kPeakOutput,
-												Constants.kTimeoutMs);
+		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Turning, Constants.kGains_Turning.kPeakOutput, Constants.kTimeoutMs);
 		_rightMaster.configAllowableClosedloopError(Constants.kSlot_Turning, 0, Constants.kTimeoutMs);
 			
 		/* 1ms per loop.  PID loop can be slowed down if need be.
@@ -133,9 +133,10 @@ public class Robot extends IterativeRobot {
 		 */
 		_rightMaster.configAuxPIDPolarity(false, Constants.kTimeoutMs);
 
+		/* Initialize */
+		_firstCall = true;
+		_state = false;
 		zeroSensors();
-		
-		bFirstCall = true;
 	}
 	
 	@Override
@@ -143,55 +144,44 @@ public class Robot extends IterativeRobot {
 		/* Gamepad processing */
 		double forward = -1 * _gamepad.getY();
 		double turn = _gamepad.getTwist();
-		forward *= 0.75f;
-		turn *= 0.75f;
 		forward = Deadband(forward);
 		turn = Deadband(turn);
 	
 		/* Button processing for state toggle and sensor zeroing */
 		getButtons(btns, _gamepad);
 		if(btns[2] && !_btns[2]){
-			_state = !_state; 	// Toggle State
-			bFirstCall = true;	// Mode Change, Do first call operation
+			_state = !_state; 		// Toggle state
+			_firstCall = true;		// State change, do first call operation
 			_targetAngle = _rightMaster.getSelectedSensorPosition(1);
 		}else if (btns[1] && !_btns[1]) {
-			zeroSensors();		//Zero Sensors
+			zeroSensors();			// Zero sensors
 		}
-		CopyButtons(_btns, btns);
+		System.arraycopy(btns, 0, _btns, 0, Constants.kNumButtonsPlusOne);
 				
 		if(!_state){
-			/* Arcade Drive with turn enabled */
-			one_Axis_PercentOutput(bFirstCall, forward, turn);
-		}else{
-			/* PercentOuput mode for forward/reverse throttle, but go straight in current angle/yaw */
-			two_Axis_PercentOutput(bFirstCall, forward, _targetAngle);
-		}
-		bFirstCall = false;
-	}
-	
-	void one_Axis_PercentOutput(boolean bFirstCall, double joyY, double joyTurn) {
-		/* calculate targets from gamepad inputs */
-		double left = joyY + joyTurn;
-		double rght = joyY - joyTurn;
-
-		if (bFirstCall) {
-			System.out.println("This is a basic arcade drive.\n");
-		}
-
-		_leftMaster.set(ControlMode.PercentOutput, left);
-		_rightMaster.set(ControlMode.PercentOutput, rght);
-	}
-	
-	void two_Axis_PercentOutput(boolean bFirstCall, double joyY, double targetAngle) {		
-		if (bFirstCall) {
-			System.out.println("This is Drive Straight using the Auxiliary feature with difference between two encoders to maintain current heading.");
+			if (_firstCall)
+				System.out.println("This is a basic arcade drive.\n");
 			
-			/* Determine which slot affects which PID */
-			_rightMaster.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
+			_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
+			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
+		}else{
+			if (_firstCall) {
+				System.out.println("This is Drive Straight using the Auxiliary feature with difference between two encoders to maintain current heading.");
+				
+				/* Determine which slot affects which PID */
+				_rightMaster.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
+			}
+			
+			/* Configured for percentOutput with Auxiliary PID on Quadrature Encoders' Difference */
+			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
+			_leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
+			
+			/* Print some Closed Loop information */
+			System.out.println(	"TargetAng: " + _targetAngle + 
+								" CurrentAng: " + _rightMaster.getSelectedSensorPosition(1) + 
+								" Error; " + _rightMaster.getClosedLoopError(1));
 		}
-		
-		_rightMaster.set(ControlMode.PercentOutput, joyY, DemandType.AuxPID, targetAngle);
-		_leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
+		_firstCall = false;
 	}
 	
 	void zeroSensors() {
@@ -218,13 +208,6 @@ public class Robot extends IterativeRobot {
 	void getButtons(boolean[] btns, Joystick gamepad) {
 		for (int i = 1; i < Constants.kNumButtonsPlusOne; ++i) {
 			btns[i] = gamepad.getRawButton(i);
-		}
-	}
-	
-	/** Store the values of current buttons into a last button state array */
-	void CopyButtons(boolean[] destination, boolean[] source) {
-		for (int i = 1; i < Constants.kNumButtonsPlusOne; ++i) {
-			destination[i] = source[i];
 		}
 	}
 }

@@ -1,5 +1,8 @@
 package org.usfirst.frc.team217.robot;
 
+/**
+ *  Class that organizes gains used when assigning values to slots
+ */
 public class Gains {
 	public final double kP;
 	public final double kI;
