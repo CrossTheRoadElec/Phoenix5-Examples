@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2000
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DriveStraightAuxiliary[Quadrature]", "DriveStraightAuxiliary[Quadrature].csproj", "{8FB1B8BE-0B6E-442B-A4AF-C6901061EDCF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8FB1B8BE-0B6E-442B-A4AF-C6901061EDCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FB1B8BE-0B6E-442B-A4AF-C6901061EDCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FB1B8BE-0B6E-442B-A4AF-C6901061EDCF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{8FB1B8BE-0B6E-442B-A4AF-C6901061EDCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FB1B8BE-0B6E-442B-A4AF-C6901061EDCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FB1B8BE-0B6E-442B-A4AF-C6901061EDCF}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F5B179C4-A572-4018-A0AE-8E546668B605}
+	EndGlobalSection
+EndGlobal
