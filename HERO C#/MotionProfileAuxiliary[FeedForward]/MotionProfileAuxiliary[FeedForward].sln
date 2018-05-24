@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2000
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MotionProfileAuxiliary[FeedForward]", "MotionProfileAuxiliary[FeedForward].csproj", "{AA8E326A-B8B0-4557-801E-6F5DA547A807}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AA8E326A-B8B0-4557-801E-6F5DA547A807}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA8E326A-B8B0-4557-801E-6F5DA547A807}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA8E326A-B8B0-4557-801E-6F5DA547A807}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{AA8E326A-B8B0-4557-801E-6F5DA547A807}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA8E326A-B8B0-4557-801E-6F5DA547A807}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA8E326A-B8B0-4557-801E-6F5DA547A807}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3CC91F1D-B1F4-49E7-B0DB-49B0C66C5896}
+	EndGlobalSection
+EndGlobal
