@@ -1,9 +1,9 @@
 /**
  * Task manageing the CANifier outputs to the LED strip.
  */
-using CTRE;
+using CTRE.Phoenix.Tasking;
 
-public class TaskAnimateLEDStrip : CTRE.Tasking.ILoopable
+public class TaskAnimateLEDStrip : ILoopable
 {
     private float _hue;
 

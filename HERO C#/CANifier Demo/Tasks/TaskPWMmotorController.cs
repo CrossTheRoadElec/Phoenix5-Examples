@@ -1,10 +1,10 @@
 /**
  * Task manageing the CANifier outputs to the LED strip.
  */
-using CTRE;
+using CTRE.Phoenix.Tasking;
 using Platform;
 
-public class TaskPWMmotorController : CTRE.Tasking.ILoopable
+public class TaskPWMmotorController : ILoopable
 {
     float _percentOut;
     bool _running; //!< Track if we are running so TaskMainLoop can keep "starting" this task with no extra init work.
@@ -14,12 +14,12 @@ public class TaskPWMmotorController : CTRE.Tasking.ILoopable
         /* just grab three axis and direct control the components */
         float axis = Hardware.gamepad.GetAxis(Constants.GamePadAxis_y);
         /* scale to typical pwm withds */
-        float pulseUs = LinearInterpolation.Calculate(axis, -1, 1000f, +1, 2000f); /* [-1,+1] => [1000,2000]us */
+        float pulseUs = CTRE.Phoenix.LinearInterpolation.Calculate(axis, -1, 1000f, +1, 2000f); /* [-1,+1] => [1000,2000]us */
         /* scale to period */
         float periodUs = 4200; // hardcoded for now, this will be settable in future firmware update.
         _percentOut = pulseUs / periodUs;
         /* set it */
-        Hardware.canifier.SetPWMOutput(Constants.kMotorControllerCh, _percentOut);
+        Hardware.canifier.SetPWMOutput((uint)Constants.kMotorControllerCh, _percentOut);
     }
 
     public override string ToString()
@@ -34,8 +34,8 @@ public class TaskPWMmotorController : CTRE.Tasking.ILoopable
 
         /* start transmitting neutral */
         _percentOut = 0;
-        Hardware.canifier.SetPWMOutput(Constants.kMotorControllerCh, 0);
-        Hardware.canifier.EnablePWMOutput(Constants.kMotorControllerCh, true);
+        Hardware.canifier.SetPWMOutput((uint)Constants.kMotorControllerCh, 0);
+        Hardware.canifier.EnablePWMOutput((int)Constants.kMotorControllerCh, true);
 
         /* okay task is now running */
         _running = true;
@@ -43,7 +43,7 @@ public class TaskPWMmotorController : CTRE.Tasking.ILoopable
     public void OnStop()
     {
         /* stop transmitting PWM */
-        Hardware.canifier.EnablePWMOutput(Constants.kMotorControllerCh, false);
+        Hardware.canifier.EnablePWMOutput((int)Constants.kMotorControllerCh, false);
 
         /* task has stopped, take note */
         _running = false;

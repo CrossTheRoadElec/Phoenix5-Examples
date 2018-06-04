@@ -1,10 +1,11 @@
 /**
  * Task manageing the CANifier outputs to the LED strip.
  */
-using CTRE;
+using CTRE.Phoenix.Signals;
+using CTRE.Phoenix;
 using Platform;
 
-public class TaskHSV : CTRE.Tasking.ILoopable
+public class TaskHSV : CTRE.Phoenix.Tasking.ILoopable
 {
     public float Hue { get; set; }
     public float Saturation { get; set; }
@@ -12,9 +13,9 @@ public class TaskHSV : CTRE.Tasking.ILoopable
 
     private float _r, _g, _b;
 
-    private CTRE.Signals.MovingAverage _averageR = new CTRE.Signals.MovingAverage(10);
-    private CTRE.Signals.MovingAverage _averageG = new CTRE.Signals.MovingAverage(10);
-    private CTRE.Signals.MovingAverage _averageB = new CTRE.Signals.MovingAverage(10);
+    private CTRE.Phoenix.Signals.MovingAverage _averageR = new CTRE.Phoenix.Signals.MovingAverage(10);
+    private CTRE.Phoenix.Signals.MovingAverage _averageG = new CTRE.Phoenix.Signals.MovingAverage(10);
+    private CTRE.Phoenix.Signals.MovingAverage _averageB = new CTRE.Phoenix.Signals.MovingAverage(10);
 
     public void OnLoop()
     {
@@ -35,9 +36,9 @@ public class TaskHSV : CTRE.Tasking.ILoopable
         _b = _averageB.Process(_b);
 
         /* update CANifier's LED strip */
-        Platform.Hardware.canifier.SetLEDOutput(_r, CTRE.CANifier.LEDChannel.LEDChannelA);
-        Platform.Hardware.canifier.SetLEDOutput(_g, CTRE.CANifier.LEDChannel.LEDChannelB);
-        Platform.Hardware.canifier.SetLEDOutput(_b, CTRE.CANifier.LEDChannel.LEDChannelC);
+        Platform.Hardware.canifier.SetLEDOutput(_r, CANifier.LEDChannel.LEDChannelA);
+        Platform.Hardware.canifier.SetLEDOutput(_g, CANifier.LEDChannel.LEDChannelB);
+        Platform.Hardware.canifier.SetLEDOutput(_b, CANifier.LEDChannel.LEDChannelC);
     }
 
     public override string ToString()

@@ -1,10 +1,11 @@
 /**
  * Task manageing the CANifier outputs to the LED strip.
  */
-using CTRE;
+using CTRE.Phoenix.Tasking;
+using CTRE.Phoenix;
 using Platform;
 
-public class TaskMeasurePulseSensors : CTRE.Tasking.ILoopable
+public class TaskMeasurePulseSensors : ILoopable
 {
     float[][] _dutyCycleAndPeriods = new float[][] { new float[] { 0, 0 }, new float[] { 0, 0 }, new float[] { 0, 0 }, new float[] { 0, 0 } };
 
@@ -37,10 +38,10 @@ public class TaskMeasurePulseSensors : CTRE.Tasking.ILoopable
     public void OnStart()
     {
         /* speed up PWM inputs */
-        Hardware.canifier.SetStatusFrameRate(CANifier.StatusFrameRate.Status3_PwmInput0, 10);
-        Hardware.canifier.SetStatusFrameRate(CANifier.StatusFrameRate.Status4_PwmInput1, 10);
-        Hardware.canifier.SetStatusFrameRate(CANifier.StatusFrameRate.Status5_PwmInput2, 10);
-        Hardware.canifier.SetStatusFrameRate(CANifier.StatusFrameRate.Status6_PwmInput3, 10);
+        Hardware.canifier.SetStatusFramePeriod(CANifierStatusFrame.Status_3_PwmInputs0, 10);
+        Hardware.canifier.SetStatusFramePeriod(CANifierStatusFrame.Status_4_PwmInputs1, 10);
+        Hardware.canifier.SetStatusFramePeriod(CANifierStatusFrame.Status_5_PwmInputs2, 10);
+        Hardware.canifier.SetStatusFramePeriod(CANifierStatusFrame.Status_6_PwmInputs3, 10);
     }
     public void OnStop() { }
     public bool IsDone() { return false; }

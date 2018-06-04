@@ -8,14 +8,14 @@
  * 
  * Anything under "Tasks" are typical examples tasks done on a robot platform.
  */
-using CTRE.Tasking;
+using CTRE.Phoenix.Tasking;
 using Microsoft.SPOT;
 using Platform;
 using System.Threading;
 
 namespace CANifier_Demo
 {
-    public class Program : CTRE.RobotApplication
+    public class Program : CTRE.Phoenix.RobotApplication
     {
         public override void RunForever()
         {

@@ -15,12 +15,10 @@
  * Long term there will likely be a configurable GUI in Phoenix Framework to create robot applciations in this format (in multiple languages).
  */
 
-using CTRE.MotorControllers;
-using CTRE.Tasking;
-using CTRE.Controller;
-using CTRE.HERO.Module;
-using CTRE.Mechanical;
-using CTRE;
+using CTRE.Phoenix.MotorControl.CAN;
+using CTRE.Phoenix.Controller;
+using CTRE.Phoenix.Tasking;
+using CTRE.Phoenix;
 
 namespace Platform
 {
@@ -43,7 +41,7 @@ namespace Platform
     {
         public static CANifier canifier = new CANifier(0);
 
-        public static GameController gamepad = new GameController(CTRE.UsbHostDevice.GetInstance(0), 0);
+        public static GameController gamepad = new GameController(UsbHostDevice.GetInstance(0), 0);
     }
 
     public static class Schedulers
