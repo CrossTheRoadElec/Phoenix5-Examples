@@ -5,6 +5,12 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+/********* Version *********/
+/* TalonSRX: 3.9
+ * VictorSPX: 3.9
+ * Phoenix Framework: 5.6.0 
+ */
+
 package org.usfirst.frc.team217.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;

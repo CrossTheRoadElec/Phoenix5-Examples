@@ -5,6 +5,13 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+/********* Version *********/
+/* TalonSRX: 3.9
+ * VictorSPX: 3.9
+ * Pigeon IMU: 0.41
+ * Phoenix Framework: 5.6.0 
+ */
+
 package org.usfirst.frc.team217.robot;
 
 import com.ctre.phoenix.ParamEnum;
@@ -166,7 +173,7 @@ public class Robot extends IterativeRobot {
 			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
 		}else{
 			if (_firstCall) {
-				System.out.println("This is Drive Straight using the Auxiliary feature with difference between two encoders to maintain current heading.");
+				System.out.println("This is Drive Straight using the Auxiliary feature with difference between two encoders to maintain current heading.\n");
 				
 				/* Determine which slot affects which PID */
 				_rightMaster.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
@@ -175,11 +182,6 @@ public class Robot extends IterativeRobot {
 			/* Configured for percentOutput with Auxiliary PID on Quadrature Encoders' Difference */
 			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
 			_leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
-			
-			/* Print some Closed Loop information */
-			System.out.println(	"TargetAng: " + _targetAngle + 
-								" CurrentAng: " + _rightMaster.getSelectedSensorPosition(1) + 
-								" Error; " + _rightMaster.getClosedLoopError(1));
 		}
 		_firstCall = false;
 	}
