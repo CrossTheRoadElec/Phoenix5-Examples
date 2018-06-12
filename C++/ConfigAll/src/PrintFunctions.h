@@ -142,6 +142,23 @@ std::ostream& operator<<(std::ostream& out, const ctre::phoenix::motorcontrol::S
 
     return out << s;
 }
+std::ostream& operator<<(std::ostream& out, const ctre::phoenix::CANifierVelocityMeasPeriod value){
+    const char* s = 0;
+    #define PROCESS_VAL(p) case(p): s = #p; break;
+	switch(value) {
+        PROCESS_VAL(CANifierVelocityMeasPeriod::Period_1Ms);     
+        PROCESS_VAL(CANifierVelocityMeasPeriod::Period_2Ms);     
+        PROCESS_VAL(CANifierVelocityMeasPeriod::Period_5Ms);     
+        PROCESS_VAL(CANifierVelocityMeasPeriod::Period_10Ms);     
+        PROCESS_VAL(CANifierVelocityMeasPeriod::Period_20Ms);     
+        PROCESS_VAL(CANifierVelocityMeasPeriod::Period_25Ms);     
+        PROCESS_VAL(CANifierVelocityMeasPeriod::Period_50Ms);     
+        PROCESS_VAL(CANifierVelocityMeasPeriod::Period_100Ms);     
+#undef PROCESS_VAL
+    }   
+
+    return out << s;
+}
 
 
 
@@ -225,6 +242,19 @@ std::cout << "_talon.forwardLimitSwitchSource = " << config.forwardLimitSwitchSo
 	std::cout << "_talon.peakCurrentLimit = " << config.peakCurrentLimit << std::endl;
 	std::cout << "_talon.peakCurrentDuration = " << config.peakCurrentDuration << std::endl;
 	std::cout << "_talon.continuousCurrentLimit = " << config.continuousCurrentLimit << std::endl;
+	std::cout << "_talon.customParam_0 = " <<  config.customParam_0 << std::endl;
+	std::cout << "_talon.customParam_1 = " <<  config.customParam_1 << std::endl;
+    
+    std::cout << "_talon.feedbackNotContinuous = " << config.feedbackNotContinuous << std::endl;
+    std::cout << "_talon.remoteSensorClosedLoopDisableNeutralOnLOS =  " << config.remoteSensorClosedLoopDisableNeutralOnLOS << std::endl;
+    std::cout << "_talon.clearPositionOnLimitF =  " << config.clearPositionOnLimitF << std::endl;
+    std::cout << "_talon.clearPositionOnLimitR =  " << config.clearPositionOnLimitR << std::endl;
+    std::cout << "_talon.clearPositionOnQuadIdx =  " << config.clearPositionOnQuadIdx << std::endl;
+    std::cout << "_talon.limitSwitchDisableNeutralOnLOS =  " << config.limitSwitchDisableNeutralOnLOS << std::endl;
+    std::cout << "_talon.softLimitDisableNeutralOnLOS =  " << config.softLimitDisableNeutralOnLOS << std::endl;
+    std::cout << "_talon.pulseWidthPeriod_EdgesPerRot =  " << config.pulseWidthPeriod_EdgesPerRot << std::endl;
+    std::cout << "_talon.pulseWidthPeriod_FilterWindowSz =  " << config.pulseWidthPeriod_FilterWindowSz << std::endl;
+
 }
 void PrintVictorConfigPart1(VictorSPXConfiguration &config) {
 	std::cout << "_victor.openloopRamp = " << config.openloopRamp <<std::endl;
@@ -310,11 +340,34 @@ void PrintVictorConfigPart2(VictorSPXConfiguration &config) {
 	std::cout << "_victor.forwardLimitSwitchSource = " <<  config.forwardLimitSwitchSource << std::endl;
     config.reverseLimitSwitchSource = ((int) config.reverseLimitSwitchSource == 0) ? RemoteLimitSwitchSource_Deactivated : config.reverseLimitSwitchSource;
 	std::cout << "_victor.reverseLimitSwitchSource = " <<  config.reverseLimitSwitchSource << std::endl;
+	std::cout << "_victor.customParam_0 = " <<  config.customParam_0 << std::endl;
+	std::cout << "_victor.customParam_1 = " <<  config.customParam_1 << std::endl;
 
+    std::cout << "_victor.feedbackNotContinuous = " << config.feedbackNotContinuous << std::endl;
+    std::cout << "_victor.remoteSensorClosedLoopDisableNeutralOnLOS =  " << config.remoteSensorClosedLoopDisableNeutralOnLOS << std::endl;
+    std::cout << "_victor.clearPositionOnLimitF =  " << config.clearPositionOnLimitF << std::endl;
+    std::cout << "_victor.clearPositionOnLimitR =  " << config.clearPositionOnLimitR << std::endl;
+    std::cout << "_victor.clearPositionOnQuadIdx =  " << config.clearPositionOnQuadIdx << std::endl;
+    std::cout << "_victor.limitSwitchDisableNeutralOnLOS =  " << config.limitSwitchDisableNeutralOnLOS << std::endl;
+    std::cout << "_victor.softLimitDisableNeutralOnLOS =  " << config.softLimitDisableNeutralOnLOS << std::endl;
+    std::cout << "_victor.pulseWidthPeriod_EdgesPerRot =  " << config.pulseWidthPeriod_EdgesPerRot << std::endl;
+    std::cout << "_victor.pulseWidthPeriod_FilterWindowSz =  " << config.pulseWidthPeriod_FilterWindowSz << std::endl;
 
 }
 
+void PrintPigeonConfig(PigeonIMUConfiguration &config) {
+	std::cout << "_pigeon.temperatureCompensationDisable = " <<  config.temperatureCompensationDisable << std::endl;
+	std::cout << "_pigeon.customParam_0 = " <<  config.customParam_0 << std::endl;
+	std::cout << "_pigeon.customParam_1 = " <<  config.customParam_1 << std::endl;
 
+}
 
+void PrintCanifierConfig(CANifierConfiguration &config) {
+	std::cout << "_canifier.velocityMeasurementPeriod = " <<  config.velocityMeasurementPeriod << std::endl;
+	std::cout << "_canifier.velocityMeasurementWindow = " <<  config.velocityMeasurementWindow << std::endl;
+	std::cout << "_canifier.customParam_0 = " <<  config.customParam_0 << std::endl;
+	std::cout << "_canifier.customParam_1 = " <<  config.customParam_1 << std::endl;
+
+}
 
 #endif /* SRC_PRINTFUNCTIONS_H_ */

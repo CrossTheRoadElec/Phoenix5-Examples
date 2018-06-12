@@ -14,8 +14,8 @@ struct configs {
 
 	ctre::phoenix::motorcontrol::can::TalonSRXConfiguration _talon;
 	ctre::phoenix::motorcontrol::can::VictorSPXConfiguration _victor;
-	ctre::phoenix::sensors::PigeonIMUConfiguration pigeon_;
-	ctre::phoenix::CANifierConfiguration canifier_;
+	ctre::phoenix::sensors::PigeonIMUConfiguration _pigeon;
+	ctre::phoenix::CANifierConfiguration _canifier;
 
 	
 	configs() {
@@ -38,7 +38,7 @@ struct configs {
 		_talon.velocityMeasurementPeriod = ctre::phoenix::motorcontrol::Period_25Ms;
 		_talon.velocityMeasurementWindow = 8;
 		
-		_talon.forwardLimitSwitchDeviceID = 6; //TODO
+		_talon.forwardLimitSwitchDeviceID = 6; 
 		_talon.reverseLimitSwitchDeviceID = 5;
 		_talon.forwardLimitSwitchNormal = LimitSwitchNormal_Disabled;
 		_talon.reverseLimitSwitchNormal = LimitSwitchNormal_NormallyClosed;
@@ -115,7 +115,19 @@ struct configs {
 		_talon.peakCurrentLimit = 20;          
 		_talon.peakCurrentDuration = 200;	   
 		_talon.continuousCurrentLimit = 30;    
-	
+        _talon.customParam_0 = 3;
+        _talon.customParam_1 = 5;
+
+        _talon.feedbackNotContinuous = true;
+        _talon.remoteSensorClosedLoopDisableNeutralOnLOS = false;
+        _talon.clearPositionOnLimitF = true; 
+        _talon.clearPositionOnLimitR = true; 
+        _talon.clearPositionOnQuadIdx = false;
+        _talon.limitSwitchDisableNeutralOnLOS = true;
+        _talon.softLimitDisableNeutralOnLOS = false;
+        _talon.pulseWidthPeriod_EdgesPerRot = 9;
+        _talon.pulseWidthPeriod_FilterWindowSz = 32;
+
 		//VictorSPX: 
 		_victor.openloopRamp = 0.3;
 		_victor.closedloopRamp = 0.1;
@@ -198,13 +210,37 @@ struct configs {
 		_victor.filter_1.remoteSensorDeviceID = 41;
 		_victor.filter_1.remoteSensorSource = RemoteSensorSource::RemoteSensorSource_GadgeteerPigeon_Yaw; 
 		
-        _victor.sum_0 = RemoteFeedbackDevice_RemoteSensor0; //TODO
-		_victor.sum_1 = RemoteFeedbackDevice_RemoteSensor1; //TODO
-        _victor.diff_0 = RemoteFeedbackDevice_SoftwareEmulatedSensor; //TODO
-		_victor.diff_1 = RemoteFeedbackDevice_RemoteSensor0; //TODO
+        _victor.sum_0 = RemoteFeedbackDevice_RemoteSensor0; 
+		_victor.sum_1 = RemoteFeedbackDevice_RemoteSensor1; 
+        _victor.diff_0 = RemoteFeedbackDevice_SoftwareEmulatedSensor; 
+		_victor.diff_1 = RemoteFeedbackDevice_RemoteSensor0; 
 		
 		_victor.forwardLimitSwitchSource = RemoteLimitSwitchSource_RemoteTalonSRX;
 		_victor.reverseLimitSwitchSource = RemoteLimitSwitchSource_Deactivated;
+        _victor.customParam_0 = 7;
+        _victor.customParam_1 = 9;
+        
+        _victor.feedbackNotContinuous = false;
+        _victor.remoteSensorClosedLoopDisableNeutralOnLOS = true;
+        _victor.clearPositionOnLimitF = false; 
+        _victor.clearPositionOnLimitR = false; 
+        _victor.clearPositionOnQuadIdx = true;
+        _victor.limitSwitchDisableNeutralOnLOS = false;
+        _victor.softLimitDisableNeutralOnLOS = true;
+        _victor.pulseWidthPeriod_EdgesPerRot = 8;
+        _victor.pulseWidthPeriod_FilterWindowSz = 19;
+
+
+        //PigeonIMU:
+        _pigeon.temperatureCompensationDisable = true;
+        _pigeon.customParam_0 = 6;
+        _pigeon.customParam_1 = 14;
+
+        //CANifier
+        _canifier.velocityMeasurementPeriod = ctre::phoenix::Period_50Ms;
+        _canifier.velocityMeasurementWindow = 8;
+        _canifier.customParam_0 = 2;
+        _canifier.customParam_1 = 1;
 
 	}
 };
