@@ -209,16 +209,18 @@ void PrintTalonConfigPart2(ctre::phoenix::motorcontrol::can::TalonSRXConfigurati
 	std::cout << "_talon.motionAcceleration = " << config.motionAcceleration << std::endl;
 	std::cout << "_talon.motionProfileTrajectoryPeriod = " << config.motionProfileTrajectoryPeriod << std::endl;
 	std::cout << "_talon.primaryPID.selectedFeedbackCoefficient = " << config.primaryPID.selectedFeedbackCoefficient << std::endl;
-	std::cout << "_talon.primaryPID.sensorTerm = " << config.primaryPID.sensorTerm << std::endl;
-	std::cout << "_talon.primaryPID.remoteSensorDeviceID = " << config.primaryPID.remoteSensorDeviceID << std::endl;
-	std::cout << "_talon.primaryPID.remoteSensorSource = " << config.primaryPID.remoteSensorSource << std::endl;
 	std::cout << "_talon.primaryPID.selectedFeedbackSensor = " << config.primaryPID.selectedFeedbackSensor << std::endl;
 	std::cout << "_talon.auxilaryPID.selectedFeedbackCoefficient = " << config.auxilaryPID.selectedFeedbackCoefficient << std::endl;
-	std::cout << "_talon.auxilaryPID.sensorTerm = " << config.auxilaryPID.sensorTerm << std::endl;
-	std::cout << "_talon.auxilaryPID.remoteSensorDeviceID = " << config.auxilaryPID.remoteSensorDeviceID << std::endl;
-	std::cout << "_talon.auxilaryPID.remoteSensorSource = " << config.auxilaryPID.remoteSensorSource << std::endl;
 	std::cout << "_talon.auxilaryPID.selectedFeedbackSensor = " << config.auxilaryPID.selectedFeedbackSensor << std::endl;
-	std::cout << "_talon.forwardLimitSwitchSource = " << config.forwardLimitSwitchSource << std::endl;
+    std::cout << "_talon.filter_0.remoteSensorDeviceID = " << config.filter_0.remoteSensorDeviceID << std::endl;
+    std::cout << "_talon.filter_0.remoteSensorSource = " << config.filter_0.remoteSensorSource << std::endl;
+    std::cout << "_talon.filter_1.remoteSensorDeviceID = " << config.filter_1.remoteSensorDeviceID << std::endl;
+    std::cout << "_talon.filter_1.remoteSensorSource = " << config.filter_1.remoteSensorSource << std::endl;
+    std::cout << "_talon.sum_0 = " << config.sum_0 << std::endl;
+    std::cout << "_talon.sum_1 = " << config.sum_1 << std::endl;
+    std::cout << "_talon.diff_0 = " << config.diff_0 << std::endl;
+    std::cout << "_talon.diff_1 = " << config.diff_1 << std::endl;
+std::cout << "_talon.forwardLimitSwitchSource = " << config.forwardLimitSwitchSource << std::endl;
 	std::cout << "_talon.reverseLimitSwitchSource = " << config.reverseLimitSwitchSource << std::endl;
 	std::cout << "_talon.peakCurrentLimit = " << config.peakCurrentLimit << std::endl;
 	std::cout << "_talon.peakCurrentDuration = " << config.peakCurrentDuration << std::endl;
@@ -287,18 +289,27 @@ void PrintVictorConfigPart2(VictorSPXConfiguration &config) {
 	std::cout << "_victor.motionAcceleration = " << config.motionAcceleration << std::endl;
 	std::cout << "_victor.motionProfileTrajectoryPeriod = " << config.motionProfileTrajectoryPeriod << std::endl;
 	std::cout << "_victor.primaryPID.selectedFeedbackCoefficient = " << config.primaryPID.selectedFeedbackCoefficient << std::endl;
-	std::cout << "_victor.primaryPID.sensorTerm = " << (int) config.primaryPID.sensorTerm << std::endl;
-	std::cout << "_victor.primaryPID.remoteSensorDeviceID = " << config.primaryPID.remoteSensorDeviceID << std::endl;
-	std::cout << "_victor.primaryPID.remoteSensorSource = " << config.primaryPID.remoteSensorSource << std::endl;
-	std::cout << "_victor.primaryPID.selectedFeedbackSensor = " << config.primaryPID.selectedFeedbackSensor << std::endl;
+    config.primaryPID.selectedFeedbackSensor = ((int) config.primaryPID.selectedFeedbackSensor == 0) ? RemoteFeedbackDevice_None : config.primaryPID.selectedFeedbackSensor;
+    std::cout << "_victor.primaryPID.selectedFeedbackSensor = " << config.primaryPID.selectedFeedbackSensor << std::endl;
 	std::cout << "_victor.auxilaryPID.selectedFeedbackCoefficient = " << config.auxilaryPID.selectedFeedbackCoefficient << std::endl;
-	std::cout << "_victor.auxilaryPID.sensorTerm = " << (int) config.auxilaryPID.sensorTerm << std::endl;
-	std::cout << "_victor.auxilaryPID.remoteSensorDeviceID = " << config.auxilaryPID.remoteSensorDeviceID << std::endl;
-	std::cout << "_victor.auxilaryPID.remoteSensorSource = " << config.auxilaryPID.remoteSensorSource << std::endl;
+    config.auxilaryPID.selectedFeedbackSensor = ((int) config.auxilaryPID.selectedFeedbackSensor == 0) ? RemoteFeedbackDevice_None : config.auxilaryPID.selectedFeedbackSensor;
 	std::cout << "_victor.auxilaryPID.selectedFeedbackSensor = " << config.auxilaryPID.selectedFeedbackSensor << std::endl;
-
-	std::cout << "_victor.forwardLimitSwitchSource = " << config.forwardLimitSwitchSource << std::endl;
-	std::cout << "_victor.reverseLimitSwitchSource = " << config.reverseLimitSwitchSource << std::endl;
+    std::cout << "_victor.filter_0.remoteSensorDeviceID = " << config.filter_0.remoteSensorDeviceID << std::endl;
+    std::cout << "_victor.filter_0.remoteSensorSource = " << config.filter_0.remoteSensorSource << std::endl;
+    std::cout << "_victor.filter_1.remoteSensorDeviceID = " << config.filter_1.remoteSensorDeviceID << std::endl;
+    std::cout << "_victor.filter_1.remoteSensorSource = " << config.filter_1.remoteSensorSource << std::endl;
+    config.sum_0 = ((int) config.sum_0 == 0) ? RemoteFeedbackDevice_None : config.sum_0;
+    std::cout << "_victor.sum_0 = " <<  config.sum_0 << std::endl;
+    config.sum_1 = ((int) config.sum_1 == 0) ? RemoteFeedbackDevice_None : config.sum_1;
+    std::cout << "_victor.sum_1 = " << config.sum_1 << std::endl;
+    config.diff_0 = ((int) config.diff_0 == 0) ? RemoteFeedbackDevice_None : config.diff_0;
+    std::cout << "_victor.diff_0 = " << config.diff_0 << std::endl;
+    config.diff_1 = ((int) config.diff_1 == 0) ? RemoteFeedbackDevice_None : config.diff_1;
+    std::cout << "_victor.diff_1 = " << config.diff_1 << std::endl;
+    config.forwardLimitSwitchSource = ((int) config.forwardLimitSwitchSource == 0) ? RemoteLimitSwitchSource_Deactivated : config.forwardLimitSwitchSource;
+	std::cout << "_victor.forwardLimitSwitchSource = " <<  config.forwardLimitSwitchSource << std::endl;
+    config.reverseLimitSwitchSource = ((int) config.reverseLimitSwitchSource == 0) ? RemoteLimitSwitchSource_Deactivated : config.reverseLimitSwitchSource;
+	std::cout << "_victor.reverseLimitSwitchSource = " <<  config.reverseLimitSwitchSource << std::endl;
 
 
 }

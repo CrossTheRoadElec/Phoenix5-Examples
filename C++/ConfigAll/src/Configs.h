@@ -94,18 +94,23 @@ struct configs {
 		_talon.motionProfileTrajectoryPeriod = 11;
 
 		_talon.primaryPID.selectedFeedbackCoefficient = .3283;
-		_talon.primaryPID.sensorTerm = SensorTerm::SensorTerm_Diff0; //TODO
-		_talon.primaryPID.remoteSensorDeviceID = 41;
-		_talon.primaryPID.remoteSensorSource = RemoteSensorSource::RemoteSensorSource_GadgeteerPigeon_Yaw; 
 		_talon.primaryPID.selectedFeedbackSensor = RemoteSensor0;	
-
-		_talon.auxilaryPID.selectedFeedbackCoefficient = .8777;
-		_talon.auxilaryPID.sensorTerm = SensorTerm::SensorTerm_Diff1; //TODO
-		_talon.auxilaryPID.remoteSensorDeviceID = 22;
-		_talon.auxilaryPID.remoteSensorSource = RemoteSensorSource::RemoteSensorSource_GadgeteerPigeon_Roll;
-		_talon.auxilaryPID.selectedFeedbackSensor = Analog;	
 		
-		_talon.forwardLimitSwitchSource = LimitSwitchSource_Deactivated;
+		_talon.auxilaryPID.selectedFeedbackCoefficient = .8777;
+		_talon.auxilaryPID.selectedFeedbackSensor = Analog;	
+
+		_talon.filter_0.remoteSensorDeviceID = 22;
+		_talon.filter_0.remoteSensorSource = RemoteSensorSource::RemoteSensorSource_GadgeteerPigeon_Roll;
+
+		_talon.filter_1.remoteSensorDeviceID = 41;
+		_talon.filter_1.remoteSensorSource = RemoteSensorSource::RemoteSensorSource_GadgeteerPigeon_Yaw; 
+		
+        _talon.sum_0 = QuadEncoder; 
+		_talon.sum_1 = RemoteSensor0; 
+        _talon.diff_0 = RemoteSensor1; 
+		_talon.diff_1 = PulseWidthEncodedPosition; 
+		
+        _talon.forwardLimitSwitchSource = LimitSwitchSource_Deactivated;
 		_talon.reverseLimitSwitchSource = LimitSwitchSource_RemoteTalonSRX;
 		_talon.peakCurrentLimit = 20;          
 		_talon.peakCurrentDuration = 200;	   
@@ -177,21 +182,26 @@ struct configs {
 		_victor.slot_3.closedLoopPeriod = 21;
 
 		_victor.auxPIDPolarity = true;
-		_victor.motionCruiseVelocity = .2324;
-		_victor.motionAcceleration = .2192;
+		_victor.motionCruiseVelocity = 50;
+		_victor.motionAcceleration = 3;
 		_victor.motionProfileTrajectoryPeriod = 20;
 
 		_victor.primaryPID.selectedFeedbackCoefficient = .12222;
-		_victor.primaryPID.sensorTerm = SensorTerm::SensorTerm_Sum1;
-		_victor.primaryPID.remoteSensorDeviceID = 13;
-		_victor.primaryPID.remoteSensorSource = RemoteSensorSource::RemoteSensorSource_CANifier_PWMInput0;
 		_victor.primaryPID.selectedFeedbackSensor = RemoteFeedbackDevice::RemoteFeedbackDevice_SoftwareEmulatedSensor;
 
 		_victor.auxilaryPID.selectedFeedbackCoefficient = .291;
-		_victor.auxilaryPID.sensorTerm = SensorTerm::SensorTerm_Sum0;
-		_victor.auxilaryPID.remoteSensorDeviceID = 48;
-		_victor.auxilaryPID.remoteSensorSource = RemoteSensorSource::RemoteSensorSource_CANifier_PWMInput3;
 		_victor.auxilaryPID.selectedFeedbackSensor = RemoteFeedbackDevice::RemoteFeedbackDevice_SensorDifference;
+		
+        _victor.filter_0.remoteSensorDeviceID = 22;
+		_victor.filter_0.remoteSensorSource = RemoteSensorSource::RemoteSensorSource_GadgeteerPigeon_Roll;
+
+		_victor.filter_1.remoteSensorDeviceID = 41;
+		_victor.filter_1.remoteSensorSource = RemoteSensorSource::RemoteSensorSource_GadgeteerPigeon_Yaw; 
+		
+        _victor.sum_0 = RemoteFeedbackDevice_RemoteSensor0; //TODO
+		_victor.sum_1 = RemoteFeedbackDevice_RemoteSensor1; //TODO
+        _victor.diff_0 = RemoteFeedbackDevice_SoftwareEmulatedSensor; //TODO
+		_victor.diff_1 = RemoteFeedbackDevice_RemoteSensor0; //TODO
 		
 		_victor.forwardLimitSwitchSource = RemoteLimitSwitchSource_RemoteTalonSRX;
 		_victor.reverseLimitSwitchSource = RemoteLimitSwitchSource_Deactivated;
