@@ -1,17 +1,16 @@
 
 #include "WPILib.h"
 #include "Configs.h"
-#include "PrintFunctions.h"
+#include <string>
 
 class Robot: public IterativeRobot {
 private:
 
 	TalonSRX * _talon = new TalonSRX(1);
-	VictorSPX * _victor = new VictorSPX(9);
-	//PigeonIMU * _pigeon = new PigeonIMU(3);
+	VictorSPX * _victor = new VictorSPX(2);
+	PigeonIMU * _pigeon = new PigeonIMU(3);
 	CANifier * _canifier = new CANifier(4);
 	Joystick * _joy = new Joystick(0);
-	std::string _sb;
 
 	configs _custom_configs;
 
@@ -21,8 +20,6 @@ private:
 	bool _button4_last = false;
 	bool _button5_last = false;
 	bool _button6_last = false;
-	bool _button7_last = false;
-	bool _button8_last = false;
 
 	void RobotInit() {
 
@@ -32,88 +29,71 @@ private:
 	 * This function is called periodically during operator control
 	 */
 	void TeleopPeriodic() {
-		//std::cout << "Running" << std::endl;
-		bool button1 = _joy->GetRawButton(1); //Button A on xbox style controllers, read talon part 1
-		bool button2 = _joy->GetRawButton(2); //Button B on xbox style controllers, read talon part 2
-		bool button3 = _joy->GetRawButton(3); //Button X on xbox style controllers, read victor part 1
-		bool button4 = _joy->GetRawButton(4); //Button Y on xbox style controllers, read victor part 2
+		bool button1 = _joy->GetRawButton(1); //Button A on xbox style controllers, read talon
+		bool button2 = _joy->GetRawButton(2); //Button B on xbox style controllers, read victor
+		bool button3 = _joy->GetRawButton(3); //Button X on xbox style controllers, read pigeon
+		bool button4 = _joy->GetRawButton(4); //Button Y on xbox style controllers, read canifier
 		bool button5 = _joy->GetRawButton(5); //Button Left Bumper on xbox style controllers, custom configs
 		bool button6 = _joy->GetRawButton(6); //Button Right Bumper on xbox style controllers, API default
-		bool button7 = _joy->GetRawButton(7); //Button Back on xbox style controllers, read pigeon
-		bool button8 = _joy->GetRawButton(8); //Button Start on xbox style controllers, read canifier
 
         
         if(button1 && !_button1_last) {
-			std::cout << "read talon part 1" << std::endl;
+			printf("read talon\n");
 			
 			TalonSRXConfiguration read_talon;
 			_talon->GetAllConfigs(read_talon);
 
-			PrintTalonConfigPart1(read_talon);
+			printf(read_talon.toString("_talon").c_str());
 
 		}
 		else if(button2 && !_button2_last) {
-			std::cout << "read talon part 2" << std::endl;
-			
-			TalonSRXConfiguration read_talon;
-			_talon->GetAllConfigs(read_talon);
+			printf("read victor\n");
 
-			PrintTalonConfigPart2(read_talon);
+			VictorSPXConfiguration read_victor;
+			_victor->GetAllConfigs(read_victor);
+
+			printf(read_victor.toString("_victor").c_str());
 
 		}
 		else if(button3 && !_button3_last) {
-			std::cout << "read victor part 1" << std::endl;
 			
-			VictorSPXConfiguration read_victor;
-			_victor->GetAllConfigs(read_victor);
-			
-			PrintVictorConfigPart1(read_victor);
+			printf("read pigeon\n");
+
+			PigeonIMUConfiguration read_pigeon;
+			_pigeon->GetAllConfigs(read_pigeon);
+
+			printf(read_pigeon.toString("_pigeon").c_str());
 
 		}
 		else if(button4 && !_button4_last) {
-			std::cout << "read victor part 2" << std::endl;
-			
-			VictorSPXConfiguration read_victor;
-			_victor->GetAllConfigs(read_victor);
-			
-			PrintVictorConfigPart2(read_victor);
+			printf("read canifier\n");
+
+			CANifierConfiguration read_canifier;
+			_canifier->GetAllConfigs(read_canifier);
+
+			printf(read_canifier.toString("_canifier").c_str());
 
 		}
 		else if(button5 && !_button5_last) {
-			std::cout << "custom config start" << std::endl;
+			printf("custom config start\n");
 
 			_talon->ConfigAllSettings(_custom_configs._talon);
 			_victor->ConfigAllSettings(_custom_configs._victor);
-			//_pigeon->ConfigAllSettings(_custom_configs._pigeon);	
-			_canifier->ConfigAllSettings(_custom_configs._canifier);	
-			std::cout << "custom config finish" << std::endl;
+			_pigeon->ConfigAllSettings(_custom_configs._pigeon);
+			_canifier->ConfigAllSettings(_custom_configs._canifier);
+			printf("custom config finish\n");
 
 		}
 		else if(button6 && !_button6_last) {
-			std::cout << "factory default start" << std::endl;
+
+			printf("factory default start\n");
 			_talon->ConfigFactoryDefault();
         	_victor->ConfigFactoryDefault();
-			//_pigeon->ConfigFactoryDefault();
+			_pigeon->ConfigFactoryDefault();
         	_canifier->ConfigFactoryDefault();
-        	std::cout << "factory default finish" << std::endl;
+        	printf("factory default finish\n");
 
 
-		}
-		/*else if(button7 && !_button7_last) {
-			std::cout << "read pigeon" << std::endl;
-			
-			PigeonIMUConfiguration read_pigeon;
-			_pigeon->GetAllConfigs(read_pigeon);
-			
-			PrintPigeonConfig(read_pigeon);
-		}*/
-		else if(button8 && !_button8_last) {
-			std::cout << "read canifier" << std::endl;
-			
-			CANifierConfiguration read_canifier;
-			_canifier->GetAllConfigs(read_canifier);
-			
-			PrintCanifierConfig(read_canifier);
 		}
         
 		_button1_last = button1;
@@ -122,8 +102,6 @@ private:
 		_button4_last = button4;
 		_button5_last = button5;
 		_button6_last = button6;
-		_button7_last = button7;
-		_button8_last = button8;
 	}
 
 };
