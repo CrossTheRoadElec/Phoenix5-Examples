@@ -1,0 +1,66 @@
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\le\HERO Continuous Position Servo Example.exe
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\be\HERO Continuous Position Servo Example.exe
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\le\HERO Continuous Position Servo Example.pdb
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\be\HERO Continuous Position Servo Example.pdb
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\HERO Continuous Position Servo Example.exe
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\HERO Continuous Position Servo Example.pdb
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\le\HERO Continuous Position Servo Example.pe
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\le\HERO Continuous Position Servo Example.pdbx
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\be\HERO Continuous Position Servo Example.pe
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\be\HERO Continuous Position Servo Example.pdbx
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\LE\CTRE.pe
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\LE\ctre_netmf_native.pe
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\BE\CTRE.pe
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\BE\ctre_netmf_native.pe
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\LE\CTRE.pdbx
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\LE\ctre_netmf_native.pdbx
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\BE\CTRE.pdbx
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\BE\ctre_netmf_native.pdbx
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\CTRE.dll
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\ctre_netmf_native.dll
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\CTRE.pdb
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\CTRE.xml
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\bin\Debug\ctre_netmf_native.pdb
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\obj\Debug\Config All Example.csprojAssemblyReference.cache
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\obj\Debug\TinyCLR_DebugReferences.cache
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\obj\Debug\Config All Example.csproj.CoreCompileInputs.cache
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\obj\Debug\be\HERO Continuous Position Servo Example.pe
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\obj\Debug\be\HERO Continuous Position Servo Example.pdbx
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\obj\Debug\le\HERO Continuous Position Servo Example.pe
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\obj\Debug\le\HERO Continuous Position Servo Example.pdbx
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\obj\Debug\Config All Example.csproj.CopyComplete
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\obj\Debug\HERO Continuous Position Servo Example.exe
+C:\Users\Ryan Greenblatt\source\repos\HERO Continuous Position Servo Example1\HERO Continuous Position Servo Example1\obj\Debug\HERO Continuous Position Servo Example.pdb
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\le\HERO Continuous Position Servo Example.exe
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\be\HERO Continuous Position Servo Example.exe
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\le\HERO Continuous Position Servo Example.pdb
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\be\HERO Continuous Position Servo Example.pdb
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\HERO Continuous Position Servo Example.exe
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\HERO Continuous Position Servo Example.pdb
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\le\HERO Continuous Position Servo Example.pe
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\le\HERO Continuous Position Servo Example.pdbx
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\be\HERO Continuous Position Servo Example.pe
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\be\HERO Continuous Position Servo Example.pdbx
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\LE\CTRE.pe
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\LE\ctre_netmf_native.pe
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\BE\CTRE.pe
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\BE\ctre_netmf_native.pe
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\LE\CTRE.pdbx
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\LE\ctre_netmf_native.pdbx
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\BE\CTRE.pdbx
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\BE\ctre_netmf_native.pdbx
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\CTRE.dll
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\ctre_netmf_native.dll
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\CTRE.pdb
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\CTRE.xml
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\bin\Debug\ctre_netmf_native.pdb
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\obj\Debug\Config All Example.csprojAssemblyReference.cache
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\obj\Debug\TinyCLR_DebugReferences.cache
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\obj\Debug\Config All Example.csproj.CoreCompileInputs.cache
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\obj\Debug\be\HERO Continuous Position Servo Example.pe
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\obj\Debug\be\HERO Continuous Position Servo Example.pdbx
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\obj\Debug\le\HERO Continuous Position Servo Example.pe
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\obj\Debug\le\HERO Continuous Position Servo Example.pdbx
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\obj\Debug\Config All Example.csproj.CopyComplete
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\obj\Debug\HERO Continuous Position Servo Example.exe
+C:\Users\Ryan Greenblatt\Documents\CTRE\Phoenix-Examples-Languages\HERO C#\Config All Example\Config All Example\obj\Debug\HERO Continuous Position Servo Example.pdb
