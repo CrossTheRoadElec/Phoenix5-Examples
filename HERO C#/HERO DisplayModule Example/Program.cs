@@ -1,6 +1,7 @@
 /**
  * Example HERO application with Display Module on port8, and USB gamepad inserted into HERO.
  * Bar graphs and text will update when user changes button states and axis values on gamepad.
+ * Tested with Phoenix Framework 5.6.0.0 (Phoenix NETMF: 5.1.5.0)
  */
 /*
 *  Software License Agreement
@@ -26,7 +27,7 @@
 */
 using System.Threading;
 using Microsoft.SPOT;
-using CTRE.HERO.Module;
+using CTRE.Gadgeteer.Module;
 using CTRE.Phoenix.Controller;
 using CTRE.Phoenix;
 
@@ -36,7 +37,7 @@ namespace DisplayModule_Example
     {
         GameController _gamepad = new GameController(UsbHostDevice.GetInstance());
 
-        DisplayModule _displayModule = new DisplayModule(CTRE.HERO.IO.Port8, DisplayModule.OrientationType.Landscape);
+        DisplayModule _displayModule = new DisplayModule(CTRE.HERO.IO.Port1, DisplayModule.OrientationType.Landscape);
 
         /* lets pick a font */
         Font _smallFont = Properties.Resources.GetFont(Properties.Resources.FontResources.small);
@@ -62,7 +63,7 @@ namespace DisplayModule_Example
         }
         public int GetFirstButton(GameController gamepad)
         {
-            for (uint i = 0; i < 16 ;++i)
+            for (uint i = 1; i < 16 ;++i)
             {
                 if (gamepad.GetButton(i))
                     return (int)i;
@@ -95,8 +96,8 @@ namespace DisplayModule_Example
 
             _labelBtn = _displayModule.AddLabelSprite(_smallFont, DisplayModule.Color.White, 30, 50, 100, 15);
 
-            while (true)
-            {
+			while (true)
+			{
                 UpdateGauge(_leftX, _gamepad.GetAxis(0));
                 UpdateGauge(_leftY, _gamepad.GetAxis(1));
                 UpdateGauge(_rightX, _gamepad.GetAxis(2));
@@ -131,9 +132,9 @@ namespace DisplayModule_Example
                         case 2: _labelBtn.SetColor(DisplayModule.Color.Red); break;
                         case 3: _labelBtn.SetColor(DisplayModule.Color.Yellow); break;
 
-                    }
+			}
                     _labelBtn.SetText("Pressed Button " + idx);
-                }
+        }
 
                 Thread.Sleep(10);
             }

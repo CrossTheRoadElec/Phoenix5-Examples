@@ -32,7 +32,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="DisplayModule.cs" />
     <Compile Include="HorizGauge.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

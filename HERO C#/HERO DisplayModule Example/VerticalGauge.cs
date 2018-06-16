@@ -22,7 +22,7 @@
 */
 using System.Threading;
 using Microsoft.SPOT;
-using CTRE.HERO.Module;
+using CTRE.Gadgeteer.Module;
 
 namespace DisplayModule_Example
 {
