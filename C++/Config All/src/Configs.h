@@ -1,10 +1,3 @@
-/*
- * Configs.h
- *
- *  Created on: Jun 8, 2018
- *      Author: Ryan Greenblatt
- */
-
 #ifndef SRC_CONFIGS_H_
 #define SRC_CONFIGS_H_
 
@@ -12,6 +5,7 @@
 
 struct configs {
 
+    /*Hold all of the config data*/
 	ctre::phoenix::motorcontrol::can::TalonSRXConfiguration _talon;
 	ctre::phoenix::motorcontrol::can::VictorSPXConfiguration _victor;
 	ctre::phoenix::sensors::PigeonIMUConfiguration _pigeon;
@@ -21,7 +15,7 @@ struct configs {
 	configs() {
 		/*Construct all of the configurations with any set of values
 		 *These are just arbitrary values to demonstrate the feature
-		 */
+         */
 
 		//TalonSRX:
         _talon.primaryPID.selectedFeedbackSensor = RemoteSensor0;

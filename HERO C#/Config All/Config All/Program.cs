@@ -29,7 +29,6 @@ namespace HERO_Continuous_Position_Servo_Example1
 
     public class RobotApplication
     {
-        /** make a talon with deviceId 0 */
         TalonSRX _talon = new TalonSRX(1);
         VictorSPX _victor = new VictorSPX(2);
         PigeonIMU _pigeon = new PigeonIMU(3);
@@ -60,6 +59,7 @@ namespace HERO_Continuous_Position_Servo_Example1
             /* get all the buttons */
             FillBtns(ref _btns);
 
+            /* on button1 press read talon configs */
             if (_btns[1] && !_btnsLast[2])
             {
                 Debug.Print("read talon");
@@ -69,6 +69,7 @@ namespace HERO_Continuous_Position_Servo_Example1
 
                 Debug.Print(read_talon.ToString("_talon"));
             }
+            /* on button2 press read victor configs */
             else if (_btns[2] && !_btnsLast[2])
             {
                 Debug.Print("read victor");
@@ -78,6 +79,7 @@ namespace HERO_Continuous_Position_Servo_Example1
 
                 Debug.Print(read_victor.ToString("_victor"));
             }
+            /* on button3 press read pigeon configs */
             else if (_btns[3] && !_btnsLast[3])
             {
 
@@ -89,6 +91,7 @@ namespace HERO_Continuous_Position_Servo_Example1
                 Debug.Print(read_pigeon.ToString("_pigeon"));
 
             }
+            /* on button4 press read canifier configs */
             else if (_btns[4] && !_btnsLast[4])
             {
                 Debug.Print("read canifier");
@@ -98,6 +101,7 @@ namespace HERO_Continuous_Position_Servo_Example1
 
                 Debug.Print(read_canifier.ToString("_canifier"));
             }
+            /* on button5 press set custom configs */
             else if (_btns[5] && !_btnsLast[5])
             {
                 Debug.Print("custom config start");
@@ -109,6 +113,7 @@ namespace HERO_Continuous_Position_Servo_Example1
 
                 Debug.Print("custom config finish");
             }
+            /* on button6 press set factory default */
             else if (_btns[6] && !_btnsLast[6])
             {
                 Debug.Print("factory default start");
@@ -120,11 +125,8 @@ namespace HERO_Continuous_Position_Servo_Example1
 
                 Debug.Print("factory default finish");
             }
+            /* set last presses */
             _btnsLast = (bool[])_btns.Clone();
-            /*for(int i = 0; i < _btns.Length; i++)
-            {
-                _btnsLast[i] = _btns[i];
-            }*/
         }
 
         /** throw all the gamepad buttons into an array */

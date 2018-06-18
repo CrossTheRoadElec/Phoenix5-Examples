@@ -7,6 +7,7 @@ namespace HERO_Continuous_Position_Servo_Example1
 {
     public class configs
     {
+        /*Hold all of the config data*/
         public TalonSRXConfiguration _talon;
         public VictorSPXConfiguration _victor;
         public PigeonIMUConfiguration _pigeon;
@@ -18,12 +19,11 @@ namespace HERO_Continuous_Position_Servo_Example1
             /*Construct all of the configurations with any set of values
              *These are just arbitrary values to demonstrate the feature
              */
+
             _talon = new TalonSRXConfiguration();
             _victor = new VictorSPXConfiguration();
             _pigeon = new PigeonIMUConfiguration();
             _canifier = new CANifierConfiguration();
-
-
 
             //TalonSRX:
             _talon.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;

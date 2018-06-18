@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Config All", "HERO Continuous Position Servo Example1\Config All.csproj", "{9B04D554-E877-4EEF-A1DD-3D8F8C52EA77}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Config All", "Config all/Config All.csproj", "{9B04D554-E877-4EEF-A1DD-3D8F8C52EA77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

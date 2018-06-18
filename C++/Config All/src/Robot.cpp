@@ -1,4 +1,3 @@
-
 #include "WPILib.h"
 #include "Configs.h"
 #include <string>
@@ -29,14 +28,15 @@ private:
 	 * This function is called periodically during operator control
 	 */
 	void TeleopPeriodic() {
-		bool button1 = _joy->GetRawButton(1); //Button A on xbox style controllers, read talon
-		bool button2 = _joy->GetRawButton(2); //Button B on xbox style controllers, read victor
-		bool button3 = _joy->GetRawButton(3); //Button X on xbox style controllers, read pigeon
-		bool button4 = _joy->GetRawButton(4); //Button Y on xbox style controllers, read canifier
-		bool button5 = _joy->GetRawButton(5); //Button Left Bumper on xbox style controllers, custom configs
-		bool button6 = _joy->GetRawButton(6); //Button Right Bumper on xbox style controllers, API default
+		/* get gamepad buttons */
+        bool button1 = _joy->GetRawButton(1); // read talon
+		bool button2 = _joy->GetRawButton(2); // read victor
+		bool button3 = _joy->GetRawButton(3); // read pigeon
+		bool button4 = _joy->GetRawButton(4); // read canifier
+		bool button5 = _joy->GetRawButton(5); // custom configs
+		bool button6 = _joy->GetRawButton(6); // factory default
 
-        
+        /* on button1 press read talon configs */ 
         if(button1 && !_button1_last) {
 			printf("read talon\n");
 			
@@ -46,6 +46,7 @@ private:
 			printf(read_talon.toString("_talon").c_str());
 
 		}
+        /* on button2 press read victor configs */ 
 		else if(button2 && !_button2_last) {
 			printf("read victor\n");
 
@@ -55,6 +56,7 @@ private:
 			printf(read_victor.toString("_victor").c_str());
 
 		}
+        /* on button3 press read pigeon configs */ 
 		else if(button3 && !_button3_last) {
 			
 			printf("read pigeon\n");
@@ -65,6 +67,7 @@ private:
 			printf(read_pigeon.toString("_pigeon").c_str());
 
 		}
+        /* on button4 press read canifier configs */ 
 		else if(button4 && !_button4_last) {
 			printf("read canifier\n");
 
@@ -74,6 +77,7 @@ private:
 			printf(read_canifier.toString("_canifier").c_str());
 
 		}
+        /* on button5 press set custom configs */ 
 		else if(button5 && !_button5_last) {
 			printf("custom config start\n");
 
@@ -84,6 +88,7 @@ private:
 			printf("custom config finish\n");
 
 		}
+        /* on button6 press set factory default */ 
 		else if(button6 && !_button6_last) {
 
 			printf("factory default start\n");
@@ -93,9 +98,9 @@ private:
         	_canifier->ConfigFactoryDefault();
         	printf("factory default finish\n");
 
-
 		}
-        
+
+        /* set last presses */        
 		_button1_last = button1;
 		_button2_last = button2;
 		_button3_last = button3;
