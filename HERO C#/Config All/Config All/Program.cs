@@ -8,7 +8,7 @@ using CTRE.Phoenix.LowLevel;
 using CTRE.Phoenix.Sensors;
 using System;
 
-namespace HERO_Continuous_Position_Servo_Example1
+namespace Config_All
 {
     public class Program
     {

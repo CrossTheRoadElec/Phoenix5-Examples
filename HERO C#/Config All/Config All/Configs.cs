@@ -3,7 +3,7 @@ using CTRE.Phoenix.Sensors;
 using CTRE.Phoenix;
 using CTRE.Phoenix.MotorControl;
 
-namespace HERO_Continuous_Position_Servo_Example1
+namespace Config_All
 {
     public class configs
     {
