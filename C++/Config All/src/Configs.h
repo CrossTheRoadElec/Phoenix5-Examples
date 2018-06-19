@@ -18,7 +18,7 @@ struct configs {
          */
 
 		//TalonSRX:
-        _talon.primaryPID.selectedFeedbackSensor = RemoteSensor0;
+        _talon.primaryPID.selectedFeedbackSensor = None;
         _talon.primaryPID.selectedFeedbackCoefficient = 0.328293;
         _talon.auxilaryPID.selectedFeedbackSensor = Analog;
         _talon.auxilaryPID.selectedFeedbackCoefficient = 0.877686;
@@ -201,6 +201,9 @@ struct configs {
         //CANifier
         _canifier.velocityMeasurementPeriod = ctre::phoenix::Period_50Ms;
         _canifier.velocityMeasurementWindow = 8;
+		_canifier.clearPositionOnLimitF = true;
+		_canifier.clearPositionOnLimitR = false;
+		_canifier.clearPositionOnQuadIdx = true;
         _canifier.customParam_0 = 2;
         _canifier.customParam_1 = 1;
 

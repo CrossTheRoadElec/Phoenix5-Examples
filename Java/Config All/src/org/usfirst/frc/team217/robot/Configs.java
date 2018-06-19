@@ -212,6 +212,9 @@ public class Configs {
         //CANifier
         _canifier.velocityMeasurementPeriod = VelocityPeriod.Period_50Ms;
         _canifier.velocityMeasurementWindow = 8;
+		_canifier.clearPositionOnLimitF = true;
+		_canifier.clearPositionOnLimitR = false;
+		_canifier.clearPositionOnQuadIdx = true;
         _canifier.customParam_0 = 2;
         _canifier.customParam_1 = 1;
     }

@@ -209,7 +209,10 @@ namespace HERO_Continuous_Position_Servo_Example1
             //CANifier
             _canifier.velocityMeasurementPeriod = CANifierVelocityMeasPeriod.Period_50Ms;
             _canifier.velocityMeasurementWindow = 8;
-            _canifier.customParam_0 = 2;
+			_canifier.clearPositionOnLimitF = true;
+			_canifier.clearPositionOnLimitR = false;
+			_canifier.clearPositionOnQuadIdx = true;
+			_canifier.customParam_0 = 2;
             _canifier.customParam_1 = 1;
         }
     }
