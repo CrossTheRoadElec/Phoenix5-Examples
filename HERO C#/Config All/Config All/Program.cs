@@ -8,6 +8,17 @@ using CTRE.Phoenix.LowLevel;
 using CTRE.Phoenix.Sensors;
 using System;
 
+/* This project may be used to test the GetAllConfigs, ConfigAllSettings, and ConfigFactoryDefault
+ * Functions. Note that this project requires at least firmware 3.11 on Victors/Talons
+ * for full function. Also, if firmware greater than 0.41 on the pigeon and 0.42 on the canfier
+ * isn't used, the pigeon/canifier won't retain configs on reboot.
+ * Some recommended tests:
+ *   1. Set to custom configs and then read configs. Confirm that read and write are the same.
+ *   2. Set to factory default configs and then read configs and confirm they are what is expected.
+ *   3. Set to custom configs and then restart devices. Confirm that all configs persist between
+ *   reboots. (See above note about pigeon and CANifier firmware)
+ */
+
 namespace Config_All
 {
     public class Program
@@ -29,7 +40,7 @@ namespace Config_All
 
     public class RobotApplication
     {
-        TalonSRX _talon = new TalonSRX(1);
+        TalonSRX _talon = new TalonSRX(23);
         VictorSPX _victor = new VictorSPX(2);
         PigeonIMU _pigeon = new PigeonIMU(3);
         CANifier _canifier = new CANifier(4);
@@ -118,12 +129,12 @@ namespace Config_All
             {
                 Debug.Print("factory default start");
 
-                _talon.ConfigFactoryDefault();
+				_talon.ConfigFactoryDefault();
                 _victor.ConfigFactoryDefault();
                 _pigeon.ConfigFactoryDefault();
                 _canifier.ConfigFactoryDefault();
 
-                Debug.Print("factory default finish");
+				Debug.Print("factory default finish");
             }
             /* set last presses */
             _btnsLast = (bool[])_btns.Clone();

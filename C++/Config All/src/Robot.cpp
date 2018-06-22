@@ -2,10 +2,21 @@
 #include "Configs.h"
 #include <string>
 
+/* This project may be used to test the GetAllConfigs, ConfigAllSettings, and ConfigFactoryDefault
+ * Functions. Note that this project requires at least firmware 3.11 on Victors/Talons
+ * for full function. Also, if firmware greater than 0.41 on the pigeon and 0.42 on the canfier
+ * isn't used, the pigeon/canifier won't retain configs on reboot.
+ * Some recommended tests:
+ *   1. Set to custom configs and then read configs. Confirm that read and write are the same.
+ *   2. Set to factory default configs and then read configs and confirm they are what is expected.
+ *   3. Set to custom configs and then restart devices. Confirm that all configs persist between
+ *   reboots. (See above note about pigeon and CANifier firmware)
+ */
+
 class Robot: public IterativeRobot {
 private:
 
-	TalonSRX * _talon = new TalonSRX(1);
+	TalonSRX * _talon = new TalonSRX(23);
 	VictorSPX * _victor = new VictorSPX(2);
 	PigeonIMU * _pigeon = new PigeonIMU(3);
 	CANifier * _canifier = new CANifier(4);
@@ -92,11 +103,13 @@ private:
 		else if(button6 && !_button6_last) {
 
 			printf("factory default start\n");
+
 			_talon->ConfigFactoryDefault();
         	_victor->ConfigFactoryDefault();
 			_pigeon->ConfigFactoryDefault();
         	_canifier->ConfigFactoryDefault();
-        	printf("factory default finish\n");
+        	
+            printf("factory default finish\n");
 
 		}
 

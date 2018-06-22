@@ -32,7 +32,7 @@ namespace Config_All
             _talon.auxilaryPID.selectedFeedbackCoefficient = 0.877686F;
             _talon.forwardLimitSwitchSource = LimitSwitchSource.Deactivated;
             _talon.reverseLimitSwitchSource = LimitSwitchSource.RemoteTalonSRX;
-            _talon.sum_0 = FeedbackDevice.QuadEncoder;
+            _talon.sum_0 = FeedbackDevice.QuadEncoder; //FeedbackDevice.PulseWidthEncodedPosition;
             _talon.sum_1 = FeedbackDevice.RemoteSensor0;
             _talon.diff_0 = FeedbackDevice.RemoteSensor1;
             _talon.diff_1 = FeedbackDevice.PulseWidthEncodedPosition;
@@ -103,12 +103,12 @@ namespace Config_All
             _talon.motionAcceleration = 3;
             _talon.motionProfileTrajectoryPeriod = 11;
             _talon.feedbackNotContinuous = true;
-            _talon.remoteSensorClosedLoopDisableNeutralOnLOS = false;
+            _talon.remoteSensorClosedLoopDisableNeutralOnLOS = false; //true;
             _talon.clearPositionOnLimitF = true;
             _talon.clearPositionOnLimitR = true;
-            _talon.clearPositionOnQuadIdx = false;
+            _talon.clearPositionOnQuadIdx = false; //true;
             _talon.limitSwitchDisableNeutralOnLOS = true;
-            _talon.softLimitDisableNeutralOnLOS = false;
+            _talon.softLimitDisableNeutralOnLOS = false; //true;
             _talon.pulseWidthPeriod_EdgesPerRot = 9;
             _talon.pulseWidthPeriod_FilterWindowSz = 32;
             _talon.customParam_0 = 3;
@@ -138,11 +138,11 @@ namespace Config_All
             _victor.velocityMeasurementWindow = 4;
             _victor.forwardLimitSwitchDeviceID = 8;
             _victor.reverseLimitSwitchDeviceID = 7;
-            _victor.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
+            _victor.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen; //LimitSwitchNormal.NormallyClosed;
             _victor.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
             _victor.forwardSoftLimitThreshold = 2326;
             _victor.reverseSoftLimitThreshold = -9023;
-            _victor.forwardSoftLimitEnable = false;
+            _victor.forwardSoftLimitEnable = false; //true;
             _victor.reverseSoftLimitEnable = true;
             _victor.slot_0.kP = 0.100000F;
             _victor.slot_0.kI = 0.010000F;
@@ -188,12 +188,12 @@ namespace Config_All
             _victor.motionCruiseVelocity = 50;
             _victor.motionAcceleration = 3;
             _victor.motionProfileTrajectoryPeriod = 20;
-            _victor.feedbackNotContinuous = false;
+            _victor.feedbackNotContinuous = false; //true;
             _victor.remoteSensorClosedLoopDisableNeutralOnLOS = true;
-            _victor.clearPositionOnLimitF = false;
-            _victor.clearPositionOnLimitR = false;
+            _victor.clearPositionOnLimitF = false; //true;
+            _victor.clearPositionOnLimitR = false; //true;
             _victor.clearPositionOnQuadIdx = true;
-            _victor.limitSwitchDisableNeutralOnLOS = false;
+            _victor.limitSwitchDisableNeutralOnLOS = false; //true;
             _victor.softLimitDisableNeutralOnLOS = true;
             _victor.pulseWidthPeriod_EdgesPerRot = 8;
             _victor.pulseWidthPeriod_FilterWindowSz = 19;
@@ -202,7 +202,6 @@ namespace Config_All
 
 
             //PigeonIMU:
-            _pigeon.temperatureCompensationDisable = true;
             _pigeon.customParam_0 = 6;
             _pigeon.customParam_1 = 14;
 
@@ -210,7 +209,7 @@ namespace Config_All
             _canifier.velocityMeasurementPeriod = CANifierVelocityMeasPeriod.Period_50Ms;
             _canifier.velocityMeasurementWindow = 8;
 			_canifier.clearPositionOnLimitF = true;
-			_canifier.clearPositionOnLimitR = false;
+			_canifier.clearPositionOnLimitR = false; //true;
 			_canifier.clearPositionOnQuadIdx = true;
 			_canifier.customParam_0 = 2;
             _canifier.customParam_1 = 1;
