@@ -1,11 +1,10 @@
-# Binary files that aren't needed
 *.jar
-
 *.class
-
 *.bak
 *.o
-FRCUserProgram
-
-# Generated .gitIgnore files from eclipse
 *.gitignore
+*.user
+FRCUserProgram
+.vs
+bin
+obj
