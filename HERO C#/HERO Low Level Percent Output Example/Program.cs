@@ -27,14 +27,12 @@ namespace Hero_Low_Level_Percent_Output_Example
     {
 		/** Use a USB gamepad plugged into the HERO */
 		GameController _gamepad = new GameController(UsbHostDevice.GetInstance());
-
+		TalonSRX temp = new TalonSRX(23);
         public void Run()
         {
-			UInt32 deviceNumber = 0; //must be  0 - 62
+			UInt32 deviceNumber = 23; //must be  0 - 62
 			const UInt32 CONTROL_3 = 0x040080; //CONTROL_3 is the frame which is used for percent output
 			uint baseArbId = deviceNumber | 0x02040000;
-
-			CTRE.Native.CAN.Send(CONTROL_3 | baseArbId, 0x00, 8, 10); //This frame must be sent to specify the correct period.
 
 			while (true)
             {				
@@ -67,9 +65,8 @@ namespace Hero_Low_Level_Percent_Output_Example
 				 * All CAN Bus framing uses 29bit arbIDs.
 				 */
 
-
 				/* put message on the bus */
-				CTRE.Native.CAN.Send(CONTROL_3 | baseArbId, msg, 8, 0xFFFFFFFF);
+				CTRE.Native.CAN.Send(CONTROL_3 | baseArbId, msg, 8, 0);
 
 				Watchdog.Feed();  //watch dog times out after 100 ms
 
