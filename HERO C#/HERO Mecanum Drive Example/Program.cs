@@ -18,7 +18,7 @@ namespace HERO_Mecanum_Drive_Example
         static TalonSRX rghtFrnt = new TalonSRX(2);
         static TalonSRX rghtRear = new TalonSRX(1);
 
-        static GameController _gamepad = null;
+		static GameController _gamepad = new GameController(UsbHostDevice.GetInstance());
 
         public static void Main()
         {
@@ -75,9 +75,6 @@ namespace HERO_Mecanum_Drive_Example
         }
         static void Drive()
         {
-            if (null == _gamepad)
-                _gamepad = new GameController(UsbHostDevice.GetInstance());
-
             float x = _gamepad.GetAxis(0);      // Positive is strafe-right, negative is strafe-left
             float y = -1 * _gamepad.GetAxis(1); // Positive is forward, negative is reverse
             float turn = _gamepad.GetAxis(2);  // Positive is turn-right, negative is turn-left

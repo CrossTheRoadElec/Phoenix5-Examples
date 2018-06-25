@@ -20,7 +20,7 @@ namespace Hero_Arcade_Drive_Example
 
         static StringBuilder stringBuilder = new StringBuilder();
 
-        static CTRE.Phoenix.Controller.GameController _gamepad = null;
+        static CTRE.Phoenix.Controller.GameController _gamepad = new GameController(UsbHostDevice.GetInstance());
 
         public static void Main()
         {
@@ -60,9 +60,6 @@ namespace Hero_Arcade_Drive_Example
         }
         static void Drive()
         {
-            if (null == _gamepad)
-                _gamepad = new GameController(UsbHostDevice.GetInstance());
-
             float x = _gamepad.GetAxis(0);
             float y = -1 * _gamepad.GetAxis(1);
             float twist = _gamepad.GetAxis(2);
