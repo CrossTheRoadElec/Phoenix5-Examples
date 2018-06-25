@@ -74,33 +74,35 @@ namespace Hero_Position_Servo_Example
 
         public void Run()
         {
+            
+            /* nonzero to block the config until success, zero to skip checking */
+            const int kTimeoutMs = 30;
+
             /* first choose the sensor */
-            _talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0);
+            _talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, kTimeoutMs);
             _talon.SetSensorPhase(false);
-            //_talon.ConfigEncoderCodesPerRev(XXX), // if using TalonSRX.FeedbackDevice.QuadEncoder
-            //_talon.ConfigPotentiometerTurns(XXX), // if using TalonSRX.FeedbackDevice.AnalogEncoder or TalonSRX.FeedbackDevice.AnalogPot
 
             /* set closed loop gains in slot0 */
-            _talon.Config_kP(0, 0.2f); /* tweak this first, a little bit of overshoot is okay */
-            _talon.Config_kI(0, 0f); 
-            _talon.Config_kD(0, 0f);
-            _talon.Config_kF(0, 0f); /* For position servo kF is rarely used. Leave zero */
+            _talon.Config_kP(0, 0.2f, kTimeoutMs); /* tweak this first, a little bit of overshoot is okay */
+            _talon.Config_kI(0, 0f, kTimeoutMs); 
+            _talon.Config_kD(0, 0f, kTimeoutMs);
+            _talon.Config_kF(0, 0f, kTimeoutMs); /* For position servo kF is rarely used. Leave zero */
 
             /* use slot0 for closed-looping */
             _talon.SelectProfileSlot(0, 0);
 
             /* set the peak and nominal outputs, 1.0 means full */
-            _talon.ConfigNominalOutputForward(0.0f, 50);
-			_talon.ConfigNominalOutputReverse(0.0f, 50);
-            _talon.ConfigPeakOutputForward(+1.0f, 50);
-            _talon.ConfigPeakOutputReverse(-1.0f, 50);
+            _talon.ConfigNominalOutputForward(0.0f, kTimeoutMs);
+			_talon.ConfigNominalOutputReverse(0.0f, kTimeoutMs);
+            _talon.ConfigPeakOutputForward(+1.0f, kTimeoutMs);
+            _talon.ConfigPeakOutputReverse(-1.0f, kTimeoutMs);
 
 			/* how much error is allowed?  This defaults to 0. */
-			_talon.ConfigAllowableClosedloopError(0,0, 50);
+			_talon.ConfigAllowableClosedloopError(0,0, kTimeoutMs);
 
 			/* put in a ramp to prevent the user from flipping their mechanism in open loop mode */
-			_talon.ConfigClosedloopRamp(0);
-			_talon.ConfigOpenloopRamp(1);
+			_talon.ConfigClosedloopRamp(0, kTimeoutMs);
+			_talon.ConfigOpenloopRamp(1, kTimeoutMs);
 
             /* zero the sensor and throttle */
             ZeroSensorAndThrottle();
@@ -129,7 +131,7 @@ namespace Hero_Position_Servo_Example
          */
         void ZeroSensorAndThrottle()
         {
-            _talon.SetSelectedSensorPosition(0, 0); /* start our position at zero, this example uses relative positions */
+            _talon.SetSelectedSensorPosition(0, kTimeoutMs); /* start our position at zero, this example uses relative positions */
             _targetPosition = 0;
 			/* zero throttle */
 			_talon.Set(ControlMode.PercentOutput, 0);

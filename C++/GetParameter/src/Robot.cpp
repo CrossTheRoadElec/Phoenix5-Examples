@@ -25,9 +25,11 @@ public:
 		//Initialize talon with ID 3
 		_talon = new TalonSRX(3);
 
+	    /* nonzero to block the config until success, zero to skip checking */
+    	const int kTimeoutMs = 30;
 		//Configure parameters to talon to get later
-		_talon->Config_kP(0, 0.2, 10);
-		_talon->ConfigForwardSoftLimitThreshold(200, 10);
+		_talon->Config_kP(0, 0.2, kTimeoutMs);
+		_talon->ConfigForwardSoftLimitThreshold(200, kTimeoutMs);
 	}
 
 	void TeleopInit() {

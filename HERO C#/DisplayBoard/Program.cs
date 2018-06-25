@@ -125,7 +125,7 @@ namespace Hero_DisplayBoard
         static Battery _Battery = new Battery(_Talon);
 
         /* Constants */
-        static int kTimeout = 10;
+        static int kTimeoutMs = 30;
         static int kSlotIdx = 0;
 
         /* PID Constants */
@@ -373,9 +373,9 @@ namespace Hero_DisplayBoard
        static void InitMotors()
         {
             /* Select Sensor */
-            _Talon.ConfigSelectedFeedbackSensor(CTRE.Phoenix.MotorControl.FeedbackDevice.QuadEncoder, 0, kTimeout);
-            _victor.ConfigRemoteFeedbackFilter(_Talon.GetDeviceID(), CTRE.Phoenix.MotorControl.RemoteSensorSource.RemoteSensorSource_TalonSRX_SelectedSensor, 0, kTimeout);
-            _victor.ConfigSelectedFeedbackSensor(CTRE.Phoenix.MotorControl.RemoteFeedbackDevice.RemoteFeedbackDevice_RemoteSensor0, 0, kTimeout);
+            _Talon.ConfigSelectedFeedbackSensor(CTRE.Phoenix.MotorControl.FeedbackDevice.QuadEncoder, 0, kTimeoutMs);
+            _victor.ConfigRemoteFeedbackFilter(_Talon.GetDeviceID(), CTRE.Phoenix.MotorControl.RemoteSensorSource.RemoteSensorSource_TalonSRX_SelectedSensor, 0, kTimeoutMs);
+            _victor.ConfigSelectedFeedbackSensor(CTRE.Phoenix.MotorControl.RemoteFeedbackDevice.RemoteFeedbackDevice_RemoteSensor0, 0, kTimeoutMs);
             _Talon.SetInverted(true);
             _victor.SetInverted(true);
             _Talon.SetSensorPhase(true);
@@ -386,42 +386,42 @@ namespace Hero_DisplayBoard
             _victor.SetNeutralMode(CTRE.Phoenix.MotorControl.NeutralMode.Brake);
 
             /* Closed loop / Motion Magic Parameters */
-            _Talon.Config_kF(kSlotIdx, kF, kTimeout);
-            _Talon.Config_kP(kSlotIdx, kP, kTimeout);
-            _Talon.Config_kI(kSlotIdx, kI, kTimeout);
-            _Talon.Config_kD(kSlotIdx, kD, kTimeout);
-            _Talon.Config_IntegralZone(kSlotIdx, kIZone, kTimeout);
+            _Talon.Config_kF(kSlotIdx, kF, kTimeoutMs);
+            _Talon.Config_kP(kSlotIdx, kP, kTimeoutMs);
+            _Talon.Config_kI(kSlotIdx, kI, kTimeoutMs);
+            _Talon.Config_kD(kSlotIdx, kD, kTimeoutMs);
+            _Talon.Config_IntegralZone(kSlotIdx, kIZone, kTimeoutMs);
             _Talon.SelectProfileSlot(kSlotIdx, 0);
-            _Talon.ConfigNominalOutputForward(kNominalOuput, kTimeout);
-            _Talon.ConfigNominalOutputReverse(-(kNominalOuput), kTimeout);
-            _Talon.ConfigPeakOutputForward(kPeakOutput, kTimeout);
-            _Talon.ConfigPeakOutputReverse(-(kPeakOutput), kTimeout);
-            _Talon.ConfigMotionCruiseVelocity(kMotionVelocity, kTimeout);
-            _Talon.ConfigMotionAcceleration(kMotionAcceleration, kTimeout);
+            _Talon.ConfigNominalOutputForward(kNominalOuput, kTimeoutMs);
+            _Talon.ConfigNominalOutputReverse(-(kNominalOuput), kTimeoutMs);
+            _Talon.ConfigPeakOutputForward(kPeakOutput, kTimeoutMs);
+            _Talon.ConfigPeakOutputReverse(-(kPeakOutput), kTimeoutMs);
+            _Talon.ConfigMotionCruiseVelocity(kMotionVelocity, kTimeoutMs);
+            _Talon.ConfigMotionAcceleration(kMotionAcceleration, kTimeoutMs);
 
-            _Talon.SetStatusFramePeriod(CTRE.Phoenix.MotorControl.StatusFrameEnhanced.Status_10_Targets, 10, kTimeout);
-            _Talon.SetStatusFramePeriod(CTRE.Phoenix.MotorControl.StatusFrameEnhanced.Status_2_Feedback0, 10, kTimeout);
+            _Talon.SetStatusFramePeriod(CTRE.Phoenix.MotorControl.StatusFrameEnhanced.Status_10_Targets, 10, kTimeoutMs);
+            _Talon.SetStatusFramePeriod(CTRE.Phoenix.MotorControl.StatusFrameEnhanced.Status_2_Feedback0, 10, kTimeoutMs);
 
 
             /* Closed loop / Motion Magic Parameters */
-            _victor.Config_kF(kSlotIdx, kF, kTimeout);
-            _victor.Config_kP(kSlotIdx, kP, kTimeout);
-            _victor.Config_kI(kSlotIdx, kI, kTimeout);
-            _victor.Config_kD(kSlotIdx, kD/2, kTimeout);
-            _victor.Config_IntegralZone(kSlotIdx, kIZone, kTimeout);
+            _victor.Config_kF(kSlotIdx, kF, kTimeoutMs);
+            _victor.Config_kP(kSlotIdx, kP, kTimeoutMs);
+            _victor.Config_kI(kSlotIdx, kI, kTimeoutMs);
+            _victor.Config_kD(kSlotIdx, kD/2, kTimeoutMs);
+            _victor.Config_IntegralZone(kSlotIdx, kIZone, kTimeoutMs);
             _victor.SelectProfileSlot(kSlotIdx, 0);
-            _victor.ConfigNominalOutputForward(kNominalOuput, kTimeout);
-            _victor.ConfigNominalOutputReverse(-(kNominalOuput), kTimeout);
-            _victor.ConfigPeakOutputForward(kPeakOutput, kTimeout);
-            _victor.ConfigPeakOutputReverse(-(kPeakOutput), kTimeout);
-            _victor.ConfigMotionCruiseVelocity(kMotionVelocity, kTimeout);
-            _victor.ConfigMotionAcceleration(kMotionAcceleration, kTimeout);
+            _victor.ConfigNominalOutputForward(kNominalOuput, kTimeoutMs);
+            _victor.ConfigNominalOutputReverse(-(kNominalOuput), kTimeoutMs);
+            _victor.ConfigPeakOutputForward(kPeakOutput, kTimeoutMs);
+            _victor.ConfigPeakOutputReverse(-(kPeakOutput), kTimeoutMs);
+            _victor.ConfigMotionCruiseVelocity(kMotionVelocity, kTimeoutMs);
+            _victor.ConfigMotionAcceleration(kMotionAcceleration, kTimeoutMs);
 
-            _victor.SetStatusFramePeriod(CTRE.Phoenix.MotorControl.StatusFrameEnhanced.Status_10_Targets, 10, kTimeout);
+            _victor.SetStatusFramePeriod(CTRE.Phoenix.MotorControl.StatusFrameEnhanced.Status_10_Targets, 10, kTimeoutMs);
 
 			/* Set current position to 0, can be changed with button 4 */
-            _victor.SetSelectedSensorPosition(0, 0, kTimeout);
-            _Talon.SetSelectedSensorPosition(0, 0,  kTimeout);
+            _victor.SetSelectedSensorPosition(0, 0, kTimeoutMs);
+            _Talon.SetSelectedSensorPosition(0, 0,  kTimeoutMs);
         }
 
         /* Does all motor output control based on Arguements */
@@ -448,8 +448,8 @@ namespace Hero_DisplayBoard
             {
                 _victor.Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, 0);
                 _Talon.Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, 0);
-                _victor.SetSelectedSensorPosition(0, 0, kTimeout);
-                _Talon.SetSelectedSensorPosition(0, 0, kTimeout);
+                _victor.SetSelectedSensorPosition(0, 0, kTimeoutMs);
+                _Talon.SetSelectedSensorPosition(0, 0, kTimeoutMs);
             }
         }
 

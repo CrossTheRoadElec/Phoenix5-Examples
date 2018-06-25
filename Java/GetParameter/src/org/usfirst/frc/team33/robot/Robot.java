@@ -30,9 +30,13 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		// Configure parameters to talon to see later
-		_talon.config_kP(0, 0.2, 10);
-		_talon.configForwardSoftLimitThreshold(200, 10);
+		
+	    /* nonzero to block the config until success, zero to skip checking */
+    	int kTimeoutMs = 30;
+
+        // Configure parameters to talon to see later
+		_talon.config_kP(0, 0.2, kTimeoutMs);
+		_talon.configForwardSoftLimitThreshold(200, kTimeoutMs);
 	}
 
 	/**

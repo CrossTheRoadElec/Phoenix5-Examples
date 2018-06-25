@@ -29,7 +29,7 @@ public:
 	int _isRevLimitSwitchClosed = 0;
 
 	/* nonzero to block the config until success, zero to skip checking */
-	const int kTimeoutMs = 10;
+	const int kTimeoutMs = 30;
 
 	/* everytime we enter disable, reinit*/
 	void DisabledInit() {

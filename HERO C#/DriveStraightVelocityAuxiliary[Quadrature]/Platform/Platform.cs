@@ -41,7 +41,7 @@ namespace DriveStraightVelocityAuxiliary.Platform
          * set to zero to skip waiting for confirmation, set to nonzero to wait
          * and report to DS if action fails.
          */
-        public const int kTimeoutMs = 10;
+        public const int kTimeoutMs = 30;
 
         /**
          * Motor neutral dead-band, set to the minimum 0.1%.

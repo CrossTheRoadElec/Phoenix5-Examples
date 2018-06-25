@@ -42,7 +42,7 @@ namespace HERO_Motion_Magic_Example
         /** How long to wait for receipt when setting a param.  Many setters take an optional timeout that API will wait for.
             This is benefical for initial setup (before movement), though typically not desired 
             when changing parameters concurrently with robot operation (gain scheduling for example).*/
-        const int kTimeoutMs = 50;
+        const int kTimeoutMs = 30;
 
         /**
          * Setup all of the configuration parameters.

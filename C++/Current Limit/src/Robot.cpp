@@ -32,15 +32,17 @@ public:
 		const int kPeakCurrentAmps = 15; /* threshold to trigger current limit */
 		const int kPeakTimeMs = 0; /* how long after Peak current to trigger current limit */
 		const int kContinCurrentAmps = 10; /* hold current after limit is triggered */
+	    /* nonzero to block the config until success, zero to skip checking */
+    	const int kTimeoutMs = 30;
 
-		_tal->ConfigPeakCurrentLimit(kPeakCurrentAmps, 10);
-		_tal->ConfigPeakCurrentDuration(kPeakTimeMs, 10); /* this is a necessary call to avoid errata. */
-		_tal->ConfigContinuousCurrentLimit(kContinCurrentAmps, 10);
+		_tal->ConfigPeakCurrentLimit(kPeakCurrentAmps, kTimeoutMs);
+		_tal->ConfigPeakCurrentDuration(kPeakTimeMs, kTimeoutMs); /* this is a necessary call to avoid errata. */
+		_tal->ConfigContinuousCurrentLimit(kContinCurrentAmps, kTimeoutMs);
 		_tal->EnableCurrentLimit(_currentLimEn); /* honor initial setting */
 
 		/* setup a basic closed loop */
 		_tal->SetNeutralMode(NeutralMode::Brake);
-		_tal->ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0, 10);
+		_tal->ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0, kTimeoutMs);
 		_tal->SetSensorPhase(true); /* flip until sensor is in phase, or closed-loop will not work */
 		_tal->Config_kP(0, 2.0, 10);
 		_tal->Config_kI(0, 0.0, 10);

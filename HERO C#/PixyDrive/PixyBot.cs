@@ -145,11 +145,15 @@ namespace Hero_PixyDrive
             float KdGain1 = 0.0005f;                   /*D-Gain for driving*/
             float kForwardCorrectionRatio = 0.6f;   /*Ratio for driving speed*/
 
+            
+            /* nonzero to block the config until success, zero to skip checking */
+            const int kTimeoutMs = 30;
+
             /* Configure Talons to operate in percentage VBus mode, and Ramp Up Voltage*/
             foreach (TalonSRX temp in Talons)
             {
                 temp.Set(ControlMode.PercentOutput, 0);
-                temp.ConfigOpenloopRamp(kVoltageRampSec);
+                temp.ConfigOpenloopRamp(kVoltageRampSec, kTimeoutMs);
             }
 
             /* Initiate the program by starting off in Manaul Drive mode */

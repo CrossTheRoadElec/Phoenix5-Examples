@@ -67,7 +67,11 @@ public class Robot extends IterativeRobot {
 	}
 	
     public void teleopInit() {
-		_pidgey.setFusedHeading(0.0, 10); /* reset heading, angle measurement wraps at plus/minus 23,040 degrees (64 rotations) */
+        
+        /* nonzero to block the config until success, zero to skip checking */
+        final int kTimeoutMs = 30;
+	
+    	_pidgey.setFusedHeading(0.0, kTimeoutMs); /* reset heading, angle measurement wraps at plus/minus 23,040 degrees (64 rotations) */
 		_goStraight = GoStraight.Off;  
     }
 	

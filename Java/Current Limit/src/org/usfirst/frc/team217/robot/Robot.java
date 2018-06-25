@@ -33,19 +33,22 @@ public class Robot extends TimedRobot {
 		final int kPeakTimeMs = 0; /* how long after Peak current to trigger current limit */
 		final int kContinCurrentAmps = 10; /* hold current after limit is triggered */
 
-		_tal.configPeakCurrentLimit(kPeakCurrentAmps, 10);
-		_tal.configPeakCurrentDuration(kPeakTimeMs, 10); /* this is a necessary call to avoid errata. */
-		_tal.configContinuousCurrentLimit(kContinCurrentAmps, 10);
+	    /* nonzero to block the config until success, zero to skip checking */
+    	int kTimeoutMs = 30;
+		
+        _tal.configPeakCurrentLimit(kPeakCurrentAmps, kTimeoutMs);
+		_tal.configPeakCurrentDuration(kPeakTimeMs, kTimeoutMs); /* this is a necessary call to avoid errata. */
+		_tal.configContinuousCurrentLimit(kContinCurrentAmps, kTimeoutMs);
 		_tal.enableCurrentLimit(_currentLimEn); /* honor initial setting */
 
 		/* setup a basic closed loop */
 		_tal.setNeutralMode(NeutralMode.Brake);
-		_tal.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
+		_tal.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, kTimeoutMs);
 		_tal.setSensorPhase(true); /* flip until sensor is in phase, or closed-loop will not work */
-		_tal.config_kP(0, 2.0, 10);
-		_tal.config_kI(0, 0.0, 10);
-		_tal.config_kD(0, 0.0, 10);
-		_tal.config_kF(0, 0.0, 10);
+		_tal.config_kP(0, 2.0, kTimeoutMs);
+		_tal.config_kI(0, 0.0, kTimeoutMs);
+		_tal.config_kD(0, 0.0, kTimeoutMs);
+		_tal.config_kF(0, 0.0, kTimeoutMs);
 	}
 
 	public void teleopPeriodic() {
