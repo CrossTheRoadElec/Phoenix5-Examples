@@ -70,13 +70,15 @@ namespace Hero_Position_Servo_Example
 
         float _targetPosition = 0;
 
-        uint [] _debLeftY = { 0, 0 }; // _debLeftY[0] is how many times leftY is zero, _debLeftY[1] is how many times leftY is not zeero.
+		const int kTimeoutMs = 30;
+
+		uint [] _debLeftY = { 0, 0 }; // _debLeftY[0] is how many times leftY is zero, _debLeftY[1] is how many times leftY is not zeero.
 
         public void Run()
         {
             
             /* nonzero to block the config until success, zero to skip checking */
-            const int kTimeoutMs = 30;
+            
 
             /* first choose the sensor */
             _talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, kTimeoutMs);

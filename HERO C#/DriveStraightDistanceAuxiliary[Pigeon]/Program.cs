@@ -140,7 +140,7 @@ namespace DriveStraightDistanceAuxiliary
                 CTRE.Phoenix.Util.Deadband(ref turn);
 
                 /* Button processing */
-                Hardware._gamepad.GetButtons(ref btns);
+                Hardware._gamepad.GetButtons(btns);
                 if (btns[2] && !_btns[2])
                 {
                     _state = !_state;           // Toggle state
