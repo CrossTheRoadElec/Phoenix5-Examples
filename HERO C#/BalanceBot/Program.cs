@@ -65,6 +65,14 @@ using BalanceBot.Platform;
 
 namespace BalanceBot
 {
+
+	public class ServoParameters
+	{
+		public float P = 0;
+		public float I = 0;
+		public float D = 0;
+	}
+
    public class Program
    {
 	   /* Constants */
@@ -105,21 +113,21 @@ namespace BalanceBot
 		static float PIDCycle = 0;
         static float inc_dec = 0.001f;
 
-        static CTRE.Phoenix.ServoParameters BalancePID = new CTRE.Phoenix.ServoParameters
+        static ServoParameters BalancePID = new ServoParameters
         {
             /* acute gains */
             P = 0.010f,
             I = 0.000f,
             D = 0.700f,
         };
-        static CTRE.Phoenix.ServoParameters DrivePID = new CTRE.Phoenix.ServoParameters
+        static ServoParameters DrivePID = new ServoParameters
         {
             /* normal gains */
             P = 0.009f,
             I = 0.000f,
             D = 0.700f,
         };
-        static CTRE.Phoenix.ServoParameters VelocityPID = new CTRE.Phoenix.ServoParameters
+        static ServoParameters VelocityPID = new ServoParameters
         {
             /* velocity gains */
             P = 30,
@@ -188,7 +196,7 @@ namespace BalanceBot
 			float tempP = 0;
             float tempI = 0;
             float tempD = 0;
-			CTRE.Phoenix.ServoParameters currentPID = new CTRE.Phoenix.ServoParameters();
+			ServoParameters currentPID = new ServoParameters();
 
 			float[] XYZ_Dps = new float[3];
 			Boolean lowBattery = false;
@@ -513,7 +521,7 @@ namespace BalanceBot
         }
 
         /** PID gains setter */
-        public static void PIDControl(CTRE.Phoenix.ServoParameters PIDtoControl)
+        public static void PIDControl(ServoParameters PIDtoControl)
         {
             bool button5 = Hardware.Gamepad.GetButton(5);
             bool button6 = Hardware.Gamepad.GetButton(6);
