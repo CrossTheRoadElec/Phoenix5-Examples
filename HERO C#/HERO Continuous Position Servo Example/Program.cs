@@ -154,6 +154,10 @@ namespace HERO_Continuous_Position_Servo_Example
                 _targetPosition = servo(leftAxisX, _talon.GetSelectedSensorPosition(0), _sensorRange);
                 EnableClosedLoop();
             }
+       
+            //Copy to the array last button values with the current button values 
+            _btnsLast = _btns;           
+
         }
 
         void EnableClosedLoop()
