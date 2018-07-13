@@ -79,7 +79,7 @@ namespace BalanceBot
 		const float maxOutput = 1;					// Max output is 0, percent output is [-1, 1]
         const float DegToRad = 0.01745329252f;		// Scalor to convert Degrees to Radians
         const float RadToDeg = 57.2957795131f;		// Scalor to convert Radians to Degrees
-		const int kTimeout = 10;                    // Timeout of 10ms for sets and configs
+		const int kTimeoutMs = 30;                    // Timeout of 30ms for sets and configs
 
 		/* PID for straigtness */
 		static float KpGain = 0.2f / 10;
@@ -162,35 +162,35 @@ namespace BalanceBot
 			foreach(CTRE.Phoenix.MotorControl.CAN.TalonSRX Talon in Hardware.allTalons)
 			{
 				/* Voltage Compensation on both Talons */
-				Talon.ConfigVoltageCompSaturation(10.0f, kTimeout);
+				Talon.ConfigVoltageCompSaturation(10.0f, kTimeoutMs);
 				Talon.EnableVoltageCompensation(true);
-				Talon.ConfigVoltageMeasurementFilter(32, kTimeout);
+				Talon.ConfigVoltageMeasurementFilter(32, kTimeoutMs);
 
-				Talon.ConfigNominalOutputForward(0, kTimeout);
-				Talon.ConfigNominalOutputReverse(0, kTimeout);
-				Talon.ConfigPeakOutputForward(1, kTimeout);
-				Talon.ConfigPeakOutputReverse(-1, kTimeout);
+				Talon.ConfigNominalOutputForward(0, kTimeoutMs);
+				Talon.ConfigNominalOutputReverse(0, kTimeoutMs);
+				Talon.ConfigPeakOutputForward(1, kTimeoutMs);
+				Talon.ConfigPeakOutputReverse(-1, kTimeoutMs);
 
 				/* Current limiting on both Talons */
-				Talon.ConfigContinuousCurrentLimit(15, kTimeout);  // Configured to desired amperage of current draw
-				Talon.ConfigPeakCurrentLimit(15, kTimeout);        // Peak current limit set to 0, current limit when current has excedded continout current limit value
-				Talon.ConfigPeakCurrentDuration(0, kTimeout);      // Current limit the moment peak current limit has been met by current limit
+				Talon.ConfigContinuousCurrentLimit(15, kTimeoutMs);  // Configured to desired amperage of current draw
+				Talon.ConfigPeakCurrentLimit(15, kTimeoutMs);        // Peak current limit set to 0, current limit when current has excedded continout current limit value
+				Talon.ConfigPeakCurrentDuration(0, kTimeoutMs);      // Current limit the moment peak current limit has been met by current limit
 				Talon.EnableCurrentLimit(true);                    // Enable current limiting
 
 				/* Change Velocity measurement paramters */
-				Talon.ConfigVelocityMeasurementPeriod(CTRE.Phoenix.MotorControl.VelocityMeasPeriod.Period_10Ms, kTimeout);
-				Talon.ConfigVelocityMeasurementWindow(32, kTimeout);
+				Talon.ConfigVelocityMeasurementPeriod(CTRE.Phoenix.MotorControl.VelocityMeasPeriod.Period_10Ms, kTimeoutMs);
+				Talon.ConfigVelocityMeasurementWindow(32, kTimeoutMs);
 
 				/* Speed up Feedback status frame of both Talons */
-				Talon.SetStatusFramePeriod(CTRE.Phoenix.MotorControl.StatusFrame.Status_2_Feedback0_, 10, kTimeout);
+				Talon.SetStatusFramePeriod(CTRE.Phoenix.MotorControl.StatusFrame.Status_2_Feedback0_, 10, kTimeoutMs);
 
 				/* Speed up Status Frame 4, which provides information about battery */
-				Talon.SetStatusFramePeriod(CTRE.Phoenix.MotorControl.StatusFrameEnhanced.Status_4_AinTempVbat, 10, kTimeout);
+				Talon.SetStatusFramePeriod(CTRE.Phoenix.MotorControl.StatusFrameEnhanced.Status_4_AinTempVbat, 10, kTimeoutMs);
 			}
 
 			/* Speed up Pigeon CAN Frames that are important for the cascade PID loop to operate properly */
-			Hardware.pidgey.SetStatusFramePeriod(CTRE.Phoenix.Sensors.PigeonIMU_StatusFrame.BiasedStatus_2_Gyro, 5, kTimeout);
-			Hardware.pidgey.SetStatusFramePeriod(CTRE.Phoenix.Sensors.PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 5, kTimeout);
+			Hardware.pidgey.SetStatusFramePeriod(CTRE.Phoenix.Sensors.PigeonIMU_StatusFrame.BiasedStatus_2_Gyro, 5, kTimeoutMs);
+			Hardware.pidgey.SetStatusFramePeriod(CTRE.Phoenix.Sensors.PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 5, kTimeoutMs);
 
 			/* Locals used when Gain Scheduling within Balance loop (Inner Loop) */
 			float tempP = 0;

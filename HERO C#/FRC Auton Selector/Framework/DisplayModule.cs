@@ -32,7 +32,7 @@ namespace CTRE
     {
         namespace Module
         {
-            public class DisplayModule : ModuleBase
+            public class DisplayModule : ModuleBase //TODO
             {
                 public enum Color : uint
                 {

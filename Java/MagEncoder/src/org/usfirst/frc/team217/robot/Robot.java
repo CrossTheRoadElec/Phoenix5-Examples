@@ -65,12 +65,15 @@ public class Robot extends IterativeRobot {
 		/* Victor will follow Talon */
 		_vic.follow(_tal);
 
+	    /* nonzero to block the config until success, zero to skip checking */
+    	int kTimeoutMs = 30;
+
 		/*
 		 * new frame every 1ms, since this is a test project use up as much
 		 * bandwidth as possible for the purpose of this test.
 		 */
-		_tal.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 1, 10);
-		_tal.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+		_tal.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 1, kTimeoutMs);
+		_tal.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, kTimeoutMs);
 
 		/* fire the plotter */
 		_plotThread = new PlotThread(this);

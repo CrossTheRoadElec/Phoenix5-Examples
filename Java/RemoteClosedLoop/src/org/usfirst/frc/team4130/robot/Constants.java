@@ -55,7 +55,7 @@ public class Constants {
 	 * set to zero to skip waiting for confirmation, set to nonzero to wait
 	 * and report to DS if action fails.
 	 */
-	public final static int kTimeoutMs = 10;
+	public final static int kTimeoutMs = 30;
 
 	/**
 	 * Base trajectory period to add to each individual 

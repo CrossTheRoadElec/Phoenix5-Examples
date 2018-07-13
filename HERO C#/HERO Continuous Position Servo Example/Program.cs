@@ -85,15 +85,19 @@ namespace HERO_Continuous_Position_Servo_Example
 
         public void init()
         {
+
+            /* nonzero to block the config until success, zero to skip checking */
+            const int kTimeoutMs = 30;
+            
             /* first choose the sensor */
-            _talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0);
+            _talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, kTimeoutMs);
             _talon.SetSensorPhase(false);
 
             /* set closed loop gains in slot0 */
-            _talon.Config_kP(0, 0.5f); /* tweak this first, a little bit of overshoot is okay */
-            _talon.Config_kI(0, 0f);
-            _talon.Config_kD(0, 0f);
-            _talon.Config_kF(0, 0f); /* For position servo kF is rarely used. Leave zero */
+            _talon.Config_kP(0, 0.5f, kTimeoutMs); /* tweak this first, a little bit of overshoot is okay */
+            _talon.Config_kI(0, 0f, kTimeoutMs);
+            _talon.Config_kD(0, 0f, kTimeoutMs);
+            _talon.Config_kF(0, 0f, kTimeoutMs); /* For position servo kF is rarely used. Leave zero */
 
             /* use slot0 for closed-looping */
             _talon.SelectProfileSlot(0, 0);

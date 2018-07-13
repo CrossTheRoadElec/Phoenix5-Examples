@@ -43,17 +43,20 @@ public:
 	void TeleopInit() {
 		/* Initialize count to 0 */
 		count = 0;
-
-		/* Configure sensor on talon to check CANifier */
-		_tal->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10);
+        
+	    /* nonzero to block the config until success, zero to skip checking */
+	    const int kTimeoutMs = 30;
+		
+        /* Configure sensor on talon to check CANifier */
+		_tal->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, kTimeoutMs);
 
 		/* Set sensor positions to some known position */
-		_tal->SetSelectedSensorPosition(33, 0, 0);
-		_can->SetQuadraturePosition(33, 0);
+		_tal->SetSelectedSensorPosition(33, 0, kTimeoutMs);
+		_can->SetQuadraturePosition(33, kTimeoutMs);
 
 		/* Configure velocity measurements to what we want */
-		_can->ConfigVelocityMeasurementPeriod(CANifierVelocityMeasPeriod::Period_100Ms, 10);
-		_can->ConfigVelocityMeasurementWindow(64, 10);
+		_can->ConfigVelocityMeasurementPeriod(CANifierVelocityMeasPeriod::Period_100Ms, kTimeoutMs);
+		_can->ConfigVelocityMeasurementWindow(64, kTimeoutMs);
 	}
 
 	void TeleopPeriodic() {

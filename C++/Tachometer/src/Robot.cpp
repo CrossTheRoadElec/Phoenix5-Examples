@@ -26,21 +26,25 @@ public:
 	}
 
 	void TeleopInit() {
-		//Configure talon to read magencoder values
+		
+	    /* nonzero to block the config until success, zero to skip checking */
+    	const int kTimeoutMs = 30;
+
+        //Configure talon to read magencoder values
 		_magTalon->ConfigSelectedFeedbackSensor(
-				FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10);
+				FeedbackDevice::CTRE_MagEncoder_Relative, 0, kTimeoutMs);
 
 		//Configure talon to read tachometer values
 		_tachTalon->ConfigSelectedFeedbackSensor(
-				FeedbackDevice::Tachometer, 0, 10);
+				FeedbackDevice::Tachometer, 0, kTimeoutMs);
 
 		/* read section 7.9 Tachometer Measurement in software reference manual */
 		//Edges per cycle = 2 (WHITE black WHITE black per revolution)
 		int edgesPerCycle = 2;
-		_tachTalon->ConfigSetParameter((ParamEnum) 430, edgesPerCycle, 0, 0, 10);
+		_tachTalon->ConfigSetParameter((ParamEnum) 430, edgesPerCycle, 0, 0, kTimeoutMs);
 		// additional filtering if need be.
 		int filterWindowSize = 1;
-		_tachTalon->ConfigSetParameter((ParamEnum) 431, filterWindowSize, 0, 0, 10);
+		_tachTalon->ConfigSetParameter((ParamEnum) 431, filterWindowSize, 0, 0, kTimeoutMs);
 	}
 
 	void TeleopPeriodic() {

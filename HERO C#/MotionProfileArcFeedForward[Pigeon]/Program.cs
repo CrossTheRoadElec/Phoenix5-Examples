@@ -152,7 +152,7 @@ namespace MotionProfileArcFeedForward
                 CTRE.Phoenix.Util.Deadband(ref leftX);
 
                 /* Button processing */
-                Hardware._gamepad.GetButtons(ref btns);
+                Hardware._gamepad.GetButtons( btns);
                 if (btns[1] && !_btns[1])
                 {
                     /* Enter/Exit reverse direction Motion Profile */
@@ -195,7 +195,7 @@ namespace MotionProfileArcFeedForward
                 Thread.Sleep(5);
 
                 /* Update motion profile status every loop */
-                Hardware._rightTalon.GetMotionProfileStatus(ref _motionProfileStatus);
+                Hardware._rightTalon.GetMotionProfileStatus(_motionProfileStatus);
 
                 if (_state == 0)
                 {

@@ -29,7 +29,7 @@ public class Constants {
 	 * Set to zero to skip waiting for confirmation.
 	 * Set to nonzero to wait and report to DS if action fails.
 	 */
-	public final static int kTimeoutMs = 10;
+	public final static int kTimeoutMs = 30;
 
 	/**
 	 * Motor neutral dead-band, set to the minimum 0.1%.

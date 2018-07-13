@@ -36,19 +36,23 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopInit() {
-		// Mag Encoder to read true values
-		_magTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+    
+        /* nonzero to block the config until success, zero to skip checking */
+        final int kTimeoutMs = 30;
+		
+        // Mag Encoder to read true values
+		_magTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, kTimeoutMs);
 		
 
 		/* read section 7.9 Tachometer Measurement in software reference manual */
 		// Talon Tach to read test values
-		_tachTalon.configSelectedFeedbackSensor(FeedbackDevice.Tachometer, 0, 10);
+		_tachTalon.configSelectedFeedbackSensor(FeedbackDevice.Tachometer, 0, kTimeoutMs);
 		// 2 Edges per cycle (WHITE-black-WHITE-black)
 		int edgesPerCycle = 2;
-		_tachTalon.configSetParameter(430, edgesPerCycle, 0, 0, 10);
+		_tachTalon.configSetParameter(430, edgesPerCycle, 0, 0, kTimeoutMs);
 		// additional filtering if need be.
 		int filterWindowSize = 1;
-		_tachTalon.configSetParameter(431, filterWindowSize, 0, 0, 10);
+		_tachTalon.configSetParameter(431, filterWindowSize, 0, 0, kTimeoutMs);
 	}
 
 	/**

@@ -52,16 +52,20 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopInit() {
+        
+	    /* nonzero to block the config until success, zero to skip checking */
+    	final int kTimeoutMs = 30;
+
 		/* Configure talon with feedback device to double check CANifier */
-		_tal.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+		_tal.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, kTimeoutMs);
 		
 		/* On Teleop Initialization, set positions to some value */
-		_tal.setSelectedSensorPosition(-745, 0, 0);
-		_can.setQuadraturePosition(-745, 10);
+		_tal.setSelectedSensorPosition(-745, 0, kTimeoutMs);
+		_can.setQuadraturePosition(-745, kTimeoutMs);
 		
 		/* Configure velocity measurements to be what we want */
-		_can.configVelocityMeasurementPeriod(VelocityPeriod.Period_100Ms, 0);
-		_can.configVelocityMeasurementWindow(64, 0);
+		_can.configVelocityMeasurementPeriod(VelocityPeriod.Period_100Ms, kTimeoutMs);
+		_can.configVelocityMeasurementWindow(64, kTimeoutMs);
 	}
 
 	/**

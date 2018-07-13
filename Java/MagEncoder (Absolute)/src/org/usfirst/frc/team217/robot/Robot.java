@@ -98,8 +98,10 @@ public class Robot extends TimedRobot {
 	TalonSRX _talon = new TalonSRX(3);
 	Joystick _joy = new Joystick(0);
 
-	final int kTimeoutMs = 10;
-	/**
+    /* nonzero to block the config until success, zero to skip checking */
+    final int kTimeoutMs = 30;
+	
+    /**
 	 * If the measured travel has a discontinuity, Note the extremities or
 	 * "book ends" of the travel.
 	 */
