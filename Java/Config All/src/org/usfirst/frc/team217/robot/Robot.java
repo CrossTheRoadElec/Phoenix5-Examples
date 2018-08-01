@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.Joystick;
 
 public class Robot extends IterativeRobot {
     /** make a talon with deviceId 0 */
-    TalonSRX  _talon = new TalonSRX(23);
+    TalonSRX  _talon = new TalonSRX(1);
     VictorSPX  _victor = new VictorSPX(2);
     PigeonIMU  _pigeon = new PigeonIMU(3);
     CANifier  _canifier = new CANifier(4);
