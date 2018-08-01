@@ -3,8 +3,8 @@
 #include <string>
 
 /* This project may be used to test the GetAllConfigs, ConfigAllSettings, and ConfigFactoryDefault
- * Functions. Note that this project requires at least firmware 3.11 on Victors/Talons
- * for full function. Also, if firmware greater than 0.41 on the pigeon and 0.42 on the canfier
+ * Functions. Note that this project requires at least firmware 3.10 on Victors/Talons
+ * for full function. Also, if firmware greater than 0.41 on the pigeon and 0.42 on the canifier
  * isn't used, the pigeon/canifier won't retain configs on reboot.
  * Some recommended tests:
  *   1. Set to custom configs and then read configs. Confirm that read and write are the same.
