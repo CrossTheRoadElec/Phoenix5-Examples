@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
 /* This project may be used to test the getAllConfigs, configAllSettings, and configFactoryDefault
- * Functions. Note that this project requires at least firmware 3.11 on Victors/Talons
+ * Functions. Note that this project requires at least firmware 3.10/11.10 on Victors/Talons
  * for full function. Also, if firmware greater than 0.41 on the pigeon and 0.42 on the canfier
  * isn't used, the pigeon/canifier won't retain configs on reboot.
  * Some recommended tests:
@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.Joystick;
 
 public class Robot extends IterativeRobot {
     /** make a talon with deviceId 0 */
-    TalonSRX  _talon = new TalonSRX(23);
+    TalonSRX  _talon = new TalonSRX(1);
     VictorSPX  _victor = new VictorSPX(2);
     PigeonIMU  _pigeon = new PigeonIMU(3);
     CANifier  _canifier = new CANifier(4);
