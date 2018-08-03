@@ -5,6 +5,16 @@ This example is a pair of projects - one for the CTRE HERO, and one for the robo
 Using these projects together allows the control of CTRE devices from the HERO while
 the roboRIO handles the enable signals.
 
+## Why?
+
+Phoenix already supports the CTRE CAN motor controller and sensor devices for roboRIO.  However there may be advantages in having other sub systems commanding these devices.  
+
+For example, a device can calculate the feed-forwards and target positions of a single complex mechanism such as a multi joint arm or swerve drivetrain.  Then, directly update the involved Talon SRXs without involving the roboRIO.
+
+Different platforms have different languages, toolchains, debugging-features, performance metrics, etc.  This example focuses on the HERO control board, but this method could be used with anything that can link Phoenix.  Additionally developers can port the open source Phoenix-netmf repository.
+
+RoboRIO still sends the FRC-specific enable, ensuring safe operation of these motor controllers.
+
 ## Setup
 Both the roboRIO and HERO must be connected on the same CAN bus.
 
