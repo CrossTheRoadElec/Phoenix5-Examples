@@ -1,40 +1,44 @@
 /**
- * Read Logitech game controller and direct control the WHEEL's motor output with left stick.
+ * Open Loop Wheel Task, Read Logitech game controller and direct control the Wheel's motor output
+ * with right joystick. Task can be started by pressing left shoulder button.
  * 
- * Speed is measued with a Talon Tach and Talon SRX.
+ * Speed is measued through Talon Tach connected to Talon SRX 
  * @link http://www.ctr-electronics.com/talon-tach-tachometer-new-limit-switch.html
  */
+using CTRE.Phoenix.Tasking;
 using Platform;
 
-public class TaskDirectControlWheel : CTRE.Tasking.ILoopable
+public class TaskDirectControlWheel : ILoopable
 {
     float _percentOut = 0;
 
     public void OnLoop()
     {
-        float rightStickY = Hardware.gamepad.GetAxis(5);  // Ensure Positive is turn-right, negative is turn-left
+		/* Get right joystick. Posivite is turn right, Negative is turn left */
+        float rightStickY = Hardware.gamepad.GetAxis(5);
 
-        CTRE.Util.Deadband(ref rightStickY);
+		/* Deadband joystick value to remove small noise */
+        CTRE.Phoenix.Util.Deadband(ref rightStickY);
 
+		/* Store Joystick value into output value and cap with [-1, 1], where Voltage Comp will cap to [-13V, 13V] */
         _percentOut = rightStickY; // [-1,1]
-        _percentOut = LinearInterpolation.Calculate(_percentOut, -1, -13f, +1, +13f); // scale to [-13V, +13V]
-        _percentOut = CTRE.Util.Cap(_percentOut, 13f); // cap to 13V
+        _percentOut = CTRE.Phoenix.Util.Cap(_percentOut, 1f);
 
+		/* Call Open Loop method and provide percent output */
         Subsystems.Wheel.SetPercentOutput(_percentOut);
 
-        /* if Talon was reset, redo config.  This is generally not necessary */
-        if (Subsystems.Wheel.MotorController.HasResetOccured())
+		/* If Talon has reset, redo initialization.  This is generally not necessary */
+		if (Subsystems.Wheel.MotorController.HasResetOccured())
         {
-            Subsystems.Wheel.Setup();
+            Subsystems.Wheel.Initialize();
         }
     }
 
-    public bool IsDone() { return false; }
-
+	/* ILoopables */
     public void OnStart() { }
-
-    public void OnStop()
-    {
-        Subsystems.Wheel.Stop();
-    }
+	public void OnStop()
+	{
+		Subsystems.Wheel.Stop();
+	}
+	public bool IsDone() { return false; }
 }

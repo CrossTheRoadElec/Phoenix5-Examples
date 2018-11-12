@@ -1,98 +1,104 @@
 /**
- * Task manageing the CANifier outputs to the LED strip.
+ * Arm Subsystem in TalonTach Example. 
+ * Arm initialized with CTRE Mag Encoder and Hardware Limit Switches (TalonTachs)
+ * Used to demonstrate the ability to use Talon Tach as Hardware LimitSwitches
+ * 
+ * Provides method Percent Output and initialization
+ *  
+ * TODO: Add proper Closed Loop Mode to Task Servo Arm
  * 
  * Limit switches are automatic via Talon Tach and Talon SRXs.
  * @link http://www.ctr-electronics.com/talon-tach-tachometer-new-limit-switch.html
  */
-using CTRE.Mechanical;
-using CTRE.MotorControllers;
+
 using Platform;
+using CTRE.Phoenix.Mechanical;
+using CTRE.Phoenix.MotorControl;
+using CTRE.Phoenix.MotorControl.CAN;
+using Microsoft.SPOT;
 
 namespace Subsystem
 {
     public class SubSystemArm
     {
-        /* grab the gearbox reference for easy reach */
+        /* grab the gearbox and talon reference for easy reach */
         SensoredGearbox _gearBox = Hardware.ArmGearBox;
+		TalonSRX _tal = Hardware.armTalon;
 
-        /* track which control mode we are in */
-        ControlMode _controlMode = ControlMode.kPercentVbus;
+		/* track which control mode we are in */
+		ControlMode _controlMode = ControlMode.PercentOutput;
 
-        public SubSystemArm()
-        {
-            Setup();
-        }
-
-        public TalonSrx MotorController
+        public TalonSRX MotorController
         {
             get
             {
-                return (TalonSrx)_gearBox.GetMaster();
-            }
+				return (TalonSRX)_gearBox.MasterMotorController;
+			}
         }
 
-        public void Setup()
-        {
-            TalonSrx armTalon = (TalonSrx)_gearBox.GetMaster();
+		/* General Setup */
+		public void Initialize()
+		{
+			/* Set Talon Status Frame Rates */
+			_tal.SetStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 10);    //Send updates every 10ms instead of 10ms
+			_tal.SetSensorPhase(true);                                              //reversed sensor
 
-            armTalon.SetStatusFrameRateMs(TalonSrx.StatusFrameRate.StatusFrameRateGeneral, 10); //Send updates every 10ms instead of 10ms
-            armTalon.SetStatusFrameRateMs(TalonSrx.StatusFrameRate.StatusFrameRatePulseWidthMeas, 1); //1ms update insead of 100ms for encoder
-            armTalon.SetSensorDirection(true); //reversed sensor
-            armTalon.ConfigFwdLimitSwitchNormallyOpen(false);
-            armTalon.ConfigRevLimitSwitchNormallyOpen(false);
-            armTalon.EnableZeroSensorPositionOnReverseLimit(false); //enable on reverse limit
-            armTalon.EnableZeroSensorPositionOnForwardLimit(false);
-        }
-        private void SetupPositionServo()
-        {
-            TalonSrx armTalon = (TalonSrx)_gearBox.GetMaster();
+			/* Configure Talon Tach Limit Switches to be Normally Closed */
+			_tal.ConfigForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed);
+			_tal.ConfigReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed);
 
-            armTalon.ConfigNominalOutputVoltage(0, 0);
-            armTalon.ConfigPeakOutputVoltage(Constants.MAX_VOLTAGE, -Constants.MAX_VOLTAGE);
-            armTalon.SetAllowableClosedLoopErr(0, Constants.TOLERANCE);
+			/* Configure Sensor */
+			_tal.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute);
 
-            armTalon.SetPID(0, Constants.KPARM, Constants.KIARM, Constants.KDARM);
+			/* Clear Position on Reverse Limit Switch */
+			_tal.ConfigClearPositionOnLimitR(false, 30);	//Enable to Zero Position on Limit Switch, Can be used to Home/Set Postions for Software Limit Switches
+			_tal.ConfigClearPositionOnLimitF(false, 30);
+		}
 
-            _controlMode = ControlMode.kPosition;
-
-            armTalon.SelectProfileSlot(0);
-            armTalon.SetMotionMagicAcceleration(60.0f);
-            armTalon.SetMotionMagicCruiseVelocity(22.0f);
-
-            armTalon.SetVoltageRampRate(0f);
-        }
-
+		/** Setup for PercentOutput */
         private void SetupMotorOutput()
         {
-            TalonSrx armTalon = (TalonSrx)_gearBox.GetMaster();
-
-            //_gearBox.SetControlMode(ControlMode.kPercentVbus);
-            _controlMode = ControlMode.kPercentVbus;
-
-            armTalon.SetVoltageRampRate(16.0f);
+			/* Update Control Mode */
+            _controlMode = ControlMode.PercentOutput;
+			/* Configure Open Loop Ramp Rate */
+			_tal.ConfigOpenloopRamp(1.0f);
         }
 
-        public void SetTargetPos(float pos)
-        {
-            if (_controlMode != ControlMode.kPosition)
-            {
-                SetupPositionServo();
-            }
-            _gearBox.Set(pos, _controlMode);
-        }
-
+		/** Set for PercentOutput */
         public void SetPercentOutput(float percentOutput)
         {
-            percentOutput = CTRE.Util.Cap(percentOutput, 0.20f);
-
-            if (_controlMode != ControlMode.kPercentVbus)
-            {
-                SetupMotorOutput();
-            }
-            _gearBox.Set(percentOutput, _controlMode);
+			/* Cap output to 20% */
+            percentOutput = CTRE.Phoenix.Util.Cap(percentOutput, 0.25f);
+			/* Call Percent Output Setup on Control Mode switch */
+			if (_controlMode != ControlMode.PercentOutput) { SetupMotorOutput(); }
+			/* Perform Percent Output */
+			_gearBox.Set(_controlMode, percentOutput);
+			SensorCollection _collection = _tal.GetSensorCollection();
+			int value = 0;
+			_collection.GetQuadraturePosition(out value);
+			Debug.Print("Pos: " + value);
         }
 
-        public void Stop()
+		/** Get Limit switches' fault from Talon */
+		public bool isReverseHardwareLimitAsserted
+		{
+			get
+			{
+				Faults _talFaults = new Faults();
+				_tal.GetFaults(_talFaults);
+				return _talFaults.ReverseLimitSwitch;
+			}
+		}
+		public bool isForwardHardwareLimitAsserted
+		{
+			get
+			{
+				Faults _talFaults = new Faults();
+				_tal.GetFaults(_talFaults);
+				return _talFaults.ForwardLimitSwitch;
+			}
+		}
+		public void Stop()
         {
             SetPercentOutput(0);
         }

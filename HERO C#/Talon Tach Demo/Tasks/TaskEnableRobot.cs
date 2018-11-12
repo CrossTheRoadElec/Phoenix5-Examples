@@ -1,30 +1,34 @@
 /**
- * If a USB Game controller (Logitech wireless, Xbox 360, similar) is connected use that for control
+ * Enable Task, Checking gamepad status to disable/enable motor output by using the Watchdog.Feed() method.
+ * 
+ * If a USB Game controller (Logitech wireless, Xbox 360, similar) is connected, use for control
  * If no gamepad is present or user flipped D-X Switch to disable, disable the robot.
  * Additionally the shoulder buttons switch the Arm and Wheel between closed loop and open loop modes.
  **/
-using CTRE.Tasking;
+using CTRE.Phoenix.Tasking;
 using Platform;
 
 public class TaskEnableRobot : ILoopable
 {
-
     public void OnLoop()
     {
+		/* Track Gamepad state */
         bool gamepadOk = false;
+
         /* keep feeding watchdog to enable motors */
-        if (Hardware.gamepad.GetConnectionStatus() == CTRE.UsbDeviceConnection.Connected)
+        if (Hardware.gamepad.GetConnectionStatus() == CTRE.Phoenix.UsbDeviceConnection.Connected)
         {
             /* keep talons enabled */
-            CTRE.Watchdog.Feed();
-            /* take note if gamepad is present */
+            CTRE.Phoenix.Watchdog.Feed();
+
+            /* Update gamepadOk to be present */
             gamepadOk = true;
         }
 
-
+		/* Select tasks to run in consecutive scheduler based on gamepad state and button pressed */
         if (gamepadOk == false)
         {
-            /* no gamepad?  stop all tasks */
+            /* no gamepad? Stop all tasks */
             Platform.Schedulers.PeriodicTasks.Stop(Platform.Tasks.taskDirectControlArm);
             Platform.Schedulers.PeriodicTasks.Stop(Platform.Tasks.taskServoArmPos);
             Platform.Schedulers.PeriodicTasks.Stop(Platform.Tasks.taskDirectControlWheel);
@@ -49,6 +53,7 @@ public class TaskEnableRobot : ILoopable
         }
     }
 
+	/* ILoopables */
     public void OnStart() { }
     public void OnStop() { }
     public bool IsDone() { return false; }

@@ -32,12 +32,7 @@
   </PropertyGroup>
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
-    <Compile Include="Framework\ConcurrentScheduler.cs" />
-    <Compile Include="Framework\SensoredGearbox.cs" />
-    <Compile Include="Framework\ServoParameters.cs" />
-    <Compile Include="Framework\VersaPlanetaryWithMagEnc.cs" />
     <Compile Include="Platform\Platform.cs" />
-    <Compile Include="RemoveDiscontinuityMagEncoder.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -49,7 +44,6 @@
     <Compile Include="Tasks\TaskServoArmPos.cs" />
     <Compile Include="Tasks\TaskDisplay.cs" />
     <Compile Include="Tasks\TaskEnableRobot.cs" />
-    <Compile Include="Tasks\TaskOnceAbsoluteArmSensor.cs" />
     <Compile Include="Tasks\TaskLowBatteryDetect.cs" />
     <Compile Include="Subsystem\SubSystemArm.cs" />
     <Compile Include="Tasks\TaskDirectControlArm.cs" />

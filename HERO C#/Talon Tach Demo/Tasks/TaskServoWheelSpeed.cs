@@ -1,9 +1,12 @@
 /**
- * Read game controller and set target WHEEL speeds based on buttons.
+ * Closed Loop Wheel Task, Read Logitech game controller and drive wheel at one to two preset RPMs (Constants)
+ * Button X and Button A allow Servos at two different RPm
+ * Press the Right should button to start this task 
  */
 using Platform;
+using CTRE.Phoenix.Tasking;
 
-public class TaskServoWheelSpeed : CTRE.Tasking.ILoopable
+public class TaskServoWheelSpeed : ILoopable
 {
     float _target = 0;
 
@@ -20,9 +23,10 @@ public class TaskServoWheelSpeed : CTRE.Tasking.ILoopable
 
         Subsystems.Wheel.ServoToSpeed(_target);
 
-        if (Subsystems.Wheel.MotorController.HasResetOccured())
+		/* If Talon has reset, redo initialization.  This is generally not necessary */
+		if (Subsystems.Wheel.MotorController.HasResetOccured())
         {
-            Subsystems.Wheel.Setup();
+            Subsystems.Wheel.Initialize();
         }
     }
 

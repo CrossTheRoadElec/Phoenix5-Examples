@@ -15,53 +15,54 @@
  * Long term there will likely be a configurable GUI in Phoenix Framework to create robot applciations in this format (in multiple languages).
  */
 
-using CTRE.MotorControllers;
-using CTRE.Tasking;
-using CTRE.Controller;
-using CTRE.HERO.Module;
-using CTRE.Mechanical;
+using CTRE.Phoenix.MotorControl.CAN;
+using CTRE.Phoenix.Mechanical;
+using CTRE.Phoenix.Controller;
+using CTRE.Phoenix.Tasking;
+using CTRE.Gadgeteer.Module;
 
 namespace Platform
 {
     /* System wide constants.  Use 'public static' because these are single objects. */
     public static class Constants
     {
-        /* when the ARM is at the top position, the pulse width raw signal is 3276.
-         * At the bottom the sensor is about 327.
-         * So offset by 3276 so it absolute signal does not wrap.
-         */
-        public static int ArmAbsoluteSensorOffset = 3276;
+        /* Arms gains */
+        public static float KPArm = 0.01f; //1.9f;
+        public static float KDArm = 0 * 23.5f;
+        public static float KIArm = 0 * 0.001f;
+		/* Wheel gains */
+		public static float KPWheel = 0.01f; //1.9f;
+		public static float KDWheel = 0 * 23.5f;
+		public static float KIWheel = 0 * 0.001f;
+		/* peak voltage for Voltage Compensation on Arm/Wheel */
+		public static float MAX_VOLTAGE = 12f;
 
-        /* ARM gains */
-        public static float KPARM = 1f; //1.9f;
-        public static float KDARM = 0 * 23.5f;
-        public static float KIARM = 0 * 0.001f;
-        /* peak voltage for ARM */
-        public static float MAX_VOLTAGE = 8.9f;
-        /* tolerance for close loop err */
-        public static uint TOLERANCE = 0;
-        /* ARM target positions */
+		/* tolerance for close loop err */
+		public static int TOLERANCE = 0;
+
+        /* Arm target positions (TODO) */
         public static float Target1 = -0.1f;
         public static float Target2 = -0.23f;
 
-        /* WHEEL target speeds in RPM */
+        /* Wheel target speeds in RPM (Converted to native units in SubSystemWheel.cs) */
         public static float SpeedTarget1 = 1000;
         public static float SpeedTarget2 = 2000;
 
-        /* WHEEL white marks per rotation. Wheel is a six spoke 6" Rubber wheel. Each spoke is paint markered white. */
-        public static float MarksPerRotation = 6; //!< We have six white marks on our Tach/Wheel.
+        /* Number of white marks per rotation. Wheel is a six spoke 6" Rubber wheel. Each spoke is paint markered white. */
+        public static int MarksPerRotation = 6;		//!< We have six white marks on our Tach/Wheel.
+		public static int PWM_FilterWindowSize = 1;	//!< Keep number of values to average to 1, faster samples
     }
 
     /* The hardware objects.  Use 'public static' because these are single objects. */
     public static class Hardware
     {
         /* Talons on CAN bus */
-        public static TalonSrx armTalon = new TalonSrx(1); //Talon ID = 1,
-        public static TalonSrx wheelTalon = new TalonSrx(0); //Talon ID = 0
+        public static TalonSRX armTalon = new TalonSRX(1); //Talon ID = 1,
+        public static TalonSRX wheelTalon = new TalonSRX(0); //Talon ID = 0
         /* logitech gamepad */
-        public static GameController gamepad = new CTRE.Controller.GameController(CTRE.UsbHostDevice.GetInstance(0), 0);
+        public static GameController gamepad = new GameController(CTRE.Phoenix.UsbHostDevice.GetInstance(0), 0);
         /* sensor slice is the last stage before geared output */
-        public static VersaPlanetaryWithMagEnc ArmGearBox = new VersaPlanetaryWithMagEnc(Hardware.armTalon);
+        public static VersaPlanetaryWithMagEnc ArmGearBox = new VersaPlanetaryWithMagEnc(4096f	, Hardware.armTalon);
         /* no gearbox, just 1:1 linkage */
         public static Gearbox WheelGearBox = new Gearbox(Hardware.wheelTalon);
         /* CTRE LCD display */
@@ -94,7 +95,6 @@ namespace Platform
         public static TaskDirectControlArm taskDirectControlArm = new TaskDirectControlArm();
         public static TaskDirectControlWheel taskDirectControlWheel = new TaskDirectControlWheel();
         public static TaskDisplay taskDisplay = new TaskDisplay();
-        public static TaskOnceAbsoluteArmSensor taskOnceAbsoluteArmSensor = new TaskOnceAbsoluteArmSensor();
         public static TaskServoArmPos taskServoArmPos = new TaskServoArmPos();
         public static TaskServoWheelSpeed taskServoWheelSpeed = new TaskServoWheelSpeed();
         public static TaskLowBatteryDetect taskLowBatteryDetect = new TaskLowBatteryDetect();
@@ -107,7 +107,6 @@ namespace Platform
             taskDirectControlWheel,
             taskEnableRobot,
             taskDisplay,
-            taskOnceAbsoluteArmSensor,
             taskLowBatteryDetect,
         };
     }

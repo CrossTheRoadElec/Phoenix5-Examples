@@ -1,89 +1,80 @@
 /**
- * Task manageing the CANifier outputs to the LED strip.
+ * Wheel Subsystem in TalonTach Example. 
+ * Wheel initialized with Talon Tach Sensor and Voltage Compenstation
+ * 
+ * Provides methods for both Velocity Closed Loop and Percent Output
  */
-using CTRE.Mechanical;
-using CTRE.Motion;
-using CTRE.MotorControllers;
+using CTRE.Phoenix.Mechanical;
+using CTRE.Phoenix.MotorControl;
+using CTRE.Phoenix.MotorControl.CAN;
 using Platform;
+using Microsoft.SPOT;
 
 namespace Subsystem
 {
     public class SubSystemWheel
     {
-        /* grab the gearbox and talon object */
-        Gearbox _gearBox = Hardware.WheelGearBox;
-        TalonSrx _tal = Hardware.wheelTalon;
+		/* grab the gearbox and talon reference for easy reach */
+		Gearbox _gearBox = Hardware.WheelGearBox;
+        TalonSRX _tal = Hardware.wheelTalon;
 
-        float _targetSpeedRPM = 0;
+		public TalonSRX MotorController
+		{
+			get
+			{
+				return Platform.Hardware.wheelTalon;
+			}
+		}
 
-        ServoParameters _ServoParameters = new ServoParameters();
-
-        public SubSystemWheel()
+		/* General Setup */
+		public void Initialize()
         {
-            Setup();
-        }
+			/* Configure Voltage compenstaion */
+			_tal.ConfigVoltageCompSaturation(Constants.MAX_VOLTAGE);		// 12 Volts
+			_tal.ConfigVoltageMeasurementFilter(32);						// Default 32 Samples per Avg
+			_tal.EnableVoltageCompensation(true);							// Enable Voltage Compensation
+		    
+			/* Configure Selected Sensor */
+            _tal.ConfigSelectedFeedbackSensor(FeedbackDevice.Tachometer, 0);				// Sensor type
+			_tal.ConfigPulseWidthPeriod_EdgesPerRot(Constants.MarksPerRotation, 30);		// 6 EdgesPerRot + 30ms Timeout
+			_tal.ConfigPulseWidthPeriod_FilterWindowSz(Constants.PWM_FilterWindowSize, 30);	// 1 SamplePerAvg + 30ms Timeout
+		}
 
-        public TalonSrx MotorController
+		/* Get Speed in RPM */
+		public float MeasuredSpeed
         {
-            get
-            {
-                return (TalonSrx)_gearBox.GetMaster();
-            }
-        }
+			get
+			{
+				/* GetSelectedSensorVelocity returns velocity in native units.
+				 * Values used to convert native units to RPM can be found here...
+				 * https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor
+				 */
+				int unitsPer100ms = _tal.GetSelectedSensorVelocity();
+				int velocityRPM = unitsPer100ms * 600 / 1024;
+				return velocityRPM;
+			}
+		}
 
-        public void Setup()
-        {
-            _tal.ConfigFwdLimitSwitchNormallyOpen(true);
-            _tal.ConfigRevLimitSwitchNormallyOpen(true);
-            _tal.SetControlMode(ControlMode.kVoltage); //voltage control mode
-            _tal.SetFeedbackDevice(TalonSrx.FeedbackDevice.CtreMagEncoder_Relative); //sensor type
-            _tal.SetStatusFrameRateMs(TalonSrx.StatusFrameRate.StatusFrameRatePulseWidthMeas, 1); //feedback to 1ms
-        }
-
-        public float MeasuredSpeed
-        {
-            get
-            {
-                /* sample the period*/
-                uint periodUs = (uint)_tal.GetPulseWidthRiseToRiseUs();
-                /* convert to frequency */
-                float edgesPerMin;
-                if (periodUs == 0)
-                {
-                    /* wheel is not spinning or sensor is disconnected */
-                    edgesPerMin = 0;
-                }
-                else
-                {
-                    /* convert from us to EPM */
-                    edgesPerMin = 60000000f / periodUs;
-                }
-                /* convert to RPM, assume 1 mark per rotation */
-                float rpm = edgesPerMin / Constants.MarksPerRotation;
-
-                return rpm;
-            }
-        }
-
-
+		/* Perform Velocity Closed Loop drive */
         public void ServoToSpeed(float speedRPM)
         {
-            /* close loop constants */
-            _ServoParameters.P = 0.01f;
-            _ServoParameters.I = 0 * 0.0001f;
-            _ServoParameters.F = 6f / 2000f; // about 6V for 2000 RPM
-            /* save the target */
-            _targetSpeedRPM = speedRPM;
-            /* get measured speed */
-            float measuredSpeedRpm = MeasuredSpeed;
-            /* robot controller level closed loop, replace with firmware close loop later */
-            float output = _ServoParameters.PID(_targetSpeedRPM, measuredSpeedRpm, 0);
-            _tal.Set(output);
+			/* PID Parameters for MotorController level Closed Loop */
+			_tal.Config_kP(0.05f);
+			_tal.Config_kI(0.000f);
+			_tal.Config_kF(6f / 2000f);
+
+			/* Calculate requested speed in RPM back into native units for Talon */
+			double speedPer100ms = speedRPM / 600 * 4096;
+
+			/* Set */
+			_tal.Set(ControlMode.Velocity, speedPer100ms);
         }
 
+		/* Perform Percent Output drive */
         public void SetPercentOutput(float percentOut)
         {
-            _tal.Set(percentOut);
+			/* Set */
+            _tal.Set(ControlMode.PercentOutput, percentOut);
         }
 
         public void Stop()

@@ -1,32 +1,39 @@
 /**
- * Read Logitech game controller and direct control the ARM's motor output with left stick.
+ * Open Loop Arm Task, Read Logitech game controller and direct control the Arm's motor output
+ * with left joystick. Task can be started by pressing left shoulder button.
+ * 
+ * Talon Tach connected to Talon SRX used as Hardware Limit Switches
+ * @link http://www.ctr-electronics.com/talon-tach-tachometer-new-limit-switch.html
  */
+using CTRE.Phoenix.Tasking;
 using Platform;
 
-public class TaskDirectControlArm : CTRE.Tasking.ILoopable
+public class TaskDirectControlArm : ILoopable
 {
     public void OnLoop()
     {
-        float y = +1 * Hardware.gamepad.GetAxis(1); // Ensure Positive is forward, negative is reverse
+		/* Get left joystick. Posivite is turn left, Negative is turn right */
+		float y = -1 * Hardware.gamepad.GetAxis(1); // Ensure Positive is forward, negative is reverse
 
-        CTRE.Util.Deadband(ref y);
+		/* Deadband joystick value to remove small noise */
+		CTRE.Phoenix.Util.Deadband(ref y);
 
-        Subsystems.Arm.SetPercentOutput(y);
+		/* Call Open Loop method and provide percent output */
+		Subsystems.Arm.SetPercentOutput(y);
 
-        /* if Talon was reset, redo config.  This is generally not necessary */
-        if(Subsystems.Arm.MotorController.HasResetOccured())
+		/* If Talon has reset, redo initialization.  This is generally not necessary */
+		if (Subsystems.Arm.MotorController.HasResetOccured())
         {
-            Subsystems.Arm.Setup();
+            Subsystems.Arm.Initialize();
         }
     }
 
-    public bool IsDone() { return false; }
-
+	/* ILoopables */
     public void OnStart() { }
-
-    public void OnStop() {
-
+    public void OnStop()
+	{
         Subsystems.Arm.Stop();
-
     }
+	public bool IsDone() { return false; }
+
 }

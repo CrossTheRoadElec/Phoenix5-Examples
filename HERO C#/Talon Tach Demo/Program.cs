@@ -7,21 +7,29 @@
  * Anything under the "Framework" folder are tenative changes later to be into the Phoenix Framework.
  * 
  * Anything under "Tasks" are typical examples tasks done on a robot platform.
+ * 
+ * Information on how each task work and can be operated can be found in their respective .cs file
  */
-using CTRE.Tasking;
+using CTRE.Phoenix.Tasking;
 using Microsoft.SPOT;
 using Platform;
 using System.Threading;
 
 namespace Talon_Tach_Demo
 {
-    public class Program : CTRE.RobotApplication
+    public class Program : CTRE.Phoenix.RobotApplication
     {
         public override void RunForever()
         {
-            /* any system wide initializations here */
+			/* Clear all configs (Runs after Start )*/
+			Platform.Hardware.armTalon.ConfigFactoryDefault();
+			Platform.Hardware.wheelTalon.ConfigFactoryDefault();
 
-            /* add all the periodic tasks */
+			/* Initialize Subystems (Perform configs after Factory Default) */
+			Subsystems.Arm.Initialize();
+			Subsystems.Wheel.Initialize();
+
+            /* add all the periodic tasks to consecutive scheduler */
             foreach(ILoopable task in Platform.Tasks.FullList)
                 Schedulers.PeriodicTasks.Add(task);
 
@@ -36,13 +44,13 @@ namespace Talon_Tach_Demo
             {
                 Schedulers.PeriodicTasks.Process();
 
-                /* dump some tasks and subsystems into the console output */
-                Debug.Print(Platform.Subsystems.Arm.ToString());
-                Debug.Print(Platform.Subsystems.Wheel.ToString());
-                Debug.Print(Platform.Tasks.taskServoArmPos.ToString());
-                Debug.Print(Platform.Tasks.taskServoWheelSpeed.ToString());
+				/* dump some tasks and subsystems into the console output */
+				Debug.Print(Platform.Subsystems.Arm.ToString());
+				Debug.Print(Platform.Subsystems.Wheel.ToString());
+				Debug.Print(Platform.Tasks.taskServoArmPos.ToString());
+				Debug.Print(Platform.Tasks.taskServoWheelSpeed.ToString());
 
-                Thread.Sleep(5);
+				Thread.Sleep(5);
             }
         }
       

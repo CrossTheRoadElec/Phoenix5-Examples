@@ -1,5 +1,5 @@
 /**
- * Task tracking the robot battery voltage.  
+ * Battery Task, Track the robot battery voltage and report
  * 
  * If the battery voltage is considered low, consider signaling the user of this.
  * Especially if using battery chemistries that require a low voltage lock out.
@@ -9,8 +9,9 @@
  * - CTRE Display @link http://www.ctr-electronics.com/gadgeteer-display-module.html
  * - LED strip update (CANifier). @link http://www.ctr-electronics.com/can-can-canifier-driver-led-driver-gpio.html
  */
+using CTRE.Phoenix.Tasking;
 
-public class TaskLowBatteryDetect : CTRE.Tasking.ILoopable
+public class TaskLowBatteryDetect : ILoopable
 {
     int _dnCnt = 0;
     int _upCnt = 0;
@@ -18,17 +19,11 @@ public class TaskLowBatteryDetect : CTRE.Tasking.ILoopable
     public bool BatteryIsLow { get; private set; }
     public float BatteryVoltage { get; private set; }
 
-    /* ILoopable */
-    public bool IsDone()
-    {
-        return false;
-    }
-
     public void OnLoop()
     {
         float vbat;
 
-        /* get the average voltage from a couple talons */
+        /* get the average voltage from the two talons */
         vbat = 0;
         vbat += Platform.Hardware.armTalon.GetBusVoltage();
         vbat += Platform.Hardware.wheelTalon.GetBusVoltage();
@@ -63,15 +58,12 @@ public class TaskLowBatteryDetect : CTRE.Tasking.ILoopable
         BatteryVoltage = vbat;
     }
 
-    public void OnStart()
-    {
-    }
+	/* ILoopables */
+	public void OnStart() { }
+	public void OnStop() { }
+	public bool IsDone() { return false; }
 
-    public void OnStop()
-    {
-    }
-
-    public override string ToString()
+	public override string ToString()
     {
         if (BatteryIsLow)
             return "Batt:Low VBAT:" + BatteryVoltage;
