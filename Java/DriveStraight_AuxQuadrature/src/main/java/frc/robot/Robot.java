@@ -24,32 +24,35 @@
 
 /**
  * Description:
- * The DriveStraight_AuxQuadrature example demonstrates the new Talon and Victor Auxiliary 
- * and Remote Features to peform more complex closed loops. This example has the robot 
- * driving in Percent Output with an auxiliary closed loop on Quadrature Difference to keep
- * the robot straight.
+ * The DriveStraight_AuxQuadrature example demonstrates the new Talon/Victor auxiliary and 
+ * remote features used to perform complex closed loops. This example has the robot driving in 
+ * Percent Output with an auxiliary closed loop on quadrature difference to keep the robot straight.
  * 
  * This example uses:
  * - 2x Quadrature Encoders wired to Talon SRX for Auxiliary Closed Loop on Difference (heading)
  * A Talon/Victor caclulates the heading by taking the difference between both sensors.
-
- * 
- * This example has two modes of operation, which can be switched between with Button 1.
+ *
+ * This example has two modes of operation, which can be switched between with Button 2.
  * 1.) Arcade Drive
- * 2.) Percent Output Drive Straight with Quadrature Difference (Auxiliary)
+ * 2.) Percent Output Drive Straight with quadrature difference
  * 
  * Controls:
- * Button 1: When pressed, zero heading. Set current Pigeon Heading to 0.
- * Button 2: When pressed, toggle between Arcade Drive and Drive Straight with Pigeon
- * 	+ When toggling into Drive Straight Mode, the current heading is saved and used
- * 	+ as the the closed loop target. Can be changed by toggling out and in again.
- * Left Joystick Y-Axis: Drive robot in forward in reverse direction in both modes.
- * Right Joystick X-Axis: Turn robot in left and right direction when in Arcade Drive mode.
+ * Button 1: When pressed, zero heading. Set quadrature encoder's postions to 0.
+ * Button 2: When pressed, toggle between Arcade Drive and Drive Straight with quadrature difference
+ * 	When toggling into Drive Straight, the current heading is saved and used as the 
+ * 	closed loop target. Can be changed by toggling out and in again.
+ * Left Joystick Y-Axis: Drive robot forward and revers in both modes.
+ * Right Joystick X-Axis: 
+ * 	+ Arcade Drive: Turn robot left and right
+ * 	+ Drive Straight: Not used
+ * 
+ * Gains for auxiliary closed loop may need to be adjusted in Constants.java
  * 
  * Supported Version:
- * - Talon SRX: 3.11
- * - Victor SPX: 3.11
- * - Pigeon IMU: 0.42
+ * 	- Talon SRX: 4.0
+ * 	- Victor SPX: 4.0
+ * 	- Pigeon IMU: 4.0
+ * 	- CANifier: 4.0
  */
 package frc.robot;
 
@@ -83,7 +86,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-		/* Not in use */
+		/* Not used in this project */
 	}
 	
 	@Override
@@ -205,13 +208,14 @@ public class Robot extends TimedRobot {
 				
 		if(!_state){
 			if (_firstCall)
-				System.out.println("This is a basic arcade drive.\n");
+				System.out.println("This is Arcade Drive.\n");
 			
 			_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
 			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
 		}else{
 			if (_firstCall) {
-				System.out.println("This is Drive Straight using the Auxiliary feature with difference between two encoders to maintain current heading.\n");
+				System.out.println("This is Drive Straight using the auxiliary feature with" + 
+					"the difference between two encoders to maintain current heading.\n");
 				
 				/* Determine which slot affects which PID */
 				_rightMaster.selectProfileSlot(Constants.kSlot_Turning, Constants.PID_TURN);
@@ -224,10 +228,11 @@ public class Robot extends TimedRobot {
 		_firstCall = false;
 	}
 	
+	/* Zero all sensors used */
 	void zeroSensors() {
 		_leftMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		_rightMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
-		System.out.println("[Quad Encoders] All sensors are zeroed.\n");
+		System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
 	}
 	
 	/** Deadband 5 percent, used on the gamepad */

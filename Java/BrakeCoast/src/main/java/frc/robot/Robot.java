@@ -24,18 +24,18 @@
 
 /**
  * Description:
- * The BrakeCoast example project demonstrates Talon SRXs and Victor ability to change
- * their neutral mode between Brake and Coast.
+ * The BrakeCoast example demonstrates Talon SRX's/Victor SPX's ability to change
+ * neutral mode between Brake and Coast.
  * 
- * Neutral Mode can be determined by LED state of B/C Button on either Motor Controller (MC).
+ * Neutral mode can be determined by LED state of B/C Button on either Motor Controller (MC).
  * 	- Brake Mode: LED On
  * 	- Coast Mode: LED Off
  * 
- * Two Methods to toggle between Brake and Coast
- * 1.) Use setNeutralMode() to perform software override on MC's Neutral Mode.
+ * Two methods to toggle between Brake and Coast
+ * 1.) Use setNeutralMode() to perform software override on MC's neutral Mode.
  * 2.) Use Hardware B/C button on MC to toggle neutral mode state. 
  * 	Only works if setNeutralMode() has not been called in current program 
- * 	(software override prevents hardware B/C button from changing MC'sNeutral Mode);
+ * 	(software override prevents hardware B/C button from changing MC's neutral Mode);
  * 
  * Controls:
  * Button 1: Toggle between Coast and Brake, 
@@ -69,7 +69,7 @@ public class Robot extends TimedRobot {
         System.out.println("Brake:" + (_brake ? "Enabled" : "Disabled"));
 	}
 
-	/** Every loop, flip brake mode if button1 when is pressed. */
+	/** Every loop, flip brake mode if button 1 when is pressed. */
 	public void commonloop() {
 		/* Get buttons from gamepad */
 		boolean[] currentBtns = new boolean[_previousBtns.length];
@@ -93,10 +93,10 @@ public class Robot extends TimedRobot {
 	}
 
 	public void disabledPeriodic() {
-		commonloop(); /* just call a "common" loop */
+		commonloop();	// just call a "common" loop
 	}
 
 	public void teleopPeriodic() {
-		commonloop(); /* just call a "common" loop */
+		commonloop();	// just call a "common" loop
 	}
 }

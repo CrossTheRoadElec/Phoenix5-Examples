@@ -24,29 +24,34 @@
 
 /**
  * Description:
- * The DriveStraight_AuxPigeon example demonstrates the new Talon and Victor Auxiliary 
- * and Remote Features to peform more complex closed loops. This example has the robot
+ * The DriveStraight_AuxPigeon example demonstrates the new Talon/Victor auxiliary and 
+ * remote features used to perform complex closed loops. This example has the robot
  * driving in Percent Output with an auxiliary closed loop on Pigeon Yaw to keep the robot straight.
  * 
  * This example uses:
  * - Pigeon IMU wired on CAN Bus for Auxiliary Closed Loop on Yaw
  * 
- * This example has two modes of operation, which can be switched between with Button 1.
+ * This example has two modes of operation, which can be switched between with Button 2.
  * 1.) Arcade Drive
- * 2.) Percent Output Drive Straight with Pigeon (Auxiliary)
+ * 2.) Percent Output Drive Straight with Pigeon
  * 
  * Controls:
- * Button 1: When pressed, zero heading. Set current Pigeon Heading to 0.
- * Button 2: When pressed, toggle between Arcade Drive and Drive Straight with Pigeon
- * 	+ When toggling into Drive Straight Mode, the current heading is saved and used
- * 	+ as the the closed loop target. Can be changed by toggling out and in again.
- * Left Joystick Y-Axis: Drive robot in forward in reverse direction in both modes.
- * Right Joystick X-Axis: Turn robot in left and right direction when in Arcade Drive mode.
+ * Button 1: When pressed, zero heading. Set Pigeon heading to 0.
+ * Button 2: When pressed, toggle between Arcade Drive and Drive Straight with Pigeon.
+ * 	When toggling into Drive Straight, the current heading is saved and used as the 
+ * 	closed loop target. Can be changed by toggling out and in again.
+ * Left Joystick Y-Axis: Drive robot forward and reverse in both control modes.
+ * Right Joystick X-Axis: 
+ * 	+ Arcade Drive: Turn robot left and right
+ * 	+ Drive Straight: Not used
+ * 
+ * Gains for auxiliary closed loop may need to be adjusted in Constants.java
  * 
  * Supported Version:
- * - Talon SRX: 3.11
- * - Victor SPX: 3.11
- * - Pigeon IMU: 0.42
+ * 	- Talon SRX: 4.0
+ * 	- Victor SPX: 4.0
+ * 	- Pigeon IMU: 4.0
+ * 	- CANifier: 4.0
  */
 package frc.robot;
 
@@ -80,6 +85,7 @@ public class Robot extends TimedRobot {
 	boolean _firstCall = false;
 	boolean _state = false;
 	double _targetAngle = 0;
+	int _printCount = 0;
 
 	@Override
 	public void robotInit() {
@@ -92,8 +98,10 @@ public class Robot extends TimedRobot {
 		_rightMaster.set(ControlMode.PercentOutput, 0);
 		_leftMaster.set(ControlMode.PercentOutput, 0);
 
+		/* Factory Default all hardware to prevent unexpected behaviour */
 		_rightMaster.configFactoryDefault();
 		_leftMaster.configFactoryDefault();
+		_pidgey.configFactoryDefault();
 		
 		/* Set Neutral Mode */
 		_leftMaster.setNeutralMode(NeutralMode.Brake);
@@ -168,6 +176,7 @@ public class Robot extends TimedRobot {
 		/* Initialize */
 		_firstCall = true;
 		_state = false;
+		_printCount = 0;
 		zeroHeading();
 	}
 	
@@ -210,10 +219,13 @@ public class Robot extends TimedRobot {
 			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, _targetAngle);
 			_leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
 			
-			/* Print some Closed Loop information */
-			System.out.println(	"TargetAng: " + _targetAngle + 
-								" CurrentAng: " + _rightMaster.getSelectedSensorPosition(1) + 
-								" Error; " + _rightMaster.getClosedLoopError(1));
+			/* Print extra Closed Loop information */
+			if(_printCount++ > 20){
+				System.out.println(	"TargetAng: " + _targetAngle + 
+									" CurrentAng: " + _rightMaster.getSelectedSensorPosition(1) + 
+									" Error; " + _rightMaster.getClosedLoopError(1));
+				_printCount = 0;	// Reset print count
+			}
 		}
 		_firstCall = false;
 	}

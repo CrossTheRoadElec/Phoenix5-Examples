@@ -25,7 +25,8 @@
 /**
  * Description:
  * The CANifier Quadrature example demonstates CANifier's ability to read a Quadrature
- * Envocder's input and compares it to Talon SRX's Quadrature reading. 
+ * Encoder's input, then compares it to Talon SRX's Quadrature reading.
+ * 
  * CANifier pins used in example are:
  * 	5V:		pin 3
  * 	Quad A: pin 4
@@ -33,7 +34,13 @@
  * 	Quad B:	pin 6
  * 
  * Controls:
- * Left Joystick: Throttle Talon in forward and reverse direction
+ * Left Joystick: Throttle Talon forward and reverse
+ * 
+ * Supported Version:
+ *	- Talon SRX: 4.0
+ * 	- Victor SPX: 4.0
+ * 	- Pigeon IMU: 4.0
+ * 	- CANifier: 4.0
  */
 package frc.robot;
 
@@ -45,16 +52,9 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.*;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the IterativeRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.properties file in the
- * project.
- */
 public class Robot extends TimedRobot {
 	/* Hardware */
-	CANifier _can = new CANifier(4);	// CANifier
+	CANifier _can = new CANifier(0);	// CANifier
 	TalonSRX _tal = new TalonSRX(1);	// Talon SRX
 	Joystick _joy = new Joystick(0);	// Joystick or Gamepad
 
@@ -72,11 +72,13 @@ public class Robot extends TimedRobot {
 		_can.configFactoryDefault();
 		_tal.configFactoryDefault();
         
-	    /* nonzero to block the config until success, zero to skip checking */
+	    /* Nonzero to block the config until success, zero to skip checking */
     	final int kTimeoutMs = 30;
 
 		/* Configure talon with feedback device to double check CANifier */
-		_tal.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, kTimeoutMs);
+		_tal.configSelectedFeedbackSensor(	FeedbackDevice.CTRE_MagEncoder_Relative,
+											0, 
+											kTimeoutMs);
 		
 		/* On Teleop Initialization, set positions to some value */
 		_tal.setSelectedSensorPosition(-745, 0, kTimeoutMs);
@@ -113,6 +115,6 @@ public class Robot extends TimedRobot {
 		}
 		
 		/* Drive talon with joystick */
-		_tal.set(ControlMode.PercentOutput, _joy.getY());
+		_tal.set(ControlMode.PercentOutput, -1 * _joy.getY());
 	}
 }

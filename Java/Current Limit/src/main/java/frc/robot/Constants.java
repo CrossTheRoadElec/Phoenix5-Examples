@@ -13,12 +13,14 @@ class Constants{
     /* Current to mantain once current limit has been triggered */
     static final int kContinCurrentAmps = 10;
 
-    /* Timeout value generally used in parameter configs
+    /**
+     * Timeout value generally used in parameter configs
      * Non-zero to block the config until success, zero to skip checking 
      */
     static final int kTimeoutMs = 30;
 
-    /* Gains used in Position Closed Loop, to be adjusted accordingly
+    /**
+     * Gains used in Position Closed Loop, to be adjusted accordingly
      * Gains(kp, ki, kd, kf, izone, peak output);
      */
     static final Gains kGains = new Gains(2.0, 0.0, 0.0, 0.0, 0, 1.0);

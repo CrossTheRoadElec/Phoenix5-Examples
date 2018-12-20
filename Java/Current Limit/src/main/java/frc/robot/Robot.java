@@ -38,8 +38,14 @@
  * Button 1: When held, enable Percent Output. To be used with Left Joystick Y-Axis
  * Button 2: When pressed, peform Postion Closed Loop servo to 0 position
  * Button 5: When pressed, toggle between current limit Enable and Disable.
- *  + Enable/Disable state indcated through prints
+ * 	Enable/Disable state indcated through prints
  * Left Joystick Y-Axis: Throttle Talon forward and reverse when Button 1 is held
+ * 
+ * Supported Version:
+ * 	- Talon SRX: 4.0
+ * 	- Victor SPX: 4.0
+ * 	- Pigeon IMU: 4.0
+ * 	- CANifier: 4.0
  */
 package frc.robot;
 

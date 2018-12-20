@@ -35,10 +35,10 @@
  * Right Joystick X-Axis: Turn robot right and left
  * 
  * Supported Version:
- *	- TalonSRX: 3.9
- * 	- VictorSPX: 3.9
- * 	- Pigeon IMU: 0.41
- * 	- Phoenix Framework: 5.6.0 
+ * 	- Talon SRX: 4.0
+ * 	- Victor SPX: 4.0
+ * 	- Pigeon IMU: 4.0
+ * 	- CANifier: 4.0
  */
 package frc.robot;
 
@@ -58,16 +58,16 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-		/* Not necessary for this project */
+		/* Not used in this project */
 	}
 	
 	@Override
 	public void teleopInit(){
 		/* Ensure motor output is neutral during init */
-		_rightMaster.set(ControlMode.PercentOutput, 0);
 		_leftMaster.set(ControlMode.PercentOutput, 0);
+		_rightMaster.set(ControlMode.PercentOutput, 0);
 
-		/* Factory Default hardware to prevent unexpected behavior */
+		/* Factory Default all hardware to prevent unexpected behaviour */
 		_leftMaster.configFactoryDefault();
 		_rightMaster.configFactoryDefault();
 		
@@ -79,7 +79,7 @@ public class Robot extends TimedRobot {
 		_leftMaster.setInverted(false);
 		_rightMaster.setInverted(true);
 		
-		System.out.println("This is a basic arcade drive using Arbitrary Feed Forward.");
+		System.out.println("This is Arcade Drive using Arbitrary Feed Forward.");
 	}
 	
 	@Override
@@ -90,7 +90,7 @@ public class Robot extends TimedRobot {
 		forward = Deadband(forward);
 		turn = Deadband(turn);
 
-		/* Basic Arcade Drive using PercentOutput along with Arbitrary FeedForward supplied by turn */
+		/* Arcade Drive using PercentOutput along with Arbitrary Feed Forward supplied by turn */
 		_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
 		_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
 	}

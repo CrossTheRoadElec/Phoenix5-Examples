@@ -35,18 +35,17 @@
  * 
  * Controls:
  * Button 1: Read and Print Talon SRX Configs
- * Button 2 Readn and Print Vicotr SPX Configs
+ * Button 2: Read and Print Victor SPX Configs
  * Button 3: Read and Print Pigeon IMU Configs
  * Button 4: Read and Print CANifier Configs
  * Button 5: Config all 4 devices with Custom configs (Configs.java)
  * Button 6: Factory Default all Configs on all 4 devices
  * 
  * Supported Version:
- *	- TalonSRX: 3.9
- * 	- VictorSPX: 3.9
- * 	- Pigeon IMU: 0.41
- *  - CANifier: 0.42
- * 	- Phoenix Framework: 5.6.0 
+ *	- Talon SRX: 4.0
+ * 	- Victor SPX: 4.0
+ * 	- Pigeon IMU: 4.0
+ * 	- CANifier: 4.0
  */
 package frc.robot;
 
@@ -58,18 +57,18 @@ import com.ctre.phoenix.sensors.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Robot extends TimedRobot {
-    /* Hardware */
+    /** Hardware */
     TalonSRX  _talon = new TalonSRX(1);
     VictorSPX  _victor = new VictorSPX(2);
     PigeonIMU  _pigeon = new PigeonIMU(3);
-    CANifier  _canifier = new CANifier(4);
+    CANifier  _canifier = new CANifier(0);
     
     Joystick _joy = new Joystick(0);
     
-    /* configs object with all four Configurations defined in Confgis.java */
+    /** Configs object with all four Configurations defined in Configs.java */
     Configs _custom_configs = new Configs();
     
-    /* Track current and previous button state to detect single presse button event */
+    /** Track current and previous button state to detect single press button event */
     boolean[] _previousBtns = { false, false, false, false, false, 
                                 false, false, false, false, false};
     /**
