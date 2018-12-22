@@ -24,37 +24,38 @@
 
 /**
  * Description:
- * The VelocityClosedLoop_AuxStraightPigeon example demonstrates the new Talon/Victor Auxiliary 
- * and Remote Features to peform more complex. This example has the robot performing Velocity 
- * Closed Loop with an auxiliary closed loop on Pigeon Yaw to keep the robot straight.
+ * The VelocityClosedLoop_AuxStraightPigeon example demonstrates the new Talon/Victor auxiliary 
+ * and remote features used to peform complex closed loops. This example has the robot performing
+ * Velocity Closed Loop with an auxiliary closed loop on Pigeon yaw to keep the robot straight.
  * 
  * This example uses:
- * - 2x Quad Encoders, One on both sides of robot for Primary Closed Loop on Position
+ * - 2x quad encoders, One on both sides of robot for Primary Closed Loop on Position
  * A Talon/Victor calculates the distance by taking the sum of both sensors and dividing it by 2.
  * - Pigeon IMU wired on CAN Bus for Auxiliary Closed Loop on Yaw
  * 
  * This example has two modes of operation, which can be switched between with Button 2.
  * 1.) Arcade Drive
- * 2.) Velocity Closed Loop wtih Quadrature Encoders and Drive Straight Wight Pigeon (Auxiliary)
+ * 2.) Velocity Closed Loop wtih quadrature encoders and Drive Straight with Pigeon yaw
  * 
  * Controls:
- * Button 1: When pressed, zero all sensors. Set Quad Encoders + Pigeon Yaw position to 0.
- * Button 2: When pressed, Toggle between Arcade Drive and Velocity Closed Loop With Straight Drive
- * 	+ When toggling into Velocity Closed Loop Mode, the current heading is saved and used
- * 	+ as the the auxiliary closed loop target. Can be changed by toggling out and in again.
+ * Button 1: When pressed, zero all sensors. Set quad encoders' positions + Pigeon's yaw to 0.
+ * Button 2: When pressed, toggle between Arcade Drive and Velocity Closed Loop
+ * 	When toggling into Velocity Closed Loop, the current heading is saved and used as the the 
+ * 	auxiliary closed loop target. Can be changed by toggling out and in again.
  * Left Joystick Y-Axis: 
- * 	+ Arcade Drive: Drive robot in forward and reverse direction
+ * 	+ Arcade Drive: Drive robot forward and reverse
  * 	+ Position Closed Loop: Servo robot forward and reverse [-500, 500] RPM
  * Right Joystick X-Axis:
- * 	+ Arcade Drive: Turn robot in left and right direction
+ * 	+ Arcade Drive: Turn robot left and right
  * 	+ Vecloity Closed Loop: Not used
  * 
- * Gains for Velocity Closed Loop may need to be adjusted in Constants.java
+ * Gains for Velocity Closed Loop and Auxiliary may need to be adjusted in Constants.java
  * 
  * Supported Version:
- * - Talon SRX: 3.11
- * - Victor SPX: 3.11
- * - Pigeon IMU: 0.42
+ * - Talon SRX: 4.00
+ * - Victor SPX: 4.00
+ * - Pigeon IMU: 4.00
+ * - CANifier: 4.00
  */
 package frc.robot;
 
@@ -91,7 +92,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-		/* Not in use */
+		/* Not used in this example */
 	}
 
 	@Override
@@ -99,6 +100,11 @@ public class Robot extends TimedRobot {
 		/* Disable all motor controllers */
 		_rightMaster.set(ControlMode.PercentOutput, 0);
 		_leftMaster.set(ControlMode.PercentOutput, 0);
+
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_rightMaster.configFactoryDefault();
+		_leftMaster.configFactoryDefault();
+		_pidgey.configFactoryDefault();
 		
 		/* Set Neutral Mode */
 		_leftMaster.setNeutralMode(NeutralMode.Brake);
@@ -133,7 +139,7 @@ public class Robot extends TimedRobot {
 													Constants.kTimeoutMs);
 		
 		/* Scale Feedback by 0.5 to half the sum of Distance */
-		_rightMaster.configSelectedFeedbackCoefficient(	0.5, 						// Coefficient
+		_rightMaster.configSelectedFeedbackCoefficient(	1, 						// Coefficient
 														Constants.PID_PRIMARY,		// PID Slot of Source 
 														Constants.kTimeoutMs);		// Configuration Timeout
 		
@@ -142,10 +148,8 @@ public class Robot extends TimedRobot {
 													Constants.PID_TURN, 			// PID Slot for Source [0, 1]
 													Constants.kTimeoutMs);			// configuration Timeout
 		
-		/* Scale the Feedback Sensor using a coefficient */
-		_rightMaster.configSelectedFeedbackCoefficient(	Constants.kTurnTravelUnitsPerRotation / Constants.kPigeonUnitsPerRotation,
-														Constants.PID_TURN,
-														Constants.kTimeoutMs);
+		/* Don't scale the Feedback Sensor (use 1 for 1:1 ratio) */
+		_rightMaster.configSelectedFeedbackCoefficient(	1, Constants.PID_TURN, Constants.kTimeoutMs);
 		
 		/* Configure output and sensor direction */
 		_leftMaster.setInverted(false);
@@ -164,7 +168,8 @@ public class Robot extends TimedRobot {
 		_rightMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
 		_leftMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
 
-		/* Max out the peak output (for all modes).  
+		/**
+		 * Max out the peak output (for all modes).  
 		 * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
 		 */
 		_leftMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
@@ -190,7 +195,8 @@ public class Robot extends TimedRobot {
 		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Turning, Constants.kGains_Turning.kPeakOutput, Constants.kTimeoutMs);
 		_rightMaster.configAllowableClosedloopError(Constants.kSlot_Turning, 0, Constants.kTimeoutMs);
 			
-		/* 1ms per loop.  PID loop can be slowed down if need be.
+		/**
+		 * 1ms per loop.  PID loop can be slowed down if need be.
 		 * For example,
 		 * - if sensor updates are too slow
 		 * - sensor deltas are very small per update, so derivative error never gets large enough to be useful.
@@ -200,7 +206,8 @@ public class Robot extends TimedRobot {
 		_rightMaster.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kTimeoutMs);
 		_rightMaster.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
 
-		/* configAuxPIDPolarity(boolean invert, int timeoutMs)
+		/**
+		 * configAuxPIDPolarity(boolean invert, int timeoutMs)
 		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
 		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 		 */
@@ -233,14 +240,14 @@ public class Robot extends TimedRobot {
 		
 		if(!_state){
 			if (_firstCall)
-				System.out.println("This is a basic arcade drive.\n");
+				System.out.println("This is Arcade Drive.\n");
 			
 			_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
 			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
 			
 		}else{
 			if (_firstCall) {
-				System.out.println("This is Drive Straight Velocity with the Auxiliary feature using the Pigeon.");
+				System.out.println("This is Velocity Closed Loop with the Auxiliary PID using Pigeon.");
 				System.out.println("Travel [-500, 500] RPM in either direction while also maintaining a straight heading.\n");
 				
 				/* Determine which slot affects which PID */
@@ -257,7 +264,6 @@ public class Robot extends TimedRobot {
 			_rightMaster.set(ControlMode.Velocity, target_unitsPer100ms, DemandType.AuxPID, target_turn);
 			_leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
 		}
-	
 		_firstCall = false;
 	}
 	
@@ -267,7 +273,7 @@ public class Robot extends TimedRobot {
 		_rightMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		_pidgey.setYaw(0, Constants.kTimeoutMs);
 		_pidgey.setAccumZAngle(0, Constants.kTimeoutMs);
-		System.out.println("        [Sensors] All sensors are zeroed.\n");
+		System.out.println("[Pigeon + Quadrature Encoders] All sensors are zeroed.\n");
 	}
 	
 	/** Deadband 5 percent, used on the gamepad */

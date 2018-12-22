@@ -21,12 +21,6 @@ public class Constants {
 	 * Number of rotations to drive when performing Distance Closed Loop
 	 */
 	public final static double kRotationsToTravel = 6;
-
-	/**
-	 * Using the configSelectedFeedbackCoefficient() function, scale units to 3600 per rotation.
-	 * This is nice as it keeps 0.1 degrees of resolution, and is fairly intuitive.
-	 */
-	public final static double kTurnTravelUnitsPerRotation = 3600;
 	
 	/**
 	 * Empirically measure what the difference between encoders per 360'

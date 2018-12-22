@@ -36,7 +36,7 @@ public class Instrum {
 		}
 
 		/* Periodically print to console */
-		if (++_loops >= 10) {
+		if (++_loops >= 20) {
 			_loops = 0;
 			System.out.println(sb.toString());
 		}

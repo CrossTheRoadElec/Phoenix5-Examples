@@ -38,15 +38,15 @@
  * 2.) Position Closed Loop wtih Quadrature Encoders and Drive Straight Wight Pigeon (Auxiliary)
  * 
  * Controls:
- * Button 1: When pressed, zero all sensors. Set Quad Encoders + Pigeon Yaw Position to 0.
- * Button 2: When pressed, Toggle between Arcade Drive and Position Closed Loop With Straight Drive
- * 	+ When toggling into Position Closed Loop Mode, the current heading is saved and used
- * 	+ as the the auxiliary closed loop target. Can be changed by toggling out and in again.
+ * Button 1: When pressed, zero all sensors. Set quad encoders' positions + Pigeon yaw to 0.
+ * Button 2: When pressed, Toggle between Arcade Drive and Position Closed Loop
+ * 	When toggling into Position Closed Loop, the current heading is saved and used as the 
+ * 	auxiliary closed loop target. Can be changed by toggling out and in again.
  * Left Joystick Y-Axis: 
- * 	+ Arcade Drive: Drive robot in forward and reverse direction
+ * 	+ Arcade Drive: Drive robot forward and reverse
  * 	+ Position Closed Loop: Servo robot forward and reverse [-6, 6] rotations
  * Right Joystick X-Axis:
- * 	 + Arcade Drive: Turn robot in left and right direction
+ * 	 + Arcade Drive: Turn robot left and right
  * 	+ Position Closed Loop: Not used
  * 
  * Gains for Position Closed Loop may need to be adjusted in Constants.java
@@ -98,6 +98,11 @@ public class Robot extends TimedRobot {
 		/* Disable all motor controllers */
 		_rightMaster.set(ControlMode.PercentOutput, 0);
 		_leftMaster.set(ControlMode.PercentOutput, 0);
+
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_rightMaster.configFactoryDefault();
+		_leftMaster.configFactoryDefault();
+		_pidgey.configFactoryDefault();
 		
 		/* Set Neutral Mode */
 		_leftMaster.setNeutralMode(NeutralMode.Brake);
@@ -141,8 +146,8 @@ public class Robot extends TimedRobot {
 													Constants.PID_TURN,
 													Constants.kTimeoutMs);
 		
-		/* Scale the Feedback Sensor using a coefficient (Configured for 3600 units of resolution) */
-		_rightMaster.configSelectedFeedbackCoefficient(	Constants.kTurnTravelUnitsPerRotation / Constants.kPigeonUnitsPerRotation,
+		/* Scale the Feedback Sensor using a coefficient */
+		_rightMaster.configSelectedFeedbackCoefficient(	1,
 														Constants.PID_TURN,
 														Constants.kTimeoutMs);
 		
@@ -162,7 +167,8 @@ public class Robot extends TimedRobot {
 		_rightMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
 		_leftMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
 
-		/* Max out the peak output (for all modes).  
+		/** 
+		 * Max out the peak output (for all modes).  
 		 * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
 		 */
 		_leftMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
@@ -186,7 +192,8 @@ public class Robot extends TimedRobot {
 		_rightMaster.config_IntegralZone(Constants.kSlot_Turning, (int)Constants.kGains_Turning.kIzone, Constants.kTimeoutMs);
 		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Turning, Constants.kGains_Turning.kPeakOutput, Constants.kTimeoutMs);
 			
-		/* 1ms per loop.  PID loop can be slowed down if need be.
+		/**
+		 * 1ms per loop.  PID loop can be slowed down if need be.
 		 * For example,
 		 * - if sensor updates are too slow
 		 * - sensor deltas are very small per update, so derivative error never gets large enough to be useful.
@@ -196,7 +203,8 @@ public class Robot extends TimedRobot {
         _rightMaster.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kTimeoutMs);
         _rightMaster.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
 
-		/* configAuxPIDPolarity(boolean invert, int timeoutMs)
+		/**
+		 * configAuxPIDPolarity(boolean invert, int timeoutMs)
 		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
 		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 		 */
@@ -229,14 +237,14 @@ public class Robot extends TimedRobot {
 				
 		if(!_state){
 			if (_firstCall)
-				System.out.println("This is a basic arcade drive.\n");
+				System.out.println("This is Arcade drive.\n");
 			
 			_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
 			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
 		}else{
 			if (_firstCall) {
-				System.out.println("This is Drive Straight Distance with the Auxiliary feature using the Pigeon.");
-				System.out.println("Travel 6 rotations in either direction while also maintaining a straight heading.\n");
+				System.out.println("This is Drive Straight Distance with the Auxiliary PID using the Pigeon yaw.");
+				System.out.println("Servo [-6, 6] rotations while also maintaining a straight heading.\n");
 				zeroDistance();
 				
 				/* Determine which slot affects which PID */
@@ -255,7 +263,7 @@ public class Robot extends TimedRobot {
 		_firstCall = false;
 	}
 	
-	/** Zeroes all sensors, Both Pigeon and Talons */
+	/** Zero all sensors, both Pigeon and Talons */
 	void zeroSensors() {
 		_leftMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		_rightMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
@@ -264,7 +272,7 @@ public class Robot extends TimedRobot {
 		System.out.println("[Quadrature Encoders + Position] All sensors are zeroed.\n");
 	}
 	
-	/** Zeroes QuadEncoders, used to reset Position when performing Position Closed Loop */
+	/** Zero quadrature encoders on Talon */
 	void zeroDistance(){
 		_leftMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		_rightMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);

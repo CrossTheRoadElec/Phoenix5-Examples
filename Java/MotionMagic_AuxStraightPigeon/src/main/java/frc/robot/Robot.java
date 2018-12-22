@@ -24,37 +24,38 @@
 
 /**
  * Description:
- * The MotionMagic_AuxStraightPigeon example demonstrates the new Talon and Victor Auxiliary 
- * and Remote Features to peform more complex closed loops. This example has the robot 
- * performing Motion Magic with an auxiliary closed loop on Pigeon Yaw to keep the robot straight.
+ * The MotionMagic_AuxStraightPigeon example demonstrates the new Talon/Victor auxiliary and 
+ * remote features to peform complex closed loops. This example has the robot performing 
+ * Motion Magic with an auxiliary closed loop on Pigeon Yaw to keep the robot straight.
  * 
  * This example uses:
- * - Pigeon IMU wired on CAN Bus for Auxiliary Closed Loop on Yaw
  * - 2x Quad Encoders, One on both sides of robot for Primary Closed Loop on Position
  * A Talon/Victor calculates the distance by taking the sum of both sensors and dividing it by 2.
+ * - Pigeon IMU wired on CAN Bus for Auxiliary Closed Loop on Yaw
  * 
- * This example has two modes of operation, which can be switched between with Button 1.
+ * This example has two modes of operation, which can be switched between with Button 2.
  * 1.) Arcade Drive
- * 2.) Motion Magic with Quadrature Encoders and Drive Straight With Pigeon (Auxiliary)
+ * 2.) Motion Magic with Quadrature Encoders and Drive Straight With Pigeon yaw
  * 
  * Controls:
- * Button 1: When pressed, zero Heading. Set current Quadrature Postions to 0.
- * Button 2: When pressed, toggle between Arcade Drive and Motion Magic with Feed Forward
- * 	When toggling into Motion Magic Mode, the current heading is saved and used
- * 	as the the auxiliary closed loop target. Can be changed by toggling out and in again.
+ * Button 1: When pressed, zero sensors. Set quadrature encoders' ostions + Pigeon yaw to 0.
+ * Button 2: When pressed, toggle between Arcade Drive and Motion Magic
+ * 	When toggling into Motion Magic, the current heading is saved and used as the 
+ * 	auxiliary closed loop target. Can be changed by toggling out and in again.
  * Left Joystick Y-Axis: 
- * 	+ Arcade Drive: Drive robot in forward and reverse direction
- * 	+ Motion Magic: Drive robot in forward and reverse direction [-6, 6] rotations
+ * 	+ Arcade Drive: Drive robot forward and reverse
+ * 	+ Motion Magic: Servo robot forward and reverse [-6, 6] rotations
  * Right Joystick X-Axis: 
  *  + Arcade Drive: Turn robot in left and right direction
  *  + Motion Magic: Not used
  * 
- * Gains for Motion Magic may need to be adjusted in Constants.java
+ * Gains for Motion Magic and Auxiliary may need to be adjusted in Constants.java
  * 
  * Supported Version:
- * - Talon SRX: 3.11
- * - Victor SPX: 3.11
- * - Pigeon IMU: 0.42
+ * - Talon SRX: 4.00
+ * - Victor SPX: 4.00
+ * - Pigeon IMU: 4.00
+ * - CANifier: 4.00
  */
 package frc.robot;
 
@@ -91,7 +92,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-		/* Not in use */
+		/* Not used in this project */
 	}
 
 	@Override
@@ -148,7 +149,7 @@ public class Robot extends TimedRobot {
 													Constants.kTimeoutMs);
 		
 		/* Scale the Feedback Sensor using a coefficient */
-		_rightMaster.configSelectedFeedbackCoefficient(	Constants.kTurnTravelUnitsPerRotation / Constants.kPigeonUnitsPerRotation,
+		_rightMaster.configSelectedFeedbackCoefficient(	1,
 														Constants.PID_TURN,
 														Constants.kTimeoutMs);
 		
@@ -174,7 +175,8 @@ public class Robot extends TimedRobot {
 		_rightMaster.configMotionAcceleration(2000, Constants.kTimeoutMs);
 		_rightMaster.configMotionCruiseVelocity(2000, Constants.kTimeoutMs);
 
-		/* Max out the peak output (for all modes).  
+		/**
+		 * Max out the peak output (for all modes).  
 		 * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
 		 */
 		_leftMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
@@ -189,18 +191,17 @@ public class Robot extends TimedRobot {
 		_rightMaster.config_kF(Constants.kSlot_Distanc, Constants.kGains_Distanc.kF, Constants.kTimeoutMs);
 		_rightMaster.config_IntegralZone(Constants.kSlot_Distanc, Constants.kGains_Distanc.kIzone, Constants.kTimeoutMs);
 		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Distanc, Constants.kGains_Distanc.kPeakOutput, Constants.kTimeoutMs);
-		_rightMaster.configAllowableClosedloopError(Constants.kSlot_Distanc, 0, Constants.kTimeoutMs);
 
 		/* FPID Gains for turn servo */
 		_rightMaster.config_kP(Constants.kSlot_Turning, Constants.kGains_Turning.kP, Constants.kTimeoutMs);
 		_rightMaster.config_kI(Constants.kSlot_Turning, Constants.kGains_Turning.kI, Constants.kTimeoutMs);
 		_rightMaster.config_kD(Constants.kSlot_Turning, Constants.kGains_Turning.kD, Constants.kTimeoutMs);
 		_rightMaster.config_kF(Constants.kSlot_Turning, Constants.kGains_Turning.kF, Constants.kTimeoutMs);
-		_rightMaster.config_IntegralZone(Constants.kSlot_Turning, (int)Constants.kGains_Turning.kIzone, Constants.kTimeoutMs);
+		_rightMaster.config_IntegralZone(Constants.kSlot_Turning, Constants.kGains_Turning.kIzone, Constants.kTimeoutMs);
 		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Turning, Constants.kGains_Turning.kPeakOutput, Constants.kTimeoutMs);
-		_rightMaster.configAllowableClosedloopError(Constants.kSlot_Turning, 0, Constants.kTimeoutMs);
 		
-		/* 1ms per loop.  PID loop can be slowed down if need be.
+		/**
+		 * 1ms per loop.  PID loop can be slowed down if need be.
 		 * For example,
 		 * - if sensor updates are too slow
 		 * - sensor deltas are very small per update, so derivative error never gets large enough to be useful.
@@ -210,7 +211,8 @@ public class Robot extends TimedRobot {
 		_rightMaster.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kTimeoutMs);
 		_rightMaster.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
 
-		/* configAuxPIDPolarity(boolean invert, int timeoutMs)
+		/**
+		 * configAuxPIDPolarity(boolean invert, int timeoutMs)
 		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
 		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 		 */
@@ -243,14 +245,14 @@ public class Robot extends TimedRobot {
 				
 		if(!_state){
 			if (_firstCall)
-				System.out.println("This is a basic arcade drive.\n");
+				System.out.println("This is Arcade Drive.\n");
 			
 			_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
 			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
 		}else{
 			if (_firstCall) {
-				System.out.println("This is Drive Straight Motion Magic with the Auxiliary feature using the Pigeon.");
-				System.out.println("Travel [-6,6] rotations while also maintaining a straight heading.\n");
+				System.out.println("This is Motion Magic with the Auxiliary PID using the Pigeon yaw.");
+				System.out.println("Servo [-6,6] rotations while also maintaining a straight heading.\n");
 				zeroDistance();
 				
 				/* Determine which slot affects which PID */
@@ -275,14 +277,14 @@ public class Robot extends TimedRobot {
 		_rightMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		_pidgey.setYaw(0, Constants.kTimeoutMs);
 		_pidgey.setAccumZAngle(0, Constants.kTimeoutMs);
-		System.out.println("[Sensors] All sensors are zeroed.\n");
+		System.out.println("[Quadrature Encoders + Pigeon] All sensors are zeroed.\n");
 	}
 	
 	/** Zero QuadEncoders, used to reset position when initializing Motion Magic */
 	void zeroDistance(){
 		_leftMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		_rightMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
-		System.out.println("[Quad Encoders + Pigeon] All encoders are zeroed.\n");
+		System.out.println("[Quadrature Encoders] All encoders are zeroed.\n");
 	}
 	
 	/** Deadband 5 percent, used on the gamepad */

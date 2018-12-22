@@ -20,16 +20,13 @@
  */
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 
 import com.ctre.phoenix.motion.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
-import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
 
 public class MotionProfileExample {
-
 	/**
 	 * The status of the motion profile executer and buffer inside the Talon.
 	 * Instead of creating a new one every time we call getMotionProfileStatus,
@@ -80,7 +77,7 @@ public class MotionProfileExample {
 	 * How many trajectory points do we wait for before firing the motion
 	 * profile.
 	 */
-	private static final int kMinPointsInTalon = 5;
+	private static final int kMinPointsInTalon = 20;
 	/**
 	 * Just a state timeout to make sure we don't get stuck anywhere. Each loop
 	 * is about 20ms.
@@ -153,21 +150,18 @@ public class MotionProfileExample {
 	 * Called every loop.
 	 */
 	public void control() {
-		/* Get the motion profile status every loop */
-		_motorController.getMotionProfileStatus(_status);
-
-		/*
-		 * track time, this is rudimentary but that's okay, we just want to make
-		 * sure things never get stuck.
+		/**
+		 * Track time, this is rudimentary but that's okay, 
+		 * we just want to make sure things never get stuck.
 		 */
 		if (_loopTimeout < 0) {
-			/* do nothing, timeout is disabled */
+			/* Do nothing, timeout is disabled */
 		} else {
-			/* our timeout is nonzero */
+			/* Timeout is nonzero */
 			if (_loopTimeout == 0) {
-				/*
-				 * something is wrong. Talon is not present, unplugged, breaker
-				 * tripped
+				/**
+				 * Something is wrong. 
+				 * Talon is not present, unplugged, breaker tripped
 				 */
 				Instrumentation.OnNoProgress();
 			} else {
@@ -203,10 +197,12 @@ public class MotionProfileExample {
 						_loopTimeout = kNumLoopsTimeout;
 					}
 					break;
-				case 1: /*
-						 * wait for MP to stream to Talon, really just the first few
-						 * points
-						 */
+				case 1: 
+					_motorController.getMotionProfileStatus(_status);
+					/*
+					 * wait for MP to stream to Talon, really just the first few
+					 * points
+					 */
 					/* do we have a minimum numberof points in Talon */
 					if (_status.btmBufferCnt > kMinPointsInTalon) {
 						/* start (once) the motion profile */
@@ -217,6 +213,9 @@ public class MotionProfileExample {
 					}
 					break;
 				case 2: /* check the status of the MP */
+
+					/* Get the motion profile status every loop */
+					_motorController.getMotionProfileStatus(_status);
 					/*
 					 * if talon is reporting things are good, keep adding to our
 					 * timeout. Really this is so that you can unplug your talon in
@@ -243,7 +242,6 @@ public class MotionProfileExample {
 			}
 
 			/* Get the motion profile status every loop */
-			_motorController.getMotionProfileStatus(_status);
 			_heading = _motorController.getActiveTrajectoryHeading();
 			_pos = _motorController.getActiveTrajectoryPosition();
 			_vel = _motorController.getActiveTrajectoryVelocity();
@@ -252,24 +250,7 @@ public class MotionProfileExample {
 			Instrumentation.process(_status, _pos, _vel, _heading);
 		}
 	}
-	/**
-	 * Find enum value if supported.
-	 * @param durationMs
-	 * @return enum equivalent of durationMs
-	 */
-	private TrajectoryDuration GetTrajectoryDuration(int durationMs)
-	{	 
-		/* create return value */
-		TrajectoryDuration retval = TrajectoryDuration.Trajectory_Duration_0ms;
-		/* convert duration to supported type */
-		retval = TrajectoryDuration.valueOf(durationMs);
-		/* check that it is valid */
-		if (retval.value != durationMs) {
-			DriverStation.reportError("Trajectory Duration not supported - use configMotionProfileTrajectoryPeriod instead", false);		
-		}
-		/* pass to caller */
-		return retval;
-	}
+
 	/** Start filling the MPs to all of the involved Talons. */
 	private void startFilling() {
 		/* since this example only has one talon, just update that one */
@@ -311,15 +292,16 @@ public class MotionProfileExample {
 			double heading = _endHeading * positionRot / finalPositionRot; /* scale heading progress to position progress */
 
 			/* for each point, fill our structure and pass it to API */
-			point.position = direction * positionRot * Constants.kSensorUnitsPerRotation * 2; //Convert Revolutions to Units
-			point.velocity = direction * velocityRPM * Constants.kSensorUnitsPerRotation / 600.0; //Convert RPM to Units/100ms
+			point.position = direction * positionRot * Constants.kSensorUnitsPerRotation * 2; 		//Convert Revolutions to Units
+			point.velocity = direction * velocityRPM * Constants.kSensorUnitsPerRotation / 600.0; 	//Convert RPM to Units/100ms
 			point.auxiliaryPos = heading; /* scaled such that 3600 => 360 deg */
 			point.profileSlotSelect0 = Constants.kSlot_MotProf; /* which set of gains would you like to use [0,3]? */
 			point.profileSlotSelect1 = Constants.kSlot_Turning; /* auxiliary PID [0,1], leave zero */
-			point.timeDur = GetTrajectoryDuration((int)profile[i][2]);
+			point.timeDur = (int)profile[i][2];		// Trajectory Duration is no longer a thing...
 			point.zeroPos = false;
 			if (i == 0)
 				point.zeroPos = true; /* set this to true on the first point */
+			point.useAuxPID = true;
 
 			point.isLastPoint = false;
 			if ((i + 1) == totalCnt)
@@ -328,6 +310,7 @@ public class MotionProfileExample {
 			_motorController.pushMotionProfileTrajectory(point);
 		}
 	}
+
 	/**
 	 * Called by application to signal Talon to start the buffered MP (when it's
 	 * able to).
@@ -339,7 +322,6 @@ public class MotionProfileExample {
 	}
 
 	/**
-	 * 
 	 * @return the output value to pass to Talon's set() routine. 0 for disable
 	 *         motion-profile output, 1 for enable motion-profile, 2 for hold
 	 *         current motion profile trajectory point.

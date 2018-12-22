@@ -27,31 +27,37 @@
  * The RemoteSoftLimit example demonstrates the new Talon and Victor Remote Features, which
  * allow for the use of remote Software Limit Switches. The project allows for quick change in
  * sensor configuration between:
- * 1.) Local Quadrature Encoder (Connected directly to Talon)
- * 2.) Remote Quadrature Encoder (Connected to seperate Talon)
- * 3.) Remote CANifier Quadrature Encoder (Connected to CANifier)
- * 4.) Local Pigeon Yaw Reading (Connected directly to Talon)
- * 5.) Remote Pigeon Yaw Reading (Connected on same CAN Bus)
- * 6.) CANifier PWM input 1 (CANifier on same CAN Bus)
+ * 1.) Local Quadrature Encoder				[Local Feedback]
+ * 2.) Remote Quadrature Encoder 			[Talon]     
+ * 3.) Remote CANifier Quadrature Encoder 	[CANifier] 
+ * 4.) Local Pigeon Yaw Reading 			[Local Feedback]       
+ * 5.) Remote Pigeon Yaw Reading 			[CAN Pigeon]        
+ * 6.) CANifier PWM input 1 				[CANifier]
  * The project also allows for enable/disable on soft limit triggering when sensor is not 
  * present from remote sources. configSoftLimitDisableNeutralOnLOS only works for remote sensors.
  * 
  * This project is a quick overview on possible different soft limit sources and the
- * ability to enable/disable soft limits when sensors can't be found. 
+ * ability to enable/disable neutral output when remote limit source can't be found. 
  * 
  * Controls:
  * Current Sensor Configurtion is indicated by print message in terminal
- * 1.) Local Quadrature Encoder (Connected directly to Talon)       Button 1
- * 2.) Remote Quadrature Encoder (Connected to seperate Talon)      Button 2
- * 3.) Remote CANifier Quadrature Encoder (Connected to CANifier)   Button 3
- * 4.) Local Pigeon Yaw Reading (Connected directly to Talon)       Button 4
- * 5.) Remote Pigeon Yaw Reading (Connected on same CAN Bus)        Button 5
- * 6.) CANifier PWM input 1 (CANifier on same CAN Bus)              Button 7
+ * 1.) Local Quadrature Encoder				[Local Feedback]		Button 1
+ * 2.) Remote Quadrature Encoder 			[Talon] 				Button 2
+ * 3.) Remote CANifier Quadrature Encoder 	[CANifier] 				Button 3
+ * 4.) Local Pigeon Yaw Reading 			[Local Feedback]       	Button 4
+ * 5.) Remote Pigeon Yaw Reading 			[CAN Pigeon]        	Button 5
+ * 6.) CANifier PWM input 1 				[CANifier]				Button 7
  *
- * 7.) Enable Neutral Output on Limit Switch                        Button 6
- * 8.) Disable Neutral Output on Limit Switch                       Button 8
+ * 7.) Disable Neutral Output on loss of remote limit source        Button 6
+ * 8.) Enable Neutral Output on loss of remote limit source         Button 8
  * 
- * Left Joystick Y-Axis: Drive Talon/Motor Forward and Reverse in Percent Output
+ * Left Joystick Y-Axis: Throttle Talon/Motor forward and reverse in Percent Output
+ *
+ * Supported Version:
+ * 	- Talon SRX: 4.0
+ * 	- Victor SPX: 4.0
+ * 	- Pigeon IMU: 4.0
+ * 	- CANifier: 4.0
  */
 package frc.robot;
 
@@ -70,9 +76,9 @@ public class Robot extends TimedRobot {
     /* Hardware */
     TalonSRX _motorCntrller = new TalonSRX(1);	// Victor SPX can be used with remote sensor features.
     CANifier _canifLimits = new CANifier(0);	// Use this CANifier for remote limit switches
-    TalonSRX _talonLimits = new TalonSRX(2); 	// Use this Talon for remote limit switches
+    TalonSRX _talonLimits = new TalonSRX(3); 	// Use this Talon for remote limit switches
+    PigeonIMU _imu = new PigeonIMU(3);
     Joystick _joy = new Joystick(0);
-    PigeonIMU _imu = new PigeonIMU(0);
 
     /* a couple latched values to detect on-press events for buttons and POV */
     boolean[] _currentBtns = new boolean[Constants.kNumButtonsPlusOne];
@@ -236,7 +242,7 @@ public class Robot extends TimedRobot {
 
             /* select a Pigeon on CAN Bus. */
             _motorCntrller.configRemoteFeedbackFilter(  _canifLimits.getDeviceID(), 
-                                                        RemoteSensorSource.CANifier_PWMInput1,
+                                                        RemoteSensorSource.CANifier_PWMInput0,
                                                         Constants.REMOTE_1, /* use remote filter 1 this time */
                                                         Constants.kTimeoutMs);
 
@@ -257,6 +263,7 @@ public class Robot extends TimedRobot {
         getButtons(_currentBtns);               // Update buttons
         double joyForward = -1 * _joy.getY();   // positive stick => forward
         joyForward = deadband(joyForward);      // Deadband joystick
+        joyForward *= 0.50f;                    // Reduce speed so PWM sensor doesn't wrap around
 
         /* Select Soft Limit Setup based on button pressed */
         if (_currentBtns[1] && !_previousBtns[1]) {selectSoftLimitSetup(1);} // Button 1

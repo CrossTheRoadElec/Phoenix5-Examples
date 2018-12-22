@@ -33,18 +33,18 @@
  * direction. If this is not the case, flip the boolean input in setSensorPhase().
  * 
  * Controls:
- * Button 1: When held, start and run BVelocity Closed Loop on Talon/Victor
+ * Button 1: When held, start and run Velocity Closed Loop on Talon/Victor
  * Left Joystick Y-Axis:
- * 	+ When Button 1 is held: Run Velcity Closed Loop Mode, [-500, 500] RPM
- * 	+ When Button 1 is not held: Throttle Talon forward and reverse
- * To be used to confirm hardware setup.
+ * 	+ Percent Output: Throttle Talon forward and reverse, use to confirm hardware setup
+ * 	+ Velocity Closed Loop: Servo Talon forward and reverse [-500, 500] RPM
  * 
  * Gains for Velocity Closed Loop may need to be adjusted in Constants.java
  * 
  * Supported Version:
- * - Talon SRX: 3.11
- * - Victor SPX: 3.11
- * - Pigeon IMU: 0.42
+ * - Talon SRX: 4.00
+ * - Victor SPX: 4.00
+ * - Pigeon IMU: 4.00
+ * - CANifier: 4.00
  */
 package frc.robot;
 
@@ -66,12 +66,12 @@ public class Robot extends TimedRobot {
 	int _loops = 0;
 
 	public void robotInit() {
-        /* Factory Default All configs, eliminate unexpected behaviour */
+        /* Factory Default all hardware to prevent unexpected behaviour */
         _talon.configFactoryDefault();
 
-		/* first choose the sensor */
+		/* Config sensor used for Primary PID [Velocity] */
         _talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,
-                                            0, 
+                                            Constants.kPIDLoopIdx, 
                                             Constants.kTimeoutMs);
 
         /**
@@ -80,7 +80,7 @@ public class Robot extends TimedRobot {
          */
 		_talon.setSensorPhase(true);
 
-		/* Cet the peak and nominal outputs */
+		/* Config the peak and nominal outputs */
 		_talon.configNominalOutputForward(0, Constants.kTimeoutMs);
 		_talon.configNominalOutputReverse(0, Constants.kTimeoutMs);
 		_talon.configPeakOutputForward(1, Constants.kTimeoutMs);
@@ -98,7 +98,7 @@ public class Robot extends TimedRobot {
 	 */
 	public void teleopPeriodic() {
 		/* Get gamepad axis */
-		double leftYstick = _joy.getY();
+		double leftYstick = -1 * _joy.getY();
 
 		/* Get Talon/Victor's current output percentage */
 		double motorOutput = _talon.getMotorOutputPercent();

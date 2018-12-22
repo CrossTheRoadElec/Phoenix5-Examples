@@ -18,12 +18,6 @@ public class Constants {
 	public final static int kSensorUnitsPerRotation = 4096;
 	
 	/**
-	 * Using the configSelectedFeedbackCoefficient() function, scale units to 3600 per rotation.
-	 * This is nice as it keeps 0.1 degrees of resolution, and is fairly intuitive.
-	 */
-	public final static double kTurnTravelUnitsPerRotation = 3600.0;
-	
-	/**
 	 * This is a property of the Pigeon IMU, and should not be changed.
 	 */
 	public final static double kPigeonUnitsPerRotation = 8192.0;

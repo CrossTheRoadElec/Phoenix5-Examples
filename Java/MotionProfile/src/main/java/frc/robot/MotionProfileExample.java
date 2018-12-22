@@ -27,10 +27,8 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.*;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import com.ctre.phoenix.motion.*;
-import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
 
 public class MotionProfileExample {
 
@@ -244,24 +242,7 @@ public class MotionProfileExample {
 			Instrumentation.process(_status, _pos, _vel, _heading);
 		}
 	}
-	/**
-	 * Find enum value if supported.
-	 * @param durationMs
-	 * @return enum equivalent of durationMs
-	 */
-	private TrajectoryDuration GetTrajectoryDuration(int durationMs)
-	{	 
-		/* create return value */
-		TrajectoryDuration retval = TrajectoryDuration.Trajectory_Duration_0ms;
-		/* convert duration to supported type */
-		retval = TrajectoryDuration.valueOf(durationMs);		//Static method... 
-		/* check that it is valid */
-		if (retval.value != durationMs) {
-			DriverStation.reportError("Trajectory Duration not supported - use configMotionProfileTrajectoryPeriod instead", false);		
-		}
-		/* pass to caller */
-		return retval;
-	}
+
 	/** Start filling the MPs to all of the involved Talons. */
 	private void startFilling() {
 		/* since this example only has one talon, just update that one */
@@ -302,7 +283,7 @@ public class MotionProfileExample {
 			point.headingDeg = 0; /* future feature - not used in this example*/
 			point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
 			point.profileSlotSelect1 = 0; /* future feature  - not used in this example - cascaded PID [0,1], leave zero */
-			point.timeDur = GetTrajectoryDuration((int)profile[i][2]);
+			point.timeDur = (int)profile[i][2];
 			point.zeroPos = false;
 			if (i == 0)
 				point.zeroPos = true; /* set this to true on the first point */

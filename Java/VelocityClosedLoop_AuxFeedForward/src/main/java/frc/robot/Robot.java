@@ -24,22 +24,21 @@
 
 /**
  * Description:
- * The VelocityClosedLoop_AuxFeedForward example demonstrates the new Talon/Victor Auxiliary
- * and Remote Features to perform more complex closed loops. This example has the robot 
- * performing Velocity Closed Loop with an auxiliary FeedForward to request more or less output.
+ * The VelocityClosedLoop_AuxFeedForward example demonstrates the new Talon/Victor auxiliary
+ * and remote features to perform complex closed loops. This example has the robot performing 
+ * Velocity Closed Loop with an auxiliary feed-forward to request more or less output.
  * 
  * This example uses:
- * - 2x Quad Encoders, One on both sides of robot for Primary Closed Loop on Position
+ * - 2x quad encoders, one on both sides of robot for Primary Closed Loop on Position
  * A Talon/Victor caclulates the distance by taking the sum of both sensors and diving it by 2.
- * The Talon/Victor then calculates the Velocity internally.
  * 
  * This example has two modes of operation, which can be switched between with Button 2.
  * 1.) Arcade Drive
- * 2.) Velocity Closed Loop with Quadrature Encoders and FeedForward (Auxiliary)
+ * 2.) Velocity Closed Loop with quadrature encoders and FeedForward
  * 
  * Controls:
- * Button 1: When pressed, zero heading. Set current Quadrature Encoders' positions to 0.
- * Button 2: When pressed, toggle between Arcade Drive and Velocity Closed Loop with Feed Forward
+ * Button 1: When pressed, zero all sensors. Set quad encoders' positions to 0.
+ * Button 2: When pressed, toggle between Arcade Drive and Velocity Closed Loop
  * Left Joystick Y-Axis:
  * 	+ Arcade Drive: Drive robot forward and reverse
  * 	+ Velocity Closed Loop: Servo robot forward and reverse [-500, 500] RPM
@@ -50,9 +49,10 @@
  * Gains for Velocity Closed Loop may need to be adjusted in Constants.java
  * 
  * Supported Version:
- * - Talon SRX: 3.11
- * - Victor SPX: 3.11
- * - Pigeon IMU: 0.42
+ * - Talon SRX: 4.00
+ * - Victor SPX: 4.00
+ * - Pigeon IMU: 4.00
+ * - CANifier
  */
 package frc.robot;
 
@@ -143,7 +143,8 @@ public class Robot extends TimedRobot {
 		_rightMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
 		_leftMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
 
-		/* Max out the peak output (for all modes).  
+		/**
+		 * Max out the peak output (for all modes).  
 		 * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
 		 */
 		_leftMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
@@ -160,7 +161,8 @@ public class Robot extends TimedRobot {
 		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Velocit, Constants.kGains_Velocit.kPeakOutput, Constants.kTimeoutMs);
 		_rightMaster.configAllowableClosedloopError(Constants.kSlot_Velocit, 0, Constants.kTimeoutMs);
 			
-		/* 1ms per loop.  PID loop can be slowed down if need be.
+		/**
+		 * 1ms per loop.  PID loop can be slowed down if need be.
 		 * For example,
 		 * - if sensor updates are too slow
 		 * - sensor deltas are very small per update, so derivative error never gets large enough to be useful.
@@ -168,14 +170,9 @@ public class Robot extends TimedRobot {
 		 */
         int closedLoopTimeMs = 1;
         _rightMaster.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kTimeoutMs);
-        _rightMaster.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
+		_rightMaster.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
 
-		/* configAuxPIDPolarity(boolean invert, int timeoutMs)
-		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
-		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
-		 */
-		_rightMaster.configAuxPIDPolarity(false, Constants.kTimeoutMs);
-
+		
 		/* Initialize */
 		_firstCall = true;
 		_state = false;
@@ -202,14 +199,16 @@ public class Robot extends TimedRobot {
 		
 		if(!_state){
 			if (_firstCall)
-				System.out.println("This is a basic arcade drive.\n");
+				System.out.println("This is Arcade drive.\n");
 			
 			_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
-            _rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
-            System.out.println("Native RPM: " + _rightMaster.getSelectedSensorVelocity());
+			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
+			
+			/* Uncomment to view velocity native units */
+            //System.out.println("Native RPM: " + _rightMaster.getSelectedSensorVelocity());
 		}else{
 			if (_firstCall) {
-				System.out.println("This is Velocity Closed Loop with a custom Feed Forward.");
+				System.out.println("This is Velocity Closed Loop with an Arbitrary Feed Forward.");
 				System.out.println("Travel [-500, 500] RPM while having the ability to add a FeedForward with joyX ");
 				zeroSensors();
 				
@@ -218,24 +217,26 @@ public class Robot extends TimedRobot {
 			}
 			
 			/* Calculate targets from gamepad inputs */
-			double target_RPM = forward * 250;  /* +- 500 RPM */
-			double target_unitsPer100ms = target_RPM * Constants.kSensorUnitsPerRotation / 600.0;   //RPM -> Native units
-			double feedFwdTerm = turn * 0.10;   /* Percentage added to the close loop output */
+			double target_RPM = forward * 250;	// +- 500 RPM
+			double target_unitsPer100ms = target_RPM * Constants.kSensorUnitsPerRotation / 600.0;	//RPM -> Native units
+			double feedFwdTerm = turn * 0.10;	// Percentage added to the close loop output
 			
 			/* Configured for Velocity Closed Loop on Quad Encoders' Sum and Arbitrary FeedForward on joyX */
 			_rightMaster.set(ControlMode.Velocity, target_unitsPer100ms, DemandType.ArbitraryFeedForward, feedFwdTerm);
-            _leftMaster.follow(_rightMaster);
-            double actual_RPM = (_rightMaster.getSelectedSensorVelocity() / (double)Constants.kSensorUnitsPerRotation * 600f);
-            System.out.println("Vel[RPM]: " + actual_RPM + " Pos: " + _rightMaster.getSelectedSensorPosition());
+			_leftMaster.follow(_rightMaster);
+			
+			/* Uncomment to view RPM in Driver Station */
+            // double actual_RPM = (_rightMaster.getSelectedSensorVelocity() / (double)Constants.kSensorUnitsPerRotation * 600f);
+            // System.out.println("Vel[RPM]: " + actual_RPM + " Pos: " + _rightMaster.getSelectedSensorPosition());
 		}
 		_firstCall = false;
 	}
 		
-	/* Zero Quad Encoders on Talons */
+	/* Zero all sensors on Talons */
 	void zeroSensors() {
 		_leftMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		_rightMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
-		System.out.println("[QuadEncoders] All sensors are zeroed.\n");
+		System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
 	}
 	
 	/** Deadband 5 percent, used on the gamepad (To be added to Framework?) */

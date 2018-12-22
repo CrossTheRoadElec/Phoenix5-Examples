@@ -37,13 +37,19 @@
  * 
  * Controls:
  * Button 6: Run TaskAnimateLEDStrip, automate through HSV color wheel
- * Button 5: Run TaskDirectControlLEDStrip, control HSV value based on left joystick postion/angle
+ * Button 5: Run TaskDirectControlLEDStrip, control HSV value based on left joystick position/angle
  * Button 7: Run TaskLIDAR_ControlLEDStrip, control HSV value based on distance detected by LIDAR
- * Left Joystick: Used in both TaskDirectControlLED Strip, where postion of joystick represents
- * postion on HSV Wheel, and TaskPWMmotorController to drive motor forward and reverse when 
+ * Left Joystick: Used in both TaskDirectControlLED Strip, where position of joystick represents
+ * position on HSV Wheel, and TaskPWMmotorController, to drive motor forward and reverse when 
  * enabled.
  * 
  * Set gamepadPresent in TaskMainLoop.java to true to enable PWM output to PWM Motor Controller
+ * 
+ * Supported Version:
+ * 	- Talon SRX: 4.0
+ * 	- Victor SPX: 4.0
+ * 	- Pigeon IMU: 4.0
+ * 	- CANifier: 4.0
  */
 
 package frc.robot;

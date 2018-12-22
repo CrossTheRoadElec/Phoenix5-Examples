@@ -24,40 +24,40 @@
 
 /**
  * Description:
- * The MotionProfile_AuxMotionProfileArc example demonstrates the new Talon and Victor Auxiliary 
- * and Remote Features to peform more complex closed loops. This example has the robot 
- * performing Motion Profile with an auxiliary closed loop on pigeon yaw, which is called
- * Motion Profile Arc rather than auxiliary.
+ * The MotionProfile_AuxMotionProfileArc example demonstrates the new Talon/Victor Auxiliary and 
+ * remote featuresused to perform complex closed loops. This example has the robot performing 
+ * Motion Profile with an auxiliary closed loop on pigeon yaw, which is called Motion Profile Arc.
  * 
  * This example uses:
- * - 2x Quad Encoders, One on both sides of robot for Primary Closedop Loop on Position
- * A Talon/Victor caclulates the distance by taking the sum of both sensors and diving it by 2.
+ * - 2x Quad Encoders, One on both sides of robot for Primary Closed Loop on Position
+ * A Talon/Victor calculates the distance by taking the sum of average between both sensors.
  * - Pigeon IMU used for Auxiliary Closed Loop on Pigeon Yaw. 
  * 
- * This example has two modes of operation, which can be switched between with Button 1.
+ * This example has two modes of operation, which can be switched between with Button 2.
  * 1.) Arcade Drive
- * 2.) Motion Profile with Quadrature Encoders and Motion Profile Arc with Pigeon (Auxiliary)
+ * 2.) Motion Profile with Quadrature Encoders and Motion Profile Arc with Pigeon
  * 
  * Controls:
- * Button 1: When pressed, zero heading. Set current Quadrature Encoders' Positions to 0.
+ * Button 1: When pressed, zero sensors. Set quadrature encoders' positions + Pigeon yaw to 0.
  * Button 2: When pressed, toggle between Arcade Drive and Motion Profile Arc
  * Button 6: When pressed, select direction and final heading of Motion Profile and run 
- * Motion Profile Arc
+ * 	Motion Profile Arc
  * Left Joystick Y-Axis: 
  * 	+ Arcade Drive: Drive robot in forward and reverse direction
  * 	+ Motion Profile Arc: Select Direction of Motion profile, forward or reverse, when
- * Button 6 is pressed and held. 
+ * 	Button 6 is pressed and held. 
  * Right Joystick X-Axis: 
  *  + Arcade Drive: Turn robot in left and right direction
  *  + Motion Profile Arc: Select Final Heading of Motion profile [0, 360] degrees when 
- * Button 6 is pressed and held.
+ * 	Button 6 is pressed and held.
  * 
- * Gains for Motion Profile may need to be adjusted in Constants.java
+ * Gains for Motion Profile and Arc may need to be adjusted in Constants.java
  * 
  * Supported Version:
- * - Talon SRX: 3.11
- * - Victor SPX: 3.11
- * - Pigeon IMU: 0.42
+ * 	- Talon SRX: 4.0
+ * 	- Victor SPX: 4.0
+ * 	- Pigeon IMU: 4.0
+ * 	- CANifier: 4.0
  */
 package frc.robot;
 
@@ -65,6 +65,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
@@ -79,20 +80,21 @@ public class Robot extends TimedRobot {
 	/** Hardware */
 	TalonSRX _leftMaster = new TalonSRX(2);
 	TalonSRX _rightMaster = new TalonSRX(1);
+	VictorSPX _tempMaster = new VictorSPX(2);
 	PigeonIMU _pidgey = new PigeonIMU(3);
+
 	Joystick _gamepad = new Joystick(0);
 	
 	/** Latched values to detect on-press events for buttons and POV */
 	boolean[] _btns = new boolean[Constants.kNumButtonsPlusOne];
 	boolean[] btns = new boolean[Constants.kNumButtonsPlusOne];
-	int _pov = 0;
 
 	/** Tracking variables */
 	boolean _firstCall = false;
 	boolean _state = false;
 	
 	/** Motion profile example manager*/
-	MotionProfileExample  _motProfExample = new MotionProfileExample(_rightMaster);
+	MotionProfileExample  _motProfExample = new MotionProfileExample(_tempMaster);
 	
 	/** Used to help control the Motion Profile Close Looping */
 	enum ButtonEvent {
@@ -112,15 +114,17 @@ public class Robot extends TimedRobot {
 		/* Disable all motors */
 		_rightMaster.set(ControlMode.PercentOutput, 0);
 		_leftMaster.set(ControlMode.PercentOutput,  0);
+		_tempMaster.set(ControlMode.PercentOutput, 0);
 
 		/* Factory Default all hardware to prevent unexpected behaviour */
 		_rightMaster.configFactoryDefault();
 		_leftMaster.configFactoryDefault();
+		_tempMaster.configFactoryDefault();
 		_pidgey.configFactoryDefault();
 		
 		/* Set neutral modes */
-		_leftMaster.setNeutralMode(NeutralMode.Brake);
 		_rightMaster.setNeutralMode(NeutralMode.Brake);
+		_tempMaster.setNeutralMode(NeutralMode.Brake);
 		
 		/** Feedback Sensor Configuration */
 		
@@ -135,11 +139,11 @@ public class Robot extends TimedRobot {
 												Constants.REMOTE_0,							// Source number [0, 1]
 												Constants.kTimeoutMs);						// Configuration Timeout
 		
-		/* Configure the Pigeon IMU to the other Remote Slot on the Right Talon */
-		_rightMaster.configRemoteFeedbackFilter(_pidgey.getDeviceID(),
-												RemoteSensorSource.Pigeon_Yaw,
-												Constants.REMOTE_1,	
-												Constants.kTimeoutMs);
+		// /* Configure the Pigeon IMU to the other Remote Slot on the Right Talon */
+		// _rightMaster.configRemoteFeedbackFilter(_pidgey.getDeviceID(),
+		// 										RemoteSensorSource.Pigeon_Yaw,
+		// 										Constants.REMOTE_1,	
+		// 										Constants.kTimeoutMs);
 		
 		/* Setup Sum signal to be used for Distance */
 		_rightMaster.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);	// Feedback Device of Remote Talon
@@ -155,63 +159,76 @@ public class Robot extends TimedRobot {
 														Constants.PID_PRIMARY,		// PID Slot of Source 
 														Constants.kTimeoutMs);		// Configuration Timeout
 		
-		/* Configure Remote Slot 1 [Pigeon IMU's Yaw] to be used for Auxiliary PID Index */
-		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.RemoteSensor1,
-													Constants.PID_TURN,
-													Constants.kTimeoutMs);
+		// /* Configure Remote Slot 1 [Pigeon IMU's Yaw] to be used for Auxiliary PID Index */
+		// _rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.RemoteSensor1,
+		// 											Constants.PID_TURN,
+		// 											Constants.kTimeoutMs);
 		
-		/* Scale the Feedback Sensor using a coefficient (Configured for 3600 units of resolution) */
-		_rightMaster.configSelectedFeedbackCoefficient(	Constants.kTurnTravelUnitsPerRotation / Constants.kPigeonUnitsPerRotation,
-														Constants.PID_TURN,
-														Constants.kTimeoutMs);
+		// /* Scale the Feedback Sensor using a coefficient (Configured for 3600 units of resolution) */
+		// _rightMaster.configSelectedFeedbackCoefficient(	1,
+		// 												Constants.PID_TURN,
+		// 												Constants.kTimeoutMs);
+
+		_tempMaster.configRemoteFeedbackFilter(_rightMaster.getDeviceID(),
+												RemoteSensorSource.TalonSRX_SelectedSensor,
+												Constants.REMOTE_0);
+		_tempMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0,
+												Constants.PID_PRIMARY,
+												Constants.kTimeoutMs);
+
+		_tempMaster.configRemoteFeedbackFilter(_pidgey.getDeviceID(),
+												RemoteSensorSource.Pigeon_Yaw,
+												Constants.REMOTE_1,	
+												Constants.kTimeoutMs);
+		_tempMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1,
+												Constants.PID_TURN,
+												Constants.kTimeoutMs);
 		
 		/* Configure output and sensor direction */
-		_leftMaster.setInverted(false);
+		_tempMaster.setInverted(false);
 		_leftMaster.setSensorPhase(true);
 		_rightMaster.setInverted(true);
 		_rightMaster.setSensorPhase(true);
 		
 		/* Set status frame periods to ensure we don't have stale data */
-		_rightMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
-		_rightMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
-		_rightMaster.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
-		_rightMaster.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
-		_rightMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
+		_tempMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
+		_tempMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
+		_tempMaster.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
+		_tempMaster.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
+		_leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
 
 		/* Configure neutral deadband */
 		_rightMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
-		_leftMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
+		_tempMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
 		
 		/* Motion Magic Configurations */
-		_rightMaster.configMotionAcceleration(2000, Constants.kTimeoutMs);
-		_rightMaster.configMotionCruiseVelocity(2000, Constants.kTimeoutMs);
+		_tempMaster.configMotionAcceleration(2000, Constants.kTimeoutMs);
+		_tempMaster.configMotionCruiseVelocity(2000, Constants.kTimeoutMs);
 
 		/**
 		 * Max out the peak output (for all modes).  
 		 * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
 		 */
-		_leftMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
-		_leftMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
+		_tempMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
+		_tempMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
 		_rightMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
 		_rightMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
 
 		/* FPID Gains for Motion Profile servo */
-		_rightMaster.config_kP(Constants.kSlot_MotProf, Constants.kGains_MotProf.kP, Constants.kTimeoutMs);
-		_rightMaster.config_kI(Constants.kSlot_MotProf, Constants.kGains_MotProf.kI, Constants.kTimeoutMs);
-		_rightMaster.config_kD(Constants.kSlot_MotProf, Constants.kGains_MotProf.kD, Constants.kTimeoutMs);
-		_rightMaster.config_kF(Constants.kSlot_MotProf, Constants.kGains_MotProf.kF, Constants.kTimeoutMs);
-		_rightMaster.config_IntegralZone(Constants.kSlot_MotProf, (int)Constants.kGains_MotProf.kIzone, Constants.kTimeoutMs);
-		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_MotProf, Constants.kGains_MotProf.kPeakOutput, Constants.kTimeoutMs);
-		_rightMaster.configAllowableClosedloopError(Constants.kSlot_MotProf, 0, Constants.kTimeoutMs);
+		_tempMaster.config_kP(Constants.kSlot_MotProf, Constants.kGains_MotProf.kP, Constants.kTimeoutMs);
+		_tempMaster.config_kI(Constants.kSlot_MotProf, Constants.kGains_MotProf.kI, Constants.kTimeoutMs);
+		_tempMaster.config_kD(Constants.kSlot_MotProf, Constants.kGains_MotProf.kD, Constants.kTimeoutMs);
+		_tempMaster.config_kF(Constants.kSlot_MotProf, Constants.kGains_MotProf.kF, Constants.kTimeoutMs);
+		_tempMaster.config_IntegralZone(Constants.kSlot_MotProf, Constants.kGains_MotProf.kIzone, Constants.kTimeoutMs);
+		_tempMaster.configClosedLoopPeakOutput(Constants.kSlot_MotProf, Constants.kGains_MotProf.kPeakOutput, Constants.kTimeoutMs);
 
 		/* FPID Gains for turn servo */
-		_rightMaster.config_kP(Constants.kSlot_Turning, Constants.kGains_Turning.kP, Constants.kTimeoutMs);
-		_rightMaster.config_kI(Constants.kSlot_Turning, Constants.kGains_Turning.kI, Constants.kTimeoutMs);
-		_rightMaster.config_kD(Constants.kSlot_Turning, Constants.kGains_Turning.kD, Constants.kTimeoutMs);
-		_rightMaster.config_kF(Constants.kSlot_Turning, Constants.kGains_Turning.kF, Constants.kTimeoutMs);
-		_rightMaster.config_IntegralZone(Constants.kSlot_Turning, Constants.kGains_Turning.kIzone, Constants.kTimeoutMs);
-		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Turning, Constants.kGains_Turning.kPeakOutput, Constants.kTimeoutMs);
-		_rightMaster.configAllowableClosedloopError(Constants.kSlot_Turning, 0, Constants.kTimeoutMs);
+		_tempMaster.config_kP(Constants.kSlot_Turning, Constants.kGains_Turning.kP, Constants.kTimeoutMs);
+		_tempMaster.config_kI(Constants.kSlot_Turning, Constants.kGains_Turning.kI, Constants.kTimeoutMs);
+		_tempMaster.config_kD(Constants.kSlot_Turning, Constants.kGains_Turning.kD, Constants.kTimeoutMs);
+		_tempMaster.config_kF(Constants.kSlot_Turning, Constants.kGains_Turning.kF, Constants.kTimeoutMs);
+		_tempMaster.config_IntegralZone(Constants.kSlot_Turning, Constants.kGains_Turning.kIzone, Constants.kTimeoutMs);
+		_tempMaster.configClosedLoopPeakOutput(Constants.kSlot_Turning, Constants.kGains_Turning.kPeakOutput, Constants.kTimeoutMs);
 
 		/**
 		 * 1ms per loop.  PID loop can be slowed down if need be.
@@ -221,15 +238,15 @@ public class Robot extends TimedRobot {
 		 * - sensor movement is very slow causing the derivative error to be near zero.
 		 */
 		int closedLoopTimeMs = 1;
-		_rightMaster.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kTimeoutMs);
-		_rightMaster.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
+		_tempMaster.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kTimeoutMs);
+		_tempMaster.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
 
 		/**
 		 * configAuxPIDPolarity(boolean invert, int timeoutMs)
 		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
 		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 		 */
-		_rightMaster.configAuxPIDPolarity(false, Constants.kTimeoutMs);
+		_tempMaster.configAuxPIDPolarity(false, Constants.kTimeoutMs);
 
 		/* Initialize */
 		_firstCall = true;
@@ -274,19 +291,19 @@ public class Robot extends TimedRobot {
 			if (_firstCall)
 				System.out.println("This is a basic arcade drive.\n");
 			
-			_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
+			_tempMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
 			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
 		}else{
 			/* Calculate targets from gamepad inputs */
 			boolean bMoveForward = (forward >= 0) ? true : false;
-			/* positive right stick => negative heading target (turn to right) */
-			double finalHeading_units = Constants.kTurnTravelUnitsPerRotation * turn * -1.0;
+			/* positive right stick => negative heading target (turn to right), limit to [-90, 90 deg of current heading] */
+			double finalHeading_units = Constants.kPigeonUnitsPerRotation * turn * -1.0 * 0.25;
 
 			if (_firstCall) {
 				System.out.println("This is Motion Profile Auxiliary, also known as MotionProfileArc using the Pigeon for turn");
 				System.out.println("Additonal options for running Motion Profile, to be selected when Button 6 is pressed and held:");
 				System.out.println("\t1.) Select direction (forward or reverse) of Motion Profile with Left Joystick Y-Axis");
-				System.out.println("\t2.) Select final heading of robot after Motion Profile completion with Right Joystick X-Axis");
+				System.out.println("\t2.) Select final heading [-90, 90] deg to current heading of robot after Motion Profile completion with Right Joystick X-Axis");
 				neutralMotors("Target not set yet.\n");
 
 				/* Slots are selected in the profile, not via selectProfileSlot() */
@@ -300,16 +317,18 @@ public class Robot extends TimedRobot {
 				_motProfExample.start(finalHeading_units, bMoveForward);
 			} else if (bExecuteAction == ButtonEvent.ButtonOn) {
 				/* Configured for Motion Profile on Quad Encoders' Sum and Auxiliary PID on Pigeon IMU's Yaw */
-				_rightMaster.set(ControlMode.MotionProfileArc, _motProfExample.getSetValue().value);
-				_leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
+				_tempMaster.set(ControlMode.MotionProfileArc, _motProfExample.getSetValue().value);
+				_rightMaster.follow(_tempMaster, FollowerType.AuxOutput1);
 			}
 			/* Call this periodically, and catch the output. Only apply it if user wants to run MP. */
 			_motProfExample.control();
+
+			//System.out.println("reqHead: " + finalHeading_units);
 		}
 		_firstCall = false;
 	}
 	
-	/* Zeroes Quad Encoders on Talons */
+	/* Zeroes all sensors on Talons */
 	void zeroSensors() {
 		_leftMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		_rightMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
@@ -332,7 +351,7 @@ public class Robot extends TimedRobot {
 	}
 	
 	void neutralMotors(String reason) {
-		_leftMaster.neutralOutput();
+		_tempMaster.neutralOutput();
 		_rightMaster.neutralOutput();
 
 		/* if caller is reporting WHY motors are being neutralized, report it */

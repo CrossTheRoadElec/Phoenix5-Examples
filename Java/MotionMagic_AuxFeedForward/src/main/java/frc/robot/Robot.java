@@ -24,36 +24,37 @@
 
 /**
  * Description:
- * The MotionMagic_AuxFeedForward example demonstrates the new Talon and Victor Auxiliary and 
- * Remote Features to peform more complex closed loops. This example has the robot 
- * performing Motion Magic with an auxiliary FeedForward to request more or less output.
+ * The MotionMagic_AuxFeedForward example demonstrates the new Talon/Victor Auxiliary and 
+ * remote features used to perform complex closed loops. This example has the robot performing 
+ * Motion Magic with an arbitrary feed forward to request more or less output.
  * 
  * This example uses:
  * - 2x Quad Encoders, One on both sides of robot for Primary Closed Loop on Position
- * A Talon/Victor caclulates the distance by taking the sum of both sensors and diving it by 2.
+ * A Talon/Victor calculates the distance by taking the sum of both sensors and dividing it by 2.
  * 
  * This example has two modes of operation, which can be switched between with Button 2.
  * 1.) Arcade Drive
- * 2.) Motion Magic with Quadrature Encoders and FeedForward (Auxiliary)
+ * 2.) Motion Magic with Quadrature Encoders and FeedForward
  * 
  * Controls:
- * Button 1: When pressed, zero heading. Set current Quadrature Encoders' Positions to 0.
- * Button 2: When pressed, toggle between Arcade Drive and Motion Magic with Feed Forward
- * 	When toggling into Drive Straight Mode, the current heading is saved and used
- * 	as the the closed loop target. Can be changed by toggling out and in again.
+ * Button 1: When pressed, zero heading. Set quadrature encoders' positions to 0.
+ * Button 2: When pressed, toggle between Arcade Drive and Motion Magic
+ * 	When toggling into Motion Magic, the current heading is saved and used as the 
+ * closed loop target. Can be changed by toggling out and in again.
  * Left Joystick Y-Axis: 
- * 	+ Arcade Drive: Drive robot in forward and reverse direction
- * 	+ Motion Magic: Drive robot in forward and reverse direction [-6, 6] rotations
+ * 	+ Arcade Drive: Drive robot forward and reverse
+ * 	+ Motion Magic: Servo robot forward and reverse [-6, 6] rotations
  * Right Joystick X-Axis: 
  *  + Arcade Drive: Turn robot in left and right direction
- *  + Motion Magic FeedForward: Request more or less output, [-25, 25] % 
+ *  + Motion Magic: Request more or less output, [-25, 25] % 
  * 
  * Gains for Motion Magic may need to be adjusted in Constants.java
  * 
  * Supported Version:
- * - Talon SRX: 3.11
- * - Victor SPX: 3.11
- * - Pigeon IMU: 0.42
+ * - Talon SRX: 4.00
+ * - Victor SPX: 4.00
+ * - Pigeon IMU: 4.00
+ * - CANifier: 4.00
  */
 package frc.robot;
 
@@ -85,7 +86,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-		/* Not in use */
+		/* Not used in this project */
 	}
 	
 	@Override
@@ -148,7 +149,8 @@ public class Robot extends TimedRobot {
 		_rightMaster.configMotionAcceleration(2000, Constants.kTimeoutMs);
 		_rightMaster.configMotionCruiseVelocity(2000, Constants.kTimeoutMs);
 
-		/* Max out the peak output (for all modes).  
+		/**
+		 * Max out the peak output (for all modes).  
 		 * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
 		 */
 		_leftMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
@@ -164,7 +166,8 @@ public class Robot extends TimedRobot {
 		_rightMaster.config_IntegralZone(Constants.kSlot_Distanc, Constants.kGains_Distanc.kIzone, Constants.kTimeoutMs);
 		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Distanc, Constants.kGains_Distanc.kPeakOutput, Constants.kTimeoutMs);
 			
-		/* 1ms per loop.  PID loop can be slowed down if need be.
+		/**
+		 * 1ms per loop.  PID loop can be slowed down if need be.
 		 * For example,
 		 * - if sensor updates are too slow
 		 * - sensor deltas are very small per update, so derivative error never gets large enough to be useful.
@@ -173,12 +176,6 @@ public class Robot extends TimedRobot {
 		int closedLoopTimeMs = 1;
 		_rightMaster.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kTimeoutMs);
 		_rightMaster.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
-
-		/* configAuxPIDPolarity(boolean invert, int timeoutMs)
-		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
-		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
-		 */
-		_rightMaster.configAuxPIDPolarity(false, Constants.kTimeoutMs);
 
 		/* Initialize */
 		_firstCall = true;
@@ -207,14 +204,14 @@ public class Robot extends TimedRobot {
 		
 		if(!_state){
 			if (_firstCall)
-				System.out.println("This is a basic arcade drive.\n");
+				System.out.println("This is Arcade Drive.\n");
 			
 			_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
 			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
 		}else{
 			if (_firstCall) {
-				System.out.println("This is Motion Magic with a custom Feed Forward.");
-				System.out.println("Travel [-6, 6] rotations while also having to ability to add a FeedForward");
+				System.out.println("This is Motion Magic with an Arbitrary Feed Forward.");
+				System.out.println("Servo [-6, 6] rotations while also having to ability to add a feed forward");
 				zeroSensors();
 				
 				/* Determine which slot affects which PID */
@@ -223,7 +220,7 @@ public class Robot extends TimedRobot {
 			
 			/* calculate targets from gamepad inputs */
 			double target_sensorUnits = forward * Constants.kSensorUnitsPerRotation * Constants.kRotationsToTravel;
-			double feedFwdTerm = turn * 0.25; // how much to add to the close loop output
+			double feedFwdTerm = turn * 0.25;	// Percent to add to Closed Loop Output
 			
 			_rightMaster.set(ControlMode.MotionMagic, target_sensorUnits, DemandType.ArbitraryFeedForward, feedFwdTerm);
 			_leftMaster.follow(_rightMaster);
@@ -231,11 +228,11 @@ public class Robot extends TimedRobot {
 		_firstCall = false;
 	}
 	
-	/* Zeroes Quad Encoders on Talons */
+	/* Zero quadrature encoders on Talons */
 	void zeroSensors() {
 		_leftMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		_rightMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
-		System.out.println("[Quad Encoders] All sensors are zeroed.\n");
+		System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
 	}
 	
 	/** Deadband 5 percent, used on the gamepad */

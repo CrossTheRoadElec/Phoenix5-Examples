@@ -24,19 +24,19 @@
 
 /**
  * Description:
- * The RemoteLimitSwitch example demonstrates the new Talon/Victor Remote Features, which
+ * The RemoteLimitSwitch example demonstrates the new Talon/Victor remote features, which
  * can be used as remote Hardware Limit Switches. The project allows for quick change in
- * sensor configuration between:
+ * limit switch/sensor configuration between:
  * 1.) Disable Limit Switches
  * 2.) Enable Local Limit Switch from feedback connector
  * 3.) Enable Remote Limit Switch from a remote CANifier
  * 4.) Enable Remote Limit Switch from a remote Talon SRX
  * The project also allows for enable/disable on hardware limit triggering when sensor is not 
- * present from remote sources. configSoftLimitDisableNeutralOnLOS() only works for remote 
+ * present from remote sources. configLimitSwitchDisableNeutralOnLOS() only works for remote 
  * limit switch sensor sources.
  * 
  * This project is a quick overview on possible remote soft limit sources and the
- * ability to enable/disable soft limits when sensors can't be found. 
+ * ability to enable/disable neutral output when remote limit source can't be found. 
  * 
  * Controls:
  * Current Sensor Configurtions are indicated by print messages in DriverStation
@@ -45,15 +45,16 @@
  * 3.) Enable Remote Limit Switch from a remote CANifier			Button 3
  * 4.) Enable Remote Limit Switch from a remote Talon SRX			Button 4
  * 
- * 7.) Enable Neutral Output on Limit Switch                        Button 6
- * 8.) Disable Neutral Output on Limit Switch                       Button 8
+ * 7.) Disable Neutral Output on loss of remote limit source		Button 6
+ * 8.) Enable Neutral Output on loss of remote limit source			Button 8
  * 
  * Left Joystick Y-Axis: Throttle Talon forward and reverse in Percent Output
  * 
  * Supported Version:
- * - Talon SRX: 3.11
- * - Victor SPX: 3.11
- * - Pigeon IMU: 0.42
+ * - Talon SRX: 4.00
+ * - Victor SPX: 4.00
+ * - Pigeon IMU: 4.00
+ * - CANifier: 4.00
  */
 package frc.robot;
 
@@ -151,21 +152,21 @@ public class Robot extends TimedRobot {
         joyForward = deadband(joyForward);      // Deadband stick
 
         /* Select Hardware Limit Switch Source Configurtion */
-		if (_currentBtns[1] && !_previousBtns[1]) { SelectLimitSwitch(1); } // Button 1
-		if (_currentBtns[2] && !_previousBtns[2]) { SelectLimitSwitch(2); } // Button 2
-		if (_currentBtns[3] && !_previousBtns[3]) { SelectLimitSwitch(3); } // Button 3
-        if (_currentBtns[4] && !_previousBtns[4]) { SelectLimitSwitch(4); } // Button 4
+		if (_currentBtns[1] && !_previousBtns[1]) { SelectLimitSwitch(0); } // Button 1
+		if (_currentBtns[2] && !_previousBtns[2]) { SelectLimitSwitch(1); } // Button 2
+		if (_currentBtns[3] && !_previousBtns[3]) { SelectLimitSwitch(2); } // Button 3
+        if (_currentBtns[4] && !_previousBtns[4]) { SelectLimitSwitch(3); } // Button 4
         
         /* Enable /Disable Limit Switch Triggering on Loss of Sensor Presense */
 		if (_currentBtns[6] && !_previousBtns[6]) {                         // Button 6
 			/* Don't neutral motor if remote limit source is not available */
-            _motorCntrller.configSoftLimitDisableNeutralOnLOS(true, Constants.kTimeoutMs);
+            _motorCntrller.configLimitSwitchDisableNeutralOnLOS(true, Constants.kTimeoutMs);
 
 			System.out.println("Checking disabled for sensor presence");
 		}
 		if (_currentBtns[8] && !_previousBtns[8]) {                         // Button 8
 			/* Neutral motor if remote limit source is not available */
-            _motorCntrller.configSoftLimitDisableNeutralOnLOS(false, Constants.kTimeoutMs);
+            _motorCntrller.configLimitSwitchDisableNeutralOnLOS(false, Constants.kTimeoutMs);
 
 			System.out.println("Checking enabled for sensor presence");
         }
@@ -190,11 +191,11 @@ public class Robot extends TimedRobot {
 		}
 
 		public void teleopInit() {
-        /**
-         * Initialize hardware at start of teleop, just in case Talon was replaced or
-         * field-upgraded during disable. All params are persistent except for status
-         * frame periods.
-         */
+			/**
+			 * Initialize hardware at start of teleop, just in case Talon was replaced or
+			 * field-upgraded during disable. All params are persistent except for status
+			 * frame periods.
+			 */
 			InitRobot();
 		}
 		

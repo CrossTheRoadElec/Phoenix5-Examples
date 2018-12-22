@@ -43,6 +43,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Robot extends TimedRobot {
@@ -63,11 +64,10 @@ public class Robot extends TimedRobot {
 	Joystick _joy = new Joystick(0);
 
 	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
+	 * This function is called once at the beginning during operator control
 	 */
-	public void robotInit() {
-		/* Facotry Default all hardware to prevent unexpected behaviour */
+	public void teleopInit() {
+		/* Factory Default all hardware to prevent unexpected behaviour */
 		_frontLeftMotor.configFactoryDefault();
 		_frontRightMotor.configFactoryDefault();
 		_leftSlave1.configFactoryDefault();
@@ -75,21 +75,25 @@ public class Robot extends TimedRobot {
 		_rightSlave1.configFactoryDefault();
 		_rightSlave2.configFactoryDefault();
 
-		/* Take our extra motor controllers and have them follow the Talons updated in arcadeDrive */
+		/**
+		 * Take our extra motor controllers and have them
+		 * follow the Talons updated in arcadeDrive 
+		 */
 		_leftSlave1.follow(_frontLeftMotor);
 		_leftSlave2.follow(_frontLeftMotor);
 		_rightSlave1.follow(_frontRightMotor);
 		_rightSlave2.follow(_frontRightMotor);
 
-		/* drive robot forward and make sure all motors spin the correct way.
-		 * Toggle booleans accordingly.... */
+		/**
+		 * Drive robot forward and make sure all motors spin the correct way.
+		 * Toggle booleans accordingly.... 
+		 */
 		_frontLeftMotor.setInverted(false);
-		_leftSlave1.setInverted(false);
-		_leftSlave2.setInverted(false);
-		
+		_leftSlave1.setInverted(InvertType.FollowMaster);
+		_leftSlave2.setInverted(InvertType.FollowMaster);
 		_frontRightMotor.setInverted(false);
-		_rightSlave1.setInverted(false);
-		_rightSlave2.setInverted(false);
+		_rightSlave1.setInverted(InvertType.FollowMaster);
+		_rightSlave2.setInverted(InvertType.FollowMaster);
 	}
 
 	/**
@@ -114,12 +118,13 @@ public class Robot extends TimedRobot {
 		 * Print the joystick values to sign them, comment
 		 * out this line after checking the joystick directions. 
 		 */
-        System.out.println("JoyY:" + forward + "  turn:" + turn );
+        //System.out.println("JoyY:" + forward + "  turn:" + turn );
         
 		/**
 		 * Drive the robot, when driving forward one side will be red. 
 		 * This is because DifferentialDrive assumes 
-		 * one side must be negative */
+		 * one side must be negative 
+		 */
 		_drive.arcadeDrive(forward, turn);
 	}
 }

@@ -40,10 +40,10 @@
  * or find Motion Profile Generator.xlsx in the Project folder.
  * 
  * Controls:
- * Button 5: When held, intialize motion pofile. Sendo Motion Profile to Talon while it is nuetral.
- * Button 6: If Button 5 is held, press to  run motion profile, else do nothing. Hold final
- * 	Motion Profile point until Motion Profile is fired again (Press Button 6 again)
- * Left Joystick Y-Axis: Throttle Talon SRX forward and reverse when no buttons are pressed
+ * Button 5: When held, initialize motion pofile. Send Motion Profile to Talon while it is nuetral.
+ * Button 6: If Button 5 is held, press to run motion profile, else do nothing. 
+ * 	Hold final Motion Profile point until Motion Profile is fired again (Press Button 6 again)
+ * Left Joystick Y-Axis: Throttle Talon SRX forward and reverse when no buttons are pressed.
  * 
  * Gains for Motion Profile may need to be adjusted in Constants.java
  */
@@ -58,7 +58,7 @@ import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Robot extends TimedRobot {
-	/* Hardware */
+	/** Hardware */
 	TalonSRX _talon = new TalonSRX(1);	// Talon to Motion Profile
 	Joystick _joy = new Joystick(0);	// Joystick for testing
 
@@ -137,7 +137,7 @@ public class Robot extends TimedRobot {
 			_example.reset();
 		} else {
 			/**
-			 * Button5 is held down so switch to motion profile control mode =>
+			 * When button 5 is held down so switch to motion profile control mode =>
 			 * This is done in MotionProfileControl. When we transition from
 			 * no-press to press, pass a "true" once to MotionProfileControl.
 			 */
@@ -146,7 +146,7 @@ public class Robot extends TimedRobot {
 			_talon.set(ControlMode.MotionProfile, setOutput.value);
 
 			/**
-			 * If btn is pressed and was not pressed last time, In other words
+			 * If button 6 is pressed and was not pressed last time, In other words
 			 * we just detected the on-press event. This will signal the robot
 			 * to start a MP
 			 */

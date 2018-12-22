@@ -1,8 +1,9 @@
 package frc.robot;
 
 public class Constants {
-
-	/** which Talon on CANBus */
+	/** 
+	 * ID of Talon on CAN Bus 
+	 */
 	public static final int kTalonID = 0;
 
 	/**

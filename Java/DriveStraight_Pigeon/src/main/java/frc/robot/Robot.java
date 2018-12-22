@@ -24,33 +24,35 @@
 
 /**
  * Description:
- * The PigeonStraight example demonstrates the ability to get telemetry on orientation and 
- * perform Straight Drive Servo-ing. This is done by providing more/less output on either the 
- * left or right side of the robot based on the error between desired yaw and current yaw.
- * The project is basic PID Controller on Pigeon Yaw
+ * The DriveStraight_Pigeon example demonstrates the ability to get telemetry on orientation 
+ * from Pigeon and perform Straight Drive Servo-ing. This is done by providing more/less output
+ * on either the left or right side of the robot based on the error between desired yaw and 
+ * current yaw. The project is basic PID Controller done in the roboRIO on Pigeon Yaw.
  *
  * If Pigeon is present on CANbus, or ribbon-cabled to a CAN-Talon, the robot will use the IMU to servo.
  * If Pigeon is not present, robot will simply apply the same throttle to both sides.
  * 
  * NOTE:
  * This is different from DriveStraight_AuxPigeon in that this project does not use 
- * the Auxiliary Feature, therfore performing the Closed Loop on Yaw in the RIO rather
+ * the auxiliary feature, therfore performing the Closed Loop on Yaw in the RIO rather
  * than in the the motor controller. 
  * 
  * Controls:
  * Button 5: When held, start and run Pigeon straight drive, holding the angle the robot was 
- * in when the button was initally pressed during the entire hold duration.
- * Left Joystick Y-Axis: Drive robot forward and reverse direction.
- * Right Joystick X-Axis: Turn robot Right and Left if Straight Drive is not being enforced. 
- * If straigth drive is requested (Button 5 held down), mantain current yaw (ignore stick)
+ * 	in when the button was initally pressed during the entire hold duration.
+ * Left Joystick Y-Axis: Drive robot forward and reverse.
+ * Right Joystick X-Axis: 
+ * 	+ Normal mode: When Button 5 is released, turn robot left and right.
+ * 	+ Pigeon Straight Drive: When Button 5 is held, do nothing. Maintain current heading/yaw
  * 
  * When developing robot applications with IMUs, it's important to design in what happens if
  * the IMU is disconnected or un-powered.
  * 
  * Supported Version:
- * - Talon SRX: 3.11
- * - Victor SPX: 3.11
- * - Pigeon IMU: 0.42
+ * 	- Talon SRX: 4.0
+ * 	- Victor SPX: 4.0
+ * 	- Pigeon IMU: 4.0
+ * 	- CANifier: 4.0
  */
 package frc.robot;
 
@@ -87,8 +89,10 @@ public class Robot extends TimedRobot {
 	double kPgain = 0.04; 				// percent throttle per degree of error */
 	double kDgain = 0.0004; 			// percent throttle per angular velocity dps */
 	double kMaxCorrectionRatio = 0.30;	// cap corrective turning throttle to 30 percent of forward throttle
+
 	/** Holds the current angle to servo to */
 	double _targetAngle = 0;
+	
 	/** Count loops to print every second or so */
 	int _printLoops = 0;
 
@@ -98,16 +102,17 @@ public class Robot extends TimedRobot {
 		_rightFront = new VictorSPX(2);
 		_leftRear = new TalonSRX(3);
 		_rightRear = new TalonSRX(2);
-		_spareTalon = new TalonSRX(0);
+		//_spareTalon = new TalonSRX(0);	
 
-        /* Set isPigeonOnCAN to:
+        /**
+		 * Set isPigeonOnCAN to:
          * True if Pigeon is Connected through CAN 
          * False if connected through gadgeteer (Constructor takes the Talon it is connected to)
          */
         boolean isPigeonOnCAN = true;
         if(isPigeonOnCAN){
             /* Pigeon is on CANBus (powered from ~12V, and has a device ID of zero) */
-            _pidgey = new PigeonIMU(0);             // Change ID accordingly 
+            _pidgey = new PigeonIMU(3);             // Change ID accordingly 
         }else{
             /* Pigeon is ribbon cabled to the specified CANTalon. */
             _pidgey = new PigeonIMU(_spareTalon);   // Change Talon Accordingly
@@ -216,7 +221,7 @@ public class Robot extends TimedRobot {
 		left = Cap(left, 1.0);
 		right = Cap(right, 1.0);
 
-		/* my right side motors need to drive negative to move robot forward */
+		/* our right side motors need to drive negative to move robot forward */
 		_leftFront.set(ControlMode.PercentOutput, left);
 		_leftRear.set(ControlMode.PercentOutput, left);
 		_rightFront.set(ControlMode.PercentOutput, -1. * right);

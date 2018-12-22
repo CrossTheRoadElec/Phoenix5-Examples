@@ -38,26 +38,27 @@
  * This example has two modes of operation, which can be switched between with Button 2.
  * 1.) Arcade Drive
  * 2.) Position Closed Loop wtih Quadrature Encoders and Drive Straight with Quadrature
- * Encoders difference (Auxiliary)
+ * Encoders difference
  * 
  * Controls:
  * Button 1: When pressed, zero all sensors. Set Quadrature Encoders positions to 0
- * Button 2: When pressed, Toggle between Arcade Drive and Position Closed Loop With Straight Drive
- * 	+ When toggling into Position Closed Loop Mode, the current heading is saved and used
- * 	+ as the the auxiliary closed loop target. Can be changed by toggling out and in again.
+ * Button 2: When pressed, Toggle between Arcade Drive and Position Closed Loop.
+ * 	When toggling into Position Closed Loop, the current heading is saved and used as the 
+ * auxiliary closed loop target. Can be changed by toggling out and in again.
  * Left Joystick Y-Axis: 
- * 	+ Arcade Drive: Drive robot in forward and reverse direction
+ * 	+ Arcade Drive: Drive robot forward and reverse
  * 	+ Position Closed Loop: Servo robot forward and reverse [-6, 6] rotations
  * Right Joystick X-Axis:
- * 	 + Arcade Drive: Turn robot in left and right direction
+ * 	 + Arcade Drive: Turn robot left and right
  * 	+ Position Closed Loop: Not used
  * 
- * Gains for Position Closed Loop may need to be adjusted in Constants.java
+ * Gains for Position Closed Loop and Auxiliary may need to be adjusted in Constants.java
  * 
  * Supported Version:
- * - Talon SRX: 3.11
- * - Victor SPX: 3.11
- * - Pigeon IMU: 0.42
+ * - Talon SRX: 4.00
+ * - Victor SPX: 4.00
+ * - Pigeon IMU: 4.00
+ * - CANifier: 4.00
  */
 package frc.robot;
 
@@ -92,7 +93,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-		/* Not in use */
+		/* Not used in this project */
 	}
 	
 	@Override
@@ -100,6 +101,10 @@ public class Robot extends TimedRobot {
 		/* Disable all motor controllers */
 		_rightMaster.set(ControlMode.PercentOutput, 0);
 		_leftMaster.set(ControlMode.PercentOutput, 0);
+
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_rightMaster.configFactoryDefault();
+		_leftMaster.configFactoryDefault();
 		
 		/* Set Neutral Mode */
 		_leftMaster.setNeutralMode(NeutralMode.Brake);
@@ -115,15 +120,15 @@ public class Robot extends TimedRobot {
 		/* Configure the Remote Talon's selected sensor as a remote sensor for the right Talon */
 		_rightMaster.configRemoteFeedbackFilter(_leftMaster.getDeviceID(),					// Device ID of Source
 												RemoteSensorSource.TalonSRX_SelectedSensor,	// Remote Feedback Source
-												Constants.REMOTE_0,							// Source number [0, 1]
+												Constants.REMOTE_1,							// Source number [0, 1]
 												Constants.kTimeoutMs);						// Configuration Timeout
 		
 		/* Setup Sum signal to be used for Distance */
-		_rightMaster.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);				// Feedback Device of Remote Talon
+		_rightMaster.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor1, Constants.kTimeoutMs);				// Feedback Device of Remote Talon
 		_rightMaster.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTimeoutMs);	// Quadrature Encoder of current Talon
 		
 		/* Setup Difference signal to be used for Turn */
-		_rightMaster.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);
+		_rightMaster.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor1, Constants.kTimeoutMs);
 		_rightMaster.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTimeoutMs);
 		
 		/* Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index */
@@ -142,7 +147,7 @@ public class Robot extends TimedRobot {
 													Constants.kTimeoutMs);
 		
 		/* Scale the Feedback Sensor using a coefficient */
-		_rightMaster.configSelectedFeedbackCoefficient(	Constants.kTurnTravelUnitsPerRotation / Constants.kEncoderUnitsPerRotation,
+		_rightMaster.configSelectedFeedbackCoefficient(	1,
 														Constants.PID_TURN, 
 														Constants.kTimeoutMs);
 		
@@ -230,14 +235,14 @@ public class Robot extends TimedRobot {
 		
 		if(!_state){
 			if (_firstCall)
-				System.out.println("This is a basic arcade drive.\n");
+				System.out.println("This is a Arcade Drive.\n");
 			
 			_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
 			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
 		}else{
 			if (_firstCall) {
-				System.out.println("This is Drive Straight Distance with the Auxiliary feature using the difference between two encoders.");
-				System.out.println("Travel [-6, 6] rotations while also maintaining a straight heading.\n");
+				System.out.println("This is Drive Straight Distance with the Auxiliary PID using the difference between two encoders.");
+				System.out.println("Servo [-6, 6] rotations while also maintaining a straight heading.\n");
 				
 				/* Determine which slot affects which PID */
 				_rightMaster.selectProfileSlot(Constants.kSlot_Distanc, Constants.PID_PRIMARY);
@@ -255,7 +260,7 @@ public class Robot extends TimedRobot {
 		_firstCall = false;
 	}
 	
-	/* Zeroes Quad Encoders on Talons */
+	/* Zero quadrature encoders on Talons */
 	void zeroSensors() {
 		_leftMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		_rightMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);

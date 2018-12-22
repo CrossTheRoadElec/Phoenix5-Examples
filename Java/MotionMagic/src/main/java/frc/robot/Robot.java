@@ -30,11 +30,11 @@
  * Be sure to select the correct feedback sensor using configSelectedFeedbackSensor() below.
  *
  * After deploying/debugging this to your RIO, first use the left Y-stick 
- * to throttle the Talon manually.  This will confirm your hardware setup/sensors
+ * to throttle the Talon manually. This will confirm your hardware setup/sensors
  * and will allow you to take initial measurements.
  * 
  * Be sure to confirm that when the Talon is driving forward (green) the 
- * position sensor is moving in a positive direction.  If this is not the 
+ * position sensor is moving in a positive direction. If this is not the 
  * cause, flip the boolean input to the setSensorPhase() call below.
  *
  * Ensure your feedback device is in-phase with the motor,
@@ -42,17 +42,18 @@
  * 
  * Controls:
  * Button 1: When held, put Talon in Motion Magic mode and allow Talon to drive [-10, 10] 
- * rotations in either direction.
+ * 	rotations.
  * Left Joystick Y-Axis:
- * 	- Percent Output: Throttle Talon SRX in forward and reverse direction
- * 	- Motion Maigic: Throttle Talon SRX in forward and reverse direction, [-10, 10] rotations
+ * 	+ Percent Output: Throttle Talon SRX forward and reverse, use to confirm hardware setup.
+ * 	+ Motion Maigic: SErvo Talon SRX forward and reverse, [-10, 10] rotations.
  * 
  * Gains for Motion Magic may need to be adjusted in Constants.java
  * 
  * Supported Version:
- * - Talon SRX: 3.11
- * - Victor SPX: 3.11
- * - Pigeon IMU: 0.42
+ * - Talon SRX: 4.00
+ * - Victor SPX: 4.00
+ * - Pigeon IMU: 4.00
+ * - CANifier: 4.00
  */
 package frc.robot;
 
@@ -69,6 +70,7 @@ public class Robot extends TimedRobot {
 	/* Hardware */
 	TalonSRX _talon = new TalonSRX(3);
 	Joystick _joy = new Joystick(0);
+
 	/* Used to build string throughout loop */
 	StringBuilder _sb = new StringBuilder();
 
@@ -99,12 +101,12 @@ public class Robot extends TimedRobot {
 		_talon.configPeakOutputForward(1, Constants.kTimeoutMs);
 		_talon.configPeakOutputReverse(-1, Constants.kTimeoutMs);
 
-		/* Set closed loop gains (For Motion Magic) in slot0 - see documentation */
+		/* Set Motion Magic gains in slot0 - see documentation */
 		_talon.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
-		_talon.config_kF(0, Constants.kGains.kF, Constants.kTimeoutMs);
-		_talon.config_kP(0, Constants.kGains.kP, Constants.kTimeoutMs);
-		_talon.config_kI(0, Constants.kGains.kI, Constants.kTimeoutMs);
-		_talon.config_kD(0, Constants.kGains.kD, Constants.kTimeoutMs);
+		_talon.config_kF(Constants.kSlotIdx, Constants.kGains.kF, Constants.kTimeoutMs);
+		_talon.config_kP(Constants.kSlotIdx, Constants.kGains.kP, Constants.kTimeoutMs);
+		_talon.config_kI(Constants.kSlotIdx, Constants.kGains.kI, Constants.kTimeoutMs);
+		_talon.config_kD(Constants.kSlotIdx, Constants.kGains.kD, Constants.kTimeoutMs);
 
 		/* Set acceleration and vcruise velocity - see documentation */
 		_talon.configMotionCruiseVelocity(15000, Constants.kTimeoutMs);
@@ -130,9 +132,14 @@ public class Robot extends TimedRobot {
 		_sb.append("\tVel:");
 		_sb.append(_talon.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
 
-		/* Peform Motion Magic when Button 1 is held */
+		/**
+		 * Peform Motion Magic when Button 1 is held,
+		 * else run Percent Output, which can be used to confirm hardware setup.
+		 */
 		if (_joy.getRawButton(1)) {
-			/* Motion Magic - 4096 ticks/rev * 10 Rotations in either direction */
+			/* Motion Magic */ 
+			
+			/*4096 ticks/rev * 10 Rotations in either direction */
 			double targetPos = leftYstick * 4096 * 10.0;
 			_talon.set(ControlMode.MotionMagic, targetPos);
 
@@ -143,6 +150,7 @@ public class Robot extends TimedRobot {
 			_sb.append(targetPos);
 		} else {
 			/* Percent Output */
+
 			_talon.set(ControlMode.PercentOutput, leftYstick);
 		}
 

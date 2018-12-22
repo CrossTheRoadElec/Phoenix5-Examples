@@ -24,20 +24,20 @@
 
 /**
  * Description:
- * The PostionClosedLoop example demonstrates the Position closed-loop servo.
+ * The PositionClosedLoop example demonstrates the Position closed-loop servo.
  * Tested with Logitech F350 USB Gamepad inserted into Driver Station
  * 
  * Be sure to select the correct feedback sensor using configSelectedFeedbackSensor() below.
  * Use Percent Output Mode (Holding A and using Left Joystick) to confirm talon is driving 
- * forward (Green LED on Talon/Victor) when the postion sensor is moving in the postive 
+ * forward (Green LED on Talon/Victor) when the position sensor is moving in the postive 
  * direction. If this is not the case, flip the boolean input in setSensorPhase().
  * 
  * Controls:
- * Button 1: When pressed, start and run Postion Closed Loop on Talon/Victor
+ * Button 1: When pressed, start and run Position Closed Loop on Talon/Victor
  * Button 2: When held, start and run Percent Output
  * Left Joytick Y-Axis:
- * 	+ Position Closed Loop: Servo between 0 and 10 rotations forward and reverse
- * 	+ Percent Ouput: Throttle Talon forward and reverse in Percent Ouput Mode
+ * 	+ Position Closed Loop: Servo Talon forward and reverse [-10, 10] rotations
+ * 	+ Percent Ouput: Throttle Talon forward and reverse
  * 
  * Gains for Position Closed Loop may need to be adjusted in Constants.java
  * 
@@ -45,6 +45,7 @@
  * - Talon SRX: 4.00
  * - Victor SPX: 4.00
  * - Pigeon IMU: 4.00
+ * - CANifier: 4.00
  */
 package frc.robot;
 
@@ -98,7 +99,7 @@ public class Robot extends TimedRobot {
 		 */
 		_talon.configAllowableClosedloopError(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 
-		/* Config Postion Closed Loop gains in slot0, tsypically kF stays zero. */
+		/* Config Position Closed Loop gains in slot0, tsypically kF stays zero. */
 		_talon.config_kF(Constants.kPIDLoopIdx, Constants.kGains.kF, Constants.kTimeoutMs);
 		_talon.config_kP(Constants.kPIDLoopIdx, Constants.kGains.kP, Constants.kTimeoutMs);
 		_talon.config_kI(Constants.kPIDLoopIdx, Constants.kGains.kI, Constants.kTimeoutMs);
@@ -145,8 +146,8 @@ public class Robot extends TimedRobot {
 		_sb.append("u"); 	// Native units
 
 		/**
-		 * When button 1 is pressed, perform Postion Closed Loop to selected postion,
-		 * indicated by Joystick postion x10, [-10, 10] rotations
+		 * When button 1 is pressed, perform Position Closed Loop to selected position,
+		 * indicated by Joystick position x10, [-10, 10] rotations
 		 */
 		if (!_lastButton1 && button1) {
 			/* Position Closed Loop */

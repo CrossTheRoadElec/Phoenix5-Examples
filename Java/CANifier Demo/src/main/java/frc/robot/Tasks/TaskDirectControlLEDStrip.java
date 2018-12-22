@@ -7,7 +7,7 @@
  * 
  * Controls:
  * Right Joystick (Both Y and X): Select HSV Value by rotating stick,
- * Position of stick should represent postion on HSV Color Circle.
+ * Position of stick should represent position on HSV Color Circle.
  */
 package frc.robot.Tasks;
 

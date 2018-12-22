@@ -25,15 +25,20 @@
 /**
  * Description:
  * The Tachometer example deomonstrates Talon Tach's ability to act as a Tachometer.
- * This example is designed to be used with Quadrature Encoder wired to a Talon,
- * allowing us to compare the Tachometer readings to Talon's Selected Sensor Reading.
+ * This example is designed to be used with quadrature encoder wired to both a Talon and
+ * CANifier, allowing for comparison betwween the Tachometer and Talon's Selected Sensor.
  *  
  * The Talon Tach has been configured to find 2 edges per rotation with zero filtering.
- * Note that the Talon Tach, like many tachometers, lack resolution at low RPM's, but should
- * be configurable in a future updates.
+ * Note that the Talon Tach, like many tachometers, lack resolution at low RPM's but should
+ * be configurable in a future updates (lowest RPM of 500 RPM). 
+ * 
+ * By using two edges per rotation, the tachometer becomes twice as accurate, but the max RPM
+ * the talon tach is cut in half. Detailed explanation can be found in Section 6.5 of
+ * Talon Tach User Manual found here: 
+ * http://www.ctr-electronics.com/talon-tach-tachometer-new-limit-switch.html#product_tabs_technical_resources
  * 
  * Controls:
- * Left Joystcik Y-Axis: Drive Talon Forward and Reverse
+ * Left Joystcik Y-Axis: Drive Talon forward and reverse
  */
 package frc.robot;
 
@@ -45,9 +50,9 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Robot extends TimedRobot {
-	/* Create a talon to measure the tach and the mag encoder */
-	TalonSRX _magTalon = new TalonSRX(4);
-	TalonSRX _tachTalon = new TalonSRX(5);
+	/* Create talon's to measure the tach and the mag encoder */
+	TalonSRX _magTalon = new TalonSRX(1);
+	TalonSRX _tachTalon = new TalonSRX(0);
 
 	/* Joystick to control motor */
 	Joystick _joy = new Joystick(0);
@@ -59,10 +64,14 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
         /* Nonzero to block the config until success, zero to skip checking */
-        final int kTimeoutMs = 30;
+		final int kTimeoutMs = 30;
+		
+		/* Factory Default All Hardware to prevent unexpected behaviour */
+		_magTalon.configFactoryDefault();
+		_tachTalon.configFactoryDefault();
 		
         /* Mag Encoder to read true values */
-        _magTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,
+        _magTalon.configSelectedFeedbackSensor(	FeedbackDevice.CTRE_MagEncoder_Relative,
                                                 0, 
                                                 kTimeoutMs);
 		
@@ -74,10 +83,10 @@ public class Robot extends TimedRobot {
 		_tachTalon.configSelectedFeedbackSensor(FeedbackDevice.Tachometer, 0, kTimeoutMs);
 		/* 2 Edges per cycle (WHITE-black-WHITE-black) */
 		int edgesPerCycle = 2;
-		_tachTalon.configSetParameter(430, edgesPerCycle, 0, 0, kTimeoutMs);
+		_tachTalon.configPulseWidthPeriod_EdgesPerRot(edgesPerCycle, kTimeoutMs);
 		/* Additional filtering if need be */
 		int filterWindowSize = 1;
-		_tachTalon.configSetParameter(431, filterWindowSize, 0, 0, kTimeoutMs);
+		_tachTalon.configPulseWidthPeriod_FilterWindowSz(filterWindowSize, kTimeoutMs);
 	}
 
 	/**
@@ -86,7 +95,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		/* Set talon to joystick value */
-		_magTalon.set(ControlMode.PercentOutput, _joy.getY());
+		_tachTalon.set(ControlMode.PercentOutput, -1 * _joy.getY());
 		
 		/**
 		 * Get the velocities of two talons,
