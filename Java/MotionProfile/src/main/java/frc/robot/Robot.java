@@ -25,14 +25,14 @@
 /**
  * Description:
  * This Java FRC robot application is meant to demonstrate an example using the Motion Profile control mode
- * in Talon SRX.  The CANTalon class gives us the ability to buffer up trajectory points and execute them
+ * in Talon SRX.  The TalonSRX class gives us the ability to buffer up trajectory points and execute them
  * as the roboRIO streams them into the Talon SRX.
  * 
  * There are many valid ways to use this feature and this example does not sufficiently demonstrate every possible
  * method.  Motion Profile streaming can be as complex as the developer needs it to be for advanced applications,
  * or it can be used in a simple fashion for fire-and-forget actions that require precise timing.
  * 
- * This application is an IterativeRobot project to demonstrate a minimal implementation not requiring the command 
+ * This application is a TimedRobot project to demonstrate a minimal implementation not requiring the command 
  * framework, however these code excerpts could be moved into a command-based project.
  * 
  * The project also includes instrumentation.java which simply has debug printfs, and a MotionProfile.java which is generated
