@@ -88,12 +88,17 @@ public class Robot extends TimedRobot {
 		 * Drive robot forward and make sure all motors spin the correct way.
 		 * Toggle booleans accordingly.... 
 		 */
-		_frontLeftMotor.setInverted(false);
+		_frontLeftMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
+		_frontRightMotor.setInverted(true); // <<<<<< Adjust this until robot drives forward when stick is forward
 		_leftSlave1.setInverted(InvertType.FollowMaster);
 		_leftSlave2.setInverted(InvertType.FollowMaster);
-		_frontRightMotor.setInverted(false);
 		_rightSlave1.setInverted(InvertType.FollowMaster);
 		_rightSlave2.setInverted(InvertType.FollowMaster);
+
+		/* diff drive assumes (by default) that 
+			right side must be negative to move forward.
+			Change to 'false' so positive/green-LEDs moves robot forward  */
+		_drive.setRightSideInverted(false); // do not change this
 	}
 
 	/**
@@ -104,26 +109,22 @@ public class Robot extends TimedRobot {
 		double forward = -1.0 * _joy.getY();	// Sign this so forward is positive
 		double turn = +1.0 * _joy.getZ();       // Sign this so right is positive
         
-        /* Deadband */
+        /* Deadband - within 10% joystick, make it zero */
 		if (Math.abs(forward) < 0.10) {
-			/* within 10% joystick, make it zero */
 			forward = 0;
 		}
 		if (Math.abs(turn) < 0.10) {
-			/* within 10% joystick, make it zero */
 			turn = 0;
-        }
+		}
         
 		/**
 		 * Print the joystick values to sign them, comment
 		 * out this line after checking the joystick directions. 
 		 */
-        //System.out.println("JoyY:" + forward + "  turn:" + turn );
+        System.out.println("JoyY:" + forward + "  turn:" + turn );
         
 		/**
-		 * Drive the robot, when driving forward one side will be red. 
-		 * This is because DifferentialDrive assumes 
-		 * one side must be negative 
+		 * Drive the robot, 
 		 */
 		_drive.arcadeDrive(forward, turn);
 	}
