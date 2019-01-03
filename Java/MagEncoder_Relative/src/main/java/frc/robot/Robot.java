@@ -93,14 +93,11 @@ public class Robot extends TimedRobot {
 		/* Victor will follow Talon */
 		_vic.follow(_tal);
 
-	    /* Nonzero to block the config until success, zero to skip checking */
-    	int kTimeoutMs = 30;
-
 		/* New frame every 1ms, since this is a test project use up as much
 		 * bandwidth as possible for the purpose of this test.
 		 */
-		_tal.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 1, kTimeoutMs);
-		_tal.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, kTimeoutMs);
+		_tal.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 1);
+		_tal.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
 		/* Fire the plotter */
 		_plotThread = new PlotThread(this);
