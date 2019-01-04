@@ -1,6 +1,5 @@
 {
-  "java.configuration.updateBuildConfiguration": "disabled",
-  "java.import.gradle.enabled": false,
+  "java.configuration.updateBuildConfiguration": "automatic",
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,
@@ -11,6 +10,5 @@
     ".classpath": true,
     ".project": true
   },
-  "C_Cpp.default.configurationProvider": "vscode-wpilib",
   "wpilib.online": true
 }
