@@ -35,7 +35,7 @@ public:
 
 		/* get gamepad stick values */
 		double forw = -1 * _joystick->GetRawAxis(1); /* positive is forward */
-		double turn = +1 * _joystick->GetRawAxis(4); /* positive is right */
+		double turn = +1 * _joystick->GetRawAxis(2); /* positive is right */
 
 		/* deadband gamepad 10%*/
 		if (fabs(forw) < 0.10)
@@ -73,11 +73,17 @@ public:
 	}
 
 	void RobotInit() {
+		/* factory default values */
+		_rghtFront->ConfigFactoryDefault();
+		_rghtFollower->ConfigFactoryDefault();
+		_leftFront->ConfigFactoryDefault();
+		_leftFollower->ConfigFactoryDefault();
 
+		/* set up followers */
 		_rghtFollower->Follow(*_rghtFront);
 		_leftFollower->Follow(*_leftFront);
 
-		/* [3] Adjust inverts so all motor drive in the correction direction */
+		/* [3] flip values so robot moves forward when stick-forward/LEDs-green */
 		_rghtFront->SetInverted(false);
 		_rghtFollower->SetInverted(false);
 		_leftFront->SetInverted(false);
@@ -87,6 +93,12 @@ public:
 		 * positive when Talon LEDs are green */
 		_rghtFront->SetSensorPhase(true);
 		_leftFront->SetSensorPhase(true);
+
+		/*
+		* WPI drivetrain classes defaultly assume left and right are opposite. call
+		* this so we can apply + to both sides when moving forward. DO NOT CHANGE
+		*/
+		_diffDrive->SetRightSideInverted(false);
 	}
 
 private:
