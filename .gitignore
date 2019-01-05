@@ -8,3 +8,9 @@ FRCUserProgram
 .vs
 bin
 obj
+.gradle
+.vscode
+build
+.classpath
+.project
+org.eclipse.buildship.core.prefs
