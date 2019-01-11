@@ -18,8 +18,8 @@ struct configs {
         //TalonSRX:
         _talon.primaryPID.selectedFeedbackSensor = FeedbackDevice::RemoteSensor0;
         _talon.primaryPID.selectedFeedbackCoefficient = 0.328293;
-        _talon.auxilaryPID.selectedFeedbackSensor = FeedbackDevice::Analog;
-        _talon.auxilaryPID.selectedFeedbackCoefficient = 0.877686;
+        _talon.auxiliaryPID.selectedFeedbackSensor = FeedbackDevice::Analog;
+        _talon.auxiliaryPID.selectedFeedbackCoefficient = 0.877686;
         _talon.forwardLimitSwitchSource = LimitSwitchSource_Deactivated;
         _talon.reverseLimitSwitchSource = LimitSwitchSource_RemoteTalonSRX;
         _talon.sum0Term = FeedbackDevice::QuadEncoder;
@@ -107,8 +107,8 @@ struct configs {
         //VictorSPX: 
         _victor.primaryPID.selectedFeedbackSensor = RemoteFeedbackDevice::RemoteFeedbackDevice_SoftwareEmulatedSensor;
         _victor.primaryPID.selectedFeedbackCoefficient = 0.122208;
-        _victor.auxilaryPID.selectedFeedbackSensor = RemoteFeedbackDevice::RemoteFeedbackDevice_SensorDifference;
-        _victor.auxilaryPID.selectedFeedbackCoefficient = 0.290985;
+        _victor.auxiliaryPID.selectedFeedbackSensor = RemoteFeedbackDevice::RemoteFeedbackDevice_SensorDifference;
+        _victor.auxiliaryPID.selectedFeedbackCoefficient = 0.290985;
         _victor.forwardLimitSwitchSource = RemoteLimitSwitchSource_RemoteTalonSRX;
         _victor.reverseLimitSwitchSource = RemoteLimitSwitchSource_Deactivated;
         _victor.sum0Term = RemoteFeedbackDevice::RemoteFeedbackDevice_RemoteSensor0;
