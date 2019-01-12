@@ -265,20 +265,8 @@ public:
 	 * @param durationMs
 	 * @return enum equivalent of durationMs
 	 */
-	TrajectoryDuration GetTrajectoryDuration(int durationMs) {
-		/* lookup and return valid value */
-		switch (durationMs) {
-			case 0:		return TrajectoryDuration_0ms;
-			case 5:		return TrajectoryDuration_5ms;
-			case 10: 	return TrajectoryDuration_10ms;
-			case 20: 	return TrajectoryDuration_20ms;
-			case 30: 	return TrajectoryDuration_30ms;
-			case 40: 	return TrajectoryDuration_40ms;
-			case 50: 	return TrajectoryDuration_50ms;
-			case 100: 	return TrajectoryDuration_100ms;
-		}
-		printf("Trajectory Duration not supported - use configMotionProfileTrajectoryPeriod instead\n");
-		return TrajectoryDuration_100ms;
+	int GetTrajectoryDuration(int durationMs) {
+		return durationMs;
 	}
 	/** Start filling the MPs to all of the involved Talons. */
 	void startFilling() {
