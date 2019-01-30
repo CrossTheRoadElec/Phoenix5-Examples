@@ -52,6 +52,12 @@
  *  - sen_pos_drv moves in a positive direction when robot drives straight forward.  Or use Right Talon self-test (watch PID0 sensor pos)
  *  - sen_pos_turn moves in a positive direction when robot turns left.  Or use Right Talon self-test (watch PID1 aux sensor pos)
  *  - Update constants if not using Pigeon/CTRE Mag encoders.
+ *
+ * Supported Versions:
+ * 	- Talon SRX: 4.X
+ * 	- Victor SPX: 4.X
+ * 	- Pigeon IMU: 4.13 (required for ribbon-cable usecase)
+ * 	- CANifier: 4.X
  */
 package frc.robot;
 
