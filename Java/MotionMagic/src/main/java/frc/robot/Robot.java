@@ -68,13 +68,26 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 
 public class Robot extends TimedRobot {
 	/* Hardware */
-	TalonSRX _talon = new TalonSRX(3);
+	TalonSRX _talon = new TalonSRX(1);
 	Joystick _joy = new Joystick(0);
+
+	/* create some followers */
+	BaseMotorController _follower1 = new TalonSRX(0);
+	BaseMotorController _follower2 = new VictorSPX(0);
+	BaseMotorController _follower3 = new VictorSPX(1);
 
 	/* Used to build string throughout loop */
 	StringBuilder _sb = new StringBuilder();
 
 	public void robotInit() {
+		/* setup some followers */
+		_follower1.configFactoryDefault();
+		_follower2.configFactoryDefault();
+		_follower3.configFactoryDefault();
+		_follower1.follow(_talon);
+		_follower2.follow(_talon);
+		_follower3.follow(_talon);
+
 		/* Factory default hardware to prevent unexpected behavior */
 		_talon.configFactoryDefault();
 
@@ -122,6 +135,7 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
 		/* Get gamepad axis - forward stick is positive */
 		double leftYstick = -1.0 * _joy.getY();
+		if (Math.abs(leftYstick) < 0.10) { leftYstick = 0;} /* deadband 10% */
 
 		/* Get current Talon SRX motor output */
 		double motorOutput = _talon.getMotorOutputPercent();
@@ -156,9 +170,5 @@ public class Robot extends TimedRobot {
 
 		/* Instrumentation */
 		Instrum.Process(_talon, _sb);
-
-		/* 10 Ms timeout, allow CAN Frames to process */
-		try { TimeUnit.MILLISECONDS.sleep(10); } 	
-		catch (Exception e) { /* Do Nothing */ }
 	}
 }
