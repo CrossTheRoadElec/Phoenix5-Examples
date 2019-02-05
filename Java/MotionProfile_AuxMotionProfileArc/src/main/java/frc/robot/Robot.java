@@ -54,10 +54,10 @@
  * Gains for Motion Profile and Arc may need to be adjusted in Constants.java
  * 
  * Supported Version:
- * 	- Talon SRX: 4.0
- * 	- Victor SPX: 4.0
- * 	- Pigeon IMU: 4.0
- * 	- CANifier: 4.0
+ * 	- Talon SRX: 4.X
+ * 	- Victor SPX: 4.X
+ * 	- Pigeon IMU: 4.13 (required for ribbon-cable usecase)
+ * 	- CANifier: 4.X
  */
 package frc.robot;
 

@@ -32,7 +32,6 @@ public class Instrum {
 			SmartDashboard.putNumber("ClosedLoopTarget", tal.getClosedLoopTarget(Constants.kPIDLoopIdx));
     		SmartDashboard.putNumber("ActTrajVelocity", tal.getActiveTrajectoryVelocity());
     		SmartDashboard.putNumber("ActTrajPosition", tal.getActiveTrajectoryPosition());
-    		SmartDashboard.putNumber("ActTrajHeading", tal.getActiveTrajectoryHeading());
 		}
 
 		/* Periodically print to console */
