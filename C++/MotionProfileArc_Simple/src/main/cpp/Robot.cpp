@@ -11,6 +11,7 @@
 
 void Robot::RobotInit() 
 {
+    /* Construct global variables */
     _rightMaster = new TalonSRX(1);
     _leftMaster = new TalonSRX(2);
     _pidgey = new PigeonIMU(3); //This uses a CAN pigeon, as opposed to a gadgeteer pigeon
@@ -19,7 +20,8 @@ void Robot::RobotInit()
 
     _plotThread = new PlotThread(_rightMaster);
 
-    InitBuffer(kMotionProfile, kMotionProfileSz, 0.25); //Do a quarter rotation
+    /* Initialize buffer with motion profile */
+    InitBuffer(kMotionProfile, kMotionProfileSz, 0.25); //Do a quarter (0.25) rotation to the left
     _state = 0;
 
 
@@ -126,8 +128,15 @@ void Robot::InitBuffer(const double profile[][3], int totalCnt, double rotations
                                                          // Units
         point.velocity = direction * velocityRPM * 4096 / 600.0; // Convert RPM to
                                                                  // Units/100ms
-        point.auxiliaryPos = turnAmount * ((double)i / (double)totalCnt); //Linearly extrapolate the turn amount to do a circle
+        
+        /** 
+         * Here is where you specify the heading of the robot at each point. 
+         * In this example we're linearly interpolating creating a segment of a circle to follow
+         */
+        point.auxiliaryPos = turnAmount * ((double)i / (double)totalCnt); //Linearly interpolate the turn amount to do a circle
         point.auxiliaryVel = 0;
+
+
         point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
         point.profileSlotSelect1 = 1; /* which set of gains would you like to use [0,3]? */
         point.zeroPos = (i == 0); /* set this to true on the first point */

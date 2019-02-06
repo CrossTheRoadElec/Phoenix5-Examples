@@ -11,12 +11,14 @@
 
 void Robot::RobotInit() 
 {
+    /* Construct global variables being used */
     _master = new TalonSRX(0);
     _joy = new frc::Joystick(0);
     _bufferedStream = new BufferedTrajectoryPointStream();
 
     _plotThread = new PlotThread(_master);
 
+    /* Initialize buffer with MotionProfile */
     InitBuffer(kMotionProfile, kMotionProfileSz);
     _state = 0;
 
@@ -24,8 +26,8 @@ void Robot::RobotInit()
     _configuration = new MotionProfileConfiguration();
 
     _master->ConfigAllSettings(*_configuration);
-    _master->SetSensorPhase(true);
-    _master->SetInverted(false);
+    _master->SetSensorPhase(true); //Flip this if you need to for your robot
+    _master->SetInverted(false);   //Flip this if you need to for your robot
 }
 
 void Robot::AutonomousInit() {}
@@ -111,7 +113,7 @@ void Robot::InitBuffer(const double profile[][3], int totalCnt)
         point.auxiliaryPos = 0;
         point.auxiliaryVel = 0;
         point.profileSlotSelect0 = 0; /* which set of gains would you like to use [0,3]? */
-        point.profileSlotSelect1 = 0; /* auxiliary PID [0,1], leave zero */
+        point.profileSlotSelect1 = 0; /* which set of gains would you like to use [0,3]? */
         point.zeroPos = (i == 0); /* set this to true on the first point */
         point.isLastPoint = ((i + 1) == totalCnt); /* set this to true on the last point */
         point.arbFeedFwd = 0; /* you can add a constant offset to add to PID[0] output here */

@@ -2,6 +2,7 @@
 
 #include "ctre/Phoenix.h"
 
+/* Class that inherits TalonSRXConfiguration so it has all the default configs + modified the configs it cares about */
 class MotionProfileConfiguration : public TalonSRXConfiguration
 {
 public:
