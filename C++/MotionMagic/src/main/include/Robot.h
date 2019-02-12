@@ -29,4 +29,6 @@ public:
 private:
 	TalonSRX *_talon;
 	frc::Joystick *_joy;
+
+	int _smoothing;
 };

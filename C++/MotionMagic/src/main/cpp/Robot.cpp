@@ -10,9 +10,6 @@
 
 void Robot::RobotInit() {
     _talon = new TalonSRX(1);
-    TalonSRX * leftSide = new TalonSRX(2);
-    leftSide->Follow(*_talon);
-    leftSide->SetInverted(InvertType::OpposeMaster);
     _joy = new frc::Joystick(0);
 
     /* Factory default hardware to prevent unexpected behavior */
@@ -49,8 +46,8 @@ void Robot::RobotInit() {
     _talon->Config_kD(0, 0.0, 10);
 
     /* Set acceleration and vcruise velocity - see documentation */
-    _talon->ConfigMotionCruiseVelocity(15000, 10);
-    _talon->ConfigMotionAcceleration(6000, 10);
+    _talon->ConfigMotionCruiseVelocity(1500, 10);
+    _talon->ConfigMotionAcceleration(1500, 10);
 
     /* Zero the sensor */
     _talon->SetSelectedSensorPosition(0, 0, 10);
@@ -97,6 +94,24 @@ void Robot::TeleopPeriodic() {
 
         _talon->Set(ControlMode::PercentOutput, leftYstick);
     }
+
+    if(_joy->GetRawButtonPressed(6))
+    {
+        /* Increase smoothing */
+        ++_smoothing;
+        if(_smoothing > 8) _smoothing = 8;
+        std::cout << "Smoothing is set to: " << _smoothing << std::endl;
+        _talon->ConfigMotionSCurveStrength(_smoothing, 0);
+    }
+    if(_joy->GetRawButtonPressed(5))
+    {
+        /* Decreasing smoothing */
+        --_smoothing;
+        if(_smoothing < 0) _smoothing = 0;
+        std::cout << "Smoothing is set to: " << _smoothing << std::endl;
+        _talon->ConfigMotionSCurveStrength(_smoothing, 0);
+    }
+    
 
     /* Instrumentation */
     Instrum::Process(_talon, &sb);
