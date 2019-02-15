@@ -42,6 +42,8 @@
  * Button 2: When pressed, toggle between Arcade Drive and Motion Magic
  * 	When toggling into Motion Magic, the current heading is saved and used as the 
  * 	auxiliary closed loop target. Can be changed by toggling out and in again.
+ * Button 5(Left shoulder): When pushed, will decrement the smoothing of the motion magic down to 0
+ * Button 6(Right shoulder): When pushed, will increment the smoothing of the motion magic up to 8
  * Left Joystick Y-Axis: 
  * 	+ Arcade Drive: Drive robot forward and reverse
  * 	+ Motion Magic: Servo robot forward and reverse [-6, 6] rotations
@@ -67,6 +69,7 @@ import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
@@ -89,6 +92,8 @@ public class Robot extends TimedRobot {
 	boolean _firstCall = false;
 	boolean _state = false;
 	double _targetAngle = 0;
+
+	int _smoothing;
 
 	@Override
 	public void robotInit() {
@@ -221,6 +226,7 @@ public class Robot extends TimedRobot {
 		/* Initialize */
 		_firstCall = true;
 		_state = false;
+		_rightMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
 		zeroSensors();
 	}
 	
@@ -240,6 +246,20 @@ public class Robot extends TimedRobot {
 			_targetAngle = _rightMaster.getSelectedSensorPosition(1);
 		}else if (_currentBtns[1] && !_previous_currentBtns[1]) {
 			zeroSensors();			// Zero Sensors
+		}
+		if(_currentBtns[5] && !_previous_currentBtns[5]) {
+			_smoothing--; // Decrement smoothing
+			if(_smoothing < 0) _smoothing = 0; // Cap smoothing
+			_rightMaster.configMotionSCurveStrength(_smoothing);
+
+			System.out.println("Smoothing value is: " + _smoothing);
+		}
+		if(_currentBtns[6] && !_previous_currentBtns[6]) {
+			_smoothing++; // Increment smoothing
+			if(_smoothing > 8) _smoothing = 8; // Cap smoothing
+			_rightMaster.configMotionSCurveStrength(_smoothing);
+			
+			System.out.println("Smoothing value is: " + _smoothing);
 		}
 		System.arraycopy(_currentBtns, 0, _previous_currentBtns, 0, Constants.kNumButtonsPlusOne);
 				

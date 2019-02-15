@@ -43,6 +43,9 @@
  * Controls:
  * Button 1: When held, put Talon in Motion Magic mode and allow Talon to drive [-10, 10] 
  * 	rotations.
+ * Button 2: When pushed, the selected feedback sensor gets zero'd
+ * Button 5(Left shoulder): When pushed, will decrement the smoothing of the motion magic down to 0
+ * Button 6(Right shoulder): When pushed, will increment the smoothing of the motion magic up to 8
  * Left Joystick Y-Axis:
  * 	+ Percent Output: Throttle Talon SRX forward and reverse, use to confirm hardware setup.
  * 	+ Motion Maigic: SErvo Talon SRX forward and reverse, [-10, 10] rotations.
@@ -68,16 +71,19 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 
 public class Robot extends TimedRobot {
 	/* Hardware */
-	TalonSRX _talon = new TalonSRX(1);
+	TalonSRX _talon = new TalonSRX(12);
 	Joystick _joy = new Joystick(0);
 
 	/* create some followers */
-	BaseMotorController _follower1 = new TalonSRX(0);
+	BaseMotorController _follower1 = new TalonSRX(2);
 	BaseMotorController _follower2 = new VictorSPX(0);
 	BaseMotorController _follower3 = new VictorSPX(1);
 
 	/* Used to build string throughout loop */
 	StringBuilder _sb = new StringBuilder();
+
+	/* Create integer to keep track of smoothing variable */
+	int _smoothing = 0;
 
 	public void robotInit() {
 		/* setup some followers */
@@ -102,7 +108,7 @@ public class Robot extends TimedRobot {
 		 * Phase sensor to have positive increment when driving Talon Forward (Green LED)
 		 */
 		_talon.setSensorPhase(true);
-		_talon.setInverted(false);
+		_talon.setInverted(true);
 
 		/* Set relevant frame periods to be at least as fast as periodic rate */
 		_talon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);
@@ -122,8 +128,8 @@ public class Robot extends TimedRobot {
 		_talon.config_kD(Constants.kSlotIdx, Constants.kGains.kD, Constants.kTimeoutMs);
 
 		/* Set acceleration and vcruise velocity - see documentation */
-		_talon.configMotionCruiseVelocity(15000, Constants.kTimeoutMs);
-		_talon.configMotionAcceleration(6000, Constants.kTimeoutMs);
+		_talon.configMotionCruiseVelocity(3000, Constants.kTimeoutMs);
+		_talon.configMotionAcceleration(500, Constants.kTimeoutMs);
 
 		/* Zero the sensor */
 		_talon.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
@@ -166,6 +172,32 @@ public class Robot extends TimedRobot {
 			/* Percent Output */
 
 			_talon.set(ControlMode.PercentOutput, leftYstick);
+		}
+		if(_joy.getRawButton(2))
+		{
+			/* Clear sensor positions */
+			_talon.getSensorCollection().setQuadraturePosition(0, 0);
+
+			System.out.println("Voltage is: " + _talon.getBusVoltage());
+		}
+
+		if(_joy.getRawButtonPressed(5))
+		{
+			/* Decrease smoothing */
+			_smoothing--;
+			if(_smoothing < 0) _smoothing = 0;
+			_talon.configMotionSCurveStrength(_smoothing);
+
+			System.out.println("Smoothing is set to: " + _smoothing);
+		}
+		if(_joy.getRawButtonPressed(6))
+		{
+			/* Increase smoothing */
+			_smoothing++;
+			if(_smoothing > 8) _smoothing = 8;
+			_talon.configMotionSCurveStrength(_smoothing);
+			
+			System.out.println("Smoothing is set to: " + _smoothing);
 		}
 
 		/* Instrumentation */

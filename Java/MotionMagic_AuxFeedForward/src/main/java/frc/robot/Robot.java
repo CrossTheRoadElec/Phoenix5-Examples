@@ -41,6 +41,8 @@
  * Button 2: When pressed, toggle between Arcade Drive and Motion Magic
  * 	When toggling into Motion Magic, the current heading is saved and used as the 
  * closed loop target. Can be changed by toggling out and in again.
+ * Button 5(Left shoulder): When pushed, will decrement the smoothing of the motion magic down to 0
+ * Button 6(Right shoulder): When pushed, will increment the smoothing of the motion magic up to 8
  * Left Joystick Y-Axis: 
  * 	+ Arcade Drive: Drive robot forward and reverse
  * 	+ Motion Magic: Servo robot forward and reverse [-6, 6] rotations
@@ -65,6 +67,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -83,6 +86,8 @@ public class Robot extends TimedRobot {
 	/** Tracking variables */
 	boolean _firstCall = false;
 	boolean _state = false;
+
+	int _smoothing;
 
 	@Override
 	public void robotInit() {
@@ -180,6 +185,7 @@ public class Robot extends TimedRobot {
 		/* Initialize */
 		_firstCall = true;
 		_state = false;
+		_rightMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
 		zeroSensors();
 	}
 	
@@ -199,6 +205,20 @@ public class Robot extends TimedRobot {
 		}
 		else if (btns[1] && !_btns[1]) {
 			zeroSensors();		// Zero sensors
+		}
+		if(btns[5] && !_btns[5]) {
+			_smoothing--; // Decrement smoothing
+			if(_smoothing < 0) _smoothing = 0; // Cap smoothing
+			_rightMaster.configMotionSCurveStrength(_smoothing);
+
+			System.out.println("Smoothing value is: " + _smoothing);
+		}
+		if(btns[6] && !_btns[6]) {
+			_smoothing++; // Increment smoothing
+			if(_smoothing > 8) _smoothing = 8; // Cap smoothing
+			_rightMaster.configMotionSCurveStrength(_smoothing);
+			
+			System.out.println("Smoothing value is: " + _smoothing);
 		}
 		System.arraycopy(btns, 0, _btns, 0, Constants.kNumButtonsPlusOne);
 		
