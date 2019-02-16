@@ -43,6 +43,9 @@
  * Controls:
  * Button 1: When held, put Talon in Motion Magic mode and allow Talon to drive [-10, 10] 
  * 	rotations.
+ * Button 2: When pushed, the selected feedback sensor gets zero'd
+ * Button 5(Left shoulder): When pushed, will decrement the smoothing of the motion magic down to 0
+ * Button 6(Right shoulder): When pushed, will increment the smoothing of the motion magic up to 8
  * Left Joystick Y-Axis:
  * 	+ Percent Output: Throttle Talon SRX forward and reverse, use to confirm hardware setup.
  * 	+ Motion Maigic: SErvo Talon SRX forward and reverse, [-10, 10] rotations.
@@ -59,7 +62,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
-import java.util.concurrent.TimeUnit;		// Delay
 
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -78,6 +80,9 @@ public class Robot extends TimedRobot {
 
 	/* Used to build string throughout loop */
 	StringBuilder _sb = new StringBuilder();
+
+	/** How much smoothing [0,8] to use during MotionMagic */
+	int _smoothing = 0;
 
 	public void robotInit() {
 		/* setup some followers */
@@ -166,6 +171,32 @@ public class Robot extends TimedRobot {
 			/* Percent Output */
 
 			_talon.set(ControlMode.PercentOutput, leftYstick);
+		}
+		if(_joy.getRawButton(2))
+		{
+			/* Clear sensor positions */
+			_talon.getSensorCollection().setQuadraturePosition(0, 0);
+
+			System.out.println("Voltage is: " + _talon.getBusVoltage());
+		}
+
+		if(_joy.getRawButtonPressed(5))
+		{
+			/* Decrease smoothing */
+			_smoothing--;
+			if(_smoothing < 0) _smoothing = 0;
+			_talon.configMotionSCurveStrength(_smoothing);
+
+			System.out.println("Smoothing is set to: " + _smoothing);
+		}
+		if(_joy.getRawButtonPressed(6))
+		{
+			/* Increase smoothing */
+			_smoothing++;
+			if(_smoothing > 8) _smoothing = 8;
+			_talon.configMotionSCurveStrength(_smoothing);
+			
+			System.out.println("Smoothing is set to: " + _smoothing);
 		}
 
 		/* Instrumentation */
