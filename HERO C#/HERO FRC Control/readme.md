@@ -11,7 +11,9 @@ Phoenix already supports the CTRE CAN motor controller and sensor devices for ro
 
 For example, a device can calculate the feed-forwards and target positions of a single complex mechanism such as a multi joint arm or swerve drivetrain.  Then, directly update the involved Talon SRXs without involving the roboRIO.
 
-Different platforms have different languages, toolchains, debugging-features, performance metrics, etc.  This example focuses on the HERO control board, but this method could be used with anything that can link Phoenix.  Additionally developers can port the open source Phoenix-netmf repository.
+Different platforms have different languages, toolchains, debugging-features, performance metrics, etc.
+This example focuses on the HERO control board, but this method could be used with anything that can link Phoenix.
+User should also considering linking Phoenix into their custom Linux solutions (RaspPi, NVidea Jetson, etc.).
 
 RoboRIO still sends the FRC-specific enable, ensuring safe operation of these motor controllers.
 
