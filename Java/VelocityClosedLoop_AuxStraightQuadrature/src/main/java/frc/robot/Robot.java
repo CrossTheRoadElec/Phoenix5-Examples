@@ -25,7 +25,7 @@
 /**
  * Description:
  * The VelocityClosedLoop_AuxStraightQuadrature example demonstrates the new Talon/Victor auxiliary
- * and remote features used to peform complex closed loops. This example has the robot performing 
+ * and remote features used to perform complex closed loops. This example has the robot performing 
  * Velocity closed loop with an auxiliary closed loop on quadrature encoders difference (Heading)
  * to keep the robot straight.
  * 

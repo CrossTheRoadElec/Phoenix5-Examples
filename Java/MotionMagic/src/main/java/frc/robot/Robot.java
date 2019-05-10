@@ -152,7 +152,7 @@ public class Robot extends TimedRobot {
 		_sb.append(_talon.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
 
 		/**
-		 * Peform Motion Magic when Button 1 is held,
+		 * Perform Motion Magic when Button 1 is held,
 		 * else run Percent Output, which can be used to confirm hardware setup.
 		 */
 		if (_joy.getRawButton(1)) {

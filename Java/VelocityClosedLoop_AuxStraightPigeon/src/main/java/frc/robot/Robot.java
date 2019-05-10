@@ -25,7 +25,7 @@
 /**
  * Description:
  * The VelocityClosedLoop_AuxStraightPigeon example demonstrates the new Talon/Victor auxiliary 
- * and remote features used to peform complex closed loops. This example has the robot performing
+ * and remote features used to perform complex closed loops. This example has the robot performing
  * Velocity Closed Loop with an auxiliary closed loop on Pigeon yaw to keep the robot straight.
  * 
  * This example uses:

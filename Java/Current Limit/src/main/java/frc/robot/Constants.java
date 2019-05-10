@@ -10,7 +10,7 @@ class Constants{
     /* Duration after current exceed Peak Current to trigger current limit */
     static final int kPeakTimeMs = 0;
 
-    /* Current to mantain once current limit has been triggered */
+    /* Current to maintain once current limit has been triggered */
     static final int kContinCurrentAmps = 10;
 
     /**
