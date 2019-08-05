@@ -138,8 +138,9 @@ namespace Windows_Ping_Example
                     sent = false;
                     received = false;
                 }
-
-            }
+				
+				System.Threading.Thread.Sleep(10);
+			}
 
         }
 
