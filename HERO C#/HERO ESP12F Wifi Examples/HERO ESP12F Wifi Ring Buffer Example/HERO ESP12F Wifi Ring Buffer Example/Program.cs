@@ -80,14 +80,9 @@ namespace HERO_WiFi_Ring_Buffer_Example
 		{
 
 			wifi = new WiFiESP12F(IO.Port1);
-			//wifi.FactoryReset();
-			Thread.Sleep(1000);
-
 			wifi.reset();
 			Thread.Sleep(1000);
 			wifi.setWifiMode(WiFiESP12F.wifiMode.SOFTAP);
-			Thread.Sleep(1000);
-
 			wifi.setAP("WifiTest", "Password1", 1, WiFiESP12F.SecurityType.WPA_WPA2_PSK);
 			Thread.Sleep(1000);// Required after calling setAP
 
