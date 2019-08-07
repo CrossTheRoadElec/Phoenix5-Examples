@@ -25,7 +25,7 @@
 /**
  * Description:
  * The MotionMagic_AuxStraightQuadrature example demonstrates the new Talon/Victor auxiliary and 
- * remote features used to peform complex closed loops. This example has the robot performing 
+ * remote features used to perform complex closed loops. This example has the robot performing 
  * Motion Magic with an auxiliary closed loop on Quadrature Difference to keep the robot straight.
  * 
  * This example uses:

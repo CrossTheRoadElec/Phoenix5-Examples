@@ -25,7 +25,7 @@
 /**
  * Description:
  * The PositiionClosedLoop_AuxStraightQuadrature example demonstrates the new Talon/Victor Auxiliary
- * and Remote Features to peform more complex. This example has the robot performing Position 
+ * and Remote Features to perform more complex. This example has the robot performing Position 
  * Closed Loop with an auxiliary closed loop on Quadrature Encoders difference (Heading)
  * to keep the robot straight.
  * 

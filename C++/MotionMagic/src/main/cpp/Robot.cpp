@@ -69,7 +69,7 @@ void Robot::TeleopPeriodic() {
     }
 
     /**
-     * Peform Motion Magic when Button 1 is held,
+     * Perform Motion Magic when Button 1 is held,
      * else run Percent Output, which can be used to confirm hardware setup.
      */
     if (_joy->GetRawButton(1)) {
