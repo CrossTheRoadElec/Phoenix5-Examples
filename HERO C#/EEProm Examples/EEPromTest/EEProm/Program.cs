@@ -1,5 +1,5 @@
 ﻿
-#define ReadOnly
+//#define ReadOnly
 //Uncomment the line above to only read the data to prove it is persistant across boot cycles 
 using System;
 using System.Threading;
