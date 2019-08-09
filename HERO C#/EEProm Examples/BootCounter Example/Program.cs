@@ -4,7 +4,7 @@ using Microsoft.SPOT;
 using Microsoft.SPOT.Hardware;
 using CTRE.HERO;
 
-namespace Hero_Simple_Application7
+namespace Boot_Counter_Example
 {
 	public class Program
 	{
