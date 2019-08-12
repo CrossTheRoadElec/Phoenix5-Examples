@@ -30,14 +30,25 @@ namespace Boot_Counter_Example
 			bool chksum = TstChksum(readData);  //test to see if checksum is correct 
 			bool chksum2 = TstChksum(readData2);//test to see if checksum is correct 
 
-			if (readData[0] < readData2[0])/// check what sector has newer data 
-			{
+
+			if (!chksum&&!chksum2)
+				write[0]= 0;	
+			else if (!chksum&&chksum2)
 				write[0] = readData2[0];
-			}
+			else if (!chksum2 && chksum)
+				write[0] = readData[0];
 			else
 			{
-				write[0] = readData[0];
+				if (readData[0] < readData2[0])/// check what sector has newer data 
+				{
+					write[0] = readData2[0];
+				}
+				else
+				{
+					write[0] = readData[0];
+				}
 			}
+			
 
 			System.Threading.Thread.Sleep(100);
 
@@ -61,7 +72,7 @@ namespace Boot_Counter_Example
 				CTRE.Native.Watchdog.Feed(120);// feed so green status light will indicate when everything is complete
 				if (!chksum && !chksum2)
 				{
-					Debug.Print("Both checksums from previous data failed new count may be inaccurate");
+					Debug.Print("Both checksums from previous data failed count has been reset");
 				}
 				Debug.Print("boot: " + readData[0]);
 				Debug.Print("boot2 " + readData2[0]);
