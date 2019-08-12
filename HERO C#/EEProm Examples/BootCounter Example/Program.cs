@@ -13,6 +13,12 @@ namespace Boot_Counter_Example
 
 		public static void Main()
 		{
+
+			while(e.CheckHealth() != CTRE.ErrorCode.OK)//don't continue if CheckHealth is not ok
+			{
+				Debug.Print("CheckHealth() did not return okay");
+			}
+
 			// byte arrays for storing data 
 			byte[] readData = new byte[256];
 			byte[] readData2 = new byte[256];
