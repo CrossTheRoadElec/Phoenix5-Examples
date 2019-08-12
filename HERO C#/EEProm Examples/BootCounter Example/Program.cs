@@ -27,8 +27,8 @@ namespace Boot_Counter_Example
 			ulong sec2 = 8192;
 			e.Read(sec1, readData);//read sector 1 and store the data 
 			e.Read(sec2, readData2);//read sector 2 and store the data
-			bool chksum = TstChksum(readData);
-			bool chksum2 = TstChksum(readData2);
+			bool chksum = TstChksum(readData);  //test to see if checksum is correct 
+			bool chksum2 = TstChksum(readData2);//test to see if checksum is correct 
 
 			if (readData[0] < readData2[0])/// check what sector has newer data 
 			{
@@ -44,7 +44,7 @@ namespace Boot_Counter_Example
 
 
 			write[0]++;// increment the count 
-			CalcandInsert(write);
+			CalcandInsert(write);//insert checksum into bytearray
 			e.Erase4KB(sec1);//erase the first sector
 			e.Write(sec1, write);//write to the first sector
 
@@ -54,11 +54,11 @@ namespace Boot_Counter_Example
 
 			e.Read(sec1, readData);//read sector 1 
 			e.Read(sec2, readData2);//read sector 2 
-									/* loop forever */
 
+			/* loop forever */
 			while (true)
 			{
-				CTRE.Native.Watchdog.Feed(120);
+				CTRE.Native.Watchdog.Feed(120);// feed so green status light will indicate when everything is complete
 				if (!chksum && !chksum2)
 				{
 					Debug.Print("Both checksums from previous data failed new count may be inaccurate");
