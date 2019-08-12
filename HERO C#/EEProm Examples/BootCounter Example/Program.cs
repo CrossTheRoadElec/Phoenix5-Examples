@@ -44,21 +44,11 @@ namespace Boot_Counter_Example
 			e.Erase4KB(sec1);//erase the first sector
 			e.Write(sec1, write);//write to the first sector
 			e.Read(sec1, readData);
-/*
-			while (readData[0] != write[0])
-			{
-				//confirm data has been written before modifying next sector
-			}
-*/
+
 			e.Erase4KB(sec2);//erase the second sector
 			e.Write(sec2, write);//write to the second sector
 			e.Read(sec2, readData2);
-			/*
-			while (readData2[0] != write[0])
-			{
-				//confirm data has been written before modifying next sector
-			}
-			*/
+
 			e.Read(sec1, readData);//read sector 1 
 			e.Read(sec2, readData2);//read sector 2 
 			/* loop forever */
