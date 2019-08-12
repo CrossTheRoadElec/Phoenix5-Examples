@@ -21,18 +21,17 @@ namespace EEProm
                 tofill[i] = (byte)33;// fill our byte array with values
             }
 # if(!ReadOnly)
-            for (int max =1;  max < 512; max++)// go through the entire storage  512 * 4kb = the 16mbit storage that the hero has 
+            for (int sector =0;  sector < 512; sector++)// go through the entire storage  512 * 4kb = the 16mbit storage that the hero has 
             {
-                ulong ad = (ulong)(max * 4096);
-                int current = max + 1;
+                int current = sector + 1;
                 Debug.Print("Erasing sector "+ current + "/512");
 
-                e.Erase4KB(ad);//erase 
-                e.Read(ad, readData);//readback erased bytearray to check for erase
+                e.Erase4KB(GetAddress(sector));//erase 
+                e.Read(GetAddress(sector), readData);//readback erased bytearray to check for erase
                 for(int x = 0; x < readData.Length; x++)
                 {
                     if (readData[x] != 255)// check that storage has been erased  
-                        Debug.Print("address"+ad+"not cleared");// this should never happen
+                        Debug.Print("address"+ GetAddress(sector) + " not cleared");// this should never happen
 
                 }
 
@@ -40,18 +39,18 @@ namespace EEProm
             // all stored data has now been erased 
 
             //now lets fill it with new data
-            for (int max = 1; max < 512; max++)// go through the entire storage  512 * 4kb = the 16mbit storage that the hero has 
+            for (int sector = 0; sector < 512; sector++)// go through the entire storage  512 * 4kb = the 16mbit storage that the hero has 
             {
-                int current = max + 1;
+                int current = sector + 1;
                 Debug.Print("filling sector " + current + "/512");
-                ulong ad = (ulong)(max * 4096);
+              
 
-                e.Write(ad,tofill);//fill
-                e.Read(ad, readData);//readback filled bytearray to check for fill
+                e.Write(GetAddress(sector),tofill);//fill
+                e.Read(GetAddress(sector), readData);//readback filled bytearray to check for fill
                 for (int x = 0; x < readData.Length; x++)
                 {
                     if (readData[x] != 33)// check that storage has been filled  
-                        Debug.Print("address" + ad + "not filled correctly ");// this should never happen
+                        Debug.Print("address" + GetAddress(sector) + "not filled correctly ");// this should never happen
 
                 }
 
@@ -61,12 +60,12 @@ namespace EEProm
 
 
             // print all 16mbit of values
-            for (int max = 1; max < 512; max++)// go through the entire storage  512 * 4kb = the 16mbit storage that the hero has 
+            for (int sector = 0; sector < 512; sector++)// go through the entire storage  512 * 4kb = the 16mbit storage that the hero has 
             {
-                ulong ad = (ulong)(max * 4096);
-                int current = max + 1;
+                
+                int current = sector + 1;
 
-                e.Read(ad, readData);//read data 
+                e.Read(GetAddress(sector), readData);//read data 
                 bool allGood = true;
                 for (int x = 0; x < readData.Length; x++)
                 {
@@ -74,7 +73,7 @@ namespace EEProm
                     if (readData[x] != 33)
                     {
                         allGood = false;
-                        Debug.Print("printing sector " + current + "/512 " + " address " + ad + " byte " + x + " value " + readData[x]);
+                        Debug.Print("printing sector " + current + "/512 " + " address " + GetAddress(sector) + " byte " + x + " value " + readData[x]);
 
                     }
 
@@ -93,5 +92,17 @@ namespace EEProm
                 System.Threading.Thread.Sleep(100);
             }
         }
-    }
+		static ulong GetAddress(int sector)// returns sector address invalid requests will recive an  address of 0
+		{
+			ulong retval = 0;
+			if (sector == 0)
+				retval = 1;
+			else if (sector > 512)
+				retval = 0;
+			else
+				retval = (ulong)(sector * 4096);
+			return retval;
+		}
+
+	}
 }
