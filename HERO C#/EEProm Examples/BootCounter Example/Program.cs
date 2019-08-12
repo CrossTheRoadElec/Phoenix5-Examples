@@ -34,7 +34,7 @@ namespace Boot_Counter_Example
 			{
 				write[0] = readData[0];
 			}
-		}
+		
 
 		
 			System.Threading.Thread.Sleep(100);
