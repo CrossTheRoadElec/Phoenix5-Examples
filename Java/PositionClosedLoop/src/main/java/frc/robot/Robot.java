@@ -72,6 +72,9 @@ public class Robot extends TimedRobot {
 	double targetPositionRotations;
 
 	public void robotInit() {
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_talon.configFactoryDefault();
+		
 		/* Config the sensor used for Primary PID and sensor direction */
         _talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 
                                             Constants.kPIDLoopIdx,

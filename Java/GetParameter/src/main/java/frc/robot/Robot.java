@@ -48,6 +48,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_talon.configFactoryDefault();
 	    /* Nonzero to block the config until success, zero to skip checking */
     	int kTimeoutMs = 30;
 

@@ -63,6 +63,7 @@ public class Robot extends TimedRobot {
 
 	/** Constructor sets the neutral mode to start with. */
 	public Robot() {
+		_tal.configFactoryDefault();
 		/* Override neutral mode setting programmatically */
 		_tal.setNeutralMode(_brake ? NeutralMode.Brake : NeutralMode.Coast);
 		/* instrument to console */

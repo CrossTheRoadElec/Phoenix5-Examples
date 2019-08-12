@@ -91,6 +91,10 @@ public class Robot extends TimedRobot {
 	
 	@Override
 	public void teleopInit(){
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_leftMaster.configFactoryDefault();
+		_rightMaster.configFactoryDefault();
+
 		/* Disable all motor controllers */
 		_rightMaster.set(ControlMode.PercentOutput, 0);
 		_leftMaster.set(ControlMode.PercentOutput, 0);

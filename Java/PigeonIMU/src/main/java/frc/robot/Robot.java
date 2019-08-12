@@ -137,6 +137,8 @@ public class Robot extends TimedRobot {
             /* factory default configs */
             _leftSide.configFactoryDefault();
             _rghtSide.configFactoryDefault();
+            _pidgey.configFactoryDefault();
+
 
             /** Configure filter to use Yaw for the moment */
             if (kRemoteFilter == 0)
