@@ -32,6 +32,7 @@ public:
 	int _loops = 0;
 
 	void RobotInit() {
+		_talon->ConfigFactoryDefault();
         /* first choose the sensor */
 		_talon->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, kTimeoutMs);
 		_talon->SetSensorPhase(true);

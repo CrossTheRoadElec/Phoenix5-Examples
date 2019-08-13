@@ -23,13 +23,14 @@ public:
 	bool _btn1 = false, _btn2 = false, _btn3 = false, _btn4 = false;
 	const bool kInvert = true; /* pick this based on your preference on what positive motor output should spin to */
 	const bool kSensorPhase = false; /* pick this so self-test stops reporting sensor-out-of-phase */
-
+	void RobotInit(){
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_srx->ConfigFactoryDefault();
+	}
 	/* every time we enter disable, reinit*/
 	void DisabledInit() {
-		
 	    /* nonzero to block the config until success, zero to skip checking */
     	const int kTimeoutMs = 30;
-
         /* choose quadrature/relative which has a faster update rate */
 		_srx->ConfigSelectedFeedbackSensor(
 				FeedbackDevice::CTRE_MagEncoder_Relative, 0, kTimeoutMs);

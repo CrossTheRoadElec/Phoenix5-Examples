@@ -32,7 +32,10 @@ public:
 
 	/* nonzero to block the config until success, zero to skip checking */
 	const int kTimeoutMs = 30;
-
+	void RobotInit(){
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_srx->ConfigFactoryDefault();
+	}
 	/* everytime we enter disable, reinit*/
 	void DisabledInit() {
 		_srx->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10); /* MagEncoder meets the requirements for Unit-Scaling */

@@ -11,6 +11,13 @@ class MecanumDefaultCode: public TimedRobot {
 	WPI_TalonSRX *rf = new WPI_TalonSRX(2); /*right front */
 	WPI_TalonSRX *rr = new WPI_TalonSRX(3); /*right rear */
 public:
+void RobotInit(){
+	/* Factory Default all hardware to prevent unexpected behaviour */
+	lf->ConfigFactoryDefault();
+	lr->ConfigFactoryDefault();
+	rf->ConfigFactoryDefault();
+	rr->ConfigFactoryDefault();
+}
 	MecanumDrive *m_robotDrive;	// RobotDrive object using PWM 1-4 for drive motors
 	Joystick *m_driveStick;	// Joystick object on USB port 1 (mecanum drive)public:
 	AnalogGyro gyro;

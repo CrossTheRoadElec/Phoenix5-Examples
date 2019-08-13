@@ -13,7 +13,10 @@ public:
 
 	bool _currentLimEn = true;
 	bool _btn5 = false;
-
+	void RobotInit(){
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_tal->ConfigFactoryDefault();
+	}
 	void TeleopInit() {
 		/* factory default your Talon before running this,
 		 * This way we can just call the config* routines that are

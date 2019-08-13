@@ -30,6 +30,11 @@ public:
 	bool _btns[Constants.kNumButtonsPlusOne];
 
 	void InitRobot() {
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_motorCntrller->ConfigFactoryDefault();
+		_talonLimits->ConfigFactoryDefault();
+		_canifLimits->ConfigFactoryDefault();
+		_imu->ConfigFactoryDefault();
 		/* Start Robot with no output */
 		_motorCntrller->Set(ControlMode::PercentOutput, 0);
 

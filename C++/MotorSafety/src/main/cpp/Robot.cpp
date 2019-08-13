@@ -66,6 +66,9 @@ void Robot::RobotInit()
 {
     _drive = new frc::DifferentialDrive(_left, _rght);
     _joy =  new frc::Joystick(0); 
+    /* Factory Default all hardware to prevent unexpected behaviour */
+    _left.ConfigFactoryDefault();
+    _rght.ConfigFactoryDefault();
 }
 
 

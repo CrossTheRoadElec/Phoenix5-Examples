@@ -58,7 +58,15 @@ public:
 		/* Define joystick being used at USB port #0 on the Drivers Station */
 		_driveStick = new Joystick(0);
 	}
-
+	void RobotInit(){
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_leftFront->ConfigFactoryDefault();
+		_rightFront->ConfigFactoryDefault();
+		_leftRear->ConfigFactoryDefault();
+		_rightRear->ConfigFactoryDefault();
+		_spareTalon->ConfigFactoryDefault();
+		_pidgey->ConfigFactoryDefault();
+	}
 	void TeleopInit() {
 	    /* nonzero to block the config until success, zero to skip checking */
     	const int kTimeoutMs = 30;

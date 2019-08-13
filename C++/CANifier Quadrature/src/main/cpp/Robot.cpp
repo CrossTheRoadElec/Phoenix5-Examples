@@ -21,6 +21,10 @@ public:
 		_can = new CANifier(0);
 		_tal = new TalonSRX(4);
 		_joy = new Joystick(0);
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_can->ConfigFactoryDefault();
+		_tal->ConfigFactoryDefault();
+
 	}
 
 	void TeleopInit() {
