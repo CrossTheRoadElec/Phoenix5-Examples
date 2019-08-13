@@ -49,8 +49,10 @@ namespace HERO_Motion_Magic_Example
          */
         public void SetupConfig()
         {
-            /* specify sensor characteristics */
-            _talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0);
+			/* Factory Default all hardware to prevent unexpected behaviour */
+			_talon.ConfigFactoryDefault();
+			/* specify sensor characteristics */
+			_talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0);
             _talon.SetSensorPhase(false); /* make sure positive motor output means sensor moves in position direction */
             // call ConfigEncoderCodesPerRev or ConfigPotentiometerTurns for Quadrature or Analog sensor types.
 

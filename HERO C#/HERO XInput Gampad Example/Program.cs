@@ -45,8 +45,9 @@ namespace HERO_XInput_Gampad_Example
              * use X mode for drive, and D mode for disable (instead of vice versa as the 
              * stock HERO implementation traditionally does). */
 			UsbHostDevice.GetInstance(0).SetSelectableXInputFilter(UsbHostDevice.SelectableXInputFilter.XInputDevices);
-
-            while (true)
+			/* Factory Default all hardware to prevent unexpected behaviour */
+			_tal.ConfigFactoryDefault();
+			while (true)
             {
                 if (_gamepad.GetConnectionStatus() == UsbDeviceConnection.Connected)
                 {
@@ -71,10 +72,10 @@ namespace HERO_XInput_Gampad_Example
                 _tal.Set(ControlMode.PercentOutput, (_sticks[5] - _sticks[4]) * 0.60f);
 
                 /* fire some solenoids based on buttons */
-                _driver.Set(0, _buttons[1]);
-                _driver.Set(1, _buttons[2]);
-                _driver.Set(2, _buttons[3]);
-                _driver.Set(3, _buttons[4]);
+                _driver.Set(1, _buttons[1]);
+                _driver.Set(2, _buttons[2]);
+                _driver.Set(3, _buttons[3]);
+                _driver.Set(4, _buttons[4]);
 
                 /* rumble state machine */
                 switch (_rumblinSt)

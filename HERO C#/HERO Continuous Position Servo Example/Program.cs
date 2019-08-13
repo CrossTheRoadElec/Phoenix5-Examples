@@ -85,9 +85,10 @@ namespace HERO_Continuous_Position_Servo_Example
 
         public void init()
         {
-
-            /* nonzero to block the config until success, zero to skip checking */
-            const int kTimeoutMs = 30;
+			/* Factory Default all hardware to prevent unexpected behaviour */
+			_talon.ConfigFactoryDefault();
+			/* nonzero to block the config until success, zero to skip checking */
+			const int kTimeoutMs = 30;
             
             /* first choose the sensor */
             _talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, kTimeoutMs);

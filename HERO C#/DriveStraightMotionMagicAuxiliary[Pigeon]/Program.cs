@@ -11,8 +11,13 @@ namespace DriveStraightMotionMagicAuxiliary
     {
         public static void Main()
         {
-            /* Disable drivetrain/motors */
-            Hardware._rightTalon.Set(ControlMode.PercentOutput, 0);
+            Hardware._rightTalon.ConfigFactoryDefault();
+			Hardware._leftTalon.ConfigFactoryDefault();
+			Hardware._leftVictor.ConfigFactoryDefault();
+			Hardware._pidgey.ConfigFactoryDefault();
+
+			/* Disable drivetrain/motors */
+			Hardware._rightTalon.Set(ControlMode.PercentOutput, 0);
             Hardware._leftVictor.Set(ControlMode.PercentOutput, 0);
             Hardware._leftTalon.Set(ControlMode.PercentOutput, 0);
 

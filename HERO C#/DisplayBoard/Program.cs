@@ -372,6 +372,10 @@ namespace Hero_DisplayBoard
         /* Initialize Motors */
        static void InitMotors()
         {
+			/* Factory Default all hardware to prevent unexpected behaviour */
+			_Talon.ConfigFactoryDefault();
+			_victor.ConfigFactoryDefault();
+
             /* Select Sensor */
             _Talon.ConfigSelectedFeedbackSensor(CTRE.Phoenix.MotorControl.FeedbackDevice.QuadEncoder, 0, kTimeoutMs);
             _victor.ConfigRemoteFeedbackFilter(_Talon.GetDeviceID(), CTRE.Phoenix.MotorControl.RemoteSensorSource.RemoteSensorSource_TalonSRX_SelectedSensor, 0, kTimeoutMs);

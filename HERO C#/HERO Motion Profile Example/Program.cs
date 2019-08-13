@@ -47,9 +47,12 @@ namespace Hero_Motion_Profile_Example
 
         public void Run()
         {
-            //_talon.SetControlMode(TalonSRX.ControlMode.kVoltage);
+			/* Factory Default all hardware to prevent unexpected behaviour */
+			_talon.ConfigFactoryDefault();
 
-            _talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0);
+
+
+			_talon.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0);
             _talon.SetSensorPhase(false);
 
             _talon.Config_kP(0, 0.80f);

@@ -19,10 +19,11 @@ namespace CANifier_Demo
     {
         public override void RunForever()
         {
-            /* any system wide initializations here */
-
-            /* add all the periodic tasks */
-            foreach (ILoopable task in Platform.Tasks.FullList)
+			/* any system wide initializations here */
+			/* Factory Default all hardware to prevent unexpected behaviour */
+			Hardware.canifier.ConfigFactoryDefault();
+			/* add all the periodic tasks */
+			foreach (ILoopable task in Platform.Tasks.FullList)
                 Schedulers.PeriodicTasks.Add(task);
 
             /* loop forever */

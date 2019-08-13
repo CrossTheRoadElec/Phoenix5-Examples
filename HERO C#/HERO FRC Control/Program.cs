@@ -15,7 +15,9 @@ namespace HERO_FRC_Control
 			
 			TalonSRX leftTalon = new TalonSRX(10);
 			TalonSRX rightTalon = new TalonSRX(11);
-
+			/* Factory Default all hardware to prevent unexpected behaviour */
+			leftTalon.ConfigFactoryDefault();
+			rightTalon.ConfigFactoryDefault();
 			/* Set Inverted on one side so "forward" relative to the robot is a Green LED state */
 			leftTalon.SetInverted(false);
 			rightTalon.SetInverted(true);
