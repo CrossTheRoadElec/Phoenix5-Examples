@@ -3,7 +3,7 @@
  */
 using Platform;
 
-public class TaskServoArmPos : CTRE.Tasking.ILoopable
+public class TaskServoArmPos : CTRE.Phoenix.Tasking.ILoopable
 {
     float _target = Constants.Target1;
 

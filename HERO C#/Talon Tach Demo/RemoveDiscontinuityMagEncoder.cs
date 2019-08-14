@@ -16,16 +16,17 @@
  * 
  * Long term this will be integrate into Talon firmware in the final Phoenix Framework.
  **/
-using CTRE.MotorControllers;
+using CTRE.Phoenix.MotorControl.CAN;
 
 public class RemoveDiscontinuityMagEncoder
 {
-    public static void Offset(TalonSrx talon, bool sensorIsReversed, int offset)
+    public static void Offset(TalonSRX talon, bool sensorIsReversed, int offset)
     {
-        /* read the talon's absolute pulse wid */
-        int pos = Platform.Hardware.armTalon.GetPulseWidthPosition();
-        /* keep bottom 12bits */
-        pos &= 0xFFF;
+		/* read the talon's absolute pulse wid */
+		Platform.Hardware.armTalon.ConfigSelectedFeedbackSensor(CTRE.Phoenix.MotorControl.FeedbackDevice.PulseWidthEncodedPosition);
+        int pos = Platform.Hardware.armTalon.GetSelectedSensorPosition();
+		/* keep bottom 12bits */
+		pos &= 0xFFF;
         /* offset */
         {
             pos -= offset;
@@ -37,6 +38,6 @@ public class RemoveDiscontinuityMagEncoder
             pos *= -1;
 
         /* set it back */
-        Platform.Hardware.armTalon.SetPosition(pos);
+        Platform.Hardware.armTalon.SetSelectedSensorPosition(pos);
     }
 }

@@ -33,9 +33,7 @@
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
     <Compile Include="Framework\ConcurrentScheduler.cs" />
-    <Compile Include="Framework\SensoredGearbox.cs" />
     <Compile Include="Framework\ServoParameters.cs" />
-    <Compile Include="Framework\VersaPlanetaryWithMagEnc.cs" />
     <Compile Include="Platform\Platform.cs" />
     <Compile Include="RemoveDiscontinuityMagEncoder.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

@@ -3,7 +3,7 @@
  * If no gamepad is present or user flipped D-X Switch to disable, disable the robot.
  * Additionally the shoulder buttons switch the Arm and Wheel between closed loop and open loop modes.
  **/
-using CTRE.Tasking;
+using CTRE.Phoenix.Tasking;
 using Platform;
 
 public class TaskEnableRobot : ILoopable
@@ -13,10 +13,10 @@ public class TaskEnableRobot : ILoopable
     {
         bool gamepadOk = false;
         /* keep feeding watchdog to enable motors */
-        if (Hardware.gamepad.GetConnectionStatus() == CTRE.UsbDeviceConnection.Connected)
+        if (Hardware.gamepad.GetConnectionStatus() == CTRE.Phoenix.UsbDeviceConnection.Connected)
         {
-            /* keep talons enabled */
-            CTRE.Watchdog.Feed();
+			/* keep talons enabled */
+			CTRE.Phoenix.Watchdog.Feed();
             /* take note if gamepad is present */
             gamepadOk = true;
         }

@@ -1,7 +1,7 @@
 /** changes to the framework class below will be merged into Phoenix Framework */
 using System;
 using Microsoft.SPOT;
-
+using CTRE.Phoenix;
 namespace CTRE.Motion
 {
     public class ServoParameters
@@ -18,7 +18,7 @@ namespace CTRE.Motion
         public float durationThreshold = 0;
 
         private float IAccum = 0;
-        private Stopwatch _st = new CTRE.Stopwatch();
+        private Stopwatch _st = new CTRE.Phoenix.Stopwatch();
 
 
         public void ResetIntegralAccum()

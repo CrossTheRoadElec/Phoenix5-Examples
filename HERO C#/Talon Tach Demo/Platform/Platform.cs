@@ -15,12 +15,12 @@
  * Long term there will likely be a configurable GUI in Phoenix Framework to create robot applciations in this format (in multiple languages).
  */
 
-using CTRE.MotorControllers;
-using CTRE.Tasking;
-using CTRE.Controller;
-using CTRE.HERO.Module;
-using CTRE.Mechanical;
-
+using CTRE.Phoenix.Tasking;
+using CTRE.Phoenix.Controller;
+using CTRE.HERO;
+using CTRE.Phoenix.Mechanical;
+using CTRE.Phoenix.MotorControl.CAN;
+using CTRE.Gadgeteer.Module;
 namespace Platform
 {
     /* System wide constants.  Use 'public static' because these are single objects. */
@@ -39,14 +39,14 @@ namespace Platform
         /* peak voltage for ARM */
         public static float MAX_VOLTAGE = 8.9f;
         /* tolerance for close loop err */
-        public static uint TOLERANCE = 0;
+        public static int TOLERANCE = 0;
         /* ARM target positions */
         public static float Target1 = -0.1f;
         public static float Target2 = -0.23f;
 
         /* WHEEL target speeds in RPM */
-        public static float SpeedTarget1 = 1000;
-        public static float SpeedTarget2 = 2000;
+        public static float SpeedTarget1 = 150;
+        public static float SpeedTarget2 = 200;
 
         /* WHEEL white marks per rotation. Wheel is a six spoke 6" Rubber wheel. Each spoke is paint markered white. */
         public static float MarksPerRotation = 6; //!< We have six white marks on our Tach/Wheel.
@@ -56,12 +56,12 @@ namespace Platform
     public static class Hardware
     {
         /* Talons on CAN bus */
-        public static TalonSrx armTalon = new TalonSrx(1); //Talon ID = 1,
-        public static TalonSrx wheelTalon = new TalonSrx(0); //Talon ID = 0
+        public static TalonSRX armTalon = new TalonSRX(2); //Talon ID = 1,
+        public static TalonSRX wheelTalon = new TalonSRX(1); //Talon ID = 0
         /* logitech gamepad */
-        public static GameController gamepad = new CTRE.Controller.GameController(CTRE.UsbHostDevice.GetInstance(0), 0);
+        public static GameController gamepad = new CTRE.Phoenix.Controller.GameController(CTRE.Phoenix.UsbHostDevice.GetInstance(0), 0);
         /* sensor slice is the last stage before geared output */
-        public static VersaPlanetaryWithMagEnc ArmGearBox = new VersaPlanetaryWithMagEnc(Hardware.armTalon);
+        public static VersaPlanetaryWithMagEnc ArmGearBox = new VersaPlanetaryWithMagEnc(4096f,Hardware.armTalon);
         /* no gearbox, just 1:1 linkage */
         public static Gearbox WheelGearBox = new Gearbox(Hardware.wheelTalon);
         /* CTRE LCD display */

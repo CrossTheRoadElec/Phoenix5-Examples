@@ -1,10 +1,12 @@
 /**
  * Task manageing the CANifier outputs to the LED strip.
  */
-using CTRE.Mechanical;
+using CTRE.Phoenix.Mechanical;
 using CTRE.Motion;
-using CTRE.MotorControllers;
+using CTRE.Phoenix.MotorControl;
+using CTRE.Phoenix.MotorControl.CAN;
 using Platform;
+using CTRE.Phoenix.LowLevel;
 
 namespace Subsystem
 {
@@ -12,7 +14,7 @@ namespace Subsystem
     {
         /* grab the gearbox and talon object */
         Gearbox _gearBox = Hardware.WheelGearBox;
-        TalonSrx _tal = Hardware.wheelTalon;
+        TalonSRX _tal = Hardware.wheelTalon;
 
         float _targetSpeedRPM = 0;
 
@@ -23,31 +25,39 @@ namespace Subsystem
             Setup();
         }
 
-        public TalonSrx MotorController
+        public TalonSRX MotorController
         {
             get
             {
-                return (TalonSrx)_gearBox.GetMaster();
+                return (TalonSRX)_gearBox.MasterMotorController;
             }
         }
 
         public void Setup()
         {
-            _tal.ConfigFwdLimitSwitchNormallyOpen(true);
-            _tal.ConfigRevLimitSwitchNormallyOpen(true);
-            _tal.SetControlMode(ControlMode.kVoltage); //voltage control mode
-            _tal.SetFeedbackDevice(TalonSrx.FeedbackDevice.CtreMagEncoder_Relative); //sensor type
-            _tal.SetStatusFrameRateMs(TalonSrx.StatusFrameRate.StatusFrameRatePulseWidthMeas, 1); //feedback to 1ms
+           //_tal.ConfigFwdLimitSwitchNormallyOpen(true);
+			_tal.ConfigForwardLimitSwitchSource(CTRE.Phoenix.MotorControl.LimitSwitchSource.FeedbackConnector, CTRE.Phoenix.MotorControl.LimitSwitchNormal.NormallyOpen);
+			_tal.ConfigReverseLimitSwitchSource(CTRE.Phoenix.MotorControl.LimitSwitchSource.FeedbackConnector, CTRE.Phoenix.MotorControl.LimitSwitchNormal.NormallyOpen);
+
+			//	_tal.ConfigRevLimitSwitchNormallyOpen(true);
+			//_tal.SetControlMode(ControlMode.kVoltage); //voltage control mode
+
+			_tal.ConfigSelectedFeedbackSensor(CTRE.Phoenix.MotorControl.FeedbackDevice.CTRE_MagEncoder_Relative);
+         //   _tal.SetFeedbackDevice(TalonSRX.FeedbackDevice.CtreMagEncoder_Relative); //sensor type
+          // _tal.SetStatusFrameRateMs(TalonSRX.StatusFrameRate.StatusFrameRatePulseWidthMeas, 1); //feedback to 1ms
+
+
         }
 
         public float MeasuredSpeed
         {
             get
             {
-                /* sample the period*/
-                uint periodUs = (uint)_tal.GetPulseWidthRiseToRiseUs();
-                /* convert to frequency */
-                float edgesPerMin;
+				/* sample the period*/
+				int periodUs;
+				 _tal.GetSensorCollection().GetPulseWidthRiseToRiseUs(out periodUs);
+				/* convert to frequency */
+				float edgesPerMin;
                 if (periodUs == 0)
                 {
                     /* wheel is not spinning or sensor is disconnected */
@@ -78,12 +88,13 @@ namespace Subsystem
             float measuredSpeedRpm = MeasuredSpeed;
             /* robot controller level closed loop, replace with firmware close loop later */
             float output = _ServoParameters.PID(_targetSpeedRPM, measuredSpeedRpm, 0);
-            _tal.Set(output);
+			//_tal.Set(CTRE.Phoenix.MotorControl.ControlMode.Velocity,output);
+			_tal.Set(ControlMode.PercentOutput, output);
         }
 
         public void SetPercentOutput(float percentOut)
         {
-            _tal.Set(percentOut);
+            _tal.Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput,percentOut);
         }
 
         public void Stop()

@@ -3,7 +3,7 @@
  * @link http://www.ctr-electronics.com/srx-magnetic-encoder.html
  */
 
-public class TaskOnceAbsoluteArmSensor : CTRE.Tasking.ILoopable
+public class TaskOnceAbsoluteArmSensor : CTRE.Phoenix.Tasking.ILoopable
 {
     /* ILoopable */
     public bool IsDone()

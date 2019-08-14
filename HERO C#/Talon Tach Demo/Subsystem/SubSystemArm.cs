@@ -4,8 +4,9 @@
  * Limit switches are automatic via Talon Tach and Talon SRXs.
  * @link http://www.ctr-electronics.com/talon-tach-tachometer-new-limit-switch.html
  */
-using CTRE.Mechanical;
-using CTRE.MotorControllers;
+using CTRE.Phoenix.Mechanical;
+using CTRE.Phoenix.MotorControl;
+using CTRE.Phoenix.MotorControl.CAN;
 using Platform;
 
 namespace Subsystem
@@ -16,83 +17,87 @@ namespace Subsystem
         SensoredGearbox _gearBox = Hardware.ArmGearBox;
 
         /* track which control mode we are in */
-        ControlMode _controlMode = ControlMode.kPercentVbus;
+        ControlMode _controlMode = ControlMode.PercentOutput;
 
         public SubSystemArm()
         {
             Setup();
         }
 
-        public TalonSrx MotorController
+        public TalonSRX MotorController
         {
             get
             {
-                return (TalonSrx)_gearBox.GetMaster();
+                return (TalonSRX)_gearBox.MasterMotorController;
             }
         }
 
         public void Setup()
         {
-            TalonSrx armTalon = (TalonSrx)_gearBox.GetMaster();
+            TalonSRX armTalon = (TalonSRX)_gearBox.MasterMotorController;
 
-            armTalon.SetStatusFrameRateMs(TalonSrx.StatusFrameRate.StatusFrameRateGeneral, 10); //Send updates every 10ms instead of 10ms
-            armTalon.SetStatusFrameRateMs(TalonSrx.StatusFrameRate.StatusFrameRatePulseWidthMeas, 1); //1ms update insead of 100ms for encoder
-            armTalon.SetSensorDirection(true); //reversed sensor
-            armTalon.ConfigFwdLimitSwitchNormallyOpen(false);
-            armTalon.ConfigRevLimitSwitchNormallyOpen(false);
-            armTalon.EnableZeroSensorPositionOnReverseLimit(false); //enable on reverse limit
-            armTalon.EnableZeroSensorPositionOnForwardLimit(false);
+            armTalon.SetStatusFramePeriod(StatusFrame.Status_1_General_, 10); //Send updates every 10ms instead of 10ms
+          //  armTalon.SetStatusFrameRateMs(TalonSRX.StatusFrameRate.StatusFrameRatePulseWidthMeas, 1); //1ms update insead of 100ms for encoder
+            armTalon.SetSensorPhase(true); //reversed sensor
+			armTalon.ConfigForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed);
+			armTalon.ConfigReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed);
+		
+			
+			armTalon.ConfigClearPositionOnLimitR(false,10); //enable on reverse limit
+			armTalon.ConfigClearPositionOnLimitF(false,10);
         }
         private void SetupPositionServo()
         {
-            TalonSrx armTalon = (TalonSrx)_gearBox.GetMaster();
+            TalonSRX armTalon = (TalonSRX)_gearBox.MasterMotorController;
 
-            armTalon.ConfigNominalOutputVoltage(0, 0);
-            armTalon.ConfigPeakOutputVoltage(Constants.MAX_VOLTAGE, -Constants.MAX_VOLTAGE);
-            armTalon.SetAllowableClosedLoopErr(0, Constants.TOLERANCE);
+			armTalon.ConfigNominalOutputForward(0);
+			armTalon.ConfigNominalOutputReverse(0);
 
-            armTalon.SetPID(0, Constants.KPARM, Constants.KIARM, Constants.KDARM);
+			armTalon.ConfigPeakOutputForward(1);
+			armTalon.ConfigPeakOutputReverse(-1);
 
-            _controlMode = ControlMode.kPosition;
+			armTalon.ConfigAllowableClosedloopError(0,Constants.TOLERANCE);
+			armTalon.Config_kP(Constants.KPARM);
+			armTalon.Config_kI(Constants.KIARM);
+			armTalon.Config_kD(Constants.KDARM);
+            _controlMode = ControlMode.Position;
 
             armTalon.SelectProfileSlot(0);
-            armTalon.SetMotionMagicAcceleration(60.0f);
-            armTalon.SetMotionMagicCruiseVelocity(22.0f);
+            armTalon.ConfigMotionAcceleration(60);
+            armTalon.ConfigMotionCruiseVelocity(22);
 
-            armTalon.SetVoltageRampRate(0f);
         }
 
         private void SetupMotorOutput()
         {
-            TalonSrx armTalon = (TalonSrx)_gearBox.GetMaster();
+            TalonSRX armTalon = (TalonSRX)_gearBox.MasterMotorController;
 
-            //_gearBox.SetControlMode(ControlMode.kPercentVbus);
-            _controlMode = ControlMode.kPercentVbus;
+            _controlMode = ControlMode.PercentOutput;
 
-            armTalon.SetVoltageRampRate(16.0f);
         }
 
         public void SetTargetPos(float pos)
         {
-            if (_controlMode != ControlMode.kPosition)
+            if (_controlMode != ControlMode.Position)
             {
                 SetupPositionServo();
             }
-            _gearBox.Set(pos, _controlMode);
+			_gearBox.Set(_controlMode, pos);
         }
 
         public void SetPercentOutput(float percentOutput)
         {
-            percentOutput = CTRE.Util.Cap(percentOutput, 0.20f);
+            percentOutput = CTRE.Phoenix.Util.Cap(percentOutput, 0.25f);
 
-            if (_controlMode != ControlMode.kPercentVbus)
+            if (_controlMode != ControlMode.PercentOutput)
             {
                 SetupMotorOutput();
             }
-            _gearBox.Set(percentOutput, _controlMode);
-        }
+			_gearBox.Set(_controlMode, percentOutput);
 
-        public void Stop()
+		}
+
+		public void Stop()
         {
             SetPercentOutput(0);
         }

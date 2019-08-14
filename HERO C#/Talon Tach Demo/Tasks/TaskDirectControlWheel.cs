@@ -5,8 +5,9 @@
  * @link http://www.ctr-electronics.com/talon-tach-tachometer-new-limit-switch.html
  */
 using Platform;
+using CTRE.Phoenix;
 
-public class TaskDirectControlWheel : CTRE.Tasking.ILoopable
+public class TaskDirectControlWheel : CTRE.Phoenix.Tasking.ILoopable
 {
     float _percentOut = 0;
 
@@ -14,11 +15,11 @@ public class TaskDirectControlWheel : CTRE.Tasking.ILoopable
     {
         float rightStickY = Hardware.gamepad.GetAxis(5);  // Ensure Positive is turn-right, negative is turn-left
 
-        CTRE.Util.Deadband(ref rightStickY);
+        CTRE.Phoenix.Util.Deadband(ref rightStickY);
 
         _percentOut = rightStickY; // [-1,1]
-        _percentOut = LinearInterpolation.Calculate(_percentOut, -1, -13f, +1, +13f); // scale to [-13V, +13V]
-        _percentOut = CTRE.Util.Cap(_percentOut, 13f); // cap to 13V
+   //     _percentOut = LinearInterpolation.Calculate(_percentOut, -1, -13f, +1, +13f); // scale to [-13V, +13V]
+     //   _percentOut = CTRE.Phoenix.Util.Cap(_percentOut, 13f); // cap to 13V
 
         Subsystems.Wheel.SetPercentOutput(_percentOut);
 

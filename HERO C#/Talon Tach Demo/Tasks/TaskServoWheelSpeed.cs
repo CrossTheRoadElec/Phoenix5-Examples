@@ -3,7 +3,7 @@
  */
 using Platform;
 
-public class TaskServoWheelSpeed : CTRE.Tasking.ILoopable
+public class TaskServoWheelSpeed : CTRE.Phoenix.Tasking.ILoopable
 {
     float _target = 0;
 
