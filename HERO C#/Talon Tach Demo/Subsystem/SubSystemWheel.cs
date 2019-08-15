@@ -35,16 +35,10 @@ namespace Subsystem
 
         public void Setup()
         {
-           //_tal.ConfigFwdLimitSwitchNormallyOpen(true);
 			_tal.ConfigForwardLimitSwitchSource(CTRE.Phoenix.MotorControl.LimitSwitchSource.FeedbackConnector, CTRE.Phoenix.MotorControl.LimitSwitchNormal.NormallyOpen);
 			_tal.ConfigReverseLimitSwitchSource(CTRE.Phoenix.MotorControl.LimitSwitchSource.FeedbackConnector, CTRE.Phoenix.MotorControl.LimitSwitchNormal.NormallyOpen);
-
-			//	_tal.ConfigRevLimitSwitchNormallyOpen(true);
-			//_tal.SetControlMode(ControlMode.kVoltage); //voltage control mode
-
 			_tal.ConfigSelectedFeedbackSensor(CTRE.Phoenix.MotorControl.FeedbackDevice.CTRE_MagEncoder_Relative);
-         //   _tal.SetFeedbackDevice(TalonSRX.FeedbackDevice.CtreMagEncoder_Relative); //sensor type
-          // _tal.SetStatusFrameRateMs(TalonSRX.StatusFrameRate.StatusFrameRatePulseWidthMeas, 1); //feedback to 1ms
+			_tal.SetStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 1);
 
 
         }
@@ -79,17 +73,16 @@ namespace Subsystem
         public void ServoToSpeed(float speedRPM)
         {
             /* close loop constants */
-            _ServoParameters.P = 0.01f;
+            _ServoParameters.P = 0.005f;
             _ServoParameters.I = 0 * 0.0001f;
-            _ServoParameters.F = 6f / 2000f; // about 6V for 2000 RPM
+			_ServoParameters.F =  6f / 2000f; // about 6V for 2000 RPM
             /* save the target */
             _targetSpeedRPM = speedRPM;
             /* get measured speed */
             float measuredSpeedRpm = MeasuredSpeed;
             /* robot controller level closed loop, replace with firmware close loop later */
             float output = _ServoParameters.PID(_targetSpeedRPM, measuredSpeedRpm, 0);
-			//_tal.Set(CTRE.Phoenix.MotorControl.ControlMode.Velocity,output);
-			_tal.Set(ControlMode.PercentOutput, output);
+			_tal.Set(ControlMode.PercentOutput, (output/2));
         }
 
         public void SetPercentOutput(float percentOut)

@@ -57,7 +57,7 @@ namespace Platform
     {
         /* Talons on CAN bus */
         public static TalonSRX armTalon = new TalonSRX(2); //Talon ID = 1,
-        public static TalonSRX wheelTalon = new TalonSRX(1); //Talon ID = 0
+        public static TalonSRX wheelTalon = new TalonSRX(0); //Talon ID = 0
         /* logitech gamepad */
         public static GameController gamepad = new CTRE.Phoenix.Controller.GameController(CTRE.Phoenix.UsbHostDevice.GetInstance(0), 0);
         /* sensor slice is the last stage before geared output */

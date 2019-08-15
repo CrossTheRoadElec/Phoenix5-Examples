@@ -21,6 +21,7 @@ namespace Subsystem
 
         public SubSystemArm()
         {
+
             Setup();
         }
 
@@ -35,13 +36,12 @@ namespace Subsystem
         public void Setup()
         {
             TalonSRX armTalon = (TalonSRX)_gearBox.MasterMotorController;
-
+			armTalon.SetInverted(false);
             armTalon.SetStatusFramePeriod(StatusFrame.Status_1_General_, 10); //Send updates every 10ms instead of 10ms
-          //  armTalon.SetStatusFrameRateMs(TalonSRX.StatusFrameRate.StatusFrameRatePulseWidthMeas, 1); //1ms update insead of 100ms for encoder
-            armTalon.SetSensorPhase(true); //reversed sensor
+			armTalon.SetStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 1);
+			armTalon.SetSensorPhase(true); //reversed sensor
 			armTalon.ConfigForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed);
 			armTalon.ConfigReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed);
-		
 			
 			armTalon.ConfigClearPositionOnLimitR(false,10); //enable on reverse limit
 			armTalon.ConfigClearPositionOnLimitF(false,10);
@@ -60,7 +60,7 @@ namespace Subsystem
 			armTalon.Config_kP(Constants.KPARM);
 			armTalon.Config_kI(Constants.KIARM);
 			armTalon.Config_kD(Constants.KDARM);
-            _controlMode = ControlMode.Position;
+            _controlMode = ControlMode.MotionMagic;
 
             armTalon.SelectProfileSlot(0);
             armTalon.ConfigMotionAcceleration(60);
@@ -78,7 +78,7 @@ namespace Subsystem
 
         public void SetTargetPos(float pos)
         {
-            if (_controlMode != ControlMode.Position)
+            if (_controlMode != ControlMode.MotionMagic)
             {
                 SetupPositionServo();
             }

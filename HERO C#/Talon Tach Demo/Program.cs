@@ -19,8 +19,8 @@ namespace Talon_Tach_Demo
     {
         public override void RunForever()
         {
-            /* any system wide initializations here */
-
+			/* any system wide initializations here */
+			Hardware.armTalon.SetSelectedSensorPosition(0,10);
             /* add all the periodic tasks */
             foreach(ILoopable task in Platform.Tasks.FullList)
                 Schedulers.PeriodicTasks.Add(task);
