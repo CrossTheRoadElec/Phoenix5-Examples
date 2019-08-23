@@ -18,7 +18,7 @@ void Robot::RobotInit() {
      * Invert Motor to have green LEDs when driving Talon Forward / Requesting Postiive Output
      * Phase sensor to have positive increment when driving Talon Forward (Green LED)
      */
-    _talon->SetSensorPhase(true);
+    _talon->SetSensorPhase(false);
     _talon->SetInverted(false);
 
     /* Set relevant frame periods to be at least as fast as periodic rate */
@@ -53,7 +53,9 @@ void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
     /* Get gamepad axis - forward stick is positive */
     double leftYstick = -1.0 * _joy->GetY();
+    double RightYstick = -1.0 * _joy->GetRawAxis(5);
     if (fabs(leftYstick) < 0.10) { leftYstick = 0;} /* deadband 10% */
+    if (fabs(RightYstick) < 0.10) { RightYstick = 0;} /* deadband 10% */
 
     /* Get current Talon SRX motor output */
     double motorOutput = _talon->GetMotorOutputPercent();
@@ -76,7 +78,7 @@ void Robot::TeleopPeriodic() {
         /* Motion Magic */ 
         
         /*4096 ticks/rev * 10 Rotations in either direction */
-        double targetPos = leftYstick * 4096 * 10.0;
+        double targetPos = RightYstick * 4096 * 10.0;
         _talon->Set(ControlMode::MotionMagic, targetPos);
 
         /* Append more signals to print when in speed mode */
