@@ -41,11 +41,11 @@
  * and you have followed the walk-through in the Talon SRX Software Reference Manual.
  * 
  * Controls:
- * Button 1: When held, put Talon in Motion Magic mode and allow Talon to drive [-10, 10] 
+ * Button 1(Button A): When held, put Talon in Motion Magic mode and allow Talon to drive [-10, 10] 
  * 	rotations.
- * Button 2: When pushed, the selected feedback sensor gets zero'd
- * Button 5(Left shoulder): When pushed, will decrement the smoothing of the motion magic down to 0
- * Button 6(Right shoulder): When pushed, will increment the smoothing of the motion magic up to 8
+ * Button 2(Button B): When pushed, the selected feedback sensor gets zero'd
+ * POV 180(Dpad Down): When pushed, will decrement the smoothing of the motion magic down to 0
+ * POV 90(Dpad Up): When pushed, will increment the smoothing of the motion magic up to 8
  * Left Joystick Y-Axis:
  * 	+ Percent Output: Throttle Talon SRX forward and reverse, use to confirm hardware setup.
  * 	+ Motion Maigic: Servo Talon SRX forward and reverse, [-10, 10] rotations.
@@ -163,7 +163,7 @@ public class Robot extends TimedRobot {
 		 * Peform Motion Magic when Button 1 is held, else run Percent Output, which can
 		 * be used to confirm hardware setup.
 		 */
-		if (_joy.getRawButton(6)) {
+		if (_joy.getRawButton(1)) {
 			/* Motion Magic */
 
 			/* 4096 ticks/rev * 10 Rotations in either direction */
