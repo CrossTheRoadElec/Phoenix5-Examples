@@ -45,9 +45,10 @@
  * 	rotations.
  * Button 2(Button B): When pushed, the selected feedback sensor gets zero'd
  * POV 180(Dpad Down): When pushed, will decrement the smoothing of the motion magic down to 0
- * POV 90(Dpad Up): When pushed, will increment the smoothing of the motion magic up to 8
+ * POV 0(Dpad Up): When pushed, will increment the smoothing of the motion magic up to 8
  * Left Joystick Y-Axis:
  * 	+ Percent Output: Throttle Talon SRX forward and reverse, use to confirm hardware setup.
+ * Right Joystick Y-Axis:
  * 	+ Motion Maigic: Servo Talon SRX forward and reverse, [-10, 10] rotations.
  * 
  * Gains for Motion Magic may need to be adjusted in Constants.java
