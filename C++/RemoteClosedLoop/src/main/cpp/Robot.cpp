@@ -172,6 +172,11 @@ public:
 	double _target1 = 0;
 
 	void InitRobot() {
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_talonRght->ConfigFactoryDefault();
+		_talonLeft->ConfigFactoryDefault();	
+		_talonPigeon->ConfigFactoryDefault();	
+		_imu->ConfigFactoryDefault();	
 		/* Ensure robot starts in neutral mode */
 		_talonRght->Set(ControlMode::PercentOutput, 0);
 		_talonLeft->Set(ControlMode::PercentOutput, 0);

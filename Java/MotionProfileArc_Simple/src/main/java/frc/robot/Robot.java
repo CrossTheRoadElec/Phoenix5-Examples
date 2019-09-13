@@ -139,6 +139,7 @@ public class Robot extends TimedRobot {
 
         /* -------------- _config the left ----------------- */
         _leftAuxFollower.configFactoryDefault(); /* no special configs */
+        _pidgy.configFactoryDefault();
 
         /* pick the sensor phase and desired direction */
         _rightMaster.setSensorPhase(true);

@@ -6,7 +6,7 @@ using HERO_Mecanum_Drive_Example.Platform;
 
 namespace HERO_Mecanum_Drive_Example
 {
-    public class TaskTeleopDriveWithRC : CTRE.Tasking.ILoopable
+    public class TaskTeleopDriveWithRC : CTRE.Phoenix.Tasking.ILoopable
     {
         private float[] _pulseWidUs = new float[4];
         private float[] _periodUs = new float[4];
@@ -25,15 +25,15 @@ namespace HERO_Mecanum_Drive_Example
             Hardware.ServoHoldHeading.ServoParameters.D = 0.001f;
 
             /* poll RC radio */
-            float forward = Hardware.Futaba3Ch.GetDutyCyclePerc(CTRE.RCRadio3Ch.Channel.Channel2);
-            float turn = Hardware.Futaba3Ch.GetDutyCyclePerc(CTRE.RCRadio3Ch.Channel.Channel1);
+            float forward = Hardware.Futaba3Ch.GetDutyCyclePerc(CTRE.Phoenix.RCRadio3Ch.Channel.Channel2);
+            float turn = Hardware.Futaba3Ch.GetDutyCyclePerc(CTRE.Phoenix.RCRadio3Ch.Channel.Channel1);
             float strafe = 0;
 
-            bool toggleSwitch = Hardware.Futaba3Ch.GetSwitchValue(CTRE.RCRadio3Ch.Channel.Channel3);
+            bool toggleSwitch = Hardware.Futaba3Ch.GetSwitchValue(CTRE.Phoenix.RCRadio3Ch.Channel.Channel3);
 
-            CTRE.Util.Deadband(ref forward);
-            CTRE.Util.Deadband(ref turn);
-            CTRE.Util.Deadband(ref strafe);
+			CTRE.Phoenix.Util.Deadband(ref forward);
+			CTRE.Phoenix.Util.Deadband(ref turn);
+			CTRE.Phoenix.Util.Deadband(ref strafe);
 
             if (Tasks.LowBatteryDetect.BatteryIsLow)
             {
@@ -44,12 +44,12 @@ namespace HERO_Mecanum_Drive_Example
 
             if (toggleSwitch && (turn == 0) )
             {
-                Hardware.ServoHoldHeading.Set(CTRE.Drive.Styles.Basic.PercentOutput, forward, strafe);
+                Hardware.ServoHoldHeading.Set(CTRE.Phoenix.Drive.Styles.BasicStyle.PercentOutput, forward, strafe);
             }
             else
             {
                 Hardware.ServoHoldHeading.Disable(); /* let the servo know that we've stopped using it */
-                Hardware.drivetrain.Set(CTRE.Drive.Styles.Basic.PercentOutput, forward, strafe, turn);
+                Hardware.drivetrain.Set(CTRE.Phoenix.Drive.Styles.BasicStyle.PercentOutput, forward, strafe, turn);
             }
         }
 

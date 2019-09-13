@@ -14,6 +14,8 @@ public:
 	void RobotInit() {
 		//Initialize talon with ID 3
 		_talon = new TalonSRX(3);
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_talon->ConfigFactoryDefault();
 
 	    /* nonzero to block the config until success, zero to skip checking */
     	const int kTimeoutMs = 30;

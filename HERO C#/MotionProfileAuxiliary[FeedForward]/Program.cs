@@ -20,8 +20,13 @@ namespace MotionProfileAuxiliary
 
         public static  void Main()
         {
-            /* Set neutral mode */
-            Hardware._rightTalon.SetNeutralMode(NeutralMode.Brake);
+			/* Factory Default all hardware to prevent unexpected behaviour */
+			Hardware._rightTalon.ConfigFactoryDefault();
+			Hardware._leftTalon.ConfigFactoryDefault();
+			Hardware._leftVictor.ConfigFactoryDefault();
+			Hardware._pidgey.ConfigFactoryDefault();
+			/* Set neutral mode */
+			Hardware._rightTalon.SetNeutralMode(NeutralMode.Brake);
             Hardware._leftVictor.SetNeutralMode(NeutralMode.Brake);
             Hardware._leftTalon.SetNeutralMode(NeutralMode.Brake);
 

@@ -34,7 +34,7 @@
   <ItemGroup>
     <Compile Include="Framework\ConcurrentScheduler.cs" />
     <Compile Include="Framework\HsvToRgb.cs" />
-    <Compile Include="Framework\Mecanum.cs" />
+    <Compile Include="Framework\ServoParameters.cs" />
     <Compile Include="Framework\ServoHoldHeadingWithImu.cs" />
     <Compile Include="Platform\Schedulers.cs" />
     <Compile Include="Platform\Tasks.cs" />

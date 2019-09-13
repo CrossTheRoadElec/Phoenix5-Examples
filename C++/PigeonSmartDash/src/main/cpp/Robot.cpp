@@ -22,7 +22,11 @@ public:
 		_pidgey = new PigeonIMU(_talon);
 		_plotThread = NULL;
 	}
-
+	void RobotInit(){
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_talon->ConfigFactoryDefault();
+		_pidgey->ConfigFactoryDefault();
+	}
 	void TeleopInit() {
 		_plotThread = new PlotThread(this);
 	}

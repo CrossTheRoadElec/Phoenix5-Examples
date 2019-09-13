@@ -1,7 +1,7 @@
 /** changes to the framework class below will be merged into Phoenix Framework */
 using Microsoft.SPOT;
 
-namespace CTRE.Tasking
+namespace CTRE.Phoenix.Tasking
 {
     public class ConcurrentScheduler : IProcessable, ILoopable
     {

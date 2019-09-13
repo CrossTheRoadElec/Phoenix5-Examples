@@ -2,35 +2,38 @@
  * Example Hardware list below.  
  * This robot platform includes CANifier, several Talons, and a Pigeon, and support for a Futaba 3Ch RC radio.
  */
-using CTRE.MotorControllers;
-
+using CTRE.Phoenix.MotorControl.CAN;
+using CTRE.Phoenix.Drive;
+using CTRE.Phoenix.Controller;
+using CTRE.Phoenix;
+using CTRE.Phoenix.Sensors;
 namespace HERO_Mecanum_Drive_Example.Platform
 {
     public static class Hardware
     {
         /* the hardware objects.  Use 'public static' because these are single objects. */
 
-        public static TalonSrx leftFrnt = new TalonSrx(1);
-        public static TalonSrx leftRear = new TalonSrx(2);
-        public static TalonSrx rghtFrnt = new TalonSrx(4);
-        public static TalonSrx rghtRear = new TalonSrx(3);
-        public static CTRE.Drive.Mecanum drivetrain = new CTRE.Drive.Mecanum(leftFrnt, leftRear, rghtFrnt, rghtRear);
+        public static TalonSRX leftFrnt = new TalonSRX(1);
+        public static TalonSRX leftRear = new TalonSRX(2);
+        public static TalonSRX rghtFrnt = new TalonSRX(4);
+        public static TalonSRX rghtRear = new TalonSRX(3);
+        public static Mecanum drivetrain = new Mecanum(leftFrnt, leftRear, rghtFrnt, rghtRear);
 
-        public static CTRE.Controller.GameController gamepad = new CTRE.Controller.GameController(CTRE.UsbHostDevice.GetInstance(0), 0);
+        public static GameController gamepad = new GameController(CTRE.Phoenix.UsbHostDevice.GetInstance(0), 0);
 
-        public static CTRE.CANifier canifier_LedStrip_RCRADIO = new CTRE.CANifier(0);
+        public static CANifier canifier_LedStrip_RCRADIO = new CANifier(0);
 
-        public static CTRE.RCRadio3Ch Futaba3Ch = new CTRE.RCRadio3Ch(canifier_LedStrip_RCRADIO);
+        public static RCRadio3Ch Futaba3Ch = new RCRadio3Ch(canifier_LedStrip_RCRADIO);
 
         /** Pigeon is plugged into the left rear Talon via ribbon cable. */
-        public static CTRE.PigeonImu Pigeon = new CTRE.PigeonImu(leftRear);
+        public static PigeonIMU Pigeon = new PigeonIMU(leftRear);
 
-        public static CTRE.ServoParameters ParametersHoldHeading = new CTRE.ServoParameters();
+        public static CTRE.Phoenix.Motion.ServoParameters ParametersHoldHeading = new CTRE.Phoenix.Motion.ServoParameters();
 
         public static CTRE.Motion.ServoHoldHeadingWithImu ServoHoldHeading
             = new CTRE.Motion.ServoHoldHeadingWithImu(Hardware.Pigeon,
                                                         Hardware.drivetrain,
-                                                        CTRE.Drive.Styles.Basic.PercentOutput,
+                                                        CTRE.Phoenix.Drive.Styles.BasicStyle.PercentOutput,
                                                         ParametersHoldHeading,
                                                         0,
                                                         0.2f);

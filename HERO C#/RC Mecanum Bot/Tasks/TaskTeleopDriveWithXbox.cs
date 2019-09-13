@@ -6,7 +6,7 @@ using HERO_Mecanum_Drive_Example.Platform;
 
 namespace HERO_Mecanum_Drive_Example
 {
-    public class TaskTeleopDriveWithXbox : CTRE.Tasking.ILoopable
+    public class TaskTeleopDriveWithXbox : CTRE.Phoenix.Tasking.ILoopable
     {
         public bool IsDone()
         {
@@ -19,9 +19,9 @@ namespace HERO_Mecanum_Drive_Example
             float y = +1 * Hardware.gamepad.GetAxis(1); // Ensure Positive is forward, negative is reverse
             float turn = Hardware.gamepad.GetAxis(2);  // Ensure Positive is turn-right, negative is turn-left
 
-            CTRE.Util.Deadband(ref x);
-            CTRE.Util.Deadband(ref y);
-            CTRE.Util.Deadband(ref turn);
+            CTRE.Phoenix.Util.Deadband(ref x);
+            CTRE.Phoenix.Util.Deadband(ref y);
+            CTRE.Phoenix.Util.Deadband(ref turn);
 
             if (Tasks.LowBatteryDetect.BatteryIsLow)
             {
@@ -30,7 +30,7 @@ namespace HERO_Mecanum_Drive_Example
                 turn *= 0.25f;
             }
 
-            Hardware.drivetrain.Set(CTRE.Drive.Styles.Basic.PercentOutput, y, x, turn);
+            Hardware.drivetrain.Set(CTRE.Phoenix.Drive.Styles.BasicStyle.PercentOutput, y, x, turn);
         }
 
         public void OnStart()

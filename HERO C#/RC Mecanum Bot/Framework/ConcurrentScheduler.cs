@@ -1,7 +1,7 @@
 using System;
 using Microsoft.SPOT;
 
-namespace CTRE.Tasking
+namespace CTRE.Phoenix.Tasking
 {
     public class ConcurrentScheduler : IProcessable, ILoopable
     {

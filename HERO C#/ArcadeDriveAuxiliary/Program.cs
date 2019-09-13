@@ -10,8 +10,13 @@ namespace ArcadeDriveAuxiliary
     {
         public static void Main()
         {
-            /* Disable drivetrain/motors */
-            Hardware._rightTalon.Set(ControlMode.PercentOutput, 0);
+			/* Factory Default all hardware to prevent unexpected behaviour */
+			Hardware._rightTalon.ConfigFactoryDefault();
+			Hardware._leftVictor.ConfigFactoryDefault();
+
+
+			/* Disable drivetrain/motors */
+			Hardware._rightTalon.Set(ControlMode.PercentOutput, 0);
             Hardware._leftVictor.Set(ControlMode.PercentOutput, 0);
 
             /* Set Neutral Mode */

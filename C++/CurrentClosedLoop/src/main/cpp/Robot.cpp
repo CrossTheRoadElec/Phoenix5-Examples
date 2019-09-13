@@ -15,6 +15,9 @@ private:
 	int _loops = 0;
 
 	void RobotInit() {
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_talon->ConfigFactoryDefault();
+
 		/* set the peak and nominal outputs, 12V means full */
 		_talon->ConfigNominalOutputForward(0, kTimeoutMs);
 		_talon->ConfigNominalOutputReverse(0, kTimeoutMs);

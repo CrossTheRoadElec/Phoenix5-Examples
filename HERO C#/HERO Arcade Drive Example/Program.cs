@@ -24,8 +24,13 @@ namespace Hero_Arcade_Drive_Example
 
         public static void Main()
         {
-            /* loop forever */
-            while (true)
+			/* Factory Default all hardware to prevent unexpected behaviour */
+			rightSlave.ConfigFactoryDefault();
+			right.ConfigFactoryDefault();
+			leftSlave.ConfigFactoryDefault();
+			left.ConfigFactoryDefault();
+			/* loop forever */
+			while (true)
             {
                 /* drive robot using gamepad */
                 Drive();

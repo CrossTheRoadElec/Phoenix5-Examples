@@ -1,17 +1,21 @@
 //software pid Pigeon heading => talon (PercentOutput, Voltage).
 using System;
 using Microsoft.SPOT;
-using CTRE.Drive;
-using CTRE.Tasking;
-using CTRE.MotorControllers;
+using CTRE.Phoenix.Tasking;
+using CTRE.Phoenix.MotorControl;
+using CTRE.Phoenix.Sensors;
+using CTRE.Phoenix.Drive;
+using CTRE.Phoenix;
+using CTRE.Phoenix.Motion;
+
 
 namespace CTRE.Motion
 {
     public class ServoHoldHeadingWithImu
     {
-        PigeonImu _pidgey;
+        PigeonIMU _pidgey;
         IDrivetrain _driveTrain;
-        Styles.Basic _selectedStyle;
+        Styles.BasicStyle _selectedStyle;
         ServoParameters _servoParams = new ServoParameters();
 
         float _targetHeading;
@@ -30,7 +34,7 @@ namespace CTRE.Motion
         }
 
         /** Go Straight using the IMU */
-        public ServoHoldHeadingWithImu(PigeonImu pigeonImu, IDrivetrain driveTrain, Styles.Basic selectedStyle, ServoParameters parameters, float targetHeading, float maxOutput)
+        public ServoHoldHeadingWithImu(PigeonIMU pigeonImu, IDrivetrain driveTrain, Styles.BasicStyle selectedStyle, ServoParameters parameters, float targetHeading, float maxOutput)
         {
             _pidgey = pigeonImu;
             _driveTrain = driveTrain;
@@ -41,7 +45,7 @@ namespace CTRE.Motion
         }
 
         /** Go Straight using the IMU */
-        public ServoHoldHeadingWithImu(PigeonImu pigeonImu, IDrivetrain driveTrain, Styles.Basic selectedStyle)
+        public ServoHoldHeadingWithImu(PigeonIMU pigeonImu, IDrivetrain driveTrain, Styles.BasicStyle selectedStyle)
         {
             _pidgey = pigeonImu;
             _driveTrain = driveTrain;
@@ -61,7 +65,7 @@ namespace CTRE.Motion
          * @param   forward     Y direction of robot
          * @param   strafe      X direction of robot
          */
-        public void Set(Styles.Basic mode, float forward, float strafe)
+        public void Set(Styles.BasicStyle mode, float forward, float strafe)
         {
             Enable(true);
             GoStraight(forward, _targetHeading);
@@ -74,7 +78,7 @@ namespace CTRE.Motion
                 /* calling app has turned this off */
                 _isCompensating = false;
             }
-            else if(_pidgey.GetState() != PigeonImu.PigeonState.Ready)
+            else if(_pidgey.GetState() != PigeonState.Ready)
             {
                 /* pigeon is not present on bus */
                 _isCompensating = false;

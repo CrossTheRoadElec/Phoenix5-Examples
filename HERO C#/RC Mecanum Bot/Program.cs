@@ -13,7 +13,7 @@ using HERO_Mecanum_Drive_Example.Platform;
 
 namespace HERO_Mecanum_Drive_Example
 {
-    public class Program : CTRE.RobotApplication
+    public class Program : CTRE.Phoenix.RobotApplication
     {
         public override void RunForever()
         {

@@ -161,6 +161,9 @@ namespace BalanceBot
 
 			foreach(CTRE.Phoenix.MotorControl.CAN.TalonSRX Talon in Hardware.allTalons)
 			{
+				/* Factory Default all hardware to prevent unexpected behaviour */
+				Talon.ConfigFactoryDefault();
+
 				/* Voltage Compensation on both Talons */
 				Talon.ConfigVoltageCompSaturation(10.0f, kTimeoutMs);
 				Talon.EnableVoltageCompensation(true);

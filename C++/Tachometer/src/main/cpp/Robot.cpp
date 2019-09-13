@@ -17,6 +17,10 @@ public:
 		_magTalon = new TalonSRX(4);
 		_tachTalon = new TalonSRX(5);
 		_joy = new Joystick(0);
+
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_magTalon->ConfigFactoryDefault();
+		_tachTalon->ConfigFactoryDefault();
 	}
 
 	void TeleopInit() {

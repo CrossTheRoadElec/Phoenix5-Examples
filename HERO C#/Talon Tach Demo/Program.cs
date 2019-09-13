@@ -8,19 +8,19 @@
  * 
  * Anything under "Tasks" are typical examples tasks done on a robot platform.
  */
-using CTRE.Tasking;
+using CTRE.Phoenix.Tasking;
 using Microsoft.SPOT;
 using Platform;
 using System.Threading;
 
 namespace Talon_Tach_Demo
 {
-    public class Program : CTRE.RobotApplication
+    public class Program : CTRE.Phoenix.RobotApplication
     {
         public override void RunForever()
         {
-            /* any system wide initializations here */
-
+			/* any system wide initializations here */
+			Hardware.armTalon.SetSelectedSensorPosition(0,10);
             /* add all the periodic tasks */
             foreach(ILoopable task in Platform.Tasks.FullList)
                 Schedulers.PeriodicTasks.Add(task);

@@ -5,7 +5,7 @@
  * 
  * Note the way this task can stop/start other tasks, allowing for subsystem level control.
  */
-using CTRE.Tasking;
+using CTRE.Phoenix.Tasking;
 using HERO_Mecanum_Drive_Example.Platform;
 
 namespace HERO_Mecanum_Drive_Example
@@ -20,16 +20,16 @@ namespace HERO_Mecanum_Drive_Example
         public void OnLoop()
         {
             /* keep feeding watchdog to enable motors */
-            if (Hardware.gamepad.GetConnectionStatus() == CTRE.UsbDeviceConnection.Connected)
+            if (Hardware.gamepad.GetConnectionStatus() == CTRE.Phoenix.UsbDeviceConnection.Connected)
             {
-                CTRE.Watchdog.Feed();
+				CTRE.Phoenix.Watchdog.Feed();
 
                 Platform.Schedulers.PeriodicTasks.Stop(Platform.Tasks.TeleopDriveWithRC);
                 Platform.Schedulers.PeriodicTasks.Start(Platform.Tasks.TeleopDriveWithXbox);
             }
-            else if (Hardware.Futaba3Ch.CurrentStatus == CTRE.RCRadio3Ch.Status.Ok)
+            else if (Hardware.Futaba3Ch.CurrentStatus == CTRE.Phoenix.RCRadio3Ch.Status.Ok)
             {
-                CTRE.Watchdog.Feed();
+                CTRE.Phoenix.Watchdog.Feed();
 
                 /* no gamepad, assume RC radio is being used.  If its not, channels will read zero */
                 Platform.Schedulers.PeriodicTasks.Stop(Platform.Tasks.TeleopDriveWithXbox);
@@ -39,7 +39,7 @@ namespace HERO_Mecanum_Drive_Example
             {
                 Platform.Schedulers.PeriodicTasks.Stop(Platform.Tasks.TeleopDriveWithXbox);
                 Platform.Schedulers.PeriodicTasks.Stop(Platform.Tasks.TeleopDriveWithRC);
-                Hardware.drivetrain.Set(CTRE.Drive.Styles.Basic.PercentOutput, 0, 0);
+                Hardware.drivetrain.Set(CTRE.Phoenix.Drive.Styles.BasicStyle.PercentOutput, 0, 0);
             }
         }
 

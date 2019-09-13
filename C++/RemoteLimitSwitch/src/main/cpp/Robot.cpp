@@ -27,6 +27,10 @@ public:
 	bool _btns[Constants.kNumButtonsPlusOne];
 
 	void InitRobot() {
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		_motorCntrller->ConfigFactoryDefault();
+		_canifLimits->ConfigFactoryDefault();
+		_talonLimits->ConfigFactoryDefault();
 		/* Ensure robot starts with neutral output */
 		_motorCntrller->Set(ControlMode::PercentOutput, 0);
 

@@ -10,7 +10,7 @@
  * - LED strip update (CANifier). @link http://www.ctr-electronics.com/can-can-canifier-driver-led-driver-gpio.html
  */
 
-public class TaskLowBatteryDetect : CTRE.Tasking.ILoopable
+public class TaskLowBatteryDetect : CTRE.Phoenix.Tasking.ILoopable
 {
     int _dnCnt = 0;
     int _upCnt = 0;

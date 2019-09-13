@@ -2,11 +2,11 @@
  * Periodically update a CTRE LCD Display.
  * @link http://www.ctr-electronics.com/gadgeteer-display-module.html
  */
-using CTRE.Tasking;
+using CTRE.Phoenix.Tasking;
 using Microsoft.SPOT;
 using System;
 using Platform;
-using CTRE.HERO.Module;
+using CTRE.Gadgeteer.Module;
 
 public class TaskDisplay : ILoopable
 {
@@ -15,7 +15,7 @@ public class TaskDisplay : ILoopable
     Font f1 = Top.Properties.Resources.GetFont(Top.Properties.Resources.FontResources.nina14);
     Font f2 = Top.Properties.Resources.GetFont(Top.Properties.Resources.FontResources.NinaB);
     Font f3 = Top.Properties.Resources.GetFont(Top.Properties.Resources.FontResources.ninabd18ppem);
-    CTRE.HERO.Module.DisplayModule.LabelSprite[] _lines = new CTRE.HERO.Module.DisplayModule.LabelSprite[8];
+    CTRE.Gadgeteer.Module.DisplayModule.LabelSprite[] _lines = new CTRE.Gadgeteer.Module.DisplayModule.LabelSprite[8];
 
     public TaskDisplay()
     {
@@ -25,14 +25,14 @@ public class TaskDisplay : ILoopable
         int y = 0;
 
         int i = 0;
-        _lines[i++] = Hardware.displayModule.AddLabelSprite(f0, CTRE.HERO.Module.DisplayModule.Color.Cyan, x, y, width, height); y += height;
-        _lines[i++] = Hardware.displayModule.AddLabelSprite(f0, CTRE.HERO.Module.DisplayModule.Color.Cyan, x, y, width, height); y += height;
-        _lines[i++] = Hardware.displayModule.AddLabelSprite(f0, CTRE.HERO.Module.DisplayModule.Color.Cyan, x, y, width, height); y += height;
-        _lines[i++] = Hardware.displayModule.AddLabelSprite(f0, CTRE.HERO.Module.DisplayModule.Color.Cyan, x, y, width, height); y += height;
-        _lines[i++] = Hardware.displayModule.AddLabelSprite(f0, CTRE.HERO.Module.DisplayModule.Color.Cyan, x, y, width, height); y += height;
-        _lines[i++] = Hardware.displayModule.AddLabelSprite(f0, CTRE.HERO.Module.DisplayModule.Color.Cyan, x, y, width, height); y += height;
-        _lines[i++] = Hardware.displayModule.AddLabelSprite(f0, CTRE.HERO.Module.DisplayModule.Color.Cyan, x, y, width, height); y += height;
-        _lines[i++] = Hardware.displayModule.AddLabelSprite(f0, CTRE.HERO.Module.DisplayModule.Color.Cyan, x, y, width, height); y += height;
+        _lines[i++] = Hardware.displayModule.AddLabelSprite(f0, CTRE.Gadgeteer.Module.DisplayModule.Color.Cyan, x, y, width, height); y += height;
+        _lines[i++] = Hardware.displayModule.AddLabelSprite(f0, CTRE.Gadgeteer.Module.DisplayModule.Color.Cyan, x, y, width, height); y += height;
+        _lines[i++] = Hardware.displayModule.AddLabelSprite(f0, CTRE.Gadgeteer.Module.DisplayModule.Color.Cyan, x, y, width, height); y += height;
+        _lines[i++] = Hardware.displayModule.AddLabelSprite(f0, CTRE.Gadgeteer.Module.DisplayModule.Color.Cyan, x, y, width, height); y += height;
+        _lines[i++] = Hardware.displayModule.AddLabelSprite(f0, CTRE.Gadgeteer.Module.DisplayModule.Color.Cyan, x, y, width, height); y += height;
+        _lines[i++] = Hardware.displayModule.AddLabelSprite(f0, CTRE.Gadgeteer.Module.DisplayModule.Color.Cyan, x, y, width, height); y += height;
+        _lines[i++] = Hardware.displayModule.AddLabelSprite(f0, CTRE.Gadgeteer.Module.DisplayModule.Color.Cyan, x, y, width, height); y += height;
+        _lines[i++] = Hardware.displayModule.AddLabelSprite(f0, CTRE.Gadgeteer.Module.DisplayModule.Color.Cyan, x, y, width, height); y += height;
 
     }
        

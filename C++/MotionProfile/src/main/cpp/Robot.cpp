@@ -52,7 +52,11 @@ public:
 			_talon(Constants::kTalonID), _vic(Constants::kVictorFollower), _example(
 					_talon), _joy(0) {
 	}
-
+	void RobotInit(){
+	/* Factory Default all hardware to prevent unexpected behaviour */
+		_talon.ConfigFactoryDefault();
+		_vic.ConfigFactoryDefault();
+	}
 	/** run once after booting/enter-disable */
 	void DisabledInit() {
 		_vic.Follow(_talon);

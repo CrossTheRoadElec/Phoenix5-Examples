@@ -22,6 +22,11 @@ namespace HERO_Mecanum_Drive_Example
 
         public static void Main()
         {
+			/* Factory Default all hardware to prevent unexpected behaviour */
+			leftFrnt.ConfigFactoryDefault();
+			leftRear.ConfigFactoryDefault();
+			rghtFrnt.ConfigFactoryDefault();
+			rghtRear.ConfigFactoryDefault();
             /* loop forever */
             while (true)
             {
