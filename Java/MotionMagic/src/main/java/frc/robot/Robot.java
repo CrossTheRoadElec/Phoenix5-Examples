@@ -41,14 +41,15 @@
  * and you have followed the walk-through in the Talon SRX Software Reference Manual.
  * 
  * Controls:
- * Button 1: When held, put Talon in Motion Magic mode and allow Talon to drive [-10, 10] 
+ * Button 1(Button A): When held, put Talon in Motion Magic mode and allow Talon to drive [-10, 10] 
  * 	rotations.
- * Button 2: When pushed, the selected feedback sensor gets zero'd
- * Button 5(Left shoulder): When pushed, will decrement the smoothing of the motion magic down to 0
- * Button 6(Right shoulder): When pushed, will increment the smoothing of the motion magic up to 8
+ * Button 2(Button B): When pushed, the selected feedback sensor gets zero'd
+ * POV 180(Dpad Down): When pushed, will decrement the smoothing of the motion magic down to 0
+ * POV 0(Dpad Up): When pushed, will increment the smoothing of the motion magic up to 8
  * Left Joystick Y-Axis:
  * 	+ Percent Output: Throttle Talon SRX forward and reverse, use to confirm hardware setup.
- * 	+ Motion Maigic: SErvo Talon SRX forward and reverse, [-10, 10] rotations.
+ * Right Joystick Y-Axis:
+ * 	+ Motion Maigic: Servo Talon SRX forward and reverse, [-10, 10] rotations.
  * 
  * Gains for Motion Magic may need to be adjusted in Constants.java
  * 
@@ -84,6 +85,9 @@ public class Robot extends TimedRobot {
 	/** How much smoothing [0,8] to use during MotionMagic */
 	int _smoothing = 0;
 
+	/** save the last Point Of View / D-pad value */
+	int _pov = -1;
+
 	public void robotInit() {
 		/* setup some followers */
 		_follower1.configFactoryDefault();
@@ -97,16 +101,19 @@ public class Robot extends TimedRobot {
 		_talon.configFactoryDefault();
 
 		/* Configure Sensor Source for Pirmary PID */
-		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,
-											Constants.kPIDLoopIdx, 
-											Constants.kTimeoutMs);
+		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx,
+				Constants.kTimeoutMs);
+
+		/* set deadband to super small 0.001 (0.1 %).
+			The default deadband is 0.04 (4 %) */
+		_talon.configNeutralDeadband(0.001, Constants.kTimeoutMs);
 
 		/**
-		 * Configure Talon SRX Output and Sesnor direction accordingly
-		 * Invert Motor to have green LEDs when driving Talon Forward / Requesting Postiive Output
-		 * Phase sensor to have positive increment when driving Talon Forward (Green LED)
+		 * Configure Talon SRX Output and Sesnor direction accordingly Invert Motor to
+		 * have green LEDs when driving Talon Forward / Requesting Postiive Output Phase
+		 * sensor to have positive increment when driving Talon Forward (Green LED)
 		 */
-		_talon.setSensorPhase(true);
+		_talon.setSensorPhase(false);
 		_talon.setInverted(false);
 
 		/* Set relevant frame periods to be at least as fast as periodic rate */
@@ -130,7 +137,7 @@ public class Robot extends TimedRobot {
 		_talon.configMotionCruiseVelocity(15000, Constants.kTimeoutMs);
 		_talon.configMotionAcceleration(6000, Constants.kTimeoutMs);
 
-		/* Zero the sensor */
+		/* Zero the sensor once on robot boot up */
 		_talon.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 	}
 
@@ -139,8 +146,10 @@ public class Robot extends TimedRobot {
 	 */
 	public void teleopPeriodic() {
 		/* Get gamepad axis - forward stick is positive */
-		double leftYstick = -1.0 * _joy.getY();
-		if (Math.abs(leftYstick) < 0.10) { leftYstick = 0;} /* deadband 10% */
+		double leftYstick = -1.0 * _joy.getY(); /* left-side Y for Xbox360Gamepad */
+		double rghtYstick = -1.0 * _joy.getRawAxis(5); /* right-side Y for Xbox360Gamepad */
+		if (Math.abs(leftYstick) < 0.10) { leftYstick = 0; } /* deadband 10% */
+		if (Math.abs(rghtYstick) < 0.10) { rghtYstick = 0; } /* deadband 10% */
 
 		/* Get current Talon SRX motor output */
 		double motorOutput = _talon.getMotorOutputPercent();
@@ -152,14 +161,14 @@ public class Robot extends TimedRobot {
 		_sb.append(_talon.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
 
 		/**
-		 * Peform Motion Magic when Button 1 is held,
-		 * else run Percent Output, which can be used to confirm hardware setup.
+		 * Peform Motion Magic when Button 1 is held, else run Percent Output, which can
+		 * be used to confirm hardware setup.
 		 */
 		if (_joy.getRawButton(1)) {
-			/* Motion Magic */ 
-			
-			/*4096 ticks/rev * 10 Rotations in either direction */
-			double targetPos = leftYstick * 4096 * 10.0;
+			/* Motion Magic */
+
+			/* 4096 ticks/rev * 10 Rotations in either direction */
+			double targetPos = rghtYstick * 4096 * 10.0;
 			_talon.set(ControlMode.MotionMagic, targetPos);
 
 			/* Append more signals to print when in speed mode */
@@ -172,32 +181,32 @@ public class Robot extends TimedRobot {
 
 			_talon.set(ControlMode.PercentOutput, leftYstick);
 		}
-		if(_joy.getRawButton(2))
-		{
-			/* Clear sensor positions */
-			_talon.getSensorCollection().setQuadraturePosition(0, 0);
-
-			System.out.println("Voltage is: " + _talon.getBusVoltage());
+		if (_joy.getRawButton(2)) {
+			/* Zero sensor positions */
+			_talon.setSelectedSensorPosition(0);
 		}
 
-		if(_joy.getRawButtonPressed(5))
-		{
+		int pov = _joy.getPOV();
+		if (_pov == pov) {
+			/* no change */
+		} else if (_pov == 180) { // D-Pad down
 			/* Decrease smoothing */
 			_smoothing--;
-			if(_smoothing < 0) _smoothing = 0;
+			if (_smoothing < 0)
+				_smoothing = 0;
+			_talon.configMotionSCurveStrength(_smoothing);
+
+			System.out.println("Smoothing is set to: " + _smoothing);
+		} else if (_pov == 0) { // D-Pad up
+			/* Increase smoothing */
+			_smoothing++;
+			if (_smoothing > 8)
+				_smoothing = 8;
 			_talon.configMotionSCurveStrength(_smoothing);
 
 			System.out.println("Smoothing is set to: " + _smoothing);
 		}
-		if(_joy.getRawButtonPressed(6))
-		{
-			/* Increase smoothing */
-			_smoothing++;
-			if(_smoothing > 8) _smoothing = 8;
-			_talon.configMotionSCurveStrength(_smoothing);
-			
-			System.out.println("Smoothing is set to: " + _smoothing);
-		}
+		_pov = pov; /* save the pov value for next time */
 
 		/* Instrumentation */
 		Instrum.Process(_talon, _sb);
