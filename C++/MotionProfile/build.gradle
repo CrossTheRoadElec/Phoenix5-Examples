@@ -1,7 +1,7 @@
 plugins {
     id "cpp"
     id "google-test-test-suite"
-    id "edu.wpi.first.GradleRIO" version "2020.1.1-beta-4"
+    id "edu.wpi.first.GradleRIO" version "2020.1.1"
 }
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
@@ -41,7 +41,7 @@ deploy {
 def includeSrcInIncludeRoot = false
 
 // Set this to true to enable desktop support.
-def includeDesktopSupport = true
+def includeDesktopSupport = false
 
 // Enable simulation gui support. Must check the box in vscode to enable support
 // upon debugging
