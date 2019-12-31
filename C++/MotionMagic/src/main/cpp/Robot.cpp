@@ -63,6 +63,7 @@
 #include <sstream>
 
 void Robot::RobotInit() {
+    return ;
     _talon = new TalonSRX(1);
     _joy = new frc::Joystick(0);
 
@@ -112,6 +113,7 @@ void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
+    return ;
     /* Get gamepad axis - forward stick is positive */
     double leftYstick = -1.0 * _joy->GetY();
     double RightYstick = -1.0 * _joy->GetRawAxis(5);

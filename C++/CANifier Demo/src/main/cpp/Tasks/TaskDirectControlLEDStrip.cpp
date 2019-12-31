@@ -1,11 +1,11 @@
-#define PI 3.14159265358979
-
 #include <math.h>
 
 #include "Tasks/TaskDirectControlLEDStrip.h"
 #include "ctre/Phoenix.h"
 #include "Platform/Platform.h"
 #include "ctre/phoenix/Utilities.h"
+
+#define PI 3.14159265358979
 
 /* Destructor */
 TaskDirectControlLEDStrip::~TaskDirectControlLEDStrip() { }
