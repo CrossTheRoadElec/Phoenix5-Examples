@@ -17,7 +17,6 @@ private:
 
 public:
     static void Process(TalonSRX *tal, std::stringstream *sb) {
-		return;
 		/* Smart dash plots */
 		frc::SmartDashboard::PutNumber("SensorVel", tal->GetSelectedSensorVelocity(0));
 		frc::SmartDashboard::PutNumber("SensorPos", tal->GetSelectedSensorPosition(0));
