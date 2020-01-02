@@ -79,9 +79,7 @@ void Robot::TeleopInit()
         Experiment with different enables below.... */
     //_left.SetSafetyEnabled(true);
     //_rght.SetSafetyEnabled(true);
-    /* WPI's drivetrain safetyEn appears broke,
-     so set to false https://github.com/wpilibsuite/allwpilib/issues/1525) */
-    _drive->SetSafetyEnabled(false); 
+    //_drive->SetSafetyEnabled(false); 
 
     /* Factory Default all hardware to prevent unexpected behaviour */
     _left.ConfigFactoryDefault();

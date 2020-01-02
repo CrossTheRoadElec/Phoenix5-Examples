@@ -73,7 +73,6 @@ public class Robot extends TimedRobot {
 	/* Hardware */
 	TalonSRX _talon = new TalonSRX(1);
 	Joystick _joy = new Joystick(0);
-	TalonFX _fx = new TalonFX(2);
 
 	/* create some followers */
 	BaseMotorController _follower1 = new TalonSRX(0);

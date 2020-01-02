@@ -234,7 +234,7 @@ public class MotionProfileExample {
 
 			/* Get the motion profile status every loop */
 			_talon.getMotionProfileStatus(_status);
-			_heading = _talon.getActiveTrajectoryHeading();
+			_heading = 0;
 			_pos = _talon.getActiveTrajectoryPosition();
 			_vel = _talon.getActiveTrajectoryVelocity();
 

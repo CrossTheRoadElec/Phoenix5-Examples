@@ -8,7 +8,7 @@ class MotionProfileConfiguration : public TalonSRXConfiguration
 public:
     MotionProfileConfiguration() : TalonSRXConfiguration()
     {
-        primaryPID.selectedFeedbackSensor = QuadEncoder;
+        primaryPID.selectedFeedbackSensor = FeedbackDevice::QuadEncoder;
         neutralDeadband = 0.001; /* 0.1% super small for best low-speed control */
 
         slot0.kF = 1023.0 / 68000.0;
