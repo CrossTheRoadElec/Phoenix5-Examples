@@ -9,10 +9,16 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.*;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.VictorSPXConfiguration;
 import com.ctre.phoenix.CANifierConfiguration;
-import com.ctre.phoenix.sensors.PigeonIMUConfiguration;;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
+import com.ctre.phoenix.sensors.CANCoderConfiguration;
+import com.ctre.phoenix.sensors.PigeonIMUConfiguration;
+import com.ctre.phoenix.sensors.SensorInitializationStrategy;
+import com.ctre.phoenix.sensors.SensorTimeBase;
+import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;;
 
 public class Configs {
     /* Hold all of the config data */
@@ -20,6 +26,8 @@ public class Configs {
     public VictorSPXConfiguration _victor;
     public PigeonIMUConfiguration _pigeon;
     public CANifierConfiguration _canifier;  
+    public CANCoderConfiguration _canCoder;
+    public TalonFXConfiguration _fx;
     
     public Configs()
     {
@@ -29,7 +37,9 @@ public class Configs {
         _talon = new TalonSRXConfiguration();
         _victor = new VictorSPXConfiguration();
         _pigeon = new PigeonIMUConfiguration();
-        _canifier = new CANifierConfiguration();        
+        _canifier = new CANifierConfiguration();
+        _canCoder = new CANCoderConfiguration();
+        _fx = new TalonFXConfiguration();
         
         /* Talon SRX */
         _talon.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
@@ -218,6 +228,110 @@ public class Configs {
 		_canifier.clearPositionOnQuadIdx = true;
 		_canifier.customParam0 = 2;
         _canifier.customParam1 = 1;
-        
+
+        //CanCoder
+        _canCoder.velocityMeasurementPeriod = SensorVelocityMeasPeriod.Period_25Ms;
+        _canCoder.velocityMeasurementWindow = 64;
+        _canCoder.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
+        _canCoder.magnetOffsetDegrees = 12.45;
+        _canCoder.sensorDirection = true;
+        _canCoder.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+        _canCoder.sensorCoefficient = 0.57;
+        _canCoder.unitString = "Birds!";
+        _canCoder.sensorTimeBase = SensorTimeBase.PerMinute;
+
+        //TalonFX
+        _fx.primaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor0;
+        _fx.primaryPID.selectedFeedbackCoefficient = 0.328293;
+        _fx.auxiliaryPID.selectedFeedbackSensor = FeedbackDevice.Analog;
+        _fx.auxiliaryPID.selectedFeedbackCoefficient = 0.877686;
+        _fx.forwardLimitSwitchSource = LimitSwitchSource.RemoteTalonSRX;
+        _fx.reverseLimitSwitchSource = LimitSwitchSource.RemoteCANifier;
+        _fx.sum0Term = FeedbackDevice.QuadEncoder;
+        _fx.sum1Term = FeedbackDevice.RemoteSensor0;
+        _fx.diff0Term = FeedbackDevice.RemoteSensor1;
+        _fx.diff1Term = FeedbackDevice.PulseWidthEncodedPosition;
+        _fx.openloopRamp = 1.023000;
+        _fx.closedloopRamp = 1.705000;
+        _fx.peakOutputForward = 0.939394;
+        _fx.peakOutputReverse = -0.289345F;
+        _fx.nominalOutputForward = 0.739980;
+        _fx.nominalOutputReverse = -0.119257F;
+        _fx.neutralDeadband = 0.199413;
+        _fx.voltageCompSaturation = 9.296875;
+        _fx.voltageMeasurementFilter = 16;
+        _fx.velocityMeasurementPeriod = VelocityMeasPeriod.Period_25Ms;
+        _fx.velocityMeasurementWindow = 8;
+        _fx.forwardLimitSwitchDeviceID = 6;
+        _fx.reverseLimitSwitchDeviceID = 5;
+        _fx.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
+        _fx.reverseLimitSwitchNormal = LimitSwitchNormal.Disabled;
+        _fx.forwardSoftLimitThreshold = 2767;
+        _fx.reverseSoftLimitThreshold = -1219;
+        _fx.forwardSoftLimitEnable = true;
+        _fx.reverseSoftLimitEnable = true;
+        _fx.slot0.kP = 504.000000;
+        _fx.slot0.kI = 5.600000;
+        _fx.slot0.kD = 0.200000;
+        _fx.slot0.kF = 19.300000;
+        _fx.slot0.integralZone = 900;
+        _fx.slot0.allowableClosedloopError = 217;
+        _fx.slot0.maxIntegralAccumulator = 254.000000;
+        _fx.slot0.closedLoopPeakOutput = 0.869990;
+        _fx.slot0.closedLoopPeriod = 33;
+        _fx.slot1.kP = 155.600000;
+        _fx.slot1.kI = 5.560000;
+        _fx.slot1.kD = 8.868600;
+        _fx.slot1.kF = 454.000000;
+        _fx.slot1.integralZone = 100;
+        _fx.slot1.allowableClosedloopError = 200;
+        _fx.slot1.maxIntegralAccumulator = 91.000000;
+        _fx.slot1.closedLoopPeakOutput = 0.199413;
+        _fx.slot1.closedLoopPeriod = 34;
+        _fx.slot2.kP = 223.232000;
+        _fx.slot2.kI = 34.000000;
+        _fx.slot2.kD = 67.000000;
+        _fx.slot2.kF = 6.323232;
+        _fx.slot2.integralZone = 44;
+        _fx.slot2.allowableClosedloopError = 343;
+        _fx.slot2.maxIntegralAccumulator = 334.000000;
+        _fx.slot2.closedLoopPeakOutput = 0.399804;
+        _fx.slot2.closedLoopPeriod = 14;
+        _fx.slot3.kP = 34.000000;
+        _fx.slot3.kI = 32.000000;
+        _fx.slot3.kD = 436.000000;
+        _fx.slot3.kF = 0.343430;
+        _fx.slot3.integralZone = 2323;
+        _fx.slot3.allowableClosedloopError = 543;
+        _fx.slot3.maxIntegralAccumulator = 687.000000;
+        _fx.slot3.closedLoopPeakOutput = 0.129032;
+        _fx.slot3.closedLoopPeriod = 12;
+        _fx.auxPIDPolarity = true;
+        _fx.remoteFilter0.remoteSensorDeviceID = 22;
+        _fx.remoteFilter0.remoteSensorSource = RemoteSensorSource.GadgeteerPigeon_Roll;
+        _fx.remoteFilter1.remoteSensorDeviceID = 41;
+        _fx.remoteFilter1.remoteSensorSource = RemoteSensorSource.Pigeon_Pitch;
+        _fx.motionCruiseVelocity = 37;
+        _fx.motionAcceleration = 3;
+        _fx.motionProfileTrajectoryPeriod = 11;
+        _fx.feedbackNotContinuous = true;
+        _fx.remoteSensorClosedLoopDisableNeutralOnLOS = false;
+        _fx.clearPositionOnLimitF = true;
+        _fx.clearPositionOnLimitR = true;
+        _fx.clearPositionOnQuadIdx = false;
+        _fx.limitSwitchDisableNeutralOnLOS = true;
+        _fx.softLimitDisableNeutralOnLOS = false;
+        _fx.pulseWidthPeriod_EdgesPerRot = 9;
+        _fx.pulseWidthPeriod_FilterWindowSz = 32;
+        _fx.customParam0 = 3;
+        _fx.customParam1 = 5;
+        SupplyCurrentLimitConfiguration supplyLimit = new SupplyCurrentLimitConfiguration(true, 23.1, 25, 1.4);
+        _fx.supplyCurrLimit = supplyLimit;
+        StatorCurrentLimitConfiguration statorLimit = new StatorCurrentLimitConfiguration(true, 12.1, 87.4, 0.4);
+        _fx.statorCurrLimit = statorLimit;
+        _fx.motorCommutation = MotorCommutation.Trapezoidal;
+        _fx.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
+        _fx.integratedSensorOffsetDegrees = 42;
+        _fx.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
     }
 }

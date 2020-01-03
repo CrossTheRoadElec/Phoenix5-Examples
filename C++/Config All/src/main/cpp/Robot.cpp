@@ -46,6 +46,8 @@ private:
 	VictorSPX * _victor = new VictorSPX(2);
 	PigeonIMU * _pigeon = new PigeonIMU(3);
 	CANifier * _canifier = new CANifier(4);
+	CANCoder * _canCoder = new CANCoder(5);
+	TalonFX * _fx = new TalonFX(6);
 	Joystick * _joy = new Joystick(0);
 
 	/* Config Class */
@@ -53,11 +55,20 @@ private:
 
 	/* Track Button state */
 	bool _button1_last = false;
-	bool _button2_last = false;
-	bool _button3_last = false;
-	bool _button4_last = false;
 	bool _button5_last = false;
 	bool _button6_last = false;
+	bool _leftArrowLast = false;
+	bool _rightArrowLast = false;
+
+	const int Device_Count = 6;
+	enum Device_Type{
+		enumTalonSRX,
+		enumVictorSPX,
+		enumCANifier,
+		enumPigeonIMU,
+		enumCANCoder,
+		enumTalonFX,
+	} _selectedDevice;
 
 	void RobotInit() {
 		/* Do nothing for init */
@@ -68,48 +79,97 @@ private:
 	 */
 	void TeleopPeriodic() {
 		/* get gamepad buttons */
-        bool button1 = _joy->GetRawButton(1); // read talon
-		bool button2 = _joy->GetRawButton(2); // read victor
-		bool button3 = _joy->GetRawButton(3); // read pigeon
-		bool button4 = _joy->GetRawButton(4); // read canifier
+		int pov = _joy->GetPOV();
+		bool leftArrow = pov == 270;
+		bool rightArrow = pov == 90;
+        bool button1 = _joy->GetRawButton(1); // read device
 		bool button5 = _joy->GetRawButton(5); // custom configs
 		bool button6 = _joy->GetRawButton(6); // factory default
 
+		/* Change selected device based on directional input */
+		if(leftArrow && ! _leftArrowLast) {
+			int newDev = _selectedDevice;
+			newDev--;
+			if(newDev < 0) newDev = Device_Count - 1;
+			_selectedDevice = (enum Device_Type)newDev;
+		}
+		if(rightArrow && ! _rightArrowLast) {
+			int newDev = _selectedDevice;
+			newDev++;
+			if(newDev >= Device_Count) newDev = 0;
+			_selectedDevice = (enum Device_Type)newDev;
+		}
+		/* Print selected device on change */
+		if((leftArrow && ! _leftArrowLast) || (rightArrow && ! _rightArrowLast)) {
+			switch(_selectedDevice) {
+				case enumTalonSRX: printf("Selected TalonSRX\n"); break;
+				case enumVictorSPX: printf("Selected VictorSPX\n"); break;
+				case enumCANifier: printf("Selected CANifier\n"); break;
+				case enumPigeonIMU: printf("Selected PigeonIMU\n"); break;
+				case enumCANCoder: printf("Selected CANCoder\n"); break;
+				case enumTalonFX: printf("Selected TalonFX\n"); break;
+			}
+		}
         /* on button1 press read talon configs */ 
         if(button1 && !_button1_last) {
-			printf("read talon\n");
-			
-			TalonSRXConfiguration read_talon;
-			_talon->GetAllConfigs(read_talon);
+			switch(_selectedDevice) {
+				case enumTalonSRX: {
+					printf("read talon\n");
+					
+					TalonSRXConfiguration read_talon;
+					_talon->GetAllConfigs(read_talon);
 
-			printf(read_talon.toString("_talon").c_str());
-		}
-        /* on button2 press read victor configs */ 
-		else if(button2 && !_button2_last) {
-			printf("read victor\n");
+					printf(read_talon.toString("_talon").c_str());
+					break;
+				}
+				case enumVictorSPX: {
+					printf("read victor\n");
 
-			VictorSPXConfiguration read_victor;
-			_victor->GetAllConfigs(read_victor);
+					VictorSPXConfiguration read_victor;
+					_victor->GetAllConfigs(read_victor);
 
-			printf(read_victor.toString("_victor").c_str());
-		}
-        /* on button3 press read pigeon configs */ 
-		else if(button3 && !_button3_last) {
-			printf("read pigeon\n");
+					printf(read_victor.toString("_victor").c_str());
+					break;
+				}
+				case enumCANifier: {
+					printf("read canifier\n");
 
-			PigeonIMUConfiguration read_pigeon;
-			_pigeon->GetAllConfigs(read_pigeon);
+					CANifierConfiguration read_canifier;
+					_canifier->GetAllConfigs(read_canifier);
 
-			printf(read_pigeon.toString("_pigeon").c_str());
-		}
-        /* on button4 press read canifier configs */ 
-		else if(button4 && !_button4_last) {
-			printf("read canifier\n");
+					printf(read_canifier.toString("_canifier").c_str());
+					break;
+				}
+				case enumPigeonIMU: {
+					printf("read pigeon\n");
 
-			CANifierConfiguration read_canifier;
-			_canifier->GetAllConfigs(read_canifier);
+					PigeonIMUConfiguration read_pigeon;
+					_pigeon->GetAllConfigs(read_pigeon);
 
-			printf(read_canifier.toString("_canifier").c_str());
+					printf(read_pigeon.toString("_pigeon").c_str());
+					break;
+				}
+				case enumCANCoder: {
+					printf("read cancoder\n");
+
+					CANCoderConfiguration read_cancoder;
+					_canCoder->GetAllConfigs(read_cancoder);
+
+					printf(read_cancoder.toString("_canCoder").c_str());
+					break;
+				}
+				case enumTalonFX: {
+					printf("read talonfx\n");
+
+					TalonFXConfiguration read_talonfx;
+					_fx->GetAllConfigs(read_talonfx);
+
+					printf(read_talonfx.toString("_fx").c_str());
+					break;
+				}
+				
+				default: break;
+			}
 		}
         /* on button5 press set custom configs */ 
 		else if(button5 && !_button5_last) {
@@ -119,6 +179,8 @@ private:
 			_victor->ConfigAllSettings(_custom_configs._victor);
 			_pigeon->ConfigAllSettings(_custom_configs._pigeon);
 			_canifier->ConfigAllSettings(_custom_configs._canifier);
+			_canCoder->ConfigAllSettings(_custom_configs._canCoder);
+			_fx->ConfigAllSettings(_custom_configs._fx);
 
 			printf("custom config finish\n");
 		}
@@ -130,17 +192,18 @@ private:
         	_victor->ConfigFactoryDefault();
 			_pigeon->ConfigFactoryDefault();
         	_canifier->ConfigFactoryDefault();
+			_canCoder->ConfigFactoryDefault();
+			_fx->ConfigFactoryDefault();
         	
             printf("factory default finish\n");
 		}
 
         /* set last presses */        
 		_button1_last = button1;
-		_button2_last = button2;
-		_button3_last = button3;
-		_button4_last = button4;
 		_button5_last = button5;
 		_button6_last = button6;
+		_leftArrowLast = leftArrow;
+		_rightArrowLast = rightArrow;
 	}
 };
 
