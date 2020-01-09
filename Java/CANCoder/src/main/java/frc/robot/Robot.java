@@ -41,85 +41,119 @@ import edu.wpi.first.wpilibj.TimedRobot;
  * project.
  */
 public class Robot extends TimedRobot {
-  final int PRINTOUT_DELAY = 100; // in Milliseconds
+  final int PRINTOUT_DELAY_MS = 500; // in Milliseconds
   CANCoder _CANCoder = new CANCoder(0);
   CANCoderConfiguration _canCoderConfiguration = new CANCoderConfiguration();
   Joystick joy = new Joystick(0);
-
   /**  
    * Doing lots of printing in Java creates a large overhead 
    * This Instrument class is designed to put that printing in a seperate thread
    * That way we can prevent loop overrun messages from occurring
    */
   class Instrument extends Thread {
-    void printFaults(CANCoderFaults faults) {
-      System.out.printf("Hardware fault: %s\t    Under Voltage fault: %s\t    Reset During Enable fault: %s\t    API Error fault: %s%n", 
-        faults.HardwareFault ? "True " : "False",
-        faults.UnderVoltage ? "True " : "False",
-        faults.ResetDuringEn ? "True " : "False",
-        faults.APIError ? "True " : "False");
+
+    String ToString(CANCoderFaults faults) {
+      String retval = "";
+      if (false == faults.hasAnyFault()) {
+        retval = "(none)";
+      } else {
+        if (faults.HardwareFault) { retval += "HardwareFault | "; }
+        if (faults.UnderVoltage) { retval += "UnderVoltage | "; }
+        if (faults.ResetDuringEn) { retval += "ResetDuringEn | "; }
+        if (faults.APIError) { retval += "APIError | "; }
+      }
+      return retval;
     }
-    void printFaults(CANCoderStickyFaults faults) {
-      System.out.printf("Hardware fault: %s\t    Under Voltage fault: %s\t    Reset During Enable fault: %s\t     API Error fault: %s%n", 
-        faults.HardwareFault ? "True " : "False",
-        faults.UnderVoltage ? "True " : "False",
-        faults.ResetDuringEn ? "True " : "False",
-        faults.APIError ? "True " : "False");
+
+    String ToString(CANCoderStickyFaults faults) {
+      String retval = "";
+      if (false == faults.hasAnyFault()) {
+        retval = "(none)";
+      } else {
+        if (faults.HardwareFault) { retval += "HardwareFault | "; }
+        if (faults.UnderVoltage) { retval += "UnderVoltage | "; }
+        if (faults.ResetDuringEn) { retval += "ResetDuringEn | "; }
+        if (faults.APIError) { retval += "APIError | "; }
+      }
+      return retval;
     }
-    void printValue(double val, String units, double timestamp) {
-      System.out.printf("%20f %-20s @ %f%n", val, units, timestamp);
+
+    String ToString(double val, String units, double timestamp) {
+      return String.format("%20f %-20s @ %f", val, units, timestamp);
     }
-    void printValue(MagnetFieldStrength val, String units, double timestamp) {
-      System.out.printf("%20s %-20s @ %f%n", val.toString(), units, timestamp);
+
+    String ToString(MagnetFieldStrength val, String units, double timestamp) {
+      return String.format("%20s %-20s @ %f", val.toString(), units, timestamp);
     }
 
     public void run() {
-      /* Report position, absolute position, velocity, battery voltage */
-      double posValue = _CANCoder.getPosition();
-      String posUnits = _CANCoder.getLastUnitString();
-      double posTstmp = _CANCoder.getLastTimestamp();
-      
-      double absValue = _CANCoder.getAbsolutePosition();
-      String absUnits = _CANCoder.getLastUnitString();
-      double absTstmp = _CANCoder.getLastTimestamp();
-      
-      double velValue = _CANCoder.getVelocity();
-      String velUnits = _CANCoder.getLastUnitString();
-      double velTstmp = _CANCoder.getLastTimestamp();
-      
-      double batValue = _CANCoder.getBusVoltage();
-      String batUnits = _CANCoder.getLastUnitString();
-      double batTstmp = _CANCoder.getLastTimestamp();
-
-      /* Report miscellaneous attributes about the CANCoder */
-      MagnetFieldStrength magnetStrength = _CANCoder.getMagnetFieldStrength();
-      String magnetStrengthUnits = _CANCoder.getLastUnitString();
-      double magnetStrengthTstmp = _CANCoder.getLastTimestamp();
-
-      System.out.print("Position: ");
-      printValue(posValue, posUnits, posTstmp);
-      System.out.print("Abs Pos : ");
-      printValue(absValue, absUnits, absTstmp);
-      System.out.print("Velocity: ");
-      printValue(velValue, velUnits, velTstmp);
-      System.out.print("Battery : ");
-      printValue(batValue, batUnits, batTstmp);
-      System.out.print("Strength: ");
-      printValue(magnetStrength, magnetStrengthUnits, magnetStrengthTstmp);
-
-      /* Fault reporting */
+      /* create data objects to fill */
       CANCoderFaults faults = new CANCoderFaults();
-      _CANCoder.getFaults(faults);
       CANCoderStickyFaults stickyFaults = new CANCoderStickyFaults();
-      _CANCoder.getStickyFaults(stickyFaults);
 
-      System.out.println("Faults:");
-      printFaults(faults);
-      System.out.println("Sticky Faults:");
-      printFaults(stickyFaults);
+      /* string buffer to build print output per update */
+      StringBuffer _sb = new StringBuffer();
 
-      System.out.println();
-      System.out.println();
+      while (true) {
+        /* yield */
+        try { Thread.sleep(PRINTOUT_DELAY_MS); } catch(InterruptedException excep) {}
+
+        /* Report position, absolute position, velocity, battery voltage */
+        double posValue = _CANCoder.getPosition();
+        String posUnits = _CANCoder.getLastUnitString();
+        double posTstmp = _CANCoder.getLastTimestamp();
+        
+        double absValue = _CANCoder.getAbsolutePosition();
+        String absUnits = _CANCoder.getLastUnitString();
+        double absTstmp = _CANCoder.getLastTimestamp();
+        
+        double velValue = _CANCoder.getVelocity();
+        String velUnits = _CANCoder.getLastUnitString();
+        double velTstmp = _CANCoder.getLastTimestamp();
+        
+        double batValue = _CANCoder.getBusVoltage();
+        String batUnits = _CANCoder.getLastUnitString();
+        double batTstmp = _CANCoder.getLastTimestamp();
+
+        /* Report miscellaneous attributes about the CANCoder */
+        MagnetFieldStrength magnetStrength = _CANCoder.getMagnetFieldStrength();
+        String magnetStrengthUnits = _CANCoder.getLastUnitString();
+        double magnetStrengthTstmp = _CANCoder.getLastTimestamp();
+
+        /* Fault reporting */
+        _CANCoder.getFaults(faults);
+        _CANCoder.getStickyFaults(stickyFaults);
+
+        _sb.append("***********************************");
+        _sb.append("\n");
+        _sb.append("  Position: ");
+        _sb.append(ToString(posValue, posUnits, posTstmp));
+        _sb.append("\n");
+        _sb.append("  Abs Pos : ");
+        _sb.append(ToString(absValue, absUnits, absTstmp));
+        _sb.append("\n");
+        _sb.append("  Velocity: ");
+        _sb.append(ToString(velValue, velUnits, velTstmp));
+        _sb.append("\n");
+        _sb.append("  Battery : ");
+        _sb.append(ToString(batValue, batUnits, batTstmp));
+        _sb.append("\n");
+        _sb.append("  Strength: ");
+        _sb.append(ToString(magnetStrength, magnetStrengthUnits, magnetStrengthTstmp));
+        _sb.append("\n");
+
+        _sb.append("  Faults:");
+        _sb.append(ToString(faults));
+        _sb.append("\n");
+        _sb.append("  Sticky:");
+        _sb.append(ToString(stickyFaults));
+        _sb.append("\n");
+
+        System.out.println(_sb.toString());
+        System.out.println();
+        System.out.println();
+        _sb.setLength(0);
+      }
     }
   }
 
@@ -133,21 +167,19 @@ public class Robot extends TimedRobot {
     _canCoderConfiguration.unitString = "Penguins";
 
     _CANCoder.configAllSettings(_canCoderConfiguration);
-  }
 
-  int count = 0;
-  @Override
-  public void robotPeriodic() {
-    if(count++ >= PRINTOUT_DELAY / 10) {
-      count = 0;
-
+    
       /**  
        * Doing lots of printing in Java creates a large overhead 
        * This Instrument class is designed to put that printing in a seperate thread
        * That way we can prevent loop overrun messages from occurring
        */
       new Instrument().start();
-    }
+
+  }
+
+  @Override
+  public void robotPeriodic() {
     if(joy.getRawButton(1)) {
       _CANCoder.clearStickyFaults();
     }
