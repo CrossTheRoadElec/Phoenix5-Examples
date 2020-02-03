@@ -126,7 +126,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonSRX _talon = new TalonSRX(3);
+	TalonSRX _talon = new TalonSRX(2);
 	Joystick _joy = new Joystick(0);
 
     /* Nonzero to block the config until success, zero to skip checking */
@@ -152,7 +152,7 @@ public class Robot extends TimedRobot {
 		initQuadrature();
 		
 		/* Configure Selected Sensor for Talon */
-		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,	// Feedback
+		_talon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor,	// Feedback
 											0, 											// PID ID
 											kTimeoutMs);								// Timeout
 	}

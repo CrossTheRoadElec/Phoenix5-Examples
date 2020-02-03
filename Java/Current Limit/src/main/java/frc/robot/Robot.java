@@ -52,14 +52,17 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 
 public class Robot extends TimedRobot {
     /* Hardware */
-	TalonSRX _tal = new TalonSRX(1);
+	TalonFX _tal = new TalonFX(1);
     Joystick _joy = new Joystick(0);
     
     /* Tracking variables */    
@@ -70,10 +73,7 @@ public class Robot extends TimedRobot {
         /* Factory Default Hardware to prevent unexpected behaviour */
         _tal.configFactoryDefault();
 		
-        _tal.configPeakCurrentLimit(Constants.kPeakCurrentAmps, Constants.kTimeoutMs);
-		_tal.configPeakCurrentDuration(Constants.kPeakTimeMs, Constants.kTimeoutMs);
-		_tal.configContinuousCurrentLimit(Constants.kContinCurrentAmps, Constants.kTimeoutMs);
-		_tal.enableCurrentLimit(_currentLimEn); // Honor initial setting
+        _tal.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 2, 2, 0));
 
 		/* setup a basic closed loop */
 		_tal.setNeutralMode(NeutralMode.Brake); // Netural Mode override 
@@ -117,7 +117,7 @@ public class Robot extends TimedRobot {
 			/* toggle current limit */
 			_currentLimEn = !_currentLimEn;
 			/* update Talon current limit */
-			_tal.enableCurrentLimit(_currentLimEn);
+			//_tal.enableCurrentLimit(_currentLimEn);
 			/* print to DS */
 			System.out.println("EnableCurrentLimit:"  + _currentLimEn);
 		}

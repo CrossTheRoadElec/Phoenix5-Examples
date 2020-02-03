@@ -67,6 +67,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 
 public class Robot extends TimedRobot {
@@ -75,7 +76,7 @@ public class Robot extends TimedRobot {
 	Joystick _joy = new Joystick(0);
 
 	/* create some followers */
-	BaseMotorController _follower1 = new TalonSRX(0);
+	BaseMotorController _follower1 = new TalonSRX(2);
 	BaseMotorController _follower2 = new VictorSPX(0);
 	BaseMotorController _follower3 = new VictorSPX(1);
 
@@ -96,12 +97,13 @@ public class Robot extends TimedRobot {
 		_follower1.follow(_talon);
 		_follower2.follow(_talon);
 		_follower3.follow(_talon);
+		_follower1.setInverted(InvertType.OpposeMaster);
 
 		/* Factory default hardware to prevent unexpected behavior */
 		_talon.configFactoryDefault();
 
 		/* Configure Sensor Source for Pirmary PID */
-		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx,
+		_talon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, Constants.kPIDLoopIdx,
 				Constants.kTimeoutMs);
 
 		/* set deadband to super small 0.001 (0.1 %).

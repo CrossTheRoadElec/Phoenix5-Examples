@@ -63,8 +63,8 @@ import com.ctre.phoenix.motorcontrol.can.*;
 public class Robot extends TimedRobot {
 
   /* Master Talons for arcade drive */
-  WPI_TalonSRX _left = new WPI_TalonSRX(1);
-  WPI_TalonSRX _rght = new WPI_TalonSRX(0);
+  WPI_TalonSRX _left = new WPI_TalonSRX(2);
+  WPI_TalonSRX _rght = new WPI_TalonSRX(1);
 
   /* Construct drivetrain by providing master motor controllers */
   DifferentialDrive _drive = new DifferentialDrive(_left, _rght);

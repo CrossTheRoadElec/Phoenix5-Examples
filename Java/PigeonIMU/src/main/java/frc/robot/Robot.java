@@ -84,14 +84,14 @@ public class Robot extends TimedRobot {
     PigeonIMU _pidgey;
 
     /* pick one of these */
-    TalonSRX _pigeonTalon = new TalonSRX(0); /* Pigeon is ribbon cabled to this Talon */
+    TalonSRX _pigeonTalon = null;//new TalonSRX(0); /* Pigeon is ribbon cabled to this Talon */
     // TalonSRX _pigeonTalon = null; /* Pigeon is on CAN bus, so there is no Talon to create
 
     /**
      * if Pigeon is on CAN-bus, enter the device ID. its connected to Talon, this
      * does not matter
      */
-    final int kPigeonID = 1;
+    final int kPigeonID = 3;
 
     /**
      * If using remote talon features for drive train, provide the drivetrain

@@ -79,7 +79,7 @@ public class Robot extends TimedRobot {
 		_talon.configFactoryDefault();
 
 		/* Configure Selected Sensor for Motion Profile */
-		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,
+		_talon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor,
 											Constants.kPIDLoopIdx,
 											Constants.kTimeoutMs);
 		/* Keep sensor and motor in phase, postive sensor values when MC LEDs are green */

@@ -56,17 +56,19 @@
  */
 package frc.robot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Joystick;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.*;
-import com.ctre.phoenix.sensors.*;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.sensors.PigeonIMU;
+
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.TimedRobot;
 
 public class Robot extends TimedRobot {
     /* Hardware */
-	TalonSRX _leftFront;    // Drivetrain
-	VictorSPX _rightFront;  // Drivetrain
+	TalonFX _leftFront;    // Drivetrain
+	TalonFX _rightFront;  // Drivetrain
 	TalonSRX _leftRear;     // Drivetrain
 	TalonSRX _rightRear;    // Drivetrain
     TalonSRX _spareTalon;   // Optional Talon, Can be used for Remote Talon (Can be removed)
@@ -98,8 +100,8 @@ public class Robot extends TimedRobot {
 
 	public Robot() {
         /* Init Hardware */
-		_leftFront = new TalonSRX(1);
-		_rightFront = new VictorSPX(2);
+		_leftFront = new TalonFX(1);
+		_rightFront = new TalonFX(2);
 		_leftRear = new TalonSRX(3);
 		_rightRear = new TalonSRX(2);
 		//_spareTalon = new TalonSRX(0);	
