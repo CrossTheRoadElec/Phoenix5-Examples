@@ -322,6 +322,7 @@ public:
 				point.zeroPos = true; /* set this to true on the first point */
 
 			point.isLastPoint = false;
+			point.useAuxPID = true;
 			if ((i + 1) == totalCnt)
 				point.isLastPoint = true; /* set this to true on the last point  */
 

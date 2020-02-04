@@ -43,17 +43,18 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class Robot extends TimedRobot {
 	/** Hardware, either Talon could be a Victor */
-	TalonSRX _leftMaster = new TalonSRX(2);
-	TalonSRX _rightMaster = new TalonSRX(1);
+	TalonFX _leftMaster = new TalonFX(2);
+	TalonFX _rightMaster = new TalonFX(1);
 	Joystick _gamepad = new Joystick(0);
 
 	@Override
@@ -76,8 +77,8 @@ public class Robot extends TimedRobot {
 		_rightMaster.setNeutralMode(NeutralMode.Brake);
 		
 		/* Configure output direction */
-		_leftMaster.setInverted(false);
-		_rightMaster.setInverted(true);
+		_leftMaster.setInverted(TalonFXInvertType.CounterClockwise);
+		_rightMaster.setInverted(TalonFXInvertType.Clockwise);
 		
 		System.out.println("This is Arcade Drive using Arbitrary Feed Forward.");
 	}

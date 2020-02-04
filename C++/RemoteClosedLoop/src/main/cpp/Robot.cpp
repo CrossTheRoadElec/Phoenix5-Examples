@@ -161,9 +161,9 @@ public:
 
 		//                                         kP   kI   kD   kF              Iz    PeakOut
 		constexpr static Gains kGains_Distanc = { 0.1, 0.0,  0.0, 0.0,            100,  0.50 };
-		constexpr static Gains kGains_Turning = { 2.0, 0.0,  4.0, 0.0,            200,  1.00 };
-		constexpr static Gains kGains_Velocit = { 0.1, 0.0, 20.0, 1023.0/6800.0,  300,  0.50 }; /* measured 6800 velocity units at full motor output */
-		constexpr static Gains kGains_MotProf = { 1.0, 0.0,  0.0, 1023.0/6800.0,  400,  1.00 }; /* measured 6800 velocity units at full motor output */
+		constexpr static Gains kGains_Turning = { 0.1, 0.0,  0.0, 0.0,            200,  1.00 };
+		constexpr static Gains kGains_Velocit = { 0.1, 0.0, 00.0, 1023.0/12800.0,  300,  0.50 }; /* measured 6800 velocity units at full motor output */
+		constexpr static Gains kGains_MotProf = { 0.02, 0.0,  0.2, 1023.0/7200.0,  400,  1.00 }; /* measured 6800 velocity units at full motor output */
 
 		const static int kSlot_Distanc = SLOT_0;
 		const static int kSlot_Turning = SLOT_1;
@@ -175,10 +175,10 @@ public:
 	/***************************************************************************************************************************************************/
 	/***************************************************************************************************************************************************/
 	/* hardware objects */
-	TalonSRX * _talonLeft = new TalonSRX(6);
-	TalonSRX * _talonRght = new TalonSRX(2);
-	TalonSRX * _talonPigeon = new TalonSRX(5);
-	PigeonIMU * _imu = new PigeonIMU(_talonPigeon);
+	TalonFX * _talonLeft = new TalonFX(2);
+	TalonFX * _talonRght = new TalonFX(1);
+	//TalonSRX * _talonPigeon = new TalonSRX(5);
+	PigeonIMU * _imu = new PigeonIMU(3);
 	Joystick * _joy = new Joystick(0);
 
 	/** Motion profile example manager*/
@@ -188,7 +188,7 @@ public:
 	bool _btns[kNumButtonsPlusOne];
 	int _pov = 0;
 
-	/* depending on selected example, we must latch the targets. This is necessary
+	/* depending on selected example, we must latch the targetsZ. This is necessary
 	 * so that the user is free to move the target stick and then lock in the target
 	 * on button press. */
 	double _target0 = 0;
@@ -198,7 +198,7 @@ public:
 		/* Factory Default all hardware to prevent unexpected behaviour */
 		_talonRght->ConfigFactoryDefault();
 		_talonLeft->ConfigFactoryDefault();	
-		_talonPigeon->ConfigFactoryDefault();	
+		//_talonPigeon->ConfigFactoryDefault();	
 		_imu->ConfigFactoryDefault();	
 		/* Ensure robot starts in neutral mode */
 		_talonRght->Set(ControlMode::PercentOutput, 0);
@@ -212,7 +212,7 @@ public:
 
 		//------------ setup filters -----------------//
 		/* other side is quad */
-		_talonLeft->ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder,
+		_talonLeft->ConfigSelectedFeedbackSensor(FeedbackDevice::IntegratedSensor,
 												PID_PRIMARY,
 												kTimeoutMs);
 
@@ -222,22 +222,22 @@ public:
 												REMOTE_0,
 												kTimeoutMs);
 		/* Remote 1 will be a pigeon */
-		_talonRght->ConfigRemoteFeedbackFilter(	_talonPigeon->GetDeviceID(),
+		_talonRght->ConfigRemoteFeedbackFilter(	_imu->GetDeviceNumber(),
 												RemoteSensorSource::RemoteSensorSource_GadgeteerPigeon_Yaw,
 												REMOTE_1,
 												kTimeoutMs);
 
 		/* setup sum and difference signals */
 		_talonRght->ConfigSensorTerm(SensorTerm::SensorTerm_Sum0, FeedbackDevice::RemoteSensor0, kTimeoutMs);
-		_talonRght->ConfigSensorTerm(SensorTerm::SensorTerm_Sum1, FeedbackDevice::QuadEncoder, kTimeoutMs);
-		_talonRght->ConfigSensorTerm(SensorTerm::SensorTerm_Diff1, FeedbackDevice::RemoteSensor0, kTimeoutMs);
-		_talonRght->ConfigSensorTerm(SensorTerm::SensorTerm_Diff0, FeedbackDevice::QuadEncoder, kTimeoutMs);
+		_talonRght->ConfigSensorTerm(SensorTerm::SensorTerm_Sum1, FeedbackDevice::IntegratedSensor, kTimeoutMs);
+		_talonRght->ConfigSensorTerm(SensorTerm::SensorTerm_Diff0, FeedbackDevice::RemoteSensor0, kTimeoutMs);
+		_talonRght->ConfigSensorTerm(SensorTerm::SensorTerm_Diff1, FeedbackDevice::IntegratedSensor, kTimeoutMs);
 
 		/* select sum for distance(0), different for turn(1) */
-		_talonRght->ConfigSelectedFeedbackSensor(FeedbackDevice::SensorSum, PID_PRIMARY, kTimeoutMs);
+		_talonRght->ConfigSelectedFeedbackSensor(FeedbackDevice::SensorDifference, PID_PRIMARY, kTimeoutMs);
 
 		if (kHeadingSensorChoice == 0) {
-			_talonRght->ConfigSelectedFeedbackSensor(FeedbackDevice::SensorDifference,
+			_talonRght->ConfigSelectedFeedbackSensor(FeedbackDevice::SensorSum,
 													PID_TURN,
 													kTimeoutMs);
 
@@ -346,13 +346,13 @@ public:
 		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
 		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 		 */
-		_talonRght->ConfigAuxPIDPolarity(false, kTimeoutMs);
+		_talonRght->ConfigAuxPIDPolarity(true, kTimeoutMs);
 
 		ZeroSensors();
 	}
 	void ZeroSensors() {
-		_talonLeft->GetSensorCollection().SetQuadraturePosition(0, kTimeoutMs);
-		_talonRght->GetSensorCollection().SetQuadraturePosition(0, kTimeoutMs);
+		_talonLeft->GetSensorCollection().SetIntegratedSensorPosition(0, kTimeoutMs);
+		_talonRght->GetSensorCollection().SetIntegratedSensorPosition(0, kTimeoutMs);
 		_imu->SetYaw(0, kTimeoutMs);
 		_imu->SetAccumZAngle(0, kTimeoutMs);
 		printf("        [Sensors] All sensors are zeroed.\n");

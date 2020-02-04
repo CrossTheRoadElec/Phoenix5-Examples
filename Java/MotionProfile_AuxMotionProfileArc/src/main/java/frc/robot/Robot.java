@@ -64,6 +64,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.sensors.PigeonIMU;
@@ -78,8 +79,8 @@ import com.ctre.phoenix.motorcontrol.FollowerType;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonSRX _leftMaster = new TalonSRX(2);
-	TalonSRX _rightMaster = new TalonSRX(1);
+	TalonFX _leftMaster = new TalonFX(2);
+	TalonFX _rightMaster = new TalonFX(1);
 	PigeonIMU _pidgey = new PigeonIMU(3);
 
 	Joystick _gamepad = new Joystick(0);
@@ -324,8 +325,8 @@ public class Robot extends TimedRobot {
 	
 	/* Zeroes all sensors on Talons */
 	void zeroSensors() {
-		_leftMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
-		_rightMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
+		_leftMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
+		_rightMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
 		_pidgey.setYaw(0);
 		System.out.println("[Quad Encoders + Pigeon] All sensors are zeroed.\n");
 	}

@@ -42,10 +42,7 @@
  * Left Joystick Y-Axis: Throttle Talon forward and reverse when Button 1 is held
  * 
  * Supported Version:
- * 	- Talon SRX: 4.0
- * 	- Victor SPX: 4.0
- * 	- Pigeon IMU: 4.0
- * 	- CANifier: 4.0
+ * 	- Talon FX: 20.0.0.0
  */
 package frc.robot;
 
@@ -53,12 +50,12 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 
 public class Robot extends TimedRobot {
     /* Hardware */
@@ -73,11 +70,14 @@ public class Robot extends TimedRobot {
         /* Factory Default Hardware to prevent unexpected behaviour */
         _tal.configFactoryDefault();
 		
-        _tal.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 2, 2, 0));
+		/* Limit stator current to 20 amps if it exceeds 25 amps for 1 second */
+		_tal.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 20, 25, 1.0));
+		/* Limit supply current to 10 amps if it exceeds 15 amps for 0.5 seconds */
+        _tal.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 10, 15, 0.5));
 
 		/* setup a basic closed loop */
 		_tal.setNeutralMode(NeutralMode.Brake); // Netural Mode override 
-        _tal.configSelectedFeedbackSensor(  FeedbackDevice.QuadEncoder, // Sensor Type 
+        _tal.configSelectedFeedbackSensor(  TalonFXFeedbackDevice.IntegratedSensor, // Sensor Type 
                                             Constants.PID_PRIMARY,      // PID Index
                                             Constants.kTimeoutMs);      // Config Timeout
 

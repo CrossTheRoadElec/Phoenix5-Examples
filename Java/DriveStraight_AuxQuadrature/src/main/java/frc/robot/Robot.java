@@ -64,12 +64,11 @@ import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
@@ -119,11 +118,20 @@ public class Robot extends TimedRobot {
 												Constants.kTimeoutMs);						// Configuration Timeout
 		
 		/* Setup difference signal to be used for turn when performing Drive Straight with encoders */
-		_rightMaster.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);	// Feedback Device of Remote Talon
-		_rightMaster.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.IntegratedSensor, Constants.kTimeoutMs);		// Quadrature Encoder of current Talon
+		/* 
+		 * Currently, in order to use a product-specific FeedbackDevice in configSensorTerm,
+		 * you have to call toFeedbackType. This is a workaround until a product-specific
+		 * FeedbackDevice is implemented for configSensorTerm
+		 */
+		_rightMaster.configSensorTerm(SensorTerm.Sum0, 
+									TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice(), 
+									Constants.kTimeoutMs);	// Feedback Device of Remote Talon
+		_rightMaster.configSensorTerm(SensorTerm.Sum1, 
+									TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(), 
+									Constants.kTimeoutMs);		// Quadrature Encoder of current Talon
 		
 		/* Difference term calculated by right Talon configured to be selected sensor of turn PID */
-		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.SensorDifference, 
+		_rightMaster.configSelectedFeedbackSensor(	TalonFXFeedbackDevice.SensorSum, 
 													Constants.PID_TURN, 
 													Constants.kTimeoutMs);
 		
@@ -140,10 +148,8 @@ public class Robot extends TimedRobot {
 														Constants.kTimeoutMs);														// Configuration Timeout
 		
 		/* Configure output and sensor direction */
-		_leftMaster.setInverted(false);
-		_leftMaster.setSensorPhase(false);
-		_rightMaster.setInverted(true);
-		_rightMaster.setSensorPhase(false);
+		_leftMaster.setInverted(TalonFXInvertType.CounterClockwise);
+		_rightMaster.setInverted(TalonFXInvertType.Clockwise);
 		
 		/* Set status frame periods */
 		_rightMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
@@ -185,7 +191,7 @@ public class Robot extends TimedRobot {
 		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
 		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 		 */
-		_rightMaster.configAuxPIDPolarity(false, Constants.kTimeoutMs);
+		_rightMaster.configAuxPIDPolarity(true, Constants.kTimeoutMs);
 
 		/* Initialize */
 		_firstCall = true;

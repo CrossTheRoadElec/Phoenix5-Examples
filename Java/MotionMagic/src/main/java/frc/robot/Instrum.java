@@ -6,14 +6,14 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 public class Instrum {
 	/* Tracking variables for instrumentation */
 	private static int _loops = 0;
 	private static int _timesInMotionMagic = 0;
 
-	public static void Process(TalonSRX tal, StringBuilder sb) {
+	public static void Process(TalonFX tal, StringBuilder sb) {
 		/* Smart dash plots */
 		SmartDashboard.putNumber("SensorVel", tal.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
 		SmartDashboard.putNumber("SensorPos", tal.getSelectedSensorPosition(Constants.kPIDLoopIdx));

@@ -36,7 +36,7 @@ public:
 
 	void RobotInit() {
 		//Initialize talon with ID 3
-		_talon = new TalonSRX(3);
+		_talon = new TalonSRX(1);
 		/* Factory Default all hardware to prevent unexpected behaviour */
 		_talon->ConfigFactoryDefault();
 

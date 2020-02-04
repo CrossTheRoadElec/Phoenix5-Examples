@@ -70,7 +70,7 @@ void Robot::RobotInit() {
     _talon->ConfigFactoryDefault();
 
     /* Configure Sensor Source for Pirmary PID */
-    _talon->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative,
+    _talon->ConfigSelectedFeedbackSensor(FeedbackDevice::IntegratedSensor,
                                         0, 
                                         10);
 

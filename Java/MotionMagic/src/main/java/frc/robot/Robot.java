@@ -64,21 +64,16 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
-import com.ctre.phoenix.motorcontrol.can.*;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 
 public class Robot extends TimedRobot {
 	/* Hardware */
-	TalonSRX _talon = new TalonSRX(1);
+	TalonFX _talon = new TalonFX(1);
 	Joystick _joy = new Joystick(0);
-
-	/* create some followers */
-	BaseMotorController _follower1 = new TalonSRX(2);
-	BaseMotorController _follower2 = new VictorSPX(0);
-	BaseMotorController _follower3 = new VictorSPX(1);
 
 	/* Used to build string throughout loop */
 	StringBuilder _sb = new StringBuilder();
@@ -90,20 +85,11 @@ public class Robot extends TimedRobot {
 	int _pov = -1;
 
 	public void robotInit() {
-		/* setup some followers */
-		_follower1.configFactoryDefault();
-		_follower2.configFactoryDefault();
-		_follower3.configFactoryDefault();
-		_follower1.follow(_talon);
-		_follower2.follow(_talon);
-		_follower3.follow(_talon);
-		_follower1.setInverted(InvertType.OpposeMaster);
-
 		/* Factory default hardware to prevent unexpected behavior */
 		_talon.configFactoryDefault();
 
 		/* Configure Sensor Source for Pirmary PID */
-		_talon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, Constants.kPIDLoopIdx,
+		_talon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDLoopIdx,
 				Constants.kTimeoutMs);
 
 		/* set deadband to super small 0.001 (0.1 %).
@@ -171,7 +157,7 @@ public class Robot extends TimedRobot {
 
 			/* 4096 ticks/rev * 10 Rotations in either direction */
 			double targetPos = rghtYstick * 4096 * 10.0;
-			_talon.set(ControlMode.MotionMagic, targetPos);
+			_talon.set(TalonFXControlMode.MotionMagic, targetPos);
 
 			/* Append more signals to print when in speed mode */
 			_sb.append("\terr:");
@@ -181,7 +167,7 @@ public class Robot extends TimedRobot {
 		} else {
 			/* Percent Output */
 
-			_talon.set(ControlMode.PercentOutput, leftYstick);
+			_talon.set(TalonFXControlMode.PercentOutput, leftYstick);
 		}
 		if (_joy.getRawButton(2)) {
 			/* Zero sensor positions */

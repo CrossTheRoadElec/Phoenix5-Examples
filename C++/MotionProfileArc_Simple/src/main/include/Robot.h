@@ -24,8 +24,8 @@ public:
 private:
 	int _state;
 
-	TalonSRX *_rightMaster;
-	TalonSRX *_leftMaster;
+	TalonFX *_rightMaster;
+	TalonFX *_leftMaster;
 
 	MasterProfileConfiguration *_masterConfig;
 	FollowerProfileConfiguration *_followConfig;

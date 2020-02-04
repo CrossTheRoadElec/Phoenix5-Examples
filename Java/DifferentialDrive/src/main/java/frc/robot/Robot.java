@@ -34,7 +34,8 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix.motorcontrol.InvertType;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -44,10 +45,10 @@ public class Robot extends TimedRobot {
     /*
      * --- [1] Update CAN Device IDs and use WPI_VictorSPX where necessary ------
      */
-    WPI_TalonSRX _rghtFront = new WPI_TalonSRX(2);
-    WPI_TalonSRX _rghtFollower = new WPI_TalonSRX(20);
-    WPI_TalonSRX _leftFront = new WPI_TalonSRX(1);
-    WPI_TalonSRX _leftFollower = new WPI_TalonSRX(10);
+    WPI_TalonFX _rghtFront = new WPI_TalonFX(1);
+    WPI_TalonFX _rghtFollower = new WPI_TalonFX(10);
+    WPI_TalonFX _leftFront = new WPI_TalonFX(2);
+    WPI_TalonFX _leftFollower = new WPI_TalonFX(20);
 
     DifferentialDrive _diffDrive = new DifferentialDrive(_leftFront, _rghtFront);
 
@@ -123,8 +124,8 @@ public class Robot extends TimedRobot {
         _leftFollower.follow(_leftFront);
 
         /* [3] flip values so robot moves forward when stick-forward/LEDs-green */
-        _rghtFront.setInverted(true); // !< Update this
-        _leftFront.setInverted(false); // !< Update this
+        _rghtFront.setInverted(TalonFXInvertType.Clockwise); // !< Update this
+        _leftFront.setInverted(TalonFXInvertType.CounterClockwise); // !< Update this
 
         /*
          * set the invert of the followers to match their respective master controllers

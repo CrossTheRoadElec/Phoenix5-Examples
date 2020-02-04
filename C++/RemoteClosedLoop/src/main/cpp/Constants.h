@@ -80,9 +80,9 @@ extern struct _Constants {
 
 	//                                         kP   kI   kD   kF              Iz    PeakOut
 	constexpr static Gains kGains_Distanc = { 0.1, 0.0,  0.0, 0.0,            100,  0.50 };
-	constexpr static Gains kGains_Turning = { 2.0, 0.0,  4.0, 0.0,            200,  1.00 };
-	constexpr static Gains kGains_Velocit = { 0.1, 0.0, 20.0, 1023.0/6800.0,  300,  0.50 }; /* measured 6800 velocity units at full motor output */
-	constexpr static Gains kGains_MotProf = { 1.0, 0.0,  0.0, 1023.0/6800.0,  400,  1.00 }; /* measured 6800 velocity units at full motor output */
+	constexpr static Gains kGains_Turning = { 0.1, 0.0,  0.0, 0.0,            200,  1.00 };
+	constexpr static Gains kGains_Velocit = { 0.0, 0.0, 00.0, 1023.0/12800.0,  300,  0.50 }; /* measured 6800 velocity units at full motor output */
+	constexpr static Gains kGains_MotProf = { 0.1, 0.0,  0.0, 1023.0/12800.0,  400,  1.00 }; /* measured 6800 velocity units at full motor output */
 
 	const static int kSlot_Distanc = SLOT_0;
 	const static int kSlot_Turning = SLOT_1;

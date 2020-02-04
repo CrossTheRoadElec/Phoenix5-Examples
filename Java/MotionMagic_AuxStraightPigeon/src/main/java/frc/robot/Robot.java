@@ -70,17 +70,17 @@ import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonSRX _leftMaster = new TalonSRX(2);
-	TalonSRX _rightMaster = new TalonSRX(1);
+	TalonFX _leftMaster = new TalonFX(2);
+	TalonFX _rightMaster = new TalonFX(1);
 	PigeonIMU _pidgey = new PigeonIMU(3);
 	Joystick _gamepad = new Joystick(0);
 	
@@ -104,8 +104,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit(){
 		/* Disable all motor controllers */
-		_rightMaster.set(ControlMode.PercentOutput, 0);
-		_leftMaster.set(ControlMode.PercentOutput, 0);
+		_rightMaster.set(TalonFXControlMode.PercentOutput, 0);
+		_leftMaster.set(TalonFXControlMode.PercentOutput, 0);
 
 		/* Factory Default all hardware to prevent unexpected behavior */
 		_rightMaster.configFactoryDefault();
@@ -119,7 +119,7 @@ public class Robot extends TimedRobot {
 		/** Feedback Sensor Configuration */
 		
 		/* Configure the left Talon's selected sensor as local QuadEncoder */
-		_leftMaster.configSelectedFeedbackSensor(	FeedbackDevice.IntegratedSensor,				// Local Feedback Source
+		_leftMaster.configSelectedFeedbackSensor(	TalonFXFeedbackDevice.IntegratedSensor,				// Local Feedback Source
 													Constants.PID_PRIMARY,					// PID Slot for Source [0, 1]
 													Constants.kTimeoutMs);					// Configuration Timeout
 
@@ -136,11 +136,15 @@ public class Robot extends TimedRobot {
 												Constants.kTimeoutMs);
 		
 		/* Setup Sum signal to be used for Distance */
-		_rightMaster.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);				// Feedback Device of Remote Talon
-		_rightMaster.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.IntegratedSensor, Constants.kTimeoutMs);	// Quadrature Encoder of current Talon
+		_rightMaster.configSensorTerm(SensorTerm.Diff0, 
+									TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice(), 
+									Constants.kTimeoutMs);				// Feedback Device of Remote Talon
+		_rightMaster.configSensorTerm(SensorTerm.Diff1, 
+									TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(), 
+									Constants.kTimeoutMs);	// Quadrature Encoder of current Talon
 		
 		/* Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index */
-		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.SensorDifference, 
+		_rightMaster.configSelectedFeedbackSensor(	TalonFXFeedbackDevice.SensorDifference, 
 													Constants.PID_PRIMARY,
 													Constants.kTimeoutMs);
 		
@@ -150,7 +154,7 @@ public class Robot extends TimedRobot {
 														Constants.kTimeoutMs);		// Configuration Timeout
 		
 		/* Configure Remote 1 [Pigeon IMU's Yaw] to be used for Auxiliary PID Index */
-		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.RemoteSensor1,
+		_rightMaster.configSelectedFeedbackSensor(	TalonFXFeedbackDevice.RemoteSensor1,
 													Constants.PID_TURN,
 													Constants.kTimeoutMs);
 		
@@ -268,8 +272,8 @@ public class Robot extends TimedRobot {
 			if (_firstCall)
 				System.out.println("This is Arcade Drive.\n");
 			
-			_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
-			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
+			_leftMaster.set(TalonFXControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
+			_rightMaster.set(TalonFXControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
 		}else{
 			if (_firstCall) {
 				System.out.println("This is Motion Magic with the Auxiliary PID using the Pigeon yaw.");
@@ -286,7 +290,7 @@ public class Robot extends TimedRobot {
 			double target_turn = _targetAngle;
 			
 			/* Configured for MotionMagic on Quad Encoders' Sum and Auxiliary PID on Pigeon */
-			_rightMaster.set(ControlMode.MotionMagic, target_sensorUnits, DemandType.AuxPID, target_turn);
+			_rightMaster.set(TalonFXControlMode.MotionMagic, target_sensorUnits, DemandType.AuxPID, target_turn);
 			_leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
 		}
 		_firstCall = false;
@@ -294,8 +298,8 @@ public class Robot extends TimedRobot {
 	
 	/** Zero all sensors, both Talons and Pigeon */
 	void zeroSensors() {
-		_leftMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
-		_rightMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
+		_leftMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
+		_rightMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
 		_pidgey.setYaw(0, Constants.kTimeoutMs);
 		_pidgey.setAccumZAngle(0, Constants.kTimeoutMs);
 		System.out.println("[Quadrature Encoders + Pigeon] All sensors are zeroed.\n");
@@ -303,8 +307,8 @@ public class Robot extends TimedRobot {
 	
 	/** Zero QuadEncoders, used to reset position when initializing Motion Magic */
 	void zeroDistance(){
-		_leftMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
-		_rightMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
+		_leftMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
+		_rightMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
 		System.out.println("[Quadrature Encoders] All encoders are zeroed.\n");
 	}
 	
