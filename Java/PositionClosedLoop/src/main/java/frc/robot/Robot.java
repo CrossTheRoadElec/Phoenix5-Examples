@@ -76,7 +76,7 @@ public class Robot extends TimedRobot {
 		_talon.configFactoryDefault();
 		
 		/* Config the sensor used for Primary PID and sensor direction */
-        _talon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 
+        _talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 
                                             Constants.kPIDLoopIdx,
 				                            Constants.kTimeoutMs);
 

@@ -76,7 +76,7 @@ public class Robot extends TimedRobot {
     /* Hardware */
     TalonSRX _motorCntrller = new TalonSRX(1);	// Victor SPX can be used with remote sensor features.
     CANifier _canifLimits = new CANifier(0);	// Use this CANifier for remote limit switches
-    TalonSRX _talonLimits = new TalonSRX(2); 	// Use this Talon for remote limit switches
+    TalonSRX _talonLimits = new TalonSRX(3); 	// Use this Talon for remote limit switches
     PigeonIMU _imu = new PigeonIMU(3);
     Joystick _joy = new Joystick(0);
 

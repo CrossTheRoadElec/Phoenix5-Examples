@@ -71,16 +71,16 @@ import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonFX _leftMaster = new TalonFX(2);
-	TalonFX _rightMaster = new TalonFX(1);
+	TalonSRX _leftMaster = new TalonSRX(2);
+	TalonSRX _rightMaster = new TalonSRX(1);
 	Joystick _gamepad = new Joystick(0);
 	
 	/** A couple latched values to detect on-press events for buttons */
@@ -104,8 +104,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit(){
 		/* Disable all motor controllers */
-		_rightMaster.set(TalonFXControlMode.PercentOutput, 0);
-		_leftMaster.set(TalonFXControlMode.PercentOutput, 0);
+		_rightMaster.set(ControlMode.PercentOutput, 0);
+		_leftMaster.set(ControlMode.PercentOutput, 0);
 
 		/* Factory Default all hardware to prevent unexpected behaviour */
 		_rightMaster.configFactoryDefault();
@@ -118,7 +118,7 @@ public class Robot extends TimedRobot {
 		/** Feedback Sensor Configuration */
 		
 		/* Configure the left Talon's selected sensor as local QuadEncoder */
-		_leftMaster.configSelectedFeedbackSensor(	TalonFXFeedbackDevice.IntegratedSensor,				// Local Feedback Source
+		_leftMaster.configSelectedFeedbackSensor(	FeedbackDevice.QuadEncoder,				// Local Feedback Source
 													Constants.PID_PRIMARY,					// PID Slot for Source [0, 1]
 													Constants.kTimeoutMs);					// Configuration Timeout
 
@@ -129,23 +129,15 @@ public class Robot extends TimedRobot {
 												Constants.kTimeoutMs);						// Configuration Timeout
 		
 		/* Setup Sum signal to be used for Distance */
-		_rightMaster.configSensorTerm(SensorTerm.Sum0, 
-									TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice(), 
-									Constants.kTimeoutMs);				// Feedback Device of Remote Talon
-		_rightMaster.configSensorTerm(SensorTerm.Sum1, 
-									TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(), 
-									Constants.kTimeoutMs);	// Quadrature Encoder of current Talon
+		_rightMaster.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);				// Feedback Device of Remote Talon
+		_rightMaster.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTimeoutMs);	// Quadrature Encoder of current Talon
 		
 		/* Setup Difference signal to be used for Turn */
-		_rightMaster.configSensorTerm(SensorTerm.Diff0, 
-									TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice(), 
-									Constants.kTimeoutMs);
-		_rightMaster.configSensorTerm(SensorTerm.Diff1, 
-									TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(), 
-									Constants.kTimeoutMs);
+		_rightMaster.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);
+		_rightMaster.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTimeoutMs);
 		
 		/* Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index */
-		_rightMaster.configSelectedFeedbackSensor(	TalonFXFeedbackDevice.SensorDifference, 
+		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.SensorSum, 
 													Constants.PID_PRIMARY,
 													Constants.kTimeoutMs);
 		
@@ -155,7 +147,7 @@ public class Robot extends TimedRobot {
 														Constants.kTimeoutMs);		// Configuration Timeout
 		
 		/* Configure Difference [Difference between both QuadEncoders] to be used for Auxiliary PID Index */
-		_rightMaster.configSelectedFeedbackSensor(	TalonFXFeedbackDevice.SensorSum, 
+		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.SensorDifference, 
 													Constants.PID_TURN, 
 													Constants.kTimeoutMs);
 		
@@ -227,7 +219,7 @@ public class Robot extends TimedRobot {
 		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
 		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 		 */
-		_rightMaster.configAuxPIDPolarity(true, Constants.kTimeoutMs);
+		_rightMaster.configAuxPIDPolarity(false, Constants.kTimeoutMs);
 
 		/* Initialize */
 		_firstCall = true;
@@ -274,8 +266,8 @@ public class Robot extends TimedRobot {
 			if (_firstCall)
 				System.out.println("This is Acade Drive.\n");
 			
-			_leftMaster.set(TalonFXControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
-			_rightMaster.set(TalonFXControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
+			_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
+			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
 		}else{
 			if (_firstCall) {
 				System.out.println("This is Motion Magic with the Auxiliary PID using the difference between two encoders.");
@@ -291,7 +283,7 @@ public class Robot extends TimedRobot {
 			double target_turn = _targetAngle;
 			
 			/* Configured for MotionMagic on Quad Encoders' Sum and Auxiliary PID on Quad Encoders' Difference */
-			_rightMaster.set(TalonFXControlMode.MotionMagic, target_sensorUnits, DemandType.AuxPID, target_turn);
+			_rightMaster.set(ControlMode.MotionMagic, target_sensorUnits, DemandType.AuxPID, target_turn);
 			_leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
 		}
 		_firstCall = false;
@@ -299,8 +291,8 @@ public class Robot extends TimedRobot {
 	
 	/** Zero quadrature encoders on Talon */
 	void zeroSensors() {
-		_leftMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
-		_rightMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
+		_leftMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
+		_rightMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
 	}
 	

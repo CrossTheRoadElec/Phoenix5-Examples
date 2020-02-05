@@ -113,7 +113,7 @@ public class Robot extends TimedRobot {
 		/** Feedback Sensor Configuration */
 		
 		/* Configure the left Talon's selected sensor as local QuadEncoder */
-		_leftMaster.configSelectedFeedbackSensor(	FeedbackDevice.IntegratedSensor,				// Local Feedback Source
+		_leftMaster.configSelectedFeedbackSensor(	FeedbackDevice.QuadEncoder,				// Local Feedback Source
 													Constants.PID_PRIMARY,					// PID Slot for Source [0, 1]
 													Constants.kTimeoutMs);					// Configuration Timeout
 
@@ -124,15 +124,15 @@ public class Robot extends TimedRobot {
 												Constants.kTimeoutMs);						// Configuration Timeout
 		
 		/* Setup Sum signal to be used for Distance */
-		_rightMaster.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.RemoteSensor1, Constants.kTimeoutMs);				// Feedback Device of Remote Talon
-		_rightMaster.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.IntegratedSensor, Constants.kTimeoutMs);	// Quadrature Encoder of current Talon
+		_rightMaster.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor1, Constants.kTimeoutMs);				// Feedback Device of Remote Talon
+		_rightMaster.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTimeoutMs);	// Quadrature Encoder of current Talon
 		
 		/* Setup Difference signal to be used for Turn */
-		_rightMaster.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor1, Constants.kTimeoutMs);
-		_rightMaster.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.IntegratedSensor, Constants.kTimeoutMs);
+		_rightMaster.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor1, Constants.kTimeoutMs);
+		_rightMaster.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTimeoutMs);
 		
 		/* Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index */
-		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.SensorDifference, 
+		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.SensorSum, 
 													Constants.PID_PRIMARY,
 													Constants.kTimeoutMs);
 		
@@ -142,7 +142,7 @@ public class Robot extends TimedRobot {
 														Constants.kTimeoutMs);		// Configuration Timeout
 		
 		/* Configure Difference [Difference between both QuadEncoders] to be used for Auxiliary PID Index */
-		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.SensorSum, 
+		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.SensorDifference, 
 													Constants.PID_TURN, 
 													Constants.kTimeoutMs);
 		
@@ -205,7 +205,7 @@ public class Robot extends TimedRobot {
 		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
 		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 		 */
-		_rightMaster.configAuxPIDPolarity(true, Constants.kTimeoutMs);
+		_rightMaster.configAuxPIDPolarity(false, Constants.kTimeoutMs);
 
 		/* Initialize */
 		_firstCall = true;

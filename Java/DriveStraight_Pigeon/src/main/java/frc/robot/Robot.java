@@ -56,19 +56,20 @@
  */
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.sensors.PigeonIMU;
-
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Joystick;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.*;
+import com.ctre.phoenix.sensors.*;
 
 public class Robot extends TimedRobot {
     /* Hardware */
-	TalonFX _leftFront;    // Drivetrain
-	TalonFX _rightFront;  // Drivetrain
-	TalonFX _leftRear;     // Drivetrain
-	TalonFX _rightRear;    // Drivetrain
+	TalonSRX _leftFront;    // Drivetrain
+	VictorSPX _rightFront;  // Drivetrain
+	TalonSRX _leftRear;     // Drivetrain
+	TalonSRX _rightRear;    // Drivetrain
+    TalonSRX _spareTalon;   // Optional Talon, Can be used for Remote Talon (Can be removed)
     PigeonIMU _pidgey;      // Pigeon IMU used to enforce straight drive
 	Joystick _driveStick;	// Joystick object on USB port 1
 
@@ -97,12 +98,26 @@ public class Robot extends TimedRobot {
 
 	public Robot() {
         /* Init Hardware */
-		_leftFront = new TalonFX(1);
-		_rightFront = new TalonFX(2);
-		_leftRear = new TalonFX(3);
-		_rightRear = new TalonFX(2);
-		_pidgey = new PigeonIMU(3);             // Change ID accordingly 
-        
+		_leftFront = new TalonSRX(1);
+		_rightFront = new VictorSPX(2);
+		_leftRear = new TalonSRX(3);
+		_rightRear = new TalonSRX(2);
+		//_spareTalon = new TalonSRX(0);	
+
+        /**
+		 * Set isPigeonOnCAN to:
+         * True if Pigeon is Connected through CAN 
+         * False if connected through gadgeteer (Constructor takes the Talon it is connected to)
+         */
+        boolean isPigeonOnCAN = true;
+        if(isPigeonOnCAN){
+            /* Pigeon is on CANBus (powered from ~12V, and has a device ID of zero) */
+            _pidgey = new PigeonIMU(3);             // Change ID accordingly 
+        }else{
+            /* Pigeon is ribbon cabled to the specified CANTalon. */
+            _pidgey = new PigeonIMU(_spareTalon);   // Change Talon Accordingly
+        }
+
 		/* Define joystick being used at USB port #0 on the Drivers Station */
 		_driveStick = new Joystick(0);	
 	}
@@ -207,10 +222,10 @@ public class Robot extends TimedRobot {
 		right = Cap(right, 1.0);
 
 		/* our right side motors need to drive negative to move robot forward */
-		_leftFront.set(TalonFXControlMode.PercentOutput, left);
-		_leftRear.set(TalonFXControlMode.PercentOutput, left);
-		_rightFront.set(TalonFXControlMode.PercentOutput, -1. * right);
-		_rightRear.set(TalonFXControlMode.PercentOutput, -1. * right);
+		_leftFront.set(ControlMode.PercentOutput, left);
+		_leftRear.set(ControlMode.PercentOutput, left);
+		_rightFront.set(ControlMode.PercentOutput, -1. * right);
+		_rightRear.set(ControlMode.PercentOutput, -1. * right);
 
 		/* Prints for debugging */
 		if (++_printLoops > 50){

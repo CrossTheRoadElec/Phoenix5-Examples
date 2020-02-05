@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
     int _state = 0;
 
     /** a master talon, add followers if need be. */
-    TalonSRX _master = new TalonSRX(1);
+    TalonSRX _master = new TalonSRX(0);
 
     /** gamepad for control */
     Joystick _joy = new Joystick(0);
@@ -79,7 +79,7 @@ public class Robot extends TimedRobot {
         initBuffer(MotionProfile.Points, MotionProfile.kNumPoints);
 
         /* _config the master specific settings */
-        _config.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
+        _config.primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder;
         _config.neutralDeadband = Constants.kNeutralDeadband; /* 0.1 % super small for best low-speed control */
         _config.slot0.kF = Constants.kGains_MotProf.kF;
         _config.slot0.kP = Constants.kGains_MotProf.kP;

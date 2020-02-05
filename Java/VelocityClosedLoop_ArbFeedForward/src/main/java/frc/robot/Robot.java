@@ -104,7 +104,7 @@ public class Robot extends TimedRobot {
 		/** Feedback Sensor Configuration */
 		
 		/* Configure the left Talon's selected sensor as local QuadEncoder */
-		_leftMaster.configSelectedFeedbackSensor(	FeedbackDevice.IntegratedSensor,				// Local Feedback Source
+		_leftMaster.configSelectedFeedbackSensor(	FeedbackDevice.QuadEncoder,				// Local Feedback Source
 													Constants.PID_PRIMARY,					// PID Slot for Source [0, 1]
 													Constants.kTimeoutMs);					// Configuration Timeout
 
@@ -115,11 +115,11 @@ public class Robot extends TimedRobot {
 												Constants.kTimeoutMs);						// Configuration Timeout
 		
 		/* Setup Sum signal to be used for Velocity */
-		_rightMaster.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);     // Feedback Device of Remote Talon
-		_rightMaster.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.IntegratedSensor, Constants.kTimeoutMs);       // Quadrature Encoder of current Talon
+		_rightMaster.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);     // Feedback Device of Remote Talon
+		_rightMaster.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.QuadEncoder, Constants.kTimeoutMs);       // Quadrature Encoder of current Talon
 		
 		/* Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index */
-		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.SensorDifference, 
+		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.SensorSum, 
 													Constants.PID_PRIMARY,
 													Constants.kTimeoutMs);
 		

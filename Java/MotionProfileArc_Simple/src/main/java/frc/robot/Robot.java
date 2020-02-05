@@ -76,11 +76,11 @@ public class Robot extends TimedRobot {
     int _state = 0;
 
     /** a master talon, add followers if need be. */
-    TalonFX _rightMaster = new TalonFX(1);
+    TalonSRX _rightMaster = new TalonSRX(0);
 
-    TalonFX _leftAuxFollower = new TalonFX(2);
+    TalonSRX _leftAuxFollower = new TalonSRX(1);
 
-    PigeonIMU _pidgy = new PigeonIMU(3);
+    PigeonIMU _pidgy = new PigeonIMU(0);
 
     /** gamepad for control */
     Joystick _joy = new Joystick(0);
@@ -89,16 +89,16 @@ public class Robot extends TimedRobot {
     BufferedTrajectoryPointStream _bufferedStream = new BufferedTrajectoryPointStream();
 
     /* talon _config. */
-    TalonFXConfiguration _config= new TalonFXConfiguration(); // factory default settings
+    TalonSRXConfiguration _config= new TalonSRXConfiguration(); // factory default settings
     
     /* quick and dirty plotter to smartdash */
-//    PlotThread _plotThread = new PlotThread(_rightMaster);
+    PlotThread _plotThread = new PlotThread(_rightMaster);
 
     public void robotInit() {
 
         /* fill our buffer object with the excel points, 
             lets do a 90 deg turn while using the profile for the robot drive*/
-        initBuffer(MotionProfile.Points, MotionProfile.kNumPoints, 00.0);
+        initBuffer(MotionProfile.Points, MotionProfile.kNumPoints, 90.0);
 
         /* -------------- config the master specific settings ----------------- */
         /* remote 0 will capture Pigeon IMU */
@@ -109,8 +109,8 @@ public class Robot extends TimedRobot {
         _config.remoteFilter1.remoteSensorSource = RemoteSensorSource.TalonSRX_SelectedSensor;
         /* drive-position  is our local quad minus left-talon's selected sens.  
             depending on sensor orientation, it could be the sum instead */
-        _config.diff1Term = FeedbackDevice.IntegratedSensor;
-        _config.diff0Term = FeedbackDevice.RemoteSensor1;
+        _config.diff0Term = FeedbackDevice.QuadEncoder;
+        _config.diff1Term = FeedbackDevice.RemoteSensor1;
         _config.primaryPID.selectedFeedbackSensor = FeedbackDevice.SensorDifference;
         _config.primaryPID.selectedFeedbackCoefficient = 0.5; /* divide by 2 so we servo sensor-average, intead of sum */
         /* turn position will come from the pigeon */
@@ -142,7 +142,6 @@ public class Robot extends TimedRobot {
         _pidgy.configFactoryDefault();
 
         /* pick the sensor phase and desired direction */
-        _leftAuxFollower.setInverted(InvertType.OpposeMaster);
         _rightMaster.setSensorPhase(true);
         _rightMaster.setInverted(true); /* right side has to apply +V to M-, to go forward */
 
@@ -200,7 +199,7 @@ public class Robot extends TimedRobot {
         }
 
         /* print MP values */
-        //Instrum.loop(bPrintValues, _rightMaster);
+        Instrum.loop(bPrintValues, _rightMaster);
     }
 
     /**
@@ -257,8 +256,8 @@ public class Robot extends TimedRobot {
 
     void ZeroAllSensors() {
         /* individuall clear the quad register of each side */
-        _leftAuxFollower.getSensorCollection().setIntegratedSensorPosition(0, 100);
-        _rightMaster.getSensorCollection().setIntegratedSensorPosition(0, 100);
+        _leftAuxFollower.getSensorCollection().setQuadraturePosition(0, 100);
+        _rightMaster.getSensorCollection().setQuadraturePosition(0, 100);
         _pidgy.setYaw(0);
     }
 }

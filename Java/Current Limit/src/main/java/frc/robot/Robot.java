@@ -42,24 +42,24 @@
  * Left Joystick Y-Axis: Throttle Talon forward and reverse when Button 1 is held
  * 
  * Supported Version:
- * 	- Talon FX: 20.0.0.0
+ * 	- Talon SRX: 4.0
+ * 	- Victor SPX: 4.0
+ * 	- Pigeon IMU: 4.0
+ * 	- CANifier: 4.0
  */
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 
 public class Robot extends TimedRobot {
     /* Hardware */
-	TalonFX _tal = new TalonFX(1);
+	TalonSRX _tal = new TalonSRX(1);
     Joystick _joy = new Joystick(0);
     
     /* Tracking variables */    
@@ -70,14 +70,14 @@ public class Robot extends TimedRobot {
         /* Factory Default Hardware to prevent unexpected behaviour */
         _tal.configFactoryDefault();
 		
-		/* Limit stator current to 20 amps if it exceeds 25 amps for 1 second */
-		_tal.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 20, 25, 1.0));
-		/* Limit supply current to 10 amps if it exceeds 15 amps for 0.5 seconds */
-        _tal.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 10, 15, 0.5));
+        _tal.configPeakCurrentLimit(Constants.kPeakCurrentAmps, Constants.kTimeoutMs);
+		_tal.configPeakCurrentDuration(Constants.kPeakTimeMs, Constants.kTimeoutMs);
+		_tal.configContinuousCurrentLimit(Constants.kContinCurrentAmps, Constants.kTimeoutMs);
+		_tal.enableCurrentLimit(_currentLimEn); // Honor initial setting
 
 		/* setup a basic closed loop */
 		_tal.setNeutralMode(NeutralMode.Brake); // Netural Mode override 
-        _tal.configSelectedFeedbackSensor(  TalonFXFeedbackDevice.IntegratedSensor, // Sensor Type 
+        _tal.configSelectedFeedbackSensor(  FeedbackDevice.QuadEncoder, // Sensor Type 
                                             Constants.PID_PRIMARY,      // PID Index
                                             Constants.kTimeoutMs);      // Config Timeout
 
@@ -117,7 +117,7 @@ public class Robot extends TimedRobot {
 			/* toggle current limit */
 			_currentLimEn = !_currentLimEn;
 			/* update Talon current limit */
-			//_tal.enableCurrentLimit(_currentLimEn);
+			_tal.enableCurrentLimit(_currentLimEn);
 			/* print to DS */
 			System.out.println("EnableCurrentLimit:"  + _currentLimEn);
 		}

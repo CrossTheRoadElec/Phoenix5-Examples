@@ -62,18 +62,18 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
-import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonFX _leftMaster = new TalonFX(2);
-	TalonFX _rightMaster = new TalonFX(1);
+	VictorSPX _leftMaster = new VictorSPX(2);
+	TalonSRX _rightMaster = new TalonSRX(1);
 	PigeonIMU _pidgey = new PigeonIMU(3);
 	Joystick _gamepad = new Joystick(0);
 	
@@ -116,7 +116,7 @@ public class Robot extends TimedRobot {
 												Constants.kTimeoutMs);			// Configuration Timeout
 		
 		/* Configure the Remote Sensor to be the Selected Sensor of the right Talon */
-		_rightMaster.configSelectedFeedbackSensor(	TalonFXFeedbackDevice.RemoteSensor1, 	// Set remote sensor to be used directly
+		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.RemoteSensor1, 	// Set remote sensor to be used directly
 													Constants.PID_TURN, 			// PID Slot for Source [0, 1]
 													Constants.kTimeoutMs);			// Configuration Timeout
 		
@@ -125,8 +125,10 @@ public class Robot extends TimedRobot {
 														Constants.PID_TURN, 														// PID Slot of Source
 														Constants.kTimeoutMs);														// Configuration Timeout
 		/* Configure output and sensor direction */
-		_leftMaster.setInverted(TalonFXInvertType.CounterClockwise);
-		_rightMaster.setInverted(TalonFXInvertType.Clockwise);
+		_leftMaster.setInverted(false);
+		_leftMaster.setSensorPhase(true);
+		_rightMaster.setInverted(true);
+		_rightMaster.setSensorPhase(true);
 		
 		/* Set status frame periods */
 		_rightMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_12_Feedback1, 20, Constants.kTimeoutMs);

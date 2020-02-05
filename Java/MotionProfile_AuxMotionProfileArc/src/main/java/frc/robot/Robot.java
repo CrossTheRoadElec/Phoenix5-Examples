@@ -64,7 +64,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.sensors.PigeonIMU;
@@ -79,8 +78,9 @@ import com.ctre.phoenix.motorcontrol.FollowerType;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonFX _leftMaster = new TalonFX(2);
-	TalonFX _rightMaster = new TalonFX(1);
+	TalonSRX _leftMaster = new TalonSRX(2);
+	TalonSRX _rightMaster = new TalonSRX(1);
+	VictorSPX _tempMaster = new VictorSPX(2);
 	PigeonIMU _pidgey = new PigeonIMU(3);
 
 	Joystick _gamepad = new Joystick(0);
@@ -94,7 +94,7 @@ public class Robot extends TimedRobot {
 	boolean _state = false;
 	
 	/** Motion profile example manager*/
-	MotionProfileExample  _motProfExample = new MotionProfileExample(_rightMaster);
+	MotionProfileExample  _motProfExample = new MotionProfileExample(_tempMaster);
 	
 	/** Used to help control the Motion Profile Close Looping */
 	enum ButtonEvent {
@@ -114,19 +114,22 @@ public class Robot extends TimedRobot {
 		/* Disable all motors */
 		_rightMaster.set(ControlMode.PercentOutput, 0);
 		_leftMaster.set(ControlMode.PercentOutput,  0);
+		_tempMaster.set(ControlMode.PercentOutput, 0);
 
 		/* Factory Default all hardware to prevent unexpected behaviour */
 		_rightMaster.configFactoryDefault();
 		_leftMaster.configFactoryDefault();
+		_tempMaster.configFactoryDefault();
 		_pidgey.configFactoryDefault();
 		
 		/* Set neutral modes */
 		_rightMaster.setNeutralMode(NeutralMode.Brake);
+		_tempMaster.setNeutralMode(NeutralMode.Brake);
 		
 		/** Feedback Sensor Configuration */
 		
 		/* Configure the left Talon's selected sensor as local QuadEncoder */
-		_leftMaster.configSelectedFeedbackSensor(	FeedbackDevice.IntegratedSensor,				// Local Feedback Source
+		_leftMaster.configSelectedFeedbackSensor(	FeedbackDevice.QuadEncoder,				// Local Feedback Source
 													Constants.PID_PRIMARY,					// PID Slot for Source [0, 1]
 													Constants.kTimeoutMs);					// Configuration Timeout
 
@@ -143,11 +146,11 @@ public class Robot extends TimedRobot {
 		// 										Constants.kTimeoutMs);
 		
 		/* Setup Sum signal to be used for Distance */
-		_rightMaster.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);	// Feedback Device of Remote Talon
-		_rightMaster.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.IntegratedSensor, Constants.kTimeoutMs);	// Quadrature Encoder of current Talon
+		_rightMaster.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Constants.kTimeoutMs);	// Feedback Device of Remote Talon
+		_rightMaster.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.QuadEncoder, Constants.kTimeoutMs);	// Quadrature Encoder of current Talon
 		
 		/* Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index */
-		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.SensorDifference, 
+		_rightMaster.configSelectedFeedbackSensor(	FeedbackDevice.SensorSum, 
 													Constants.PID_PRIMARY,
 													Constants.kTimeoutMs);
 		
@@ -166,64 +169,66 @@ public class Robot extends TimedRobot {
 		// 												Constants.PID_TURN,
 		// 												Constants.kTimeoutMs);
 
-		_rightMaster.configRemoteFeedbackFilter(_leftMaster.getDeviceID(),
+		_tempMaster.configRemoteFeedbackFilter(_rightMaster.getDeviceID(),
 												RemoteSensorSource.TalonSRX_SelectedSensor,
 												Constants.REMOTE_0);
-		_rightMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0,
+		_tempMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0,
 												Constants.PID_PRIMARY,
 												Constants.kTimeoutMs);
 
-		_rightMaster.configRemoteFeedbackFilter(_pidgey.getDeviceID(),
+		_tempMaster.configRemoteFeedbackFilter(_pidgey.getDeviceID(),
 												RemoteSensorSource.Pigeon_Yaw,
 												Constants.REMOTE_1,	
 												Constants.kTimeoutMs);
-		_rightMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1,
+		_tempMaster.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1,
 												Constants.PID_TURN,
 												Constants.kTimeoutMs);
 		
 		/* Configure output and sensor direction */
+		_tempMaster.setInverted(false);
 		_leftMaster.setSensorPhase(true);
 		_rightMaster.setInverted(true);
 		_rightMaster.setSensorPhase(true);
 		
 		/* Set status frame periods to ensure we don't have stale data */
-		_rightMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
-		_rightMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
-		_rightMaster.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
-		_rightMaster.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
+		_tempMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
+		_tempMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
+		_tempMaster.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
+		_tempMaster.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
 		_leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
 
 		/* Configure neutral deadband */
 		_rightMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
+		_tempMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
 		
 		/* Motion Magic Configurations */
-		_rightMaster.configMotionAcceleration(2000, Constants.kTimeoutMs);
-		_rightMaster.configMotionCruiseVelocity(2000, Constants.kTimeoutMs);
+		_tempMaster.configMotionAcceleration(2000, Constants.kTimeoutMs);
+		_tempMaster.configMotionCruiseVelocity(2000, Constants.kTimeoutMs);
 
 		/**
 		 * Max out the peak output (for all modes).  
 		 * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
 		 */
-		_rightMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
-		_rightMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
+		_tempMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
+		_tempMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
 		_rightMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
 		_rightMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
 
 		/* FPID Gains for Motion Profile servo */
-		_rightMaster.config_kP(Constants.kSlot_MotProf, Constants.kGains_MotProf.kP, Constants.kTimeoutMs);
-		_rightMaster.config_kI(Constants.kSlot_MotProf, Constants.kGains_MotProf.kI, Constants.kTimeoutMs);
-		_rightMaster.config_kD(Constants.kSlot_MotProf, Constants.kGains_MotProf.kD, Constants.kTimeoutMs);
-		_rightMaster.config_kF(Constants.kSlot_MotProf, Constants.kGains_MotProf.kF, Constants.kTimeoutMs);
-		_rightMaster.config_IntegralZone(Constants.kSlot_MotProf, Constants.kGains_MotProf.kIzone, Constants.kTimeoutMs);
-		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_MotProf, Constants.kGains_MotProf.kPeakOutput, Constants.kTimeoutMs);
+		_tempMaster.config_kP(Constants.kSlot_MotProf, Constants.kGains_MotProf.kP, Constants.kTimeoutMs);
+		_tempMaster.config_kI(Constants.kSlot_MotProf, Constants.kGains_MotProf.kI, Constants.kTimeoutMs);
+		_tempMaster.config_kD(Constants.kSlot_MotProf, Constants.kGains_MotProf.kD, Constants.kTimeoutMs);
+		_tempMaster.config_kF(Constants.kSlot_MotProf, Constants.kGains_MotProf.kF, Constants.kTimeoutMs);
+		_tempMaster.config_IntegralZone(Constants.kSlot_MotProf, Constants.kGains_MotProf.kIzone, Constants.kTimeoutMs);
+		_tempMaster.configClosedLoopPeakOutput(Constants.kSlot_MotProf, Constants.kGains_MotProf.kPeakOutput, Constants.kTimeoutMs);
 
 		/* FPID Gains for turn servo */
-		_rightMaster.config_kP(Constants.kSlot_Turning, Constants.kGains_Turning.kP, Constants.kTimeoutMs);
-		_rightMaster.config_kI(Constants.kSlot_Turning, Constants.kGains_Turning.kI, Constants.kTimeoutMs);
-		_rightMaster.config_kD(Constants.kSlot_Turning, Constants.kGains_Turning.kD, Constants.kTimeoutMs);
-		_rightMaster.config_kF(Constants.kSlot_Turning, Constants.kGains_Turning.kF, Constants.kTimeoutMs);
-		_rightMaster.config_IntegralZone(Constants.kSlot_Turning, Constants.kGains_Turning.kIzone, Constants.kTimeoutMs);
-		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Turning, Constants.kGains_Turning.kPeakOutput, Constants.kTimeoutMs);
+		_tempMaster.config_kP(Constants.kSlot_Turning, Constants.kGains_Turning.kP, Constants.kTimeoutMs);
+		_tempMaster.config_kI(Constants.kSlot_Turning, Constants.kGains_Turning.kI, Constants.kTimeoutMs);
+		_tempMaster.config_kD(Constants.kSlot_Turning, Constants.kGains_Turning.kD, Constants.kTimeoutMs);
+		_tempMaster.config_kF(Constants.kSlot_Turning, Constants.kGains_Turning.kF, Constants.kTimeoutMs);
+		_tempMaster.config_IntegralZone(Constants.kSlot_Turning, Constants.kGains_Turning.kIzone, Constants.kTimeoutMs);
+		_tempMaster.configClosedLoopPeakOutput(Constants.kSlot_Turning, Constants.kGains_Turning.kPeakOutput, Constants.kTimeoutMs);
 
 		/**
 		 * 1ms per loop.  PID loop can be slowed down if need be.
@@ -233,15 +238,15 @@ public class Robot extends TimedRobot {
 		 * - sensor movement is very slow causing the derivative error to be near zero.
 		 */
 		int closedLoopTimeMs = 1;
-		_rightMaster.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kTimeoutMs);
-		_rightMaster.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
+		_tempMaster.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kTimeoutMs);
+		_tempMaster.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
 
 		/**
 		 * configAuxPIDPolarity(boolean invert, int timeoutMs)
 		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
 		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 		 */
-		_rightMaster.configAuxPIDPolarity(false, Constants.kTimeoutMs);
+		_tempMaster.configAuxPIDPolarity(false, Constants.kTimeoutMs);
 
 		/* Initialize */
 		_firstCall = true;
@@ -286,8 +291,8 @@ public class Robot extends TimedRobot {
 			if (_firstCall)
 				System.out.println("This is a basic arcade drive.\n");
 			
-			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
-			_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
+			_tempMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
+			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
 		}else{
 			/* Calculate targets from gamepad inputs */
 			boolean bMoveForward = (forward >= 0) ? true : false;
@@ -312,8 +317,8 @@ public class Robot extends TimedRobot {
 				_motProfExample.start(finalHeading_units, bMoveForward);
 			} else if (bExecuteAction == ButtonEvent.ButtonOn) {
 				/* Configured for Motion Profile on Quad Encoders' Sum and Auxiliary PID on Pigeon IMU's Yaw */
-				_rightMaster.set(ControlMode.MotionProfileArc, _motProfExample.getSetValue().value);
-				_leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
+				_tempMaster.set(ControlMode.MotionProfileArc, _motProfExample.getSetValue().value);
+				_rightMaster.follow(_tempMaster, FollowerType.AuxOutput1);
 			}
 			/* Call this periodically, and catch the output. Only apply it if user wants to run MP. */
 			_motProfExample.control();
@@ -325,8 +330,8 @@ public class Robot extends TimedRobot {
 	
 	/* Zeroes all sensors on Talons */
 	void zeroSensors() {
-		_leftMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
-		_rightMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
+		_leftMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
+		_rightMaster.getSensorCollection().setQuadraturePosition(0, Constants.kTimeoutMs);
 		_pidgey.setYaw(0);
 		System.out.println("[Quad Encoders + Pigeon] All sensors are zeroed.\n");
 	}
@@ -346,7 +351,7 @@ public class Robot extends TimedRobot {
 	}
 	
 	void neutralMotors(String reason) {
-		_leftMaster.neutralOutput();
+		_tempMaster.neutralOutput();
 		_rightMaster.neutralOutput();
 
 		/* if caller is reporting WHY motors are being neutralized, report it */
