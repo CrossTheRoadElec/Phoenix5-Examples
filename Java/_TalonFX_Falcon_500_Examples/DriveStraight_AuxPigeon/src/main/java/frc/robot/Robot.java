@@ -66,6 +66,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 public class Robot extends TimedRobot {
@@ -74,6 +75,12 @@ public class Robot extends TimedRobot {
 	TalonFX _rightMaster = new TalonFX(1);
 	PigeonIMU _pidgey = new PigeonIMU(3);
 	Joystick _gamepad = new Joystick(0);
+
+	TalonFXInvertType _leftInvert = TalonFXInvertType.CounterClockwise; //Same as invert = "false"
+	TalonFXInvertType _rightInvert = TalonFXInvertType.Clockwise; //Same as invert = "true"
+
+	TalonFXConfiguration _leftConfig = new TalonFXConfiguration();
+	TalonFXConfiguration _rightConfig = new TalonFXConfiguration();
 	
 	/** Latched values to detect on-press events for buttons */
 	boolean[] _previousBtns = new boolean[Constants.kNumButtonsPlusOne];
@@ -97,34 +104,26 @@ public class Robot extends TimedRobot {
 		_leftMaster.set(ControlMode.PercentOutput, 0);
 
 		/* Factory Default all hardware to prevent unexpected behaviour */
-		_rightMaster.configFactoryDefault();
-		_leftMaster.configFactoryDefault();
 		_pidgey.configFactoryDefault();
 		
 		/* Set Neutral Mode */
 		_leftMaster.setNeutralMode(NeutralMode.Brake);
 		_rightMaster.setNeutralMode(NeutralMode.Brake);
+
+		_leftMaster.setInverted(_leftInvert);
+		_rightMaster.setInverted(_rightInvert);
 		
 		/** Feedback Sensor Configuration */
 		
 		/* Configure the Pigeon IMU as a Remote Sensor for the right Talon */
-		_rightMaster.configRemoteFeedbackFilter(_pidgey.getDeviceID(),			// Device ID of Source
-												RemoteSensorSource.Pigeon_Yaw,	// Remote Feedback Source
-												Constants.REMOTE_1,				// Remote number [0, 1]
-												Constants.kTimeoutMs);			// Configuration Timeout
+		_rightConfig.remoteFilter0.remoteSensorSource = RemoteSensorSource.Pigeon_Yaw;
+		_rightConfig.remoteFilter0.remoteSensorDeviceID = _pidgey.getDeviceID();
 		
 		/* Configure the Remote Sensor to be the Selected Sensor of the right Talon */
-		_rightMaster.configSelectedFeedbackSensor(	TalonFXFeedbackDevice.RemoteSensor1, 	// Set remote sensor to be used directly
-													Constants.PID_TURN, 			// PID Slot for Source [0, 1]
-													Constants.kTimeoutMs);			// Configuration Timeout
+		_rightConfig.auxiliaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice();
 		
 		/* Scale the Selected Sensor using a coefficient (Values explained in Constants.java */
-		_rightMaster.configSelectedFeedbackCoefficient(	Constants.kTurnTravelUnitsPerRotation / Constants.kPigeonUnitsPerRotation,	// Coefficient
-														Constants.PID_TURN, 														// PID Slot of Source
-														Constants.kTimeoutMs);														// Configuration Timeout
-		/* Configure output and sensor direction */
-		_leftMaster.setInverted(TalonFXInvertType.CounterClockwise);
-		_rightMaster.setInverted(TalonFXInvertType.Clockwise);
+		_rightConfig.auxiliaryPID.selectedFeedbackCoefficient = Constants.kTurnTravelUnitsPerRotation / Constants.kPigeonUnitsPerRotation;
 		
 		/* Set status frame periods */
 		_rightMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_12_Feedback1, 20, Constants.kTimeoutMs);
@@ -133,25 +132,25 @@ public class Robot extends TimedRobot {
 		_pidgey.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR , 5, Constants.kTimeoutMs);
 		
 		/* Configure neutral deadband */
-		_rightMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
-		_leftMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);		
+		_rightConfig.neutralDeadband = Constants.kNeutralDeadband;
+		_leftConfig.neutralDeadband = Constants.kNeutralDeadband;		
 
 		/* max out the peak output (for all modes).  However you can
 		 * limit the output of a given PID object with configClosedLoopPeakOutput().
 		 */
-		_leftMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
-		_leftMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
-		_rightMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
-		_rightMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
+		_leftConfig.peakOutputForward = +1.0;
+		_leftConfig.peakOutputReverse = -1.0;
+		_rightConfig.peakOutputForward = +1.0;
+		_rightConfig.peakOutputReverse = -1.0;
 
 		/* FPID Gains for turn servo */
-		_rightMaster.config_kP(Constants.kSlot_Turning, Constants.kGains_Turning.kP, Constants.kTimeoutMs);
-		_rightMaster.config_kI(Constants.kSlot_Turning, Constants.kGains_Turning.kI, Constants.kTimeoutMs);
-		_rightMaster.config_kD(Constants.kSlot_Turning, Constants.kGains_Turning.kD, Constants.kTimeoutMs);
-		_rightMaster.config_kF(Constants.kSlot_Turning, Constants.kGains_Turning.kF, Constants.kTimeoutMs);
-		_rightMaster.config_IntegralZone(Constants.kSlot_Turning, Constants.kGains_Turning.kIzone, Constants.kTimeoutMs);
-		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Turning, Constants.kGains_Turning.kPeakOutput, Constants.kTimeoutMs);
-		_rightMaster.configAllowableClosedloopError(Constants.kSlot_Turning, 0, Constants.kTimeoutMs);	
+		_rightConfig.slot1.kP = Constants.kGains_Turning.kP;
+		_rightConfig.slot1.kI = Constants.kGains_Turning.kI;
+		_rightConfig.slot1.kD = Constants.kGains_Turning.kD;
+		_rightConfig.slot1.kF = Constants.kGains_Turning.kF;
+		_rightConfig.slot1.integralZone = Constants.kGains_Turning.kIzone;
+		_rightConfig.slot1.closedLoopPeakOutput = Constants.kGains_Turning.kPeakOutput;
+		_rightConfig.slot1.allowableClosedloopError = 0;
 		
 		/* 1ms per loop.  PID loop can be slowed down if need be.
 		 * For example,
@@ -160,14 +159,16 @@ public class Robot extends TimedRobot {
 		 * - sensor movement is very slow causing the derivative error to be near zero.
 		 */
         int closedLoopTimeMs = 1;
-        _rightMaster.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kTimeoutMs);
-        _rightMaster.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
+        _rightConfig.slot0.closedLoopPeriod = closedLoopTimeMs;
+        _rightConfig.slot1.closedLoopPeriod = closedLoopTimeMs;
 
 		/* configAuxPIDPolarity(boolean invert, int timeoutMs)
 		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
 		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 		 */
-		_rightMaster.configAuxPIDPolarity(false, Constants.kTimeoutMs);
+		_rightConfig.auxPIDPolarity = false;
+
+		
 
 		/* Initialize */
 		_firstCall = true;
