@@ -202,7 +202,7 @@ public class Robot extends TimedRobot {
         }
 
         /* print MP values */
-        //Instrum.loop(bPrintValues, _rightMaster);
+        Instrum.loop(bPrintValues, _rightMaster);
     }
 
     /**

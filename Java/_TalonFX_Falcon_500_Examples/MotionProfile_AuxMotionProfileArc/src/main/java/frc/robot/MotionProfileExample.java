@@ -242,7 +242,7 @@ public class MotionProfileExample {
 			}
 
 			/* Get the motion profile status every loop */
-			_heading = _motorController.getActiveTrajectoryHeading();
+			_heading = 0; //_motorController.getActiveTrajectoryPosition(1); // This is used only for motion profile arc
 			_pos = _motorController.getActiveTrajectoryPosition();
 			_vel = _motorController.getActiveTrajectoryVelocity();
 

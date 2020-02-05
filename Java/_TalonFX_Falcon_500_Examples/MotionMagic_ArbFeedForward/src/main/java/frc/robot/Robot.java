@@ -68,6 +68,7 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 public class Robot extends TimedRobot {
@@ -138,10 +139,8 @@ public class Robot extends TimedRobot {
 														Constants.kTimeoutMs);		// Configuration Timeout
 		
 		/* Configure output and sensor direction */
-		_leftMaster.setInverted(false);
-		_leftMaster.setSensorPhase(false);
-		_rightMaster.setInverted(true);
-		_rightMaster.setSensorPhase(false);
+		_leftMaster.setInverted(TalonFXInvertType.CounterClockwise);
+		_rightMaster.setInverted(TalonFXInvertType.Clockwise);
 		
 		/* Set status frame periods to ensure we don't have stale data */
 		_rightMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
