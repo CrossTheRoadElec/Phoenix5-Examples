@@ -24,21 +24,21 @@
 
 /**
  * Description:
- * The MotionMagic_AuxStraightPigeon example demonstrates the new Talon/Victor auxiliary and 
+ * The MotionMagic_TalonFX_AuxStraightPigeon example demonstrates the Talon auxiliary and 
  * remote features to peform complex closed loops. This example has the robot performing 
  * Motion Magic with an auxiliary closed loop on Pigeon Yaw to keep the robot straight.
  * 
  * This example uses:
- * - 2x Quad Encoders, One on both sides of robot for Primary Closed Loop on Position
- * A Talon/Victor calculates the distance by taking the sum of both sensors and dividing it by 2.
+ * - 2x Talon FX's (one per side).  
+ *     Talon FX calculates the distance by taking the sum of both integrated sensors and dividing it by 2.
  * - Pigeon IMU wired on CAN Bus for Auxiliary Closed Loop on Yaw
  * 
  * This example has two modes of operation, which can be switched between with Button 2.
  * 1.) Arcade Drive
- * 2.) Motion Magic with Quadrature Encoders and Drive Straight With Pigeon yaw
+ * 2.) Motion Magic with Talon FX's Encoders and Drive Straight With Pigeon yaw
  * 
  * Controls:
- * Button 1: When pressed, zero sensors. Set quadrature encoders' ostions + Pigeon yaw to 0.
+ * Button 1: When pressed, zero sensors. Set integrated encoders' positions + Pigeon yaw to 0.
  * Button 2: When pressed, toggle between Arcade Drive and Motion Magic
  * 	When toggling into Motion Magic, the current heading is saved and used as the 
  * 	auxiliary closed loop target. Can be changed by toggling out and in again.
@@ -64,15 +64,15 @@ import edu.wpi.first.wpilibj.Joystick;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
-import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 public class Robot extends TimedRobot {
@@ -81,6 +81,14 @@ public class Robot extends TimedRobot {
 	TalonFX _rightMaster = new TalonFX(1);
 	PigeonIMU _pidgey = new PigeonIMU(3);
 	Joystick _gamepad = new Joystick(0);
+
+	/** Invert Directions for Left and Right */
+	TalonFXInvertType _leftInvert = TalonFXInvertType.CounterClockwise; //Same as invert = "false"
+	TalonFXInvertType _rightInvert = TalonFXInvertType.Clockwise; //Same as invert = "true"
+
+	/** Config Objects for motor controllers */
+	TalonFXConfiguration _leftConfig = new TalonFXConfiguration();
+	TalonFXConfiguration _rightConfig = new TalonFXConfiguration();
 	
 	/** Latched values to detect on-press events for buttons */
 	boolean[] _previous_currentBtns = new boolean[Constants.kNumButtonsPlusOne];
@@ -96,118 +104,73 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-		/* Not used in this project */
-	}
-
-	@Override
-	public void teleopInit(){
-		/* Disable all motor controllers */
-		_rightMaster.set(TalonFXControlMode.PercentOutput, 0);
-		_leftMaster.set(TalonFXControlMode.PercentOutput, 0);
-
-		/* Factory Default all hardware to prevent unexpected behavior */
-		_rightMaster.configFactoryDefault();
-		_leftMaster.configFactoryDefault();
-		_pidgey.configFactoryDefault();
-		
 		/* Set Neutral Mode */
 		_leftMaster.setNeutralMode(NeutralMode.Brake);
 		_rightMaster.setNeutralMode(NeutralMode.Brake);
-		
-		/** Feedback Sensor Configuration */
-		
-		/* Configure the left Talon's selected sensor as local QuadEncoder */
-		_leftMaster.configSelectedFeedbackSensor(	TalonFXFeedbackDevice.IntegratedSensor,				// Local Feedback Source
-													Constants.PID_PRIMARY,					// PID Slot for Source [0, 1]
-													Constants.kTimeoutMs);					// Configuration Timeout
 
-		/* Configure the Remote Talon's selected sensor as a remote sensor for the right Talon */
-		_rightMaster.configRemoteFeedbackFilter(_leftMaster.getDeviceID(),					// Device ID of Source
-												RemoteSensorSource.TalonFX_SelectedSensor,	// Remote Feedback Source
-												Constants.REMOTE_0,							// Source number [0, 1]
-												Constants.kTimeoutMs);						// Configuration Timeout
-		
-		/* Configure the Pigeon IMU to the other remote slot available on the right Talon */
-		_rightMaster.configRemoteFeedbackFilter(_pidgey.getDeviceID(),
-												RemoteSensorSource.Pigeon_Yaw,
-												Constants.REMOTE_1,	
-												Constants.kTimeoutMs);
-		
-		/* Setup Sum signal to be used for Distance */
-		_rightMaster.configSensorTerm(SensorTerm.Diff0, 
-									TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice(), 
-									Constants.kTimeoutMs);				// Feedback Device of Remote Talon
-		_rightMaster.configSensorTerm(SensorTerm.Diff1, 
-									TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(), 
-									Constants.kTimeoutMs);	// Quadrature Encoder of current Talon
-		
-		/* Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index */
-		_rightMaster.configSelectedFeedbackSensor(	TalonFXFeedbackDevice.SensorDifference, 
-													Constants.PID_PRIMARY,
-													Constants.kTimeoutMs);
-		
-		/* Scale Feedback by 0.5 to half the sum of Distance */
-		_rightMaster.configSelectedFeedbackCoefficient(	0.5, 						// Coefficient
-														Constants.PID_PRIMARY,		// PID Slot of Source 
-														Constants.kTimeoutMs);		// Configuration Timeout
-		
-		/* Configure Remote 1 [Pigeon IMU's Yaw] to be used for Auxiliary PID Index */
-		_rightMaster.configSelectedFeedbackSensor(	TalonFXFeedbackDevice.RemoteSensor1,
-													Constants.PID_TURN,
-													Constants.kTimeoutMs);
-		
-		/* Scale the Feedback Sensor using a coefficient */
-		_rightMaster.configSelectedFeedbackCoefficient(	1,
-														Constants.PID_TURN,
-														Constants.kTimeoutMs);
-		
 		/* Configure output and sensor direction */
-		_leftMaster.setInverted(false);
-		_leftMaster.setSensorPhase(true);
-		_rightMaster.setInverted(true);
-		_rightMaster.setSensorPhase(true);
-		
-		/* Set status frame periods to ensure we don't have stale data */
-		_rightMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
-		_rightMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
-		_rightMaster.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
-		_rightMaster.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kTimeoutMs);
-		_leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
-		_pidgey.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR , 5, Constants.kTimeoutMs);
+		_leftMaster.setInverted(_leftInvert);
+		_rightMaster.setInverted(_rightInvert);
 
-		/* Configure neutral deadband */
-		_rightMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
-		_leftMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
-		
-		/* Motion Magic Configurations */
-		_rightMaster.configMotionAcceleration(2000, Constants.kTimeoutMs);
-		_rightMaster.configMotionCruiseVelocity(2000, Constants.kTimeoutMs);
 
-		/**
-		 * Max out the peak output (for all modes).  
-		 * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
+		/* Reset Pigeon Configs */
+		_pidgey.configFactoryDefault();
+
+
+		/** Feedback Sensor Configuration */
+
+		/** Distance Configs */
+
+		/* Configure the left Talon's selected sensor as integrated sensor */
+		_leftConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor; //Local Feedback Source
+
+		/* Configure the Remote (Left) Talon's selected sensor as a remote sensor for the right Talon */
+		_rightConfig.remoteFilter0.remoteSensorDeviceID = _leftMaster.getDeviceID(); //Device ID of Remote Source
+		_rightConfig.remoteFilter0.remoteSensorSource = RemoteSensorSource.TalonFX_SelectedSensor; //Remote Source Type
+		
+		/* Now that the Left sensor can be used by the master Talon,
+		 * set up the Left (Aux) and Right (Master) distance into a single
+		 * Robot distance as the Master's Selected Sensor 0. */
+		setRobotDistanceConfigs(_rightInvert, _rightConfig);
+
+		/* FPID for Distance */
+		_rightConfig.slot0.kF = Constants.kGains_Distanc.kF;
+		_rightConfig.slot0.kP = Constants.kGains_Distanc.kP;
+		_rightConfig.slot0.kI = Constants.kGains_Distanc.kI;
+		_rightConfig.slot0.kD = Constants.kGains_Distanc.kD;
+		_rightConfig.slot0.integralZone = Constants.kGains_Distanc.kIzone;
+		_rightConfig.slot0.closedLoopPeakOutput = Constants.kGains_Distanc.kPeakOutput;
+
+
+
+		/** Heading Configs */
+		_rightConfig.remoteFilter1.remoteSensorDeviceID = _pidgey.getDeviceID();    //Pigeon Device ID
+		_rightConfig.remoteFilter1.remoteSensorSource = RemoteSensorSource.Pigeon_Yaw; //This is for a Pigeon over CAN
+		_rightConfig.auxiliaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor1; //Set as the Aux Sensor
+		_rightConfig.auxiliaryPID.selectedFeedbackCoefficient = 3600.0 / Constants.kPigeonUnitsPerRotation; //Convert Yaw to tenths of a degree
+
+		/* false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
+		 *   This is typical when the master is the right Talon FX and using Pigeon
+		 * 
+		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
+		 *   This is typical when the master is the left Talon FX and using Pigeon
 		 */
-		_leftMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
-		_leftMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
-		_rightMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
-		_rightMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
+		_rightConfig.auxPIDPolarity = false;
 
-		/* FPID Gains for distance servo */
-		_rightMaster.config_kP(Constants.kSlot_Distanc, Constants.kGains_Distanc.kP, Constants.kTimeoutMs);
-		_rightMaster.config_kI(Constants.kSlot_Distanc, Constants.kGains_Distanc.kI, Constants.kTimeoutMs);
-		_rightMaster.config_kD(Constants.kSlot_Distanc, Constants.kGains_Distanc.kD, Constants.kTimeoutMs);
-		_rightMaster.config_kF(Constants.kSlot_Distanc, Constants.kGains_Distanc.kF, Constants.kTimeoutMs);
-		_rightMaster.config_IntegralZone(Constants.kSlot_Distanc, Constants.kGains_Distanc.kIzone, Constants.kTimeoutMs);
-		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Distanc, Constants.kGains_Distanc.kPeakOutput, Constants.kTimeoutMs);
+		/* FPID for Heading */
+		_rightConfig.slot1.kF = Constants.kGains_Turning.kF;
+		_rightConfig.slot1.kP = Constants.kGains_Turning.kP;
+		_rightConfig.slot1.kI = Constants.kGains_Turning.kI;
+		_rightConfig.slot1.kD = Constants.kGains_Turning.kD;
+		_rightConfig.slot1.integralZone = Constants.kGains_Turning.kIzone;
+		_rightConfig.slot1.closedLoopPeakOutput = Constants.kGains_Turning.kPeakOutput;
 
-		/* FPID Gains for turn servo */
-		_rightMaster.config_kP(Constants.kSlot_Turning, Constants.kGains_Turning.kP, Constants.kTimeoutMs);
-		_rightMaster.config_kI(Constants.kSlot_Turning, Constants.kGains_Turning.kI, Constants.kTimeoutMs);
-		_rightMaster.config_kD(Constants.kSlot_Turning, Constants.kGains_Turning.kD, Constants.kTimeoutMs);
-		_rightMaster.config_kF(Constants.kSlot_Turning, Constants.kGains_Turning.kF, Constants.kTimeoutMs);
-		_rightMaster.config_IntegralZone(Constants.kSlot_Turning, Constants.kGains_Turning.kIzone, Constants.kTimeoutMs);
-		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Turning, Constants.kGains_Turning.kPeakOutput, Constants.kTimeoutMs);
-		
+
+		/* Config the neutral deadband. */
+		_leftConfig.neutralDeadband = Constants.kNeutralDeadband;
+		_rightConfig.neutralDeadband = Constants.kNeutralDeadband;
+
+
 		/**
 		 * 1ms per loop.  PID loop can be slowed down if need be.
 		 * For example,
@@ -216,20 +179,41 @@ public class Robot extends TimedRobot {
 		 * - sensor movement is very slow causing the derivative error to be near zero.
 		 */
 		int closedLoopTimeMs = 1;
-		_rightMaster.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kTimeoutMs);
-		_rightMaster.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
+		_rightConfig.slot0.closedLoopPeriod = closedLoopTimeMs;
+		_rightConfig.slot1.closedLoopPeriod = closedLoopTimeMs;
+		_rightConfig.slot2.closedLoopPeriod = closedLoopTimeMs;
+		_rightConfig.slot3.closedLoopPeriod = closedLoopTimeMs;
 
-		/**
-		 * configAuxPIDPolarity(boolean invert, int timeoutMs)
-		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
-		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
-		 */
-		_rightMaster.configAuxPIDPolarity(false, Constants.kTimeoutMs);
+		/* Motion Magic Configs */
+		_rightConfig.motionAcceleration = 2000; //(distance units per 100 ms) per second
+		_rightConfig.motionCruiseVelocity = 2000; //distance units per 100 ms
 
+
+
+		/* APPLY the config settings */
+		_leftMaster.configAllSettings(_leftConfig);
+		_rightMaster.configAllSettings(_rightConfig);
+
+
+		/* Set status frame periods to ensure we don't have stale data */
+		/* These aren't configs (they're not persistant) so we can set these after the configs.  */
+		_rightMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
+		_rightMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
+		_rightMaster.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kTimeoutMs);
+		_rightMaster.setStatusFramePeriod(StatusFrame.Status_10_Targets, 10, Constants.kTimeoutMs);
+		_leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
+		_pidgey.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR , 5, Constants.kTimeoutMs);
+	}
+
+	@Override
+	public void teleopInit(){
+		/* Disable all motor controllers */
+		_rightMaster.set(ControlMode.PercentOutput, 0);
+		_leftMaster.set(ControlMode.PercentOutput, 0);
+		
 		/* Initialize */
 		_firstCall = true;
 		_state = false;
-		_rightMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
 		zeroSensors();
 	}
 	
@@ -270,8 +254,8 @@ public class Robot extends TimedRobot {
 			if (_firstCall)
 				System.out.println("This is Arcade Drive.\n");
 			
-			_leftMaster.set(TalonFXControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
-			_rightMaster.set(TalonFXControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
+			_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
+			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
 		}else{
 			if (_firstCall) {
 				System.out.println("This is Motion Magic with the Auxiliary PID using the Pigeon yaw.");
@@ -288,7 +272,7 @@ public class Robot extends TimedRobot {
 			double target_turn = _targetAngle;
 			
 			/* Configured for MotionMagic on Quad Encoders' Sum and Auxiliary PID on Pigeon */
-			_rightMaster.set(TalonFXControlMode.MotionMagic, target_sensorUnits, DemandType.AuxPID, target_turn);
+			_rightMaster.set(ControlMode.MotionMagic, target_sensorUnits, DemandType.AuxPID, target_turn);
 			_leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
 		}
 		_firstCall = false;
@@ -330,4 +314,72 @@ public class Robot extends TimedRobot {
 			_currentBtns[i] = gamepad.getRawButton(i);
 		}
 	}
+
+	/** 
+	 * Determines if SensorSum or SensorDiff should be used 
+	 * for combining left/right sensors into Robot Distance.  
+	 * 
+	 * Assumes Aux Position is set as Remote Sensor 0.  
+	 * 
+	 * configAllSettings must still be called on the master config
+	 * after this function modifies the config values. 
+	 * 
+	 * @param masterInvertType Invert of the Master Talon
+	 * @param masterConfig Configuration object to fill
+	 */
+	 void setRobotDistanceConfigs(TalonFXInvertType masterInvertType, TalonFXConfiguration masterConfig){
+		/**
+		 * Determine if we need a Sum or Difference.
+		 * 
+		 * The auxiliary Talon FX will always be positive
+		 * in the forward direction because it's a selected sensor
+		 * over the CAN bus.
+		 * 
+		 * The master's native integrated sensor may not always be positive when forward because
+		 * sensor phase is only applied to *Selected Sensors*, not native
+		 * sensor sources.  And we need the native to be combined with the 
+		 * aux (other side's) distance into a single robot distance.
+		 */
+
+		/* THIS FUNCTION should not need to be modified. 
+		   This setup will work regardless of whether the master
+		   is on the Right or Left side since it only deals with
+		   distance magnitude.  */
+
+		/* Check if we're inverted */
+		if (masterInvertType == TalonFXInvertType.Clockwise){
+			/* 
+				If master is inverted, that means the integrated sensor
+				will be negative in the forward direction.
+
+				If master is inverted, the final sum/diff result will also be inverted.
+				This is how Talon FX corrects the sensor phase when inverting 
+				the motor direction.  This inversion applies to the *Selected Sensor*,
+				not the native value.
+
+				Will a sensor sum or difference give us a positive total magnitude?
+
+				Remember the Master is one side of your drivetrain distance and 
+				Auxiliary is the other side's distance.
+
+					Phase | Term 0   |   Term 1  | Result
+				Sum:  -1 *((-)Master + (+)Aux   )| NOT OK, will cancel each other out
+				Diff: -1 *((-)Master - (+)Aux   )| OK - This is what we want, magnitude will be correct and positive.
+				Diff: -1 *((+)Aux    - (-)Master)| NOT OK, magnitude will be correct but negative
+			*/
+
+			masterConfig.diff0Term = FeedbackDevice.IntegratedSensor; //Local Integrated Sensor
+			masterConfig.diff1Term = FeedbackDevice.RemoteSensor0;   //Aux Selected Sensor
+			masterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.SensorDifference; //Diff0 - Diff1
+		} else {
+			/* Master is not inverted, both sides are positive so we can sum them. */
+			masterConfig.sum0Term = FeedbackDevice.RemoteSensor0;    //Aux Selected Sensor
+			masterConfig.sum1Term = FeedbackDevice.IntegratedSensor; //Local IntegratedSensor
+			masterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.SensorSum; //Sum0 + Sum1
+		}
+
+		/* Since the Distance is the sum of the two sides, divide by 2 so the total isn't double
+		   the real-world value */
+		masterConfig.primaryPID.selectedFeedbackCoefficient = 0.5;
+	 }
 }

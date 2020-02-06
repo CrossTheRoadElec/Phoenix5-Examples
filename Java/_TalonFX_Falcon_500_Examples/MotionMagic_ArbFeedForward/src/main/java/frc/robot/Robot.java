@@ -62,7 +62,6 @@ import edu.wpi.first.wpilibj.Joystick;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
-import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
@@ -70,12 +69,21 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
 	TalonFX _leftMaster = new TalonFX(2);
 	TalonFX _rightMaster = new TalonFX(1);
 	Joystick _gamepad = new Joystick(0);
+
+	/** Invert Directions for Left and Right */
+	TalonFXInvertType _leftInvert = TalonFXInvertType.CounterClockwise; //Same as invert = "false"
+	TalonFXInvertType _rightInvert = TalonFXInvertType.Clockwise; //Same as invert = "true"
+
+	/** Config Objects for motor controllers */
+	TalonFXConfiguration _leftConfig = new TalonFXConfiguration();
+	TalonFXConfiguration _rightConfig = new TalonFXConfiguration();
 	
 	/** Latched values to detect on-press events for buttons and POV */
 	boolean[] _btns = new boolean[Constants.kNumButtonsPlusOne];
@@ -99,79 +107,59 @@ public class Robot extends TimedRobot {
 		_rightMaster.set(TalonFXControlMode.PercentOutput, 0);
 		_leftMaster.set(TalonFXControlMode.PercentOutput,  0);
 		
-		/* Factory Default all hardware to prevent unexpected behavior */
-		_rightMaster.configFactoryDefault();
-		_leftMaster.configFactoryDefault();
-		
 		/* Set neutral modes */
 		_leftMaster.setNeutralMode(NeutralMode.Brake);
 		_rightMaster.setNeutralMode(NeutralMode.Brake);
-		
-		/** Feedback Sensor Configuration */
-		
-		/* Configure the left Talon's selected sensor to a QuadEncoder*/
-		_leftMaster.configSelectedFeedbackSensor(	TalonFXFeedbackDevice.IntegratedSensor, 			// Local Feedback Source
-													Constants.PID_PRIMARY,					// PID Slot for Source [0, 1]
-													Constants.kTimeoutMs);					// Configuration Timeout
 
-		/* Configure the Remote Talon's selected sensor as a remote sensor for the right Talon */
-		_rightMaster.configRemoteFeedbackFilter(_leftMaster.getDeviceID(),					// Device ID of Source
-												RemoteSensorSource.TalonFX_SelectedSensor,	// Remote Feedback Source
-												Constants.REMOTE_0,							// Source number [0, 1]
-												Constants.kTimeoutMs);						// Configuration Timeout
-		
-		/* Setup Sum signal to be used for Distance */
-		_rightMaster.configSensorTerm(SensorTerm.Diff1, 
-									TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice(), 
-									Constants.kTimeoutMs);				// Feedback Device of Remote Talon
-		_rightMaster.configSensorTerm(SensorTerm.Diff0, 
-									TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(), 
-									Constants.kTimeoutMs);	// Quadrature Encoder of current Talon
-		
-		/* Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index */
-		_rightMaster.configSelectedFeedbackSensor(	TalonFXFeedbackDevice.SensorDifference, 
-													Constants.PID_PRIMARY,
-													Constants.kTimeoutMs);
-		
-		/* Scale Feedback by 0.5 to half the sum of Distance */
-		_rightMaster.configSelectedFeedbackCoefficient(	0.5, 						// Coefficient
-														Constants.PID_PRIMARY,		// PID Slot of Source 
-														Constants.kTimeoutMs);		// Configuration Timeout
-		
-		/* Configure output and sensor direction */
+		/* Configure output */
 		_leftMaster.setInverted(TalonFXInvertType.CounterClockwise);
 		_rightMaster.setInverted(TalonFXInvertType.Clockwise);
 		
-		/* Set status frame periods to ensure we don't have stale data */
-		_rightMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
-		_rightMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
-		_leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
+		/** Feedback Sensor Configuration */
 
-		/* Configure neutral deadband */
-		_rightMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
-		_leftMaster.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
+		/** Distance Configs */
+
+		/* Configure the left Talon's selected sensor as integrated sensor */
+		_leftConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local Feedback Source
+
+		/* Configure the Remote (Left) Talon's selected sensor as a remote sensor for the right Talon */
+		_rightConfig.remoteFilter0.remoteSensorDeviceID = _leftMaster.getDeviceID(); //Device ID of Remote Source
+		_rightConfig.remoteFilter0.remoteSensorSource = RemoteSensorSource.TalonFX_SelectedSensor; //Remote Source Type
 		
-		/* Motion Magic Configurations */
-		_rightMaster.configMotionAcceleration(2000, Constants.kTimeoutMs);
-		_rightMaster.configMotionCruiseVelocity(2000, Constants.kTimeoutMs);
+		/* Now that the Left sensor can be used by the master Talon,
+		 * set up the Left (Aux) and Right (Master) distance into a single
+		 * Robot distance as the Master's Selected Sensor 0. */
+		setRobotDistanceConfigs(_rightInvert, _rightConfig);
 
-		/**
-		 * Max out the peak output (for all modes).  
-		 * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
+		/* FPID for Distance */
+		_rightConfig.slot0.kF = Constants.kGains_Distanc.kF;
+		_rightConfig.slot0.kP = Constants.kGains_Distanc.kP;
+		_rightConfig.slot0.kI = Constants.kGains_Distanc.kI;
+		_rightConfig.slot0.kD = Constants.kGains_Distanc.kD;
+		_rightConfig.slot0.integralZone = Constants.kGains_Distanc.kIzone;
+		_rightConfig.slot0.closedLoopPeakOutput = Constants.kGains_Distanc.kPeakOutput;
+
+		/* false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
+		 *   This is typical when the master is the right Talon FX and using Pigeon
+		 * 
+		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
+		 *   This is typical when the master is the left Talon FX and using Pigeon
 		 */
-		_leftMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
-		_leftMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
-		_rightMaster.configPeakOutputForward(+1.0, Constants.kTimeoutMs);
-		_rightMaster.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
+		_rightConfig.auxPIDPolarity = false;
 
-		/* FPID Gains for Motion Magic servo */
-		_rightMaster.config_kP(Constants.kSlot_Distanc, Constants.kGains_Distanc.kP, Constants.kTimeoutMs);
-		_rightMaster.config_kI(Constants.kSlot_Distanc, Constants.kGains_Distanc.kI, Constants.kTimeoutMs);
-		_rightMaster.config_kD(Constants.kSlot_Distanc, Constants.kGains_Distanc.kD, Constants.kTimeoutMs);
-		_rightMaster.config_kF(Constants.kSlot_Distanc, Constants.kGains_Distanc.kF, Constants.kTimeoutMs);
-		_rightMaster.config_IntegralZone(Constants.kSlot_Distanc, Constants.kGains_Distanc.kIzone, Constants.kTimeoutMs);
-		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Distanc, Constants.kGains_Distanc.kPeakOutput, Constants.kTimeoutMs);
-			
+		/* FPID for Heading */
+		_rightConfig.slot1.kF = Constants.kGains_Turning.kF;
+		_rightConfig.slot1.kP = Constants.kGains_Turning.kP;
+		_rightConfig.slot1.kI = Constants.kGains_Turning.kI;
+		_rightConfig.slot1.kD = Constants.kGains_Turning.kD;
+		_rightConfig.slot1.integralZone = Constants.kGains_Turning.kIzone;
+		_rightConfig.slot1.closedLoopPeakOutput = Constants.kGains_Turning.kPeakOutput;
+
+
+		/* Config the neutral deadband. */
+		_leftConfig.neutralDeadband = Constants.kNeutralDeadband;
+		_rightConfig.neutralDeadband = Constants.kNeutralDeadband;
+
 		/**
 		 * 1ms per loop.  PID loop can be slowed down if need be.
 		 * For example,
@@ -180,8 +168,25 @@ public class Robot extends TimedRobot {
 		 * - sensor movement is very slow causing the derivative error to be near zero.
 		 */
 		int closedLoopTimeMs = 1;
-		_rightMaster.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kTimeoutMs);
-		_rightMaster.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kTimeoutMs);
+		_rightConfig.slot0.closedLoopPeriod = closedLoopTimeMs;
+		_rightConfig.slot1.closedLoopPeriod = closedLoopTimeMs;
+		_rightConfig.slot2.closedLoopPeriod = closedLoopTimeMs;
+		_rightConfig.slot3.closedLoopPeriod = closedLoopTimeMs;
+
+		/* Motion Magic Configs */
+		_rightConfig.motionAcceleration = 2000; //(distance units per 100 ms) per second
+		_rightConfig.motionCruiseVelocity = 2000; //distance units per 100 ms
+
+
+
+		/* APPLY the config settings */
+		_leftMaster.configAllSettings(_leftConfig);
+		_rightMaster.configAllSettings(_rightConfig);
+
+		/* Set status frame periods to ensure we don't have stale data */
+		_rightMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kTimeoutMs);
+		_rightMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kTimeoutMs);
+		_leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
 
 		/* Initialize */
 		_firstCall = true;
@@ -276,4 +281,72 @@ public class Robot extends TimedRobot {
 			btns[i] = gamepad.getRawButton(i);
 		}
 	}
+
+	/** 
+	 * Determines if SensorSum or SensorDiff should be used 
+	 * for combining left/right sensors into Robot Distance.  
+	 * 
+	 * Assumes Aux Position is set as Remote Sensor 0.  
+	 * 
+	 * configAllSettings must still be called on the master config
+	 * after this function modifies the config values. 
+	 * 
+	 * @param masterInvertType Invert of the Master Talon
+	 * @param masterConfig Configuration object to fill
+	 */
+	 void setRobotDistanceConfigs(TalonFXInvertType masterInvertType, TalonFXConfiguration masterConfig){
+		/**
+		 * Determine if we need a Sum or Difference.
+		 * 
+		 * The auxiliary Talon FX will always be positive
+		 * in the forward direction because it's a selected sensor
+		 * over the CAN bus.
+		 * 
+		 * The master's native integrated sensor may not always be positive when forward because
+		 * sensor phase is only applied to *Selected Sensors*, not native
+		 * sensor sources.  And we need the native to be combined with the 
+		 * aux (other side's) distance into a single robot distance.
+		 */
+
+		/* THIS FUNCTION should not need to be modified. 
+		   This setup will work regardless of whether the master
+		   is on the Right or Left side since it only deals with
+		   distance magnitude.  */
+
+		/* Check if we're inverted */
+		if (masterInvertType == TalonFXInvertType.Clockwise){
+			/* 
+				If master is inverted, that means the integrated sensor
+				will be negative in the forward direction.
+
+				If master is inverted, the final sum/diff result will also be inverted.
+				This is how Talon FX corrects the sensor phase when inverting 
+				the motor direction.  This inversion applies to the *Selected Sensor*,
+				not the native value.
+
+				Will a sensor sum or difference give us a positive total magnitude?
+
+				Remember the Master is one side of your drivetrain distance and 
+				Auxiliary is the other side's distance.
+
+					Phase | Term 0   |   Term 1  | Result
+				Sum:  -1 *((-)Master + (+)Aux   )| NOT OK, will cancel each other out
+				Diff: -1 *((-)Master - (+)Aux   )| OK - This is what we want, magnitude will be correct and positive.
+				Diff: -1 *((+)Aux    - (-)Master)| NOT OK, magnitude will be correct but negative
+			*/
+
+			masterConfig.diff0Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local Integrated Sensor
+			masterConfig.diff1Term = TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice();   //Aux Selected Sensor
+			masterConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.SensorDifference.toFeedbackDevice(); //Diff0 - Diff1
+		} else {
+			/* Master is not inverted, both sides are positive so we can sum them. */
+			masterConfig.sum0Term = TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice();    //Aux Selected Sensor
+			masterConfig.sum1Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local IntegratedSensor
+			masterConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.SensorSum.toFeedbackDevice(); //Sum0 + Sum1
+		}
+
+		/* Since the Distance is the sum of the two sides, divide by 2 so the total isn't double
+		   the real-world value */
+		masterConfig.primaryPID.selectedFeedbackCoefficient = 0.5;
+	 }
 }
