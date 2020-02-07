@@ -69,10 +69,18 @@ public class Robot extends TimedRobot {
         /* Factory Default Hardware to prevent unexpected behaviour */
         _tal.configFactoryDefault();
 		
-		/* Limit stator current to 20 amps if it exceeds 25 amps for 1 second */
-		_tal.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 20, 25, 1.0));
-		/* Limit supply current to 10 amps if it exceeds 15 amps for 0.5 seconds */
-        _tal.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 10, 15, 0.5));
+		/**
+		 * Configure the current limits that will be used
+		 * Stator Current is the current that passes through the motor stators.
+		 *  Use stator current limits to limit rotor acceleration/heat production
+		 * Supply Current is the current that passes into the controller from the supply
+		 *  Use supply current limits to prevent breakers from tripping
+		 * 
+		 * https://phoenix-documentation.readthedocs.io/en/latest/ch13_MC.html#current-limit
+		 * 
+		 *                                                               enabled | Limit(amp) | Trigger Threshold(amp) | Trigger Threshold Time(s)  */
+		_tal.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true,      20,                25,                1.0));
+        _tal.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true,      10,                15,                0.5));
 
 		/* setup a basic closed loop */
 		_tal.setNeutralMode(NeutralMode.Brake); // Netural Mode override 
@@ -80,10 +88,14 @@ public class Robot extends TimedRobot {
                                             Constants.PID_PRIMARY,      // PID Index
                                             Constants.kTimeoutMs);      // Config Timeout
 
-        /* Ensure Sensor is in phase, else closed loop will not work.
-         * Postivie Sensor should match Motor Positive output (Green LED)
-         */
-        _tal.setSensorPhase(true);
+		/*
+		 * Talon FX does not need sensor phase set for its integrated sensor
+		 * This is because it will always be correct if the selected feedback device is integrated sensor (default value)
+		 * and the user calls getSelectedSensor* to get the sensor's position/velocity.
+		 * 
+		 * https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#sensor-phase
+		 */
+        // _tal.setSensorPhase(true);
         
         /* Gains for Postion Closed Loop servo */
 		_tal.config_kP(Constants.SLOT_0, Constants.kGains.kP, Constants.kTimeoutMs);
