@@ -147,6 +147,15 @@ public class Robot extends TimedRobot {
         /* pick the sensor phase and desired direction */
         _leftAuxFollower.setInverted(TalonFXInvertType.Clockwise);
         _rightMaster.setInverted(TalonFXInvertType.CounterClockwise); /* right side has to apply +V to M-, to go forward */
+		/*
+		 * Talon FX does not need sensor phase set for its integrated sensor
+		 * This is because it will always be correct if the selected feedback device is integrated sensor (default value)
+		 * and the user calls getSelectedSensor* to get the sensor's position/velocity.
+		 * 
+		 * https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#sensor-phase
+		 */
+        // _leftAuxFollower.setSensorPhase(true);
+        // _rightMaster.setSensorPhase(true);
 
         /* speed up the target polling for PID[0] and PID-aux[1] */
         _rightMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20); /* plotthread is polling aux-pid-sensor-pos */

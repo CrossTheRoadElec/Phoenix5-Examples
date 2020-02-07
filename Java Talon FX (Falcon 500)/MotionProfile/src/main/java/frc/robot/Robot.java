@@ -84,8 +84,14 @@ public class Robot extends TimedRobot {
 		_talon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
 											Constants.kPIDLoopIdx,
 											Constants.kTimeoutMs);
-		/* Keep sensor and motor in phase, postive sensor values when MC LEDs are green */
-		_talon.setSensorPhase(true);
+		/*
+			* Talon FX does not need sensor phase set for its integrated sensor
+			* This is because it will always be correct if the selected feedback device is integrated sensor (default value)
+			* and the user calls getSelectedSensor* to get the sensor's position/velocity.
+			* 
+			* https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#sensor-phase
+			*/
+		// _talon.setSensorPhase(true);
 		
 		/**
 		 * Configure MotorController Neutral Deadband, disable Motor Controller when

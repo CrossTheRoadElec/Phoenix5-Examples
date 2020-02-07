@@ -94,6 +94,15 @@ public class Robot extends TimedRobot {
 		_leftSlave2.setInverted(InvertType.FollowMaster);
 		_rightSlave1.setInverted(InvertType.FollowMaster);
 		_rightSlave2.setInverted(InvertType.FollowMaster);
+		/*
+		 * Talon FX does not need sensor phase set for its integrated sensor
+		 * This is because it will always be correct if the selected feedback device is integrated sensor (default value)
+		 * and the user calls getSelectedSensor* to get the sensor's position/velocity.
+		 * 
+		 * https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#sensor-phase
+		 */
+        // _frontLeftMotor.setSensorPhase(true);
+        // _frontRightMotor.setSensorPhase(true);
 
 		/* diff drive assumes (by default) that 
 			right side must be negative to move forward.

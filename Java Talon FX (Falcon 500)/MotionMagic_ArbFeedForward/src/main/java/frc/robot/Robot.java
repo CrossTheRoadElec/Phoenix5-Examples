@@ -114,6 +114,15 @@ public class Robot extends TimedRobot {
 		/* Configure output */
 		_leftMaster.setInverted(TalonFXInvertType.CounterClockwise);
 		_rightMaster.setInverted(TalonFXInvertType.Clockwise);
+		/*
+		 * Talon FX does not need sensor phase set for its integrated sensor
+		 * This is because it will always be correct if the selected feedback device is integrated sensor (default value)
+		 * and the user calls getSelectedSensor* to get the sensor's position/velocity.
+		 * 
+		 * https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#sensor-phase
+		 */
+        // _leftMaster.setSensorPhase(true);
+        // _rightMaster.setSensorPhase(true);
 		
 		/** Feedback Sensor Configuration */
 

@@ -99,6 +99,14 @@ public class Robot extends TimedRobot {
 		 */
 		_talon.setSensorPhase(false);
 		_talon.setInverted(false);
+		/*
+		 * Talon FX does not need sensor phase set for its integrated sensor
+		 * This is because it will always be correct if the selected feedback device is integrated sensor (default value)
+		 * and the user calls getSelectedSensor* to get the sensor's position/velocity.
+		 * 
+		 * https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#sensor-phase
+		 */
+        // _talon.setSensorPhase(true);
 
 		/* Set relevant frame periods to be at least as fast as periodic rate */
 		_talon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);

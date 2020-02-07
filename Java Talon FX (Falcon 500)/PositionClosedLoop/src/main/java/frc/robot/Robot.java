@@ -85,6 +85,14 @@ public class Robot extends TimedRobot {
 		 * This does not affect sensor phase. 
 		 */ 
 		_talon.setInverted(Constants.kMotorInvert);
+		/*
+		 * Talon FX does not need sensor phase set for its integrated sensor
+		 * This is because it will always be correct if the selected feedback device is integrated sensor (default value)
+		 * and the user calls getSelectedSensor* to get the sensor's position/velocity.
+		 * 
+		 * https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#sensor-phase
+		 */
+        // _talon.setSensorPhase(true);
 
 		/* Config the peak and nominal outputs, 12V means full */
 		_talon.configNominalOutputForward(0, Constants.kTimeoutMs);

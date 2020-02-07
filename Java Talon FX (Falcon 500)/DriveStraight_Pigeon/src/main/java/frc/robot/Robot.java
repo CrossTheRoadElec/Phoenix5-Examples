@@ -112,6 +112,15 @@ public class Robot extends TimedRobot {
         _rightRear.configFactoryDefault();
         _leftRear.configFactoryDefault();
         _pidgey.configFactoryDefault();
+		/*
+		 * Talon FX does not need sensor phase set for its integrated sensor
+		 * This is because it will always be correct if the selected feedback device is integrated sensor (default value)
+		 * and the user calls getSelectedSensor* to get the sensor's position/velocity.
+		 * 
+		 * https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#sensor-phase
+		 */
+        // _rightFront.setSensorPhase(true);
+        // _leftFront.setSensorPhase(true);
 
         /* nonzero to block the config until success, zero to skip checking */
         final int kTimeoutMs = 30;
