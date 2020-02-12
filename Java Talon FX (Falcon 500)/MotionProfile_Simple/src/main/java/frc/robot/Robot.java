@@ -50,6 +50,7 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motion.*;
@@ -95,7 +96,7 @@ public class Robot extends TimedRobot {
         _master.configAllSettings(_config);
 
         /* pick the sensor phase and desired direction */
-        _master.setInverted(false);
+        _master.setInverted(TalonFXInvertType.CounterClockwise);
 		/*
 		 * Talon FX does not need sensor phase set for its integrated sensor
 		 * This is because it will always be correct if the selected feedback device is integrated sensor (default value)

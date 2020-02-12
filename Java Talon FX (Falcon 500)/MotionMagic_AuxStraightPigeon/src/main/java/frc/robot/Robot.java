@@ -70,7 +70,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.sensors.PigeonIMU;
@@ -131,7 +131,7 @@ public class Robot extends TimedRobot {
 		/** Distance Configs */
 
 		/* Configure the left Talon's selected sensor as integrated sensor */
-		_leftConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor; //Local Feedback Source
+		_leftConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local Feedback Source
 
 		/* Configure the Remote (Left) Talon's selected sensor as a remote sensor for the right Talon */
 		_rightConfig.remoteFilter0.remoteSensorDeviceID = _leftMaster.getDeviceID(); //Device ID of Remote Source
@@ -155,16 +155,8 @@ public class Robot extends TimedRobot {
 		/** Heading Configs */
 		_rightConfig.remoteFilter1.remoteSensorDeviceID = _pidgey.getDeviceID();    //Pigeon Device ID
 		_rightConfig.remoteFilter1.remoteSensorSource = RemoteSensorSource.Pigeon_Yaw; //This is for a Pigeon over CAN
-		_rightConfig.auxiliaryPID.selectedFeedbackSensor = FeedbackDevice.RemoteSensor1; //Set as the Aux Sensor
+		_rightConfig.auxiliaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.RemoteSensor1.toFeedbackDevice(); //Set as the Aux Sensor
 		_rightConfig.auxiliaryPID.selectedFeedbackCoefficient = 3600.0 / Constants.kPigeonUnitsPerRotation; //Convert Yaw to tenths of a degree
-
-		/* false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
-		 *   This is typical when the master is the right Talon FX and using Pigeon
-		 * 
-		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
-		 *   This is typical when the master is the left Talon FX and using Pigeon
-		 */
-		_rightConfig.auxPIDPolarity = false;
 
 		/* FPID for Heading */
 		_rightConfig.slot1.kF = Constants.kGains_Turning.kF;
@@ -377,14 +369,14 @@ public class Robot extends TimedRobot {
 				Diff: -1 *((+)Aux    - (-)Master)| NOT OK, magnitude will be correct but negative
 			*/
 
-			masterConfig.diff0Term = FeedbackDevice.IntegratedSensor; //Local Integrated Sensor
-			masterConfig.diff1Term = FeedbackDevice.RemoteSensor0;   //Aux Selected Sensor
-			masterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.SensorDifference; //Diff0 - Diff1
+			masterConfig.diff0Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local Integrated Sensor
+			masterConfig.diff1Term = TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice();   //Aux Selected Sensor
+			masterConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.SensorDifference.toFeedbackDevice(); //Diff0 - Diff1
 		} else {
 			/* Master is not inverted, both sides are positive so we can sum them. */
-			masterConfig.sum0Term = FeedbackDevice.RemoteSensor0;    //Aux Selected Sensor
-			masterConfig.sum1Term = FeedbackDevice.IntegratedSensor; //Local IntegratedSensor
-			masterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.SensorSum; //Sum0 + Sum1
+			masterConfig.sum0Term = TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice();    //Aux Selected Sensor
+			masterConfig.sum1Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local IntegratedSensor
+			masterConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.SensorSum.toFeedbackDevice(); //Sum0 + Sum1
 		}
 
 		/* Since the Distance is the sum of the two sides, divide by 2 so the total isn't double

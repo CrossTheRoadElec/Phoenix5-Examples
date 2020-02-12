@@ -171,12 +171,6 @@ public class Robot extends TimedRobot {
         _rightConfig.slot0.closedLoopPeriod = closedLoopTimeMs;
         _rightConfig.slot1.closedLoopPeriod = closedLoopTimeMs;
 
-		/* configAuxPIDPolarity(boolean invert, int timeoutMs)
-		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
-		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
-		 */
-		_rightConfig.auxPIDPolarity = false;
-
 		
 
 		/* Initialize */

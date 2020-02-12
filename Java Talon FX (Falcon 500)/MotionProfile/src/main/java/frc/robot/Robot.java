@@ -57,12 +57,20 @@ import com.ctre.phoenix.motion.*;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
 	TalonFX _talon = new TalonFX(1);	// Talon to Motion Profile
 	Joystick _joy = new Joystick(0);	// Joystick for testing
+
+	/** Invert Directions for Left and Right */
+	TalonFXInvertType _talonInvert = TalonFXInvertType.Clockwise; //Same as invert = "true"
+
+	/** Config Objects for motor controllers */
+	TalonFXConfiguration _talonConfig = new TalonFXConfiguration();
 
 	/** Some example logic on how one can manage an MP */
 	MotionProfileExample _example = new MotionProfileExample(_talon);
@@ -77,13 +85,9 @@ public class Robot extends TimedRobot {
 
 	/** Run once after booting/enter-disable */
 	public void disabledInit() {
-		/* Factory Default all hardware to prevent unexpected behaviour */
-		_talon.configFactoryDefault();
 
 		/* Configure Selected Sensor for Motion Profile */
-		_talon.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
-											Constants.kPIDLoopIdx,
-											Constants.kTimeoutMs);
+		_talonConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
 		/*
 			* Talon FX does not need sensor phase set for its integrated sensor
 			* This is because it will always be correct if the selected feedback device is integrated sensor (default value)
@@ -97,16 +101,20 @@ public class Robot extends TimedRobot {
 		 * Configure MotorController Neutral Deadband, disable Motor Controller when
 		 * requested Motor Output is too low to process
 		 */
-		_talon.configNeutralDeadband(Constants.kNeutralDeadband, Constants.kTimeoutMs);
+		_talonConfig.neutralDeadband = Constants.kNeutralDeadband;
 
 		/* Configure PID Gains, to be used with Motion Profile */
-		_talon.config_kF(Constants.kPIDLoopIdx, Constants.kGains.kF, Constants.kTimeoutMs);
-		_talon.config_kP(Constants.kPIDLoopIdx, Constants.kGains.kP, Constants.kTimeoutMs);
-		_talon.config_kI(Constants.kPIDLoopIdx, Constants.kGains.kI, Constants.kTimeoutMs);
-		_talon.config_kD(Constants.kPIDLoopIdx, Constants.kGains.kD, Constants.kTimeoutMs);
+		_talonConfig.slot0.kF = Constants.kGains.kF;
+		_talonConfig.slot0.kP = Constants.kGains.kP;
+		_talonConfig.slot0.kI = Constants.kGains.kI;
+		_talonConfig.slot0.kD = Constants.kGains.kD;
 
 		/* Our profile uses 10ms timing */
-		_talon.configMotionProfileTrajectoryPeriod(10, Constants.kTimeoutMs); 
+		_talonConfig.motionProfileTrajectoryPeriod = 10;
+
+		_talon.configAllSettings(_talonConfig);
+
+		_talon.setInverted(_talonInvert);
 		
 		/* Status 10 provides the trajectory target for motion profile AND motion magic */
 		_talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
