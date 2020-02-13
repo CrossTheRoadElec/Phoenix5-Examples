@@ -353,5 +353,5 @@ public class Robot extends TimedRobot {
 		 *  and motion profile trajectory points can range +-2 rotations.
 		 */
 		masterConfig.auxiliaryPID.selectedFeedbackCoefficient = Constants.kTurnTravelUnitsPerRotation / Constants.kEncoderUnitsPerRotation;
-	 }
+	}
 }
