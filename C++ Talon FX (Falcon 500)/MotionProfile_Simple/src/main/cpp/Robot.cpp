@@ -28,7 +28,7 @@
 void Robot::RobotInit() 
 {
     /* Construct global variables being used */
-    _master = new TalonSRX(1);
+    _master = new TalonFX(1);
     _joy = new frc::Joystick(0);
     _bufferedStream = new BufferedTrajectoryPointStream();
 

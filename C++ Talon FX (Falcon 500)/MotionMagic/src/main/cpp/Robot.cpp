@@ -63,7 +63,7 @@
 #include <sstream>
 
 void Robot::RobotInit() {
-    _talon = new TalonSRX(1);
+    _talon = new TalonFX(1);
     _joy = new frc::Joystick(0);
 
     /* Factory default hardware to prevent unexpected behavior */

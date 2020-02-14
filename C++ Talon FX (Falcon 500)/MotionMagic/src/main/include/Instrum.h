@@ -16,7 +16,7 @@ private:
 	static int _timesInMotionMagic;
 
 public:
-    static void Process(TalonSRX *tal, std::stringstream *sb) {
+    static void Process(TalonFX *tal, std::stringstream *sb) {
 		/* Smart dash plots */
 		frc::SmartDashboard::PutNumber("SensorVel", tal->GetSelectedSensorVelocity(0));
 		frc::SmartDashboard::PutNumber("SensorPos", tal->GetSelectedSensorPosition(0));

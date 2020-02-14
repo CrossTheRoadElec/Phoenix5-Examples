@@ -18,7 +18,7 @@ public:
 		std::cout << s << std::endl;
 	}
 
-	static void Loop(bool bPrintValues, TalonSRX *talon) {
+	static void Loop(bool bPrintValues, TalonFX *talon) {
 		if (!_bPrintValues && bPrintValues) {
 			/* user just pressed button, immediete print */
 			_loops = 999;

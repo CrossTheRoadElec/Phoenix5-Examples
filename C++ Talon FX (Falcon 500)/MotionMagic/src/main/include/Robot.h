@@ -20,7 +20,7 @@ public:
 	void TestPeriodic() override;
 
 private:
-	TalonSRX *_talon;
+	TalonFX *_talon;
 	frc::Joystick *_joy;
 
 	int _smoothing;

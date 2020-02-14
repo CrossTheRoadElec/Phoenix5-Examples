@@ -47,8 +47,8 @@ void Robot::RobotInit()
     _rightMaster->ConfigAllSettings(*_masterConfig);
     _leftMaster->ConfigAllSettings(*_followConfig);
 
-    _rightMaster->SetSensorPhase(true);
-    _leftMaster->SetSensorPhase(false);
+    // _rightMaster->SetSensorPhase(true);
+    // _leftMaster->SetSensorPhase(false);
 
     _rightMaster->SetInverted(true);
     _leftMaster->SetInverted(false);

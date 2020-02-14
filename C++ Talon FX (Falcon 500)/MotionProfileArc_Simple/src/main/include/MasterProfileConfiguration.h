@@ -39,8 +39,8 @@ public:
         remoteFilter1.remoteSensorDeviceID = pigeon->GetDeviceNumber();
 
         /* Configure sensor sum to be this quad encoder and the other talon's encoder */
-        diff1Term = FeedbackDevice::IntegratedSensor;
-        diff0Term = FeedbackDevice::RemoteSensor0;
+        diff0Term = FeedbackDevice::IntegratedSensor;
+        diff1Term = FeedbackDevice::RemoteSensor0;
 
         /* Configure auxPIDPolarity to match the drive train */
         auxPIDPolarity = false;

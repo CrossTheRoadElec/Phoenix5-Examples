@@ -23,7 +23,7 @@ public:
 
 private:
 	int _state;
-	TalonSRX *_master;
+	TalonFX *_master;
 	frc::Joystick *_joy;
 	BufferedTrajectoryPointStream *_bufferedStream;
 	MotionProfileConfiguration *_configuration;

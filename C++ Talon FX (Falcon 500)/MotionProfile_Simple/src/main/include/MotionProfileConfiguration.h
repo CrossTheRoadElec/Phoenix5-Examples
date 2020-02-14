@@ -3,10 +3,10 @@
 #include "ctre/Phoenix.h"
 
 /* Class that inherits TalonSRXConfiguration so it has all the default configs + modified the configs it cares about */
-class MotionProfileConfiguration : public TalonSRXConfiguration
+class MotionProfileConfiguration : public TalonFXConfiguration
 {
 public:
-    MotionProfileConfiguration() : TalonSRXConfiguration()
+    MotionProfileConfiguration() : TalonFXConfiguration()
     {
         primaryPID.selectedFeedbackSensor = FeedbackDevice::IntegratedSensor;
         neutralDeadband = 0.001; /* 0.1% super small for best low-speed control */
