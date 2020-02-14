@@ -169,7 +169,10 @@ public class Robot extends TimedRobot {
 		 */
         int closedLoopTimeMs = 1;
         _rightConfig.slot0.closedLoopPeriod = closedLoopTimeMs;
-        _rightConfig.slot1.closedLoopPeriod = closedLoopTimeMs;
+		_rightConfig.slot1.closedLoopPeriod = closedLoopTimeMs;
+		
+		_rightMaster.configAllSettings(_rightConfig);
+		_leftMaster.configAllSettings(_leftConfig);
 
 		
 

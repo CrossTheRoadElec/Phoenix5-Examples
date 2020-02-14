@@ -156,15 +156,14 @@ public class Robot extends TimedRobot {
 		_rightConfig.peakOutputReverse = -1.0;
 
 		/* FPID Gains for distance servo */
-		_rightMaster.config_kP(Constants.kSlot_Distanc, Constants.kGains_Distanc.kP, Constants.kTimeoutMs);
-		_rightMaster.config_kI(Constants.kSlot_Distanc, Constants.kGains_Distanc.kI, Constants.kTimeoutMs);
-		_rightMaster.config_kD(Constants.kSlot_Distanc, Constants.kGains_Distanc.kD, Constants.kTimeoutMs);
-		_rightMaster.config_kF(Constants.kSlot_Distanc, Constants.kGains_Distanc.kF, Constants.kTimeoutMs);
-		_rightMaster.config_IntegralZone(Constants.kSlot_Distanc, Constants.kGains_Distanc.kIzone, Constants.kTimeoutMs);
-		_rightMaster.configClosedLoopPeakOutput(Constants.kSlot_Distanc, Constants.kGains_Distanc.kPeakOutput, Constants.kTimeoutMs);
-
+		_rightConfig.slot0.kF = Constants.kGains_Distanc.kF;
+		_rightConfig.slot0.kP = Constants.kGains_Distanc.kP;
+		_rightConfig.slot0.kI = Constants.kGains_Distanc.kI;
+		_rightConfig.slot0.kD = Constants.kGains_Distanc.kD;
+		_rightConfig.slot0.integralZone = Constants.kGains_Distanc.kIzone;
+		_rightConfig.slot0.closedLoopPeakOutput = Constants.kGains_Distanc.kPeakOutput;
+		
 		/* FPID Gains for turn servo */
-		/* FPID for Distance */
 		_rightConfig.slot1.kF = Constants.kGains_Turning.kF;
 		_rightConfig.slot1.kP = Constants.kGains_Turning.kP;
 		_rightConfig.slot1.kI = Constants.kGains_Turning.kI;

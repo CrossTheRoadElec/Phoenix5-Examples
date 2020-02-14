@@ -192,6 +192,9 @@ public class Robot extends TimedRobot {
 		_rightConfig.slot1.closedLoopPeriod = closedLoopTimeMs;
 		_rightConfig.slot2.closedLoopPeriod = closedLoopTimeMs;
 		_rightConfig.slot3.closedLoopPeriod = closedLoopTimeMs;
+
+		_leftMaster.configAllSettings(_leftConfig);
+		_rightMaster.configAllSettings(_rightConfig);
 		
 		/* Configure output and sensor direction */
 		_leftMaster.setInverted(_leftInvert);

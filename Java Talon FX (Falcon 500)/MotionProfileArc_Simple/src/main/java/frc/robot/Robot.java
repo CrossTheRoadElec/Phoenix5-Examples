@@ -88,6 +88,10 @@ public class Robot extends TimedRobot {
     /** gamepad for control */
     Joystick _joy = new Joystick(0);
 
+	/** Invert Directions for Left and Right */
+	TalonFXInvertType _leftInvert = TalonFXInvertType.CounterClockwise; //Same as invert = "false"
+	TalonFXInvertType _rightInvert = TalonFXInvertType.Clockwise; //Same as invert = "true"
+
     /** new class type in 2019 for holding MP buffer. */
     BufferedTrajectoryPointStream _bufferedStream = new BufferedTrajectoryPointStream();
 
@@ -105,19 +109,16 @@ public class Robot extends TimedRobot {
 
         /* -------------- config the master specific settings ----------------- */
         /* remote 0 will capture Pigeon IMU */
-        _config.remoteFilter0.remoteSensorDeviceID = _pidgy.getDeviceID();
-        _config.remoteFilter0.remoteSensorSource = RemoteSensorSource.Pigeon_Yaw;
+        _config.remoteFilter1.remoteSensorDeviceID = _pidgy.getDeviceID();
+        _config.remoteFilter1.remoteSensorSource = RemoteSensorSource.Pigeon_Yaw;
         /* remote 1 will capture the quad encoder on left talon */
-        _config.remoteFilter1.remoteSensorDeviceID = _leftAuxFollower.getDeviceID();
-        _config.remoteFilter1.remoteSensorSource = RemoteSensorSource.TalonFX_SelectedSensor;
-        /* drive-position  is our local quad minus left-talon's selected sens.  
-            depending on sensor orientation, it could be the sum instead */
-        _config.sum0Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
-        _config.sum1Term = TalonFXFeedbackDevice.RemoteSensor1.toFeedbackDevice();
-        _config.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.SensorSum.toFeedbackDevice();
-        _config.primaryPID.selectedFeedbackCoefficient = 0.5; /* divide by 2 so we servo sensor-average, intead of sum */
-        /* turn position will come from the pigeon */
-        _config.auxiliaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice();
+        _config.remoteFilter0.remoteSensorDeviceID = _leftAuxFollower.getDeviceID();
+        _config.remoteFilter0.remoteSensorSource = RemoteSensorSource.TalonFX_SelectedSensor;
+		/* Now that the Left sensor can be used by the master Talon,
+		 * set up the Left (Aux) and Right (Master) distance into a single
+		 * Robot distance as the Master's Selected Sensor 0. */
+        setRobotDistanceConfigs(_rightInvert, _config);
+        _config.auxiliaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.RemoteSensor1.toFeedbackDevice();
         /* rest of the configs */
         _config.neutralDeadband = Constants.kNeutralDeadband; /* 0.1 % super small for best low-speed control */
         _config.slot0.kF = Constants.kGains_MotProf.kF;
@@ -145,8 +146,8 @@ public class Robot extends TimedRobot {
         _pidgy.configFactoryDefault();
 
         /* pick the sensor phase and desired direction */
-        _leftAuxFollower.setInverted(TalonFXInvertType.Clockwise);
-        _rightMaster.setInverted(TalonFXInvertType.CounterClockwise); /* right side has to apply +V to M-, to go forward */
+        _leftAuxFollower.setInverted(_leftInvert);
+        _rightMaster.setInverted(_rightInvert); /* right side has to apply +V to M-, to go forward */
 		/*
 		 * Talon FX does not need sensor phase set for its integrated sensor
 		 * This is because it will always be correct if the selected feedback device is integrated sensor (default value)
@@ -272,4 +273,72 @@ public class Robot extends TimedRobot {
         _rightMaster.getSensorCollection().setIntegratedSensorPosition(0, 100);
         _pidgy.setYaw(0);
     }
+
+	/** 
+	 * Determines if SensorSum or SensorDiff should be used 
+	 * for combining left/right sensors into Robot Distance.  
+	 * 
+	 * Assumes Aux Position is set as Remote Sensor 0.  
+	 * 
+	 * configAllSettings must still be called on the master config
+	 * after this function modifies the config values. 
+	 * 
+	 * @param masterInvertType Invert of the Master Talon
+	 * @param masterConfig Configuration object to fill
+	 */
+	 void setRobotDistanceConfigs(TalonFXInvertType masterInvertType, TalonFXConfiguration masterConfig){
+		/**
+		 * Determine if we need a Sum or Difference.
+		 * 
+		 * The auxiliary Talon FX will always be positive
+		 * in the forward direction because it's a selected sensor
+		 * over the CAN bus.
+		 * 
+		 * The master's native integrated sensor may not always be positive when forward because
+		 * sensor phase is only applied to *Selected Sensors*, not native
+		 * sensor sources.  And we need the native to be combined with the 
+		 * aux (other side's) distance into a single robot distance.
+		 */
+
+		/* THIS FUNCTION should not need to be modified. 
+		   This setup will work regardless of whether the master
+		   is on the Right or Left side since it only deals with
+		   distance magnitude.  */
+
+		/* Check if we're inverted */
+		if (masterInvertType == TalonFXInvertType.Clockwise){
+			/* 
+				If master is inverted, that means the integrated sensor
+				will be negative in the forward direction.
+
+				If master is inverted, the final sum/diff result will also be inverted.
+				This is how Talon FX corrects the sensor phase when inverting 
+				the motor direction.  This inversion applies to the *Selected Sensor*,
+				not the native value.
+
+				Will a sensor sum or difference give us a positive total magnitude?
+
+				Remember the Master is one side of your drivetrain distance and 
+				Auxiliary is the other side's distance.
+
+					Phase | Term 0   |   Term 1  | Result
+				Sum:  -1 *((-)Master + (+)Aux   )| NOT OK, will cancel each other out
+				Diff: -1 *((-)Master - (+)Aux   )| OK - This is what we want, magnitude will be correct and positive.
+				Diff: -1 *((+)Aux    - (-)Master)| NOT OK, magnitude will be correct but negative
+			*/
+
+			masterConfig.diff0Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local Integrated Sensor
+			masterConfig.diff1Term = TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice();   //Aux Selected Sensor
+			masterConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.SensorDifference.toFeedbackDevice(); //Diff0 - Diff1
+		} else {
+			/* Master is not inverted, both sides are positive so we can sum them. */
+			masterConfig.sum0Term = TalonFXFeedbackDevice.RemoteSensor0.toFeedbackDevice();    //Aux Selected Sensor
+			masterConfig.sum1Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local IntegratedSensor
+			masterConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.SensorSum.toFeedbackDevice(); //Sum0 + Sum1
+		}
+
+		/* Since the Distance is the sum of the two sides, divide by 2 so the total isn't double
+		   the real-world value */
+		masterConfig.primaryPID.selectedFeedbackCoefficient = 0.5;
+	 }
 }
