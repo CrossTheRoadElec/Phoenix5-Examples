@@ -28,8 +28,8 @@
 void Robot::RobotInit() 
 {
     /* Construct global variables */
-    _rightMaster = new TalonFX(1);
-    _leftMaster = new TalonFX(2);
+    _rightMaster = new TalonSRX(1);
+    _leftMaster = new TalonSRX(2);
     _pidgey = new PigeonIMU(3); //This uses a CAN pigeon, as opposed to a gadgeteer pigeon
     _joystick = new frc::Joystick(0);
     _bufferedStream = new BufferedTrajectoryPointStream();
@@ -86,8 +86,8 @@ void Robot::TeleopPeriodic()
 
         /* fire the MP, and stop calling set() since that will cancel the MP */
         case 1:
-            _rightMaster->GetSensorCollection().SetIntegratedSensorPosition(0);
-            _leftMaster->GetSensorCollection().SetIntegratedSensorPosition(0);
+            _rightMaster->GetSensorCollection().SetQuadraturePosition(0);
+            _leftMaster->GetSensorCollection().SetQuadraturePosition(0);
             _pidgey->SetYaw(0);
             /* wait for 10 points to buffer in firmware, then transition to MP */
             _leftMaster->Follow(*_rightMaster, FollowerType_AuxOutput1);

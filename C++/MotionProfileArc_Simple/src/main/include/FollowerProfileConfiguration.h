@@ -2,13 +2,13 @@
 
 #include "ctre/Phoenix.h"
 
-/* FollowerProfileConfiguration inherits TalonFXConfiguration so it has all the default configs + the unique configs for the follower talon */
-class FollowerProfileConfiguration : public TalonFXConfiguration
+/* FollowerProfileConfiguration inherits TalonSRXConfiguration so it has all the default configs + the unique configs for the follower talon */
+class FollowerProfileConfiguration : public TalonSRXConfiguration
 {
 public:
-    FollowerProfileConfiguration() : TalonFXConfiguration()
+    FollowerProfileConfiguration() : TalonSRXConfiguration()
     {
-        primaryPID.selectedFeedbackSensor = FeedbackDevice::IntegratedSensor;
+        primaryPID.selectedFeedbackSensor = FeedbackDevice::QuadEncoder;
         neutralDeadband = 0.001; /* 0.1% super small for best low-speed control */
     }
 };

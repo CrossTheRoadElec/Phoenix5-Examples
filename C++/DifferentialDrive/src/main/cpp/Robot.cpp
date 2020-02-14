@@ -39,9 +39,9 @@ using namespace frc;
 class Robot: public TimedRobot {
 public:
 	/* ------ [1] Update CAN Device IDs and switch to WPI_VictorSPX where necessary ------*/
-	WPI_TalonSRX * _rghtFront = new WPI_TalonSRX(1);
+	WPI_TalonSRX * _rghtFront = new WPI_TalonSRX(3);
 	WPI_TalonSRX * _rghtFollower = new WPI_TalonSRX(2);
-	WPI_TalonSRX * _leftFront = new WPI_TalonSRX(2);
+	WPI_TalonSRX * _leftFront = new WPI_TalonSRX(6);
 	WPI_TalonSRX * _leftFollower = new WPI_TalonSRX(4);
 
 	DifferentialDrive * _diffDrive = new DifferentialDrive(*_leftFront,
