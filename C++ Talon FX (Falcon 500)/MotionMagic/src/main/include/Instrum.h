@@ -23,7 +23,7 @@ public:
 		frc::SmartDashboard::PutNumber("MotorOutputPercent", tal->GetMotorOutputPercent());
 		frc::SmartDashboard::PutNumber("ClosedLoopError", tal->GetClosedLoopError(0));
 		
-		/* Check if Talon SRX is performing Motion Magic */
+		/* Check if Talon FX is performing Motion Magic */
 		if (tal->GetControlMode() == ControlMode::MotionMagic) {
 			++_timesInMotionMagic;
 		} else {

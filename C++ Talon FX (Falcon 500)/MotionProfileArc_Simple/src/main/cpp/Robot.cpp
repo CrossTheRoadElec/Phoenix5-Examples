@@ -47,11 +47,18 @@ void Robot::RobotInit()
     _rightMaster->ConfigAllSettings(*_masterConfig);
     _leftMaster->ConfigAllSettings(*_followConfig);
 
+    /*
+     * Talon FX does not need sensor phase set for its integrated sensor
+     * This is because it will always be correct if the selected feedback device is integrated sensor (default value)
+     * and the user calls getSelectedSensor* to get the sensor's position/velocity.
+     * 
+     * https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#sensor-phase
+     */
     // _rightMaster->SetSensorPhase(true);
     // _leftMaster->SetSensorPhase(false);
 
-    _rightMaster->SetInverted(true);
-    _leftMaster->SetInverted(false);
+    _rightMaster->SetInverted(TalonFXInvertedType::Clockwise);
+    _leftMaster->SetInverted(TalonFXInvertedType::CounterClockwise);
 
     _rightMaster->SetStatusFramePeriod(StatusFrameEnhanced::Status_14_Turn_PIDF1, 20); //Telemetry using Phoenix Tuner
 }

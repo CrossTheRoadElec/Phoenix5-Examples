@@ -36,9 +36,6 @@
  * Be sure to confirm that when the Talon is driving forward (green) the 
  * position sensor is moving in a positive direction. If this is not the 
  * cause, flip the boolean input to the setSensorPhase() call below.
- *
- * Ensure your feedback device is in-phase with the motor,
- * and you have followed the walk-through in the Talon SRX Software Reference Manual.
  * 
  * Controls:
  * Button 1: When held, put Talon in Motion Magic mode and allow Talon to drive [-10, 10] 
@@ -47,17 +44,14 @@
  * Button 5(Left shoulder): When pushed, will decrement the smoothing of the motion magic down to 0
  * Button 6(Right shoulder): When pushed, will increment the smoothing of the motion magic up to 8
  * Left Joystick Y-Axis:
- * 	+ Percent Output: Throttle Talon SRX forward and reverse, use to confirm hardware setup.
+ * 	+ Percent Output: Throttle Talon FX forward and reverse, use to confirm hardware setup.
  * Right Joystick Y-Axis:
- * 	+ Motion Maigic: Servo Talon SRX forward and reverse, [-10, 10] rotations.
+ * 	+ Motion Maigic: Servo Talon FX forward and reverse, [-10, 10] rotations.
  * 
  * Gains for Motion Magic
  * 
  * Supported Version:
- * - Talon SRX: 4.00
- * - Victor SPX: 4.00
- * - Pigeon IMU: 4.00
- * - CANifier: 4.00
+ * - Talon FX: 20.2.3.0
  */
 #include "Robot.h"
 #include <sstream>
@@ -74,13 +68,15 @@ void Robot::RobotInit() {
                                         0, 
                                         10);
 
-    /**
-     * Configure Talon SRX Output and Sesnor direction accordingly
-     * Invert Motor to have green LEDs when driving Talon Forward / Requesting Postiive Output
-     * Phase sensor to have positive increment when driving Talon Forward (Green LED)
+    /*
+     * Talon FX does not need sensor phase set for its integrated sensor
+     * This is because it will always be correct if the selected feedback device is integrated sensor (default value)
+     * and the user calls getSelectedSensor* to get the sensor's position/velocity.
+     * 
+     * https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#sensor-phase
      */
-    _talon->SetSensorPhase(false);
-    _talon->SetInverted(false);
+    //_talon->SetSensorPhase(false);
+    _talon->SetInverted(TalonFXInvertType::CounterClockwise);
 
     /* Set relevant frame periods to be at least as fast as periodic rate */
     _talon->SetStatusFramePeriod(StatusFrameEnhanced::Status_13_Base_PIDF0, 10, 10);
@@ -118,7 +114,7 @@ void Robot::TeleopPeriodic() {
     if (fabs(leftYstick) < 0.10) { leftYstick = 0;} /* deadband 10% */
     if (fabs(RightYstick) < 0.10) { RightYstick = 0;} /* deadband 10% */
 
-    /* Get current Talon SRX motor output */
+    /* Get current Talon FX motor output */
     double motorOutput = _talon->GetMotorOutputPercent();
     std::stringstream sb;
     /* Prepare line to print */
