@@ -39,18 +39,15 @@ using namespace frc;
 class Robot: public TimedRobot {
 public:
 	/* ------ [1] Update CAN Device IDs and switch to WPI_VictorSPX where necessary ------*/
-	WPI_TalonSRX * _rghtFront = new WPI_TalonSRX(1);
-	WPI_TalonSRX * _rghtFollower = new WPI_TalonSRX(2);
-	WPI_TalonSRX * _leftFront = new WPI_TalonSRX(2);
-	WPI_TalonSRX * _leftFollower = new WPI_TalonSRX(4);
+	WPI_TalonFX * _rghtFront = new WPI_TalonFX(1);
+	WPI_TalonFX * _rghtFollower = new WPI_TalonFX(3);
+	WPI_TalonFX * _leftFront = new WPI_TalonFX(2);
+	WPI_TalonFX * _leftFollower = new WPI_TalonFX(4);
 
 	DifferentialDrive * _diffDrive = new DifferentialDrive(*_leftFront,
 			*_rghtFront);
 
 	Joystick * _joystick = new Joystick(0);
-
-	Faults _faults_L;
-	Faults _faults_R;
 
 	void TeleopPeriodic() {
 
@@ -80,17 +77,6 @@ public:
 
 		work << " L:" << leftVelUnitsPer100ms << " R:" << rghtVelUnitsPer100ms;
 
-		/* drive motor at least 25%, Talons will auto-detect if sensor is out of phase */
-		_leftFront->GetFaults(_faults_L);
-		_rghtFront->GetFaults(_faults_R);
-
-		if (_faults_L.SensorOutOfPhase) {
-			work << " L sensor is out of phase";
-		}
-		if (_faults_R.SensorOutOfPhase) {
-			work << " R sensor is out of phase";
-		}
-
 		/* print to console */
 		std::cout << work.str() << std::endl;
 	}
@@ -107,15 +93,20 @@ public:
 		_leftFollower->Follow(*_leftFront);
 
 		/* [3] flip values so robot moves forward when stick-forward/LEDs-green */
-		_rghtFront->SetInverted(false);
-		_rghtFollower->SetInverted(false);
-		_leftFront->SetInverted(false);
-		_leftFollower->SetInverted(false);
+		_rghtFront->SetInverted(TalonFXInvertType::Clockwise);
+		_rghtFollower->SetInverted(TalonFXInvertType::FollowMaster);
+		_leftFront->SetInverted(TalonFXInvertType::CounterClockwise);
+		_leftFollower->SetInverted(TalonFXInvertType::FollowMaster);
 
-		/* [4] adjust sensor phase so sensor moves
-		 * positive when Talon LEDs are green */
-		_rghtFront->SetSensorPhase(true);
-		_leftFront->SetSensorPhase(true);
+		/*
+		 * Talon FX does not need sensor phase set for its integrated sensor
+		 * This is because it will always be correct if the selected feedback device is integrated sensor (default value)
+		 * and the user calls getSelectedSensor* to get the sensor's position/velocity.
+		 * 
+		 * https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#sensor-phase
+		 */
+		// _rghtFront->SetSensorPhase(true);
+		// _leftFront->SetSensorPhase(true);
 
 		/*
 		* WPI drivetrain classes defaultly assume left and right are opposite. call
