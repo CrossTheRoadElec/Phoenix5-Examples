@@ -29,16 +29,16 @@
  * Closed Loop with an auxiliary closed loop on Pigeon Yaw to keep the robot straight.
  * 
  * This example uses:
- * - 2x Quad Encoders, One on both sides of robot for Primary Closed Loop on Position
+ * - 2x Falcon 500 Integrated Sensors, One on both sides of robot for Primary Closed Loop on Position
  * A Talon/Victor calculates the distance by taking the sum of both sensors and dividing it by 2.
  * - Pigeon IMU wired on CAN Bus for Auxiliary Closed Loop on Yaw
  * 
  * This example has two modes of operation, which can be switched between with Button 2.
  * 1.) Arcade Drive
- * 2.) Position Closed Loop wtih Quadrature Encoders and Drive Straight Wight Pigeon (Auxiliary)
+ * 2.) Position Closed Loop wtih Integrated Sensors and Drive Straight With Pigeon (Auxiliary)
  * 
  * Controls:
- * Button 1: When pressed, zero all sensors. Set quad encoders' positions + Pigeon yaw to 0.
+ * Button 1: When pressed, zero all sensors. Set Integrated Sensors' positions + Pigeon yaw to 0.
  * Button 2: When pressed, Toggle between Arcade Drive and Position Closed Loop
  * 	When toggling into Position Closed Loop, the current heading is saved and used as the 
  * 	auxiliary closed loop target. Can be changed by toggling out and in again.
@@ -239,7 +239,7 @@ public class Robot extends TimedRobot {
 			double target_sensorUnits = forward * Constants.kSensorUnitsPerRotation * Constants.kRotationsToTravel;
 			double target_turn = _targetAngle;
 			
-			/* Configured for Position Closed loop on Quad Encoders' Sum and Auxiliary PID on Pigeon's Yaw */
+			/* Configured for Position Closed loop on Integrated Sensors' Sum and Auxiliary PID on Pigeon's Yaw */
 			_rightMaster.set(TalonFXControlMode.Position, target_sensorUnits, DemandType.AuxPID, target_turn);
 			_leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
 		}
@@ -252,14 +252,14 @@ public class Robot extends TimedRobot {
 		_rightMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
 		_pidgey.setYaw(0, Constants.kTimeoutMs);
 		_pidgey.setAccumZAngle(0, Constants.kTimeoutMs);
-		System.out.println("[Quadrature Encoders + Position] All sensors are zeroed.\n");
+		System.out.println("[Integrated Sensors + Position] All sensors are zeroed.\n");
 	}
 	
-	/** Zero quadrature encoders on Talon */
+	/** Zero Integrated Sensors on Talon */
 	void zeroDistance(){
 		_leftMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
 		_rightMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
-		System.out.println("[Quadrature Encoders] All encoders are zeroed.\n");
+		System.out.println("[Integrated Sensors] All encoders are zeroed.\n");
 	}
 	
 	/** Deadband 5 percent, used on the gamepad */

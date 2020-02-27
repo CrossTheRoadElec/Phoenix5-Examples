@@ -29,16 +29,16 @@
  * Motion Profile with an auxiliary closed loop on pigeon yaw, which is called Motion Profile Arc.
  * 
  * This example uses:
- * - 2x Quad Encoders, One on both sides of robot for Primary Closed Loop on Position
+ * - 2x Falcon 500 Integrated Sensors, One on both sides of robot for Primary Closed Loop on Position
  * A Talon/Victor calculates the distance by taking the sum of average between both sensors.
  * - Pigeon IMU used for Auxiliary Closed Loop on Pigeon Yaw. 
  * 
  * This example has two modes of operation, which can be switched between with Button 2.
  * 1.) Arcade Drive
- * 2.) Motion Profile with Quadrature Encoders and Motion Profile Arc with Pigeon
+ * 2.) Motion Profile with Integrated Sensors and Motion Profile Arc with Pigeon
  * 
  * Controls:
- * Button 1: When pressed, zero sensors. Set quadrature encoders' positions + Pigeon yaw to 0.
+ * Button 1: When pressed, zero sensors. Set Integrated Sensors' positions + Pigeon yaw to 0.
  * Button 2: When pressed, toggle between Arcade Drive and Motion Profile Arc
  * Button 6: When pressed, select direction and final heading of Motion Profile and run 
  * 	Motion Profile Arc
@@ -284,7 +284,7 @@ public class Robot extends TimedRobot {
 				_motProfExample.reset();
 				_motProfExample.start(finalHeading_units, bMoveForward);
 			} else if (bExecuteAction == ButtonEvent.ButtonOn) {
-				/* Configured for Motion Profile on Quad Encoders' Sum and Auxiliary PID on Pigeon IMU's Yaw */
+				/* Configured for Motion Profile on Integrated Sensors' Sum and Auxiliary PID on Pigeon IMU's Yaw */
 				_rightMaster.set(TalonFXControlMode.MotionProfileArc, _motProfExample.getSetValue().value);
 				_leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
 			}
@@ -301,7 +301,7 @@ public class Robot extends TimedRobot {
 		_leftMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
 		_rightMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
 		_pidgey.setYaw(0);
-		System.out.println("[Quad Encoders + Pigeon] All sensors are zeroed.\n");
+		System.out.println("[Integrated Sensors + Pigeon] All sensors are zeroed.\n");
 	}
 	
 	/** Deadband 5 percent, used on the gamepad */

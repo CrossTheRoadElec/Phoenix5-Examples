@@ -111,7 +111,7 @@ public class Robot extends TimedRobot {
         /* remote 0 will capture Pigeon IMU */
         _config.remoteFilter1.remoteSensorDeviceID = _pidgy.getDeviceID();
         _config.remoteFilter1.remoteSensorSource = RemoteSensorSource.Pigeon_Yaw;
-        /* remote 1 will capture the quad encoder on left talon */
+        /* remote 1 will capture the integrated sensor on left talon */
         _config.remoteFilter0.remoteSensorDeviceID = _leftAuxFollower.getDeviceID();
         _config.remoteFilter0.remoteSensorSource = RemoteSensorSource.TalonFX_SelectedSensor;
 		/* Now that the Left sensor can be used by the master Talon,
@@ -268,7 +268,7 @@ public class Robot extends TimedRobot {
     }
 
     void ZeroAllSensors() {
-        /* individuall clear the quad register of each side */
+        /* individuall clear the integrated sensor value of each side */
         _leftAuxFollower.getSensorCollection().setIntegratedSensorPosition(0, 100);
         _rightMaster.getSensorCollection().setIntegratedSensorPosition(0, 100);
         _pidgy.setYaw(0);

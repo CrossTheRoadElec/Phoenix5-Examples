@@ -7,11 +7,11 @@ public class Constants {
 	public static final int kTalonID = 0;
 
 	/**
-	 * How many sensor units per rotation. Using CTRE Magnetic Encoder.
+	 * How many sensor units per rotation. Using Falcon Integrated Sensor.
 	 * 
 	 * @link https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor
 	 */
-	public static final double kSensorUnitsPerRotation = 4096;
+	public static final double kSensorUnitsPerRotation = 2048;
 
 	/**
 	 * Which PID slot to pull gains from. Starting 2018, you can choose from

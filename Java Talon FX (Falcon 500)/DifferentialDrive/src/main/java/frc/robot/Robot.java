@@ -43,7 +43,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 public class Robot extends TimedRobot {
     /*
-     * --- [1] Update CAN Device IDs and use WPI_VictorSPX where necessary ------
+     * --- [1] Update CAN Device IDs ------
      */
     WPI_TalonFX _rghtFront = new WPI_TalonFX(1);
     WPI_TalonFX _rghtFollower = new WPI_TalonFX(10);

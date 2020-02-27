@@ -147,7 +147,7 @@ public class Robot extends TimedRobot {
 													        _talonLimits.getDeviceID(),
 													        Constants.kTimeoutMs);
 
-			System.out.println("Remote Limit Switches enabled using another Talon SRX.");
+			System.out.println("Remote Limit Switches enabled using another Talon.");
 		}
 	}
 	

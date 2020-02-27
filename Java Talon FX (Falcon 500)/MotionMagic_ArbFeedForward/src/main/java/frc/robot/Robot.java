@@ -29,15 +29,15 @@
  * Motion Magic with an arbitrary feed forward to request more or less output.
  * 
  * This example uses:
- * - 2x Quad Encoders, One on both sides of robot for Primary Closed Loop on Position
+ * - 2x Falcon 500s with Integrated Sensors, One on both sides of robot for Primary Closed Loop on Position
  * A Talon/Victor calculates the distance by taking the sum of both sensors and dividing it by 2.
  * 
  * This example has two modes of operation, which can be switched between with Button 2.
  * 1.) Arcade Drive
- * 2.) Motion Magic with Quadrature Encoders and FeedForward
+ * 2.) Motion Magic with Integrated Sensors and FeedForward
  * 
  * Controls:
- * Button 1: When pressed, zero heading. Set quadrature encoders' positions to 0.
+ * Button 1: When pressed, zero heading. Set Integrated Sensors' positions to 0.
  * Button 2: When pressed, toggle between Arcade Drive and Motion Magic
  * 	When toggling into Motion Magic, the current heading is saved and used as the 
  * closed loop target. Can be changed by toggling out and in again.
@@ -263,11 +263,11 @@ public class Robot extends TimedRobot {
 		_firstCall = false;
 	}
 	
-	/* Zero quadrature encoders on Talons */
+	/* Zero Integrated Sensors on Talons */
 	void zeroSensors() {
 		_leftMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
 		_rightMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
-		System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
+		System.out.println("[Integrated Sensors] All sensors are zeroed.\n");
 	}
 	
 	/** Deadband 5 percent, used on the gamepad */

@@ -29,6 +29,7 @@
  * driving in Percent Output with an auxiliary closed loop on Pigeon Yaw to keep the robot straight.
  * 
  * This example uses:
+ * - Talon FX's for drivetrain motors
  * - Pigeon IMU wired on CAN Bus for Auxiliary Closed Loop on Yaw
  * 
  * This example has two modes of operation, which can be switched between with Button 2.

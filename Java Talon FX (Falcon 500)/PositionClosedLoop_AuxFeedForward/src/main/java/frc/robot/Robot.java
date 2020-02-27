@@ -29,15 +29,15 @@
  * Position Closed Loop with an arbitrary Feed Forward to request more or less output.
  * 
  * This example uses:
- * - 2x Quad Encoders, One on both sides of robot for Primary Closed Loop on Position
+ * - 2x Falcon 500 Integrated Sensors, One on both sides of robot for Primary Closed Loop on Position
  * A Talon/Victor calculates the distance by taking the sum of both sensors and dividing it by 2.
  * 
  * This example has two modes of operation, which can be switched between with Button 2.
  * 1.) Arcade Drive
- * 2.) Position Closed Loop with Quadrature Encoders and Feed Forward
+ * 2.) Position Closed Loop with Integrated Sensors and Feed Forward
  * 
  * Controls:
- * Button 1: When pressed, zero heading. Set current Quadrature Encoders' positions to 0.
+ * Button 1: When pressed, zero heading. Set current Integrated Sensors' positions to 0.
  * Button 2: When pressed, toggle between Arcade Drive and Position Closed Loop with Feed Forward
  * Left Joystick Y-Axis:
  * 	+ Arcade Drive: Drive robot forward and reverse
@@ -106,7 +106,7 @@ public class Robot extends TimedRobot {
 		
 		/** Feedback Sensor Configuration */
 		
-		/* Configure the left Talon's selected sensor as local QuadEncoder */
+		/* Configure the left Talon's selected sensor as local Integrated Sensor */
 		_leftConfig.primaryPID.selectedFeedbackSensor =	TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();	// Local Feedback Source
 
 		/* Configure the Remote Talon's selected sensor as a remote sensor for the right Talon */
@@ -221,7 +221,7 @@ public class Robot extends TimedRobot {
 			double target_sensorUnits = forward * Constants.kSensorUnitsPerRotation * Constants.kRotationsToTravel;
 			double feedFwdTerm = turn * 0.10;	// Pecent to add to Closed Loop Output
 			
-			/* Configured for Position Closed Loop on Quad Encoders' Sum and Arbitrary FeedForward on joyX */
+			/* Configured for Position Closed Loop on Integrated Sensors' Sum and Arbitrary FeedForward on joyX */
 			_rightMaster.set(TalonFXControlMode.Position, target_sensorUnits, DemandType.ArbitraryFeedForward, feedFwdTerm);
 			_leftMaster.follow(_rightMaster);
 		}
@@ -229,11 +229,11 @@ public class Robot extends TimedRobot {
 		_firstCall = false;
 	}
 	
-	/* Zero quadrature encoders on Talons */
+	/* Zero Integrated Sensors on Talons */
 	void zeroSensors() {
 		_leftMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
 		_rightMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
-		System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
+		System.out.println("[Integrated Sensors] All sensors are zeroed.\n");
 	}
 	
 	/** Deadband 5 percent, used on the gamepad */

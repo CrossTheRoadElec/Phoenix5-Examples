@@ -29,15 +29,15 @@
  * Velocity Closed Loop with an auxiliary feed-forward to request more or less output.
  * 
  * This example uses:
- * - 2x quad encoders, one on both sides of robot for Primary Closed Loop on Position
+ * - 2x Falcon 500 Integrated Sensors, one on both sides of robot for Primary Closed Loop on Position
  * A Talon/Victor caclulates the distance by taking the sum of both sensors and diving it by 2.
  * 
  * This example has two modes of operation, which can be switched between with Button 2.
  * 1.) Arcade Drive
- * 2.) Velocity Closed Loop with quadrature encoders and FeedForward
+ * 2.) Velocity Closed Loop with Integrated Sensors and FeedForward
  * 
  * Controls:
- * Button 1: When pressed, zero all sensors. Set quad encoders' positions to 0.
+ * Button 1: When pressed, zero all sensors. Set Integrated Sensors' positions to 0.
  * Button 2: When pressed, toggle between Arcade Drive and Velocity Closed Loop
  * Left Joystick Y-Axis:
  * 	+ Arcade Drive: Drive robot forward and reverse
@@ -232,7 +232,7 @@ public class Robot extends TimedRobot {
 			double target_unitsPer100ms = target_RPM * Constants.kSensorUnitsPerRotation / 600.0;	//RPM -> Native units
 			double feedFwdTerm = turn * 0.10;	// Percentage added to the close loop output
 			
-			/* Configured for Velocity Closed Loop on Quad Encoders' Sum and Arbitrary FeedForward on joyX */
+			/* Configured for Velocity Closed Loop on Integrated Sensors' Sum and Arbitrary FeedForward on joyX */
 			_rightMaster.set(TalonFXControlMode.Velocity, target_unitsPer100ms, DemandType.ArbitraryFeedForward, feedFwdTerm);
 			_leftMaster.follow(_rightMaster);
 			
@@ -247,7 +247,7 @@ public class Robot extends TimedRobot {
 	void zeroSensors() {
 		_leftMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
 		_rightMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
-		System.out.println("[Quadrature Encoders] All sensors are zeroed.\n");
+		System.out.println("[Integrated Sensors] All sensors are zeroed.\n");
 	}
 	
 	/** Deadband 5 percent, used on the gamepad (To be added to Framework?) */

@@ -29,11 +29,11 @@
  * 
  * Be sure to select the correct feedback sensor using configSelectedFeedbackSensor() below.
  * Use Percent Output Mode (Holding A and using Left Joystick) to confirm talon is driving 
- * forward (Green LED on Talon/Victor) when the position sensor is moving in the postive 
+ * forward (Green LED on Talon) when the position sensor is moving in the postive 
  * direction. If this is not the case, flip the boolean input in setSensorPhase().
  * 
  * Controls:
- * Button 1: When pressed, start and run Position Closed Loop on Talon/Victor
+ * Button 1: When pressed, start and run Position Closed Loop on Talon
  * Button 2: When held, start and run Percent Output
  * Left Joytick Y-Axis:
  * 	+ Position Closed Loop: Servo Talon forward and reverse [-10, 10] rotations
@@ -120,7 +120,7 @@ public class Robot extends TimedRobot {
 		boolean button1 = _joy.getRawButton(1);	// X-Button
 		boolean button2 = _joy.getRawButton(2);	// A-Button
 
-		/* Get Talon/Victor's current output percentage */
+		/* Get Talon's current output percentage */
 		double motorOutput = _talon.getMotorOutputPercent();
 
 		/* Deadband gamepad */
@@ -146,8 +146,8 @@ public class Robot extends TimedRobot {
 		if (!_lastButton1 && button1) {
 			/* Position Closed Loop */
 
-			/* 10 Rotations * 4096 u/rev in either direction */
-			targetPositionRotations = leftYstick * 10.0 * 4096;
+			/* 10 Rotations * 2048 u/rev in either direction */
+			targetPositionRotations = leftYstick * 10.0 * 2048;
 			_talon.set(TalonFXControlMode.Position, targetPositionRotations);
 		}
 

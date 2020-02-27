@@ -80,8 +80,7 @@ public class Robot extends TimedRobot {
 	GoStraight _goStraight = GoStraight.Off;    // Start example with GoStraight Off
 
 	/**
-	 * Some gains for heading servo, these were tweaked by using the web-based
-	 * config (CAN Talon) and pressing gamepad button 6 to load them.
+	 * Some gains for heading servo
 	 */
 	double kPgain = 0.04; 				// percent throttle per degree of error */
 	double kDgain = 0.0004; 			// percent throttle per angular velocity dps */

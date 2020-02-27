@@ -19,8 +19,8 @@ public class Constants {
 	public final static int PID_PRIMARY = 0;
 	public final static int PID_TURN = 1;
 
-	public final static int kForwardSoftLimit_Quad = +4096 * 5; /* 5 rotations assuming CTRE Mag encoder */
-	public final static int kReverseSoftLimit_Quad = -4096 * 5; /* 5 rotations assuming CTRE Mag encoder */
+	public final static int kForwardSoftLimit_Quad = +2048 * 5; /* 5 rotations assuming FX Integrated Sensor */
+	public final static int kReverseSoftLimit_Quad = -2048 * 5; /* 5 rotations assuming FX Integrated Sensor */
 
 	public final static int kForwardSoftLimit_Pigeon = +341; /* ~15 deg, Pigeon resolution: 8192 => 360 deg */
 	public final static int kReverseSoftLimit_Pigeon = -341; /* ~15 deg, Pigeon resolution: 8192 => 360 deg */

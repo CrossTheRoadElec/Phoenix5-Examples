@@ -27,10 +27,10 @@
  * The RemoteSoftLimit example demonstrates the new Talon and Victor Remote Features, which
  * allow for the use of remote Software Limit Switches. The project allows for quick change in
  * sensor configuration between:
- * 1.) Local Quadrature Encoder				[Local Feedback]
- * 2.) Remote Quadrature Encoder 			[Talon]     
+ * 1.) Local Integrated Sensor				[Local Feedback]
+ * 2.) Remote Talon Sensor       			[Talon]     
  * 3.) Remote CANifier Quadrature Encoder 	[CANifier] 
- * 4.) Local Pigeon Yaw Reading 			[Local Feedback]       
+ * 4.) Gadgeteer Pigeon Yaw Reading 		[Remote SRX Feedback]       
  * 5.) Remote Pigeon Yaw Reading 			[CAN Pigeon]        
  * 6.) CANifier PWM input 1 				[CANifier]
  * The project also allows for enable/disable on soft limit triggering when sensor is not 
@@ -41,10 +41,10 @@
  * 
  * Controls:
  * Current Sensor Configurtion is indicated by print message in terminal
- * 1.) Local Quadrature Encoder				[Local Feedback]		Button 1
- * 2.) Remote Quadrature Encoder 			[Talon] 				Button 2
+ * 1.) Local Integrated Sensor				[Local Feedback]		Button 1
+ * 2.) Remote Talon Sensor       			[Talon] 				Button 2
  * 3.) Remote CANifier Quadrature Encoder 	[CANifier] 				Button 3
- * 4.) Local Pigeon Yaw Reading 			[Local Feedback]       	Button 4
+ * 4.) Gadgeteer Pigeon Yaw Reading 		[Remote SRX Feedback]  	Button 4
  * 5.) Remote Pigeon Yaw Reading 			[CAN Pigeon]        	Button 5
  * 6.) CANifier PWM input 1 				[CANifier]				Button 7
  *
@@ -151,7 +151,7 @@ public class Robot extends TimedRobot {
             _motorCntrller.configForwardSoftLimitThreshold(Constants.kForwardSoftLimit_Quad, Constants.kTimeoutMs);
             _motorCntrller.configReverseSoftLimitThreshold(Constants.kReverseSoftLimit_Quad, Constants.kTimeoutMs);
 
-            System.out.println("Using local quadrature encoder.");
+            System.out.println("Using local integrated sensor.");
         } else if (choice == 2) {
             /* select a quadrature encoder connected to a remote Talon */
             _motorCntrller.configRemoteFeedbackFilter(  _talonLimits.getDeviceID(),
@@ -173,7 +173,7 @@ public class Robot extends TimedRobot {
             _motorCntrller.configForwardSoftLimitThreshold(Constants.kForwardSoftLimit_Quad, Constants.kTimeoutMs);
             _motorCntrller.configReverseSoftLimitThreshold(Constants.kReverseSoftLimit_Quad, Constants.kTimeoutMs);
 
-            System.out.println("Using remote Talon's quadrature encoder.");
+            System.out.println("Using remote Talon's sensor.");
         } else if (choice == 3) {
             /* select a quadrature encoder connected to a CANifier */
             _motorCntrller.configRemoteFeedbackFilter(  _canifLimits.getDeviceID(),

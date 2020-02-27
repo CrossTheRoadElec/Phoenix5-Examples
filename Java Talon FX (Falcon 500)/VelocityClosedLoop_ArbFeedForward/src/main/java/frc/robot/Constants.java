@@ -12,7 +12,7 @@ public class Constants {
 	
 	/**
 	 * How many sensor units per rotation.
-	 * Using CTRE Magnetic Encoder.
+	 * Using Talon FX Integrated Sensor.
 	 * @link https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor
 	 */
 	public final static int kSensorUnitsPerRotation = 2048;

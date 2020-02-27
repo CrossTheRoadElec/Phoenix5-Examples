@@ -272,7 +272,7 @@ public class Robot extends TimedRobot {
 			double target_sensorUnits = forward * Constants.kSensorUnitsPerRotation * Constants.kRotationsToTravel;
 			double target_turn = _targetAngle;
 			
-			/* Configured for MotionMagic on Quad Encoders' Sum and Auxiliary PID on Pigeon */
+			/* Configured for MotionMagic on Integrated Encoders' Sum and Auxiliary PID on Pigeon */
 			_rightMaster.set(ControlMode.MotionMagic, target_sensorUnits, DemandType.AuxPID, target_turn);
 			_leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
 		}
@@ -285,14 +285,14 @@ public class Robot extends TimedRobot {
 		_rightMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
 		_pidgey.setYaw(0, Constants.kTimeoutMs);
 		_pidgey.setAccumZAngle(0, Constants.kTimeoutMs);
-		System.out.println("[Quadrature Encoders + Pigeon] All sensors are zeroed.\n");
+		System.out.println("[Integrated Encoders + Pigeon] All sensors are zeroed.\n");
 	}
 	
-	/** Zero QuadEncoders, used to reset position when initializing Motion Magic */
+	/** Zero Integrated Encoders, used to reset position when initializing Motion Magic */
 	void zeroDistance(){
 		_leftMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
 		_rightMaster.getSensorCollection().setIntegratedSensorPosition(0, Constants.kTimeoutMs);
-		System.out.println("[Quadrature Encoders] All encoders are zeroed.\n");
+		System.out.println("[Integrated Encoders] All encoders are zeroed.\n");
 	}
 	
 	/** Deadband 5 percent, used on the gamepad */
