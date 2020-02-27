@@ -129,9 +129,9 @@ void Robot::InitBuffer(const double profile[][3], int totalCnt)
 
         /* for each point, fill our structure and pass it to API */
         point.timeDur = durationMilliseconds;
-        point.position = direction * positionRot * 4096; // Convert Revolutions to
+        point.position = direction * positionRot * 2048; // Convert Revolutions to
                                                          // Units
-        point.velocity = direction * velocityRPM * 4096 / 600.0; // Convert RPM to
+        point.velocity = direction * velocityRPM * 2048 / 600.0; // Convert RPM to
                                                                  // Units/100ms
         point.auxiliaryPos = 0;
         point.auxiliaryVel = 0;

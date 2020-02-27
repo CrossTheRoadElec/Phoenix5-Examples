@@ -134,8 +134,8 @@ void Robot::TeleopPeriodic() {
     if (_joy->GetRawButton(1)) {
         /* Motion Magic */ 
         
-        /*4096 ticks/rev * 10 Rotations in either direction */
-        double targetPos = RightYstick * 4096 * 10.0;
+        /*2048 ticks/rev * 10 Rotations in either direction */
+        double targetPos = RightYstick * 2048 * 10.0;
         _talon->Set(ControlMode::MotionMagic, targetPos);
 
         /* Append more signals to print when in speed mode */
