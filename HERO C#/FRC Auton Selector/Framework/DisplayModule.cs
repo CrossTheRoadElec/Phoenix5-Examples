@@ -32,8 +32,8 @@ namespace CTRE
     {
         namespace Module
         {
-            public class DisplayModule : ModuleBase //TODO
-            {
+            public class DisplayModule : CTRE.Gadgeteer.Module.ModuleBase //TODO
+			{
                 public enum Color : uint
                 {
                     Black = 0x00000000,
