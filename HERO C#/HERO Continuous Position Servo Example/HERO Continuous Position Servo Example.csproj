@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
+    <LangVersion>5</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
     <AssemblyName>HERO Continuous Position Servo Example</AssemblyName>
     <OutputType>Exe</OutputType>
     <RootNamespace>HERO_Continuous_Position_Servo_Example</RootNamespace>
