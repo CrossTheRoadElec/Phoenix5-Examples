@@ -47,8 +47,16 @@
     <Reference Include="CTRE, Version=5.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Phoenix-netmf-lib\CTRE\bin\Debug\CTRE.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="ctre_netmf_native, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="CTRE.Phoenix.LowLevel, Version=5.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ctre_netmf_native, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Microsoft.SPOT.Graphics" />
     <Reference Include="Microsoft.SPOT.Hardware" />
     <Reference Include="Microsoft.SPOT.Hardware.PWM" />
