@@ -53,6 +53,11 @@
   <ItemGroup>
     <Reference Include="CTRE, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="CTRE.Phoenix.LowLevel, Version=5.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ctre_netmf_native">
       <SpecificVersion>False</SpecificVersion>
