@@ -67,6 +67,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 
 public class Robot extends TimedRobot {
@@ -113,8 +114,8 @@ public class Robot extends TimedRobot {
 		 * have green LEDs when driving Talon Forward / Requesting Postiive Output Phase
 		 * sensor to have positive increment when driving Talon Forward (Green LED)
 		 */
-		_talon.setSensorPhase(false);
-		_talon.setInverted(false);
+		_talon.setSensorPhase(	false	);
+		_talon.setInverted(		false	);
 
 		/* Set relevant frame periods to be at least as fast as periodic rate */
 		_talon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);
@@ -134,11 +135,26 @@ public class Robot extends TimedRobot {
 		_talon.config_kD(Constants.kSlotIdx, Constants.kGains.kD, Constants.kTimeoutMs);
 
 		/* Set acceleration and vcruise velocity - see documentation */
-		_talon.configMotionCruiseVelocity(15000, Constants.kTimeoutMs);
-		_talon.configMotionAcceleration(6000, Constants.kTimeoutMs);
+		_talon.configMotionCruiseVelocity(		15000, 		Constants.kTimeoutMs);
+		_talon.configMotionAcceleration(		6000, 		Constants.kTimeoutMs);
 
 		/* Zero the sensor once on robot boot up */
 		_talon.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+
+		/* Use for sensors that don't role over back to Zero similar to a Potentiometer */
+		//_talon.configFeedbackNotContinuous(true, Constants.kTimeoutMs);
+
+		/* Zero Encoder on Reverce Limit switch  or Forward Limit switch*/
+		//_talon.configClearPositionOnLimitR(true, Constants.kTimeoutMs);
+		//_talon.configClearPositionOnLimitF(true, Constants.kTimeoutMs);
+
+		/* Configure Current Limits */
+		//_talon.configPeakCurrentLimit(30);
+    	//_talon.configPeakCurrentDuration(150);
+    	// _talon.configContinuousCurrentLimit(20);
+
+     	// put all Talon SRX into brake mode
+		//_talon.setNeutralMode(NeutralMode.Brake);
 	}
 
 	/**
@@ -155,10 +171,12 @@ public class Robot extends TimedRobot {
 		double motorOutput = _talon.getMotorOutputPercent();
 
 		/* Prepare line to print */
-		_sb.append("\tOut%:");
+		_sb.append("\t Out%:");
 		_sb.append(motorOutput);
-		_sb.append("\tVel:");
+		_sb.append("\t Vel:");
 		_sb.append(_talon.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
+		_sb.append("\t Current Pos:");
+		_sb.append(_talon.getSelectedSensorPosition());
 
 		/**
 		 * Peform Motion Magic when Button 1 is held, else run Percent Output, which can
@@ -172,9 +190,9 @@ public class Robot extends TimedRobot {
 			_talon.set(ControlMode.MotionMagic, targetPos);
 
 			/* Append more signals to print when in speed mode */
-			_sb.append("\terr:");
+			_sb.append("\t err:");
 			_sb.append(_talon.getClosedLoopError(Constants.kPIDLoopIdx));
-			_sb.append("\ttrg:");
+			_sb.append("\t trg:");
 			_sb.append(targetPos);
 		} else {
 			/* Percent Output */
