@@ -152,7 +152,7 @@ public class Robot extends TimedRobot {
 		initQuadrature();
 		
 		/* Configure Selected Sensor for Talon */
-		_talon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor,	// Feedback
+		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,	// Feedback
 											0, 											// PID ID
 											kTimeoutMs);								// Timeout
 	}
