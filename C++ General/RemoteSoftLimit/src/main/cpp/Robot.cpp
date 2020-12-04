@@ -35,6 +35,7 @@
 #include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
 #include "Constants.h"
+#include "PhysicsSim.h"
 
 using namespace frc;
 
@@ -289,6 +290,17 @@ public:
 
 		/* drive talon with gamepad */
 		_motorCntrller->Set(ControlMode::PercentOutput, joyForward);
+		std::cout << _motorCntrller->GetMotorOutputPercent() << std::endl;
+	}
+
+	void SimulationInit() {
+		PhysicsSim::GetInstance().AddTalonSRXs( {
+        	new SimTalonSRX(_motorCntrller, 0.75, 1000),
+			new SimTalonSRX(_talonLimits, 0.75, 1000)
+    	} );
+	}
+	void SimulationPeriodic() {
+		PhysicsSim::GetInstance().Run();
 	}
 
 	//------------------------- Loops -------------------------------//

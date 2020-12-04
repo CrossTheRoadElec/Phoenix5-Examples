@@ -41,6 +41,7 @@
 #include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
 #include "Constants.h"
+#include "PhysicsSim.h"
 
 using namespace frc;
 
@@ -53,6 +54,15 @@ public:
 	bool _lastButton1 = false;
 	/** save the target position to servo to */
 	double targetPositionRotations;
+
+	void SimulationInit() {
+    	PhysicsSim::GetInstance().AddTalonSRXs( {
+        	new SimTalonSRX(_talon, 0.75, 2000)
+    	} );
+	}
+	void SimulationPeriodic() {
+    	PhysicsSim::GetInstance().Run();
+	}
 
 	void RobotInit() {
 		/* Factory Default all hardware to prevent unexpected behaviour */

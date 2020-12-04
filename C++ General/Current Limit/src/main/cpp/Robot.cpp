@@ -26,6 +26,7 @@
 
 #include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
+#include "PhysicsSim.h"
 
 using namespace frc;
 
@@ -36,6 +37,14 @@ public:
 
 	bool _currentLimEn = true;
 	bool _btn5 = false;
+	void SimulationInit() {
+		PhysicsSim::GetInstance().AddTalonSRXs( {
+			new SimTalonSRX(_tal, 0.75, 2000)
+		} );
+	}
+	void SimulationPeriodic() {
+		PhysicsSim::GetInstance().Run();
+	}
 	void RobotInit(){
 		/* Factory Default all hardware to prevent unexpected behaviour */
 		_tal->ConfigFactoryDefault();
@@ -85,6 +94,7 @@ public:
 			/* otherwise stop output */
 			_tal->Set(ControlMode::PercentOutput, 0);
 		}
+		std::cout << _tal->GetMotorOutputPercent() << std::endl;
 
 		/* on button5 (shoulder button on Logitech gamepad) */
 		if (!_btn5 && btn5) {

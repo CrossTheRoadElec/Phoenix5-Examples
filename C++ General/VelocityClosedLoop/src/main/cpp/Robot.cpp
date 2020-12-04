@@ -44,6 +44,7 @@
 #include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
 #include "Constants.h"
+#include "PhysicsSim.h"
 
 using namespace frc;
 
@@ -53,6 +54,15 @@ public:
 	Joystick * _joy = new Joystick(0);
 	std::string _sb;
 	int _loops = 0;
+
+	void SimulationInit() {
+		PhysicsSim::GetInstance().AddTalonSRXs( {
+        	new SimTalonSRX(_talon, 0.75, 9325)
+    	} );
+	}
+	void SimulationPeriodic() {
+		PhysicsSim::GetInstance().Run();
+	}
 
 	void RobotInit() {
 		_talon->ConfigFactoryDefault();

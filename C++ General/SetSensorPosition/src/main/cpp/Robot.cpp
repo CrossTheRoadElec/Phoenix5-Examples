@@ -35,6 +35,7 @@
 
 #include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
+#include "PhysicsSim.h"
 
 using namespace frc;
 
@@ -46,6 +47,16 @@ public:
 	bool _btn1 = false, _btn2 = false, _btn3 = false, _btn4 = false;
 	const bool kInvert = true; /* pick this based on your preference on what positive motor output should spin to */
 	const bool kSensorPhase = false; /* pick this so self-test stops reporting sensor-out-of-phase */
+
+	void SimulationInit() {
+		PhysicsSim::GetInstance().AddTalonSRXs( {
+        	new SimTalonSRX(_srx, 0.75, 2000)
+    	} );
+	}
+	void SimulationPeriodic() {
+		PhysicsSim::GetInstance().Run();
+	}
+
 	void RobotInit(){
 		/* Factory Default all hardware to prevent unexpected behaviour */
 		_srx->ConfigFactoryDefault();

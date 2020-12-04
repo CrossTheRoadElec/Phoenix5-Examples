@@ -25,6 +25,16 @@
 #include "MotionProfile.h"
 #include "Instrum.h"
 
+#include "PhysicsSim.h"
+void Robot::SimulationInit() {
+    PhysicsSim::GetInstance().AddTalonSRXs( {
+        new SimTalonSRX(_master, 0.75, 2000)
+    } );
+}
+void Robot::SimulationPeriodic() {
+    PhysicsSim::GetInstance().Run();
+}
+
 void Robot::RobotInit() 
 {
     /* Construct global variables being used */
@@ -66,6 +76,7 @@ void Robot::TeleopPeriodic()
         /* drive master talon normally */
         case 0:
             _master->Set(ControlMode::PercentOutput, axis);
+            _master->SetSelectedSensorPosition(0);
             if (bFireMp == true) {
                 /* go to MP logic */
                 _state = 1;
@@ -82,6 +93,8 @@ void Robot::TeleopPeriodic()
 
         /* wait for MP to finish */
         case 2:
+            std::cout << "Position: " << _master->GetSelectedSensorPosition() << ", Velocity: " << _master->GetSelectedSensorVelocity() << std::endl;
+            std::cout << "TarPos: " << _master->GetActiveTrajectoryPosition() << ", TarVel: " << _master->GetActiveTrajectoryVelocity() << std::endl;
             if (_master->IsMotionProfileFinished()) {
                 Instrum::PrintLine("MP finished");
                 _state = 3;

@@ -19,6 +19,9 @@ public:
 	void TestInit() override;
 	void TestPeriodic() override;
 
+	void SimulationInit() override;
+	void SimulationPeriodic() override;
+
 private:
 	TalonSRX *_talon;
 	frc::Joystick *_joy;

@@ -36,6 +36,7 @@
 #include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
 #include "Configs.h"
+#include "PhysicsSim.h"
 
 using namespace frc;
 
@@ -69,6 +70,15 @@ private:
 		enumCANCoder,
 		enumTalonFX,
 	} _selectedDevice;
+
+	void SimulationInit() {
+		PhysicsSim::GetInstance().AddTalonSRXs( {
+			new SimTalonSRX(_talon, 0.75, 2000)
+		} );
+	}
+	void SimulationPeriodic() {
+		PhysicsSim::GetInstance().Run();
+	}
 
 	void RobotInit() {
 		/* Do nothing for init */

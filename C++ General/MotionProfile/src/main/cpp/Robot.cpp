@@ -52,6 +52,7 @@
 #include "MotionProfileExample.h"
 #include "ctre/Phoenix.h"
 #include "Constants.h"
+#include "PhysicsSim.h"
 
 using namespace frc;
 
@@ -74,6 +75,17 @@ public:
 	Robot() :
 			_talon(Constants::kTalonID), _vic(Constants::kVictorFollower), _example(
 					_talon), _joy(0) {
+	}
+	void SimulationInit() {
+		PhysicsSim::GetInstance().AddTalonSRXs( {
+			new SimTalonSRX(&_talon, 0.75, 2000)
+		} );
+		PhysicsSim::GetInstance().AddVictorSPXs( {
+			new SimVictorSPX(&_vic)
+		} );
+	}
+	void SimulationPeriodic() {
+		PhysicsSim::GetInstance().Run();
 	}
 	void RobotInit(){
 	/* Factory Default all hardware to prevent unexpected behaviour */

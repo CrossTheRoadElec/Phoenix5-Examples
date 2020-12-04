@@ -36,6 +36,7 @@
 
 #include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
+#include "PhysicsSim.h"
 
 using namespace frc;
 
@@ -52,6 +53,15 @@ public:
 	bool _btn4 = false;
 	int _isFwdLimitSwitchClosed = 0;
 	int _isRevLimitSwitchClosed = 0;
+
+	void SimulationInit() {
+		PhysicsSim::GetInstance().AddTalonSRXs( {
+        	new SimTalonSRX(_srx, 0.75, 2000)
+    	} );
+	}
+	void SimulationPeriodic() {
+    	PhysicsSim::GetInstance().Run();
+	}
 
 	/* nonzero to block the config until success, zero to skip checking */
 	const int kTimeoutMs = 30;

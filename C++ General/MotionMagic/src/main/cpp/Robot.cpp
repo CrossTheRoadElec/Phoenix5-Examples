@@ -62,6 +62,16 @@
 #include "Robot.h"
 #include <sstream>
 
+#include "PhysicsSim.h"
+void Robot::SimulationInit() {
+    PhysicsSim::GetInstance().AddTalonSRXs( {
+        new SimTalonSRX(_talon, 0.75, 3400)
+    } );
+}
+void Robot::SimulationPeriodic() {
+    PhysicsSim::GetInstance().Run();
+}
+
 void Robot::RobotInit() {
     _talon = new TalonSRX(1);
     _joy = new frc::Joystick(0);
