@@ -63,7 +63,7 @@ public:
 		_motorCntrller->Set(ControlMode::PercentOutput, 0);
 
 		/* pick directions */
-		_motorCntrller->SetSensorPhase(true);
+		_motorCntrller->SetSensorPhase(false);
 		_motorCntrller->SetInverted(false);
 
 		/* use feedback connector but disable feature, use-webdash to reenable */
@@ -290,7 +290,6 @@ public:
 
 		/* drive talon with gamepad */
 		_motorCntrller->Set(ControlMode::PercentOutput, joyForward);
-		std::cout << _motorCntrller->GetMotorOutputPercent() << std::endl;
 	}
 
 	void SimulationInit() {
@@ -317,8 +316,14 @@ public:
 		 * All params are persistent except for status frame periods. */
 		InitRobot();
 	}
+
+	int loopCount = 0;
 	void TeleopPeriodic() {
 		CommonLoop();
+		if (loopCount++ % 10 == 0) {
+			std::cout << "Percent Output: " << _motorCntrller->GetMotorOutputPercent()
+					  << ", Position: " << _motorCntrller->GetSelectedSensorPosition() << std::endl;
+		}
 	}
 
 	//-------------- Some helpful routines ---------------//

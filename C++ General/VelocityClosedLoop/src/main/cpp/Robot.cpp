@@ -57,7 +57,7 @@ public:
 
 	void SimulationInit() {
 		PhysicsSim::GetInstance().AddTalonSRXs( {
-        	new SimTalonSRX(_talon, 0.75, 9325)
+        	new SimTalonSRX(_talon, 1, 9325)
     	} );
 	}
 	void SimulationPeriodic() {
@@ -68,7 +68,7 @@ public:
 		_talon->ConfigFactoryDefault();
         /* first choose the sensor */
 		_talon->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, kTimeoutMs);
-		_talon->SetSensorPhase(true);
+		_talon->SetSensorPhase(false);
 
 		/* set the peak and nominal outputs */
 		_talon->ConfigNominalOutputForward(0, kTimeoutMs);

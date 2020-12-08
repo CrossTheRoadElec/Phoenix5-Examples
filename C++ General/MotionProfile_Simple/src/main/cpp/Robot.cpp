@@ -52,7 +52,7 @@ void Robot::RobotInit()
     _configuration = new MotionProfileConfiguration();
 
     _master->ConfigAllSettings(*_configuration);
-    _master->SetSensorPhase(true); //Flip this if you need to for your robot
+    _master->SetSensorPhase(false); //Flip this if you need to for your robot
     _master->SetInverted(false);   //Flip this if you need to for your robot
 }
 

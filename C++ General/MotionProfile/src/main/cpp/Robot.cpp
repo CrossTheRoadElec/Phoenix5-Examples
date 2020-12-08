@@ -97,7 +97,7 @@ public:
 		_vic.Follow(_talon);
 		_talon.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0,
 				kTimeoutMs);
-		_talon.SetSensorPhase(true);
+		_talon.SetSensorPhase(false);
 		_talon.ConfigNeutralDeadband(Constants::kNeutralDeadbandPercent * 0.01,
 				Constants::kTimeoutMs);
 

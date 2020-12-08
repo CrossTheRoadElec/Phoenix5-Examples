@@ -155,6 +155,9 @@ private:
         
         simTalonSRX->talon->GetSimCollection().SetCurrent(10 + outPerc * 30 * random(0.95, 1.05));
         simTalonSRX->talon->GetSimCollection().SetBusVoltage(12 - outPerc * outPerc * 3/4 * random(0.95, 1.05));
+
+        simTalonSRX->talon->GetSimCollection().SetLimitFwd(simTalonSRX->talon->GetSelectedSensorPosition() > 50000);
+        simTalonSRX->talon->GetSimCollection().SetLimitRev(simTalonSRX->talon->GetSelectedSensorPosition() < -50000);
     }
 
     /**
