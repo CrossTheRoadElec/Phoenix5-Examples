@@ -153,7 +153,7 @@ private:
         simTalonSRX->talon->GetSimCollection().AddQuadraturePosition(simTalonSRX->vel * period / 100);
         simTalonSRX->talon->GetSimCollection().SetQuadratureVelocity(simTalonSRX->vel);
         
-        simTalonSRX->talon->GetSimCollection().SetCurrent(2 + outPerc * 18 * random(0.95, 1.05));
+        simTalonSRX->talon->GetSimCollection().SetSupplyCurrent(2 + fabs(outPerc) * 18 * random(0.95, 1.05));
         simTalonSRX->talon->GetSimCollection().SetBusVoltage(12 - outPerc * outPerc * 3/4 * random(0.95, 1.05));
     }
 
