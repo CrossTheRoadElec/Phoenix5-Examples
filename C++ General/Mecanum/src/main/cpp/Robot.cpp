@@ -36,12 +36,10 @@ class MecanumDefaultCode: public TimedRobot {
 	WPI_TalonSRX *rr = new WPI_TalonSRX(3); /*right rear */
 public:
 	void SimulationInit() {
-		PhysicsSim::GetInstance().AddTalonSRXs( {
-			new SimTalonSRX(lf, 0.75, 4000),
-			new SimTalonSRX(lr, 0.75, 4000),
-			new SimTalonSRX(rf, 0.75, 4000),
-			new SimTalonSRX(rr, 0.75, 4000)
-		} );
+		PhysicsSim::GetInstance().AddTalonSRX(*lf, 0.75, 4000);
+		PhysicsSim::GetInstance().AddTalonSRX(*lr, 0.75, 4000);
+		PhysicsSim::GetInstance().AddTalonSRX(*rf, 0.75, 4000);
+		PhysicsSim::GetInstance().AddTalonSRX(*rr, 0.75, 4000);
 	}
 	void SimulationPeriodic() {
 		PhysicsSim::GetInstance().Run();

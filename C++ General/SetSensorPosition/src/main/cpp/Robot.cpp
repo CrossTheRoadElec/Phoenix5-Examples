@@ -49,9 +49,7 @@ public:
 	const bool kSensorPhase = false; /* pick this so self-test stops reporting sensor-out-of-phase */
 
 	void SimulationInit() {
-		PhysicsSim::GetInstance().AddTalonSRXs( {
-        	new SimTalonSRX(_srx, 0.75, 2000, kSensorPhase)
-    	} );
+		PhysicsSim::GetInstance().AddTalonSRX(*_srx, 0.75, 2000, kSensorPhase);
 	}
 	void SimulationPeriodic() {
 		PhysicsSim::GetInstance().Run();

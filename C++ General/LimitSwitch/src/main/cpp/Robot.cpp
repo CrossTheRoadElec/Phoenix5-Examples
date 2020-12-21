@@ -55,9 +55,7 @@ public:
 	int _isRevLimitSwitchClosed = 0;
 
 	void SimulationInit() {
-		PhysicsSim::GetInstance().AddTalonSRXs( {
-        	new SimTalonSRX(_srx, 0.75, 2000)
-    	} );
+		PhysicsSim::GetInstance().AddTalonSRX(*_srx, 0.75, 2000);
 	}
 	void SimulationPeriodic() {
     	PhysicsSim::GetInstance().Run();

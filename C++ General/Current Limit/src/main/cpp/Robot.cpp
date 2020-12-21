@@ -37,14 +37,14 @@ public:
 
 	bool _currentLimEn = true;
 	bool _btn5 = false;
+
 	void SimulationInit() {
-		PhysicsSim::GetInstance().AddTalonSRXs( {
-			new SimTalonSRX(_tal, 0.75, 2000)
-		} );
+		PhysicsSim::GetInstance().AddTalonSRX(*_tal, 0.75, 2000);
 	}
 	void SimulationPeriodic() {
 		PhysicsSim::GetInstance().Run();
 	}
+	
 	void RobotInit(){
 		/* Factory Default all hardware to prevent unexpected behaviour */
 		_tal->ConfigFactoryDefault();

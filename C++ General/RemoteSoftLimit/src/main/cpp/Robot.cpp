@@ -53,6 +53,14 @@ public:
 	/* a couple latched values to detect on-press events for buttons and POV */
 	bool _btns[Constants.kNumButtonsPlusOne];
 
+	void SimulationInit() {
+		PhysicsSim::GetInstance().AddTalonSRX(*_motorCntrller, 0.75, 1000, true);
+		PhysicsSim::GetInstance().AddTalonSRX(*_talonLimits, 0.75, 1000);
+	}
+	void SimulationPeriodic() {
+		PhysicsSim::GetInstance().Run();
+	}
+
 	void InitRobot() {
 		/* Factory Default all hardware to prevent unexpected behaviour */
 		_motorCntrller->ConfigFactoryDefault();
@@ -290,16 +298,6 @@ public:
 
 		/* drive talon with gamepad */
 		_motorCntrller->Set(ControlMode::PercentOutput, joyForward);
-	}
-
-	void SimulationInit() {
-		PhysicsSim::GetInstance().AddTalonSRXs( {
-        	new SimTalonSRX(_motorCntrller, 0.75, 1000, true),
-			new SimTalonSRX(_talonLimits, 0.75, 1000)
-    	} );
-	}
-	void SimulationPeriodic() {
-		PhysicsSim::GetInstance().Run();
 	}
 
 	//------------------------- Loops -------------------------------//

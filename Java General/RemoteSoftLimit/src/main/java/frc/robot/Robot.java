@@ -72,8 +72,6 @@ import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
-import frc.robot.PhysicsSim.*;
-
 public class Robot extends TimedRobot {
     /* Hardware */
     TalonSRX _motorCntrller = new WPI_TalonSRX(1);	// Victor SPX can be used with remote sensor features.
@@ -87,9 +85,7 @@ public class Robot extends TimedRobot {
     boolean[] _previousBtns = new boolean[Constants.kNumButtonsPlusOne];
 
     public void simulationInit() {
-        PhysicsSim.getInstance().addTalonSRXs(
-            new SimTalonSRX(_motorCntrller, 0.75, 2000, true)
-        );
+        PhysicsSim.getInstance().addTalonSRX(_motorCntrller, 0.75, 2000, true);
     }
     public void simulationPeriodic() {
         PhysicsSim.getInstance().run();

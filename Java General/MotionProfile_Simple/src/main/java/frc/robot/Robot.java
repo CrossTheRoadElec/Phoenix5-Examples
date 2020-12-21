@@ -54,8 +54,6 @@ import com.ctre.phoenix.motion.*;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 
-import frc.robot.PhysicsSim.*;
-
 public class Robot extends TimedRobot {
 
     /** very simple state machine to prevent calling set() while firing MP. */
@@ -77,9 +75,7 @@ public class Robot extends TimedRobot {
     PlotThread _plotThread = new PlotThread(_master);
 
     public void simulationInit() {
-        PhysicsSim.getInstance().addTalonSRXs(
-            new SimTalonSRX(_master, 0.75, 6800, true)
-        );
+        PhysicsSim.getInstance().addTalonSRX(_master, 0.75, 6800, true);
     }
     public void simulationPeriodic() {
         PhysicsSim.getInstance().run();

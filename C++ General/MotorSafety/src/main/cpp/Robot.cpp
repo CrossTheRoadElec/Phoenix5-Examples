@@ -64,10 +64,8 @@ frc::Joystick * _joy;  /* Joystick for control */
 int _loops = 0; // slow print to the DS
 
 void Robot::SimulationInit() {
-    PhysicsSim::GetInstance().AddTalonSRXs( {
-        new SimTalonSRX(&_left, 0.75, 4000),
-        new SimTalonSRX(&_rght, 0.75, 4000)
-    } );
+    PhysicsSim::GetInstance().AddTalonSRX(_left, 0.75, 4000);
+    PhysicsSim::GetInstance().AddTalonSRX(_rght, 0.75, 4000);
 }
 void Robot::SimulationPeriodic() {
     PhysicsSim::GetInstance().Run();

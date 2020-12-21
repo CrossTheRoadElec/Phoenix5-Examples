@@ -56,9 +56,7 @@ public:
 	int _loops = 0;
 
 	void SimulationInit() {
-		PhysicsSim::GetInstance().AddTalonSRXs( {
-        	new SimTalonSRX(_talon, 1.5, 9325, true)
-    	} );
+		PhysicsSim::GetInstance().AddTalonSRX(*_talon, 1.5, 9325, true);
 	}
 	void SimulationPeriodic() {
 		PhysicsSim::GetInstance().Run();

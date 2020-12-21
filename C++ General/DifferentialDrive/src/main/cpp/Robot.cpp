@@ -54,12 +54,10 @@ public:
 	Faults _faults_R;
 
 	void SimulationInit() {
-		PhysicsSim::GetInstance().AddTalonSRXs( {
-			new SimTalonSRX(_rghtFront, 0.75, 4000, true),
-			new SimTalonSRX(_leftFront, 0.75, 4000, true),
-			new SimTalonSRX(_rghtFollower, 0.75, 4000),
-			new SimTalonSRX(_leftFollower, 0.75, 4000)
-		} );
+		PhysicsSim::GetInstance().AddTalonSRX(*_rghtFront, 0.75, 4000, true);
+		PhysicsSim::GetInstance().AddTalonSRX(*_leftFront, 0.75, 4000, true);
+		PhysicsSim::GetInstance().AddTalonSRX(*_rghtFollower, 0.75, 4000);
+		PhysicsSim::GetInstance().AddTalonSRX(*_leftFollower, 0.75, 4000);
 	}
 	void SimulationPeriodic() {
 		PhysicsSim::GetInstance().Run();

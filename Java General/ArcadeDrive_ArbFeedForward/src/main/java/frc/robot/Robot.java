@@ -50,8 +50,6 @@ import com.ctre.phoenix.motorcontrol.can.*;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
-import frc.robot.PhysicsSim.*;
-
 public class Robot extends TimedRobot {
 	/** Hardware, either Talon could be a Victor */
 	TalonSRX _leftMaster = new WPI_TalonSRX(2);
@@ -60,10 +58,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void simulationInit() {
-		PhysicsSim.getInstance().addTalonSRXs(
-			new SimTalonSRX(_leftMaster, 0.75, 4000),
-			new SimTalonSRX(_rightMaster, 0.75, 4000)
-		);
+		PhysicsSim.getInstance().addTalonSRX(_leftMaster, 0.75, 4000);
+		PhysicsSim.getInstance().addTalonSRX(_rightMaster, 0.75, 4000);
 	}
 
 	@Override

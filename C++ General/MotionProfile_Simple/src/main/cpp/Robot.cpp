@@ -24,12 +24,10 @@
 #include "Robot.h"
 #include "MotionProfile.h"
 #include "Instrum.h"
-
 #include "PhysicsSim.h"
+
 void Robot::SimulationInit() {
-    PhysicsSim::GetInstance().AddTalonSRXs( {
-        new SimTalonSRX(_master, 0.75, 2000, true)
-    } );
+    PhysicsSim::GetInstance().AddTalonSRX(*_master, 0.75, 2000, true);
 }
 void Robot::SimulationPeriodic() {
     PhysicsSim::GetInstance().Run();

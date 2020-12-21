@@ -69,8 +69,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 
-import frc.robot.PhysicsSim.*;
-
 public class Robot extends TimedRobot {
 	/* Hardware */
 	TalonSRX _talon = new WPI_TalonSRX(1);
@@ -91,9 +89,7 @@ public class Robot extends TimedRobot {
 	int _pov = -1;
 
 	public void simulationInit() {
-		PhysicsSim.getInstance().addTalonSRXs(
-			new SimTalonSRX(_talon, 0.75, 5100, false)
-		);
+		PhysicsSim.getInstance().addTalonSRX(_talon, 0.75, 5100, false);
 	}
 	public void simulationPeriodic() {
 		PhysicsSim.getInstance().run();

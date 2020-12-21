@@ -56,9 +56,7 @@ public:
 	double targetPositionRotations;
 
 	void SimulationInit() {
-    	PhysicsSim::GetInstance().AddTalonSRXs( {
-        	new SimTalonSRX(_talon, 0.75, 2000, true)
-    	} );
+    	PhysicsSim::GetInstance().AddTalonSRX(*_talon, 0.75, 2000, true);
 	}
 	void SimulationPeriodic() {
     	PhysicsSim::GetInstance().Run();

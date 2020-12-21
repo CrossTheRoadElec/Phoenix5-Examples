@@ -68,8 +68,6 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.*;
 
-import frc.robot.PhysicsSim.*;
-
 public class Robot extends TimedRobot {
     /* Hardware */
     TalonSRX _motorCntrller = new WPI_TalonSRX(1);	// Victor SPX can be used with remote sensor features.
@@ -82,10 +80,8 @@ public class Robot extends TimedRobot {
 	boolean[] _currentBtns = new boolean[Constants.kNumButtonsPlusOne];
 
 	public void simulationInit() {
-		PhysicsSim.getInstance().addTalonSRXs(
-			new SimTalonSRX(_motorCntrller, 0.75, 2000, false),
-			new SimTalonSRX(_talonLimits, 0.75, 2000)
-		);
+		PhysicsSim.getInstance().addTalonSRX(_motorCntrller, 0.75, 2000, false);
+		PhysicsSim.getInstance().addTalonSRX(_talonLimits, 0.75, 2000);
 	}
 	public void simulationPeriodic() {
 		PhysicsSim.getInstance().run();

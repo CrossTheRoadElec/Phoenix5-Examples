@@ -77,12 +77,8 @@ public:
 					_talon), _joy(0) {
 	}
 	void SimulationInit() {
-		PhysicsSim::GetInstance().AddTalonSRXs( {
-			new SimTalonSRX(&_talon, 0.75, 2000, true)
-		} );
-		PhysicsSim::GetInstance().AddVictorSPXs( {
-			new SimVictorSPX(&_vic)
-		} );
+		PhysicsSim::GetInstance().AddTalonSRX(_talon, 0.75, 2000, true);
+		PhysicsSim::GetInstance().AddVictorSPX(_vic);
 	}
 	void SimulationPeriodic() {
 		PhysicsSim::GetInstance().Run();

@@ -76,8 +76,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.*;
 
-import frc.robot.PhysicsSim.*;
-
 public class Robot extends TimedRobot {
 	/** Hardware */
 	VictorSPX _vic = new VictorSPX(1);		// Follower MC, Could be a victor
@@ -88,12 +86,8 @@ public class Robot extends TimedRobot {
 	PlotThread _plotThread;
 
 	public void simulationInit() {
-		PhysicsSim.getInstance().addTalonSRXs(
-			new SimTalonSRX(_tal, 0.75, 4000)
-		);
-		PhysicsSim.getInstance().addVictorSPXs(
-			new SimVictorSPX(_vic)
-		);
+		PhysicsSim.getInstance().addTalonSRX(_tal, 0.75, 4000);
+		PhysicsSim.getInstance().addVictorSPX(_vic);
 	}
 	public void simulationPeriodic() {
 		PhysicsSim.getInstance().run();
