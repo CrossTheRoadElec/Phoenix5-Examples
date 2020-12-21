@@ -74,7 +74,6 @@ void Robot::TeleopPeriodic()
         /* drive master talon normally */
         case 0:
             _master->Set(ControlMode::PercentOutput, axis);
-            _master->SetSelectedSensorPosition(0);
             if (bFireMp == true) {
                 /* go to MP logic */
                 _state = 1;
