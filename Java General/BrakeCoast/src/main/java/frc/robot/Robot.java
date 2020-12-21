@@ -72,6 +72,7 @@ public class Robot extends TimedRobot {
 	}
 
 	public void simulationPeriodic() {
+		/* enable the robot in simulation */
 		Unmanaged.feedEnable(100);
 	}
 

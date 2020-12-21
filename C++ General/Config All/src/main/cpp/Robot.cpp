@@ -72,6 +72,7 @@ private:
 	} _selectedDevice;
 
 	void SimulationPeriodic() {
+		/* enable the robot in simulation */
 		unmanaged::Unmanaged::FeedEnable(100);
 	}
 

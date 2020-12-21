@@ -142,6 +142,7 @@ public class Robot extends TimedRobot {
 	final int kBookEnd_1 = 1137;	/* 100 deg */
 
 	public void simulationPeriodic() {
+		/* enable the robot in simulation */
 		Unmanaged.feedEnable(100);
 	}
 

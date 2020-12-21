@@ -45,6 +45,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void simulationPeriodic() {
+		/* enable the robot in simulation */
 		Unmanaged.feedEnable(100);
 	}
 

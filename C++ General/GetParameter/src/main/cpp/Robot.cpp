@@ -36,6 +36,7 @@ public:
 	TalonSRX * _talon;
 
 	void SimulationPeriodic() {
+		/* enable the robot in simulation */
 		unmanaged::Unmanaged::FeedEnable(100);
 	}
 
