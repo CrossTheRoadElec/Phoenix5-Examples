@@ -26,6 +26,7 @@
 
 #include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
+#include "ctre/phoenix/unmanaged/Unmanaged.h"
 
 using namespace frc;
 
@@ -33,6 +34,10 @@ class Robot: public TimedRobot {
 public:
 	//Create Talon
 	TalonSRX * _talon;
+
+	void SimulationPeriodic() {
+		unmanaged::Unmanaged::FeedEnable(100);
+	}
 
 	void RobotInit() {
 		//Initialize talon with ID 3

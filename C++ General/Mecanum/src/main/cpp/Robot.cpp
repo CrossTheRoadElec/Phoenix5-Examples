@@ -101,7 +101,7 @@ public:
 												Db(m_driveStick->GetY()),
 												Db(m_driveStick->GetZ()),
 												angle);
-		if (loopCount++ >= 5) {
+		if (loopCount++ >= 10) {
 			loopCount = 0;
 			std::cout << "LF: " << lf->GetMotorOutputPercent() << ", LR: " << lr->GetMotorOutputPercent() <<
 				", RF: " << rf->GetMotorOutputPercent() << ", RR: " << rr->GetMotorOutputPercent() << std::endl;

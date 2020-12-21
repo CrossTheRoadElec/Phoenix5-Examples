@@ -54,6 +54,7 @@ import edu.wpi.first.wpilibj.Joystick;
 
 import com.ctre.phoenix.*;
 import com.ctre.phoenix.sensors.*;
+import com.ctre.phoenix.unmanaged.Unmanaged;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Robot extends TimedRobot {
@@ -96,6 +97,11 @@ public class Robot extends TimedRobot {
     boolean[] _previousBtns = { false, false, false, false, false, 
                                 false, false, false, false, false};
     int _previousPov = 0;
+
+    public void simulationPeriodic() {
+        Unmanaged.feedEnable(100);
+    }
+
     /**
      * Run Forever in TeleOperated Mode
      */

@@ -37,10 +37,16 @@ import edu.wpi.first.wpilibj.TimedRobot;
 
 import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.can.*;
+import com.ctre.phoenix.unmanaged.Unmanaged;
 
 public class Robot extends TimedRobot {
 	/* Create a Talon SRX */
 	TalonSRX _talon = new TalonSRX(2);
+
+	@Override
+	public void simulationPeriodic() {
+		Unmanaged.feedEnable(100);
+	}
 
 	/**
 	 * This function is run when the robot is first started up and should be

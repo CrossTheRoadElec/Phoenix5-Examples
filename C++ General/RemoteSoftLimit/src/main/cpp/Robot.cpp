@@ -320,7 +320,8 @@ public:
 	int loopCount = 0;
 	void TeleopPeriodic() {
 		CommonLoop();
-		if (loopCount++ % 10 == 0) {
+		if (loopCount++ >= 10) {
+			loopCount = 0;
 			std::cout << "Percent Output: " << _motorCntrller->GetMotorOutputPercent()
 					  << ", Position: " << _motorCntrller->GetSelectedSensorPosition() << std::endl;
 		}

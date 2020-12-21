@@ -54,9 +54,11 @@ import edu.wpi.first.wpilibj.Joystick;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.motorcontrol.*;
 
+import frc.robot.PhysicsSim.*;
+
 public class Robot extends TimedRobot {
     /* Hardware */
-	TalonSRX _talon = new TalonSRX(1);
+	TalonSRX _talon = new WPI_TalonSRX(1);
     Joystick _joy = new Joystick(0);
     
     /* String for output */
@@ -64,6 +66,15 @@ public class Robot extends TimedRobot {
     
     /* Loop tracker for prints */
 	int _loops = 0;
+
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonSRXs(
+			new SimTalonSRX(_talon, 1.5, 7200, true)
+		);
+	}
+	public void simulationPeriodic() {
+		PhysicsSim.getInstance().run();
+	}
 
 	public void robotInit() {
         /* Factory Default all hardware to prevent unexpected behaviour */

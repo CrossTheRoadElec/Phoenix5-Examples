@@ -56,9 +56,11 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.*;
 
+import frc.robot.PhysicsSim.*;
+
 public class Robot extends TimedRobot {
     /** Hardware */
-	TalonSRX _talon = new TalonSRX(2);
+	TalonSRX _talon = new WPI_TalonSRX(2);
 	Joystick _joy = new Joystick(0);
 	
     /** Used to create string thoughout loop */
@@ -70,6 +72,15 @@ public class Robot extends TimedRobot {
 
 	/** Save the target position to servo to */
 	double targetPositionRotations;
+
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonSRXs(
+			new SimTalonSRX(_talon, 0.75, 4000, Constants.kSensorPhase)
+		);
+	}
+	public void simulationPeriodic() {
+		PhysicsSim.getInstance().run();
+	}
 
 	public void robotInit() {
 		/* Factory Default all hardware to prevent unexpected behaviour */

@@ -159,7 +159,7 @@ private:
         simTalonSRX->talon->GetSimCollection().AddQuadraturePosition(simTalonSRX->vel * period / 100);
         simTalonSRX->talon->GetSimCollection().SetQuadratureVelocity(simTalonSRX->vel);
         
-        simTalonSRX->talon->GetSimCollection().SetSupplyCurrent(10 + fabs(outPerc) * 30 * random(0.95, 1.05));
+        simTalonSRX->talon->GetSimCollection().SetSupplyCurrent(fabs(outPerc) * 30 * random(0.95, 1.05));
         simTalonSRX->talon->GetSimCollection().SetBusVoltage(12 - outPerc * outPerc * 3/4 * random(0.95, 1.05));
 
         simTalonSRX->talon->GetSimCollection().SetLimitFwd(simTalonSRX->talon->GetSelectedSensorPosition() > 50000);

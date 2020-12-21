@@ -49,6 +49,7 @@ import edu.wpi.first.wpilibj.Joystick;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.*;
+import com.ctre.phoenix.unmanaged.Unmanaged;
 
 public class Robot extends TimedRobot {
     /* Hardware */
@@ -68,6 +69,10 @@ public class Robot extends TimedRobot {
 		_tal.setNeutralMode(_brake ? NeutralMode.Brake : NeutralMode.Coast);
 		/* instrument to console */
         System.out.println("Brake:" + (_brake ? "Enabled" : "Disabled"));
+	}
+
+	public void simulationPeriodic() {
+		Unmanaged.feedEnable(100);
 	}
 
 	/** Every loop, flip brake mode if button 1 when is pressed. */

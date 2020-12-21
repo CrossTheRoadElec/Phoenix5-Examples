@@ -122,11 +122,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.*;
+import com.ctre.phoenix.unmanaged.Unmanaged;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonSRX _talon = new TalonSRX(2);
+	TalonSRX _talon = new WPI_TalonSRX(2);
 	Joystick _joy = new Joystick(0);
 
     /* Nonzero to block the config until success, zero to skip checking */
@@ -139,6 +140,10 @@ public class Robot extends TimedRobot {
 	final boolean kDiscontinuityPresent = true;
 	final int kBookEnd_0 = 910;		/* 80 deg */
 	final int kBookEnd_1 = 1137;	/* 100 deg */
+
+	public void simulationPeriodic() {
+		Unmanaged.feedEnable(100);
+	}
 
 	/**
 	 * This function is called once on roboRIO bootup

@@ -53,6 +53,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.ctre.phoenix.motorcontrol.can.*;
 
+import frc.robot.PhysicsSim.*;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -72,6 +74,18 @@ public class Robot extends TimedRobot {
   Joystick _joy = new Joystick(0);  /* Joystick for control */
 
   int _loops = 0; // slow print to the DS
+
+  @Override
+  public void simulationInit() {
+    PhysicsSim.getInstance().addTalonSRXs(
+      new SimTalonSRX(_left, 0.75, 4000),
+      new SimTalonSRX(_rght, 0.75, 4000)
+    );
+  }
+  @Override
+  public void simulationPeriodic() {
+    PhysicsSim.getInstance().run();
+  }
 
   @Override
   public void teleopInit() {

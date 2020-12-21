@@ -52,19 +52,30 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import frc.robot.PhysicsSim.*;
+
 public class Robot extends TimedRobot {
     /* Hardware */
-	TalonSRX _tal = new TalonSRX(1);
+	TalonSRX _tal = new WPI_TalonSRX(1);
     Joystick _joy = new Joystick(0);
     
     /* Tracking variables */    
 	boolean _currentLimEn = true;
 	boolean _btn5 = false;
+
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonSRXs(
+			new SimTalonSRX(_tal, 0.75, 4000, true)
+		);
+	}
+	public void simulationPeriodic() {
+		PhysicsSim.getInstance().run();
+	}
 
 	public void teleopInit() {
         /* Factory Default Hardware to prevent unexpected behaviour */
@@ -123,5 +134,7 @@ public class Robot extends TimedRobot {
 		}
 		/* save button state for next loop */
 		_btn5 = btn5;
+
+		System.out.printf("Output: %.4f\n", _tal.getMotorOutputPercent());
 	}
 }
