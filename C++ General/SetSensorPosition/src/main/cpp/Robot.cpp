@@ -41,7 +41,7 @@ using namespace frc;
 
 class Robot: public TimedRobot {
 public:
-	TalonSRX *_srx = new TalonSRX(0);
+	TalonSRX *_srx = new WPI_TalonSRX(0);
 	Joystick *_joy = new Joystick(0);
 	std::stringstream _work;
 	bool _btn1 = false, _btn2 = false, _btn3 = false, _btn4 = false;
@@ -50,7 +50,7 @@ public:
 
 	void SimulationInit() {
 		PhysicsSim::GetInstance().AddTalonSRXs( {
-        	new SimTalonSRX(_srx, 0.75, 2000)
+        	new SimTalonSRX(_srx, 0.75, 2000, kSensorPhase)
     	} );
 	}
 	void SimulationPeriodic() {

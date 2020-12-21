@@ -43,8 +43,8 @@ using namespace frc;
 class Robot: public TimedRobot {
 private:
 	/* Hardware */
-	TalonSRX * _talon = new TalonSRX(23);
-	VictorSPX * _victor = new VictorSPX(2);
+	TalonSRX * _talon = new WPI_TalonSRX(23);
+	VictorSPX * _victor = new WPI_VictorSPX(2);
 	PigeonIMU * _pigeon = new PigeonIMU(3);
 	CANifier * _canifier = new CANifier(4);
 	CANCoder * _canCoder = new CANCoder(5);
@@ -74,6 +74,9 @@ private:
 	void SimulationInit() {
 		PhysicsSim::GetInstance().AddTalonSRXs( {
 			new SimTalonSRX(_talon, 0.75, 2000)
+		} );
+		PhysicsSim::GetInstance().AddVictorSPXs( {
+			new SimVictorSPX(_victor)
 		} );
 	}
 	void SimulationPeriodic() {

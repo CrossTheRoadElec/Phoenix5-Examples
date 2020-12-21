@@ -33,6 +33,7 @@
 
 #include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
+#include "PhysicsSim.h"
 
 using namespace frc;
 
@@ -51,6 +52,18 @@ public:
 
 	Faults _faults_L;
 	Faults _faults_R;
+
+	void SimulationInit() {
+		PhysicsSim::GetInstance().AddTalonSRXs( {
+			new SimTalonSRX(_rghtFront, 0.75, 4000, true),
+			new SimTalonSRX(_leftFront, 0.75, 4000, true),
+			new SimTalonSRX(_rghtFollower, 0.75, 4000),
+			new SimTalonSRX(_leftFollower, 0.75, 4000)
+		} );
+	}
+	void SimulationPeriodic() {
+		PhysicsSim::GetInstance().Run();
+	}
 
 	void TeleopPeriodic() {
 

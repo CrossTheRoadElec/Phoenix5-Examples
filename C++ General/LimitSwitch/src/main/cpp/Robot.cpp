@@ -42,7 +42,7 @@ using namespace frc;
 
 class Robot: public TimedRobot {
 public:
-	TalonSRX *_srx = new TalonSRX(0);
+	TalonSRX *_srx = new WPI_TalonSRX(0);
 	Joystick * _joy = new Joystick(0);
 	std::stringstream _work;
 

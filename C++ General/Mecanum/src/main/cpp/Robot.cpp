@@ -24,6 +24,7 @@
 #include "frc/WPILib.h"
 #include "frc/drive/MecanumDrive.h"
 #include "ctre/Phoenix.h"
+#include "PhysicsSim.h"
 
 using namespace frc;
 
@@ -34,13 +35,25 @@ class MecanumDefaultCode: public TimedRobot {
 	WPI_TalonSRX *rf = new WPI_TalonSRX(2); /*right front */
 	WPI_TalonSRX *rr = new WPI_TalonSRX(3); /*right rear */
 public:
-void RobotInit(){
-	/* Factory Default all hardware to prevent unexpected behaviour */
-	lf->ConfigFactoryDefault();
-	lr->ConfigFactoryDefault();
-	rf->ConfigFactoryDefault();
-	rr->ConfigFactoryDefault();
-}
+	void SimulationInit() {
+		PhysicsSim::GetInstance().AddTalonSRXs( {
+			new SimTalonSRX(lf, 0.75, 4000),
+			new SimTalonSRX(lr, 0.75, 4000),
+			new SimTalonSRX(rf, 0.75, 4000),
+			new SimTalonSRX(rr, 0.75, 4000)
+		} );
+	}
+	void SimulationPeriodic() {
+		PhysicsSim::GetInstance().Run();
+	}
+
+	void RobotInit(){
+		/* Factory Default all hardware to prevent unexpected behaviour */
+		lf->ConfigFactoryDefault();
+		lr->ConfigFactoryDefault();
+		rf->ConfigFactoryDefault();
+		rr->ConfigFactoryDefault();
+	}
 	MecanumDrive *m_robotDrive;	// RobotDrive object using PWM 1-4 for drive motors
 	Joystick *m_driveStick;	// Joystick object on USB port 1 (mecanum drive)public:
 	AnalogGyro gyro;
@@ -77,6 +90,7 @@ void RobotInit(){
 			return axisVal;
 		return 0;
 	}
+	int loopCount = 0;
 	/**
 	 * Gets called once for each new packet from the DS.
 	 */
@@ -87,6 +101,11 @@ void RobotInit(){
 												Db(m_driveStick->GetY()),
 												Db(m_driveStick->GetZ()),
 												angle);
+		if (loopCount++ >= 5) {
+			loopCount = 0;
+			std::cout << "LF: " << lf->GetMotorOutputPercent() << ", LR: " << lr->GetMotorOutputPercent() <<
+				", RF: " << rf->GetMotorOutputPercent() << ", RR: " << rr->GetMotorOutputPercent() << std::endl;
+		}
 		/* my right side motors need to drive negative to move robot forward */
 
 		/* on button 5, reset gyro angle to zero */
@@ -94,4 +113,7 @@ void RobotInit(){
 			gyro.Reset();
 	}
 };
-START_ROBOT_CLASS(MecanumDefaultCode);
+
+#ifndef RUNNING_FRC_TESTS
+int main() { return frc::StartRobot<MecanumDefaultCode>(); }
+#endif

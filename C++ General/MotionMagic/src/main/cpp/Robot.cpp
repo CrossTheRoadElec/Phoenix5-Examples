@@ -73,7 +73,7 @@ void Robot::SimulationPeriodic() {
 }
 
 void Robot::RobotInit() {
-    _talon = new TalonSRX(1);
+    _talon = new WPI_TalonSRX(1);
     _joy = new frc::Joystick(0);
 
     /* Factory default hardware to prevent unexpected behavior */

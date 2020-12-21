@@ -47,7 +47,7 @@ using namespace frc;
 
 class Robot: public TimedRobot {
 public:
-	TalonSRX * _talon = new TalonSRX(0);
+	TalonSRX * _talon = new WPI_TalonSRX(0);
 	Joystick * _joy = new Joystick(0);
 	std::string _sb;
 	int _loops = 0;
@@ -57,7 +57,7 @@ public:
 
 	void SimulationInit() {
     	PhysicsSim::GetInstance().AddTalonSRXs( {
-        	new SimTalonSRX(_talon, 0.75, 2000)
+        	new SimTalonSRX(_talon, 0.75, 2000, true)
     	} );
 	}
 	void SimulationPeriodic() {
@@ -78,7 +78,7 @@ public:
 		_talon->ConfigSelectedFeedbackSensor(
 				FeedbackDevice::CTRE_MagEncoder_Relative, kPIDLoopIdx,
 				kTimeoutMs);
-		_talon->SetSensorPhase(false);
+		_talon->SetSensorPhase(true);
 
 		/* set the peak and nominal outputs, 12V means full */
 		_talon->ConfigNominalOutputForward(0, kTimeoutMs);

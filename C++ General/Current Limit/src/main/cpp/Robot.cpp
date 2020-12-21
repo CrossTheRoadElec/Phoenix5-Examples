@@ -32,7 +32,7 @@ using namespace frc;
 
 class Robot: public TimedRobot {
 public:
-	TalonSRX * _tal = new TalonSRX(0);
+	TalonSRX * _tal = new WPI_TalonSRX(0);
 	Joystick * _joy = new Joystick(0);
 
 	bool _currentLimEn = true;

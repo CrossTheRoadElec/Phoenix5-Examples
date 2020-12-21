@@ -26,7 +26,6 @@
 
 #include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
-#include "PhysicsSim.h"
 
 using namespace frc;
 
@@ -34,15 +33,6 @@ class Robot: public TimedRobot {
 public:
 	//Create Talon
 	TalonSRX * _talon;
-
-	void SimulationInit() {
-		PhysicsSim::GetInstance().AddTalonSRXs( {
-			new SimTalonSRX(_talon, 0.75, 2000)
-		} );
-	}
-	void SimulationPeriodic() {
-		PhysicsSim::GetInstance().Run();
-	}
 
 	void RobotInit() {
 		//Initialize talon with ID 3

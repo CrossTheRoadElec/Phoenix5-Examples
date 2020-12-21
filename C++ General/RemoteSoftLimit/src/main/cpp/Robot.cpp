@@ -42,10 +42,10 @@ using namespace frc;
 class Robot: public TimedRobot {
 public:
 	/* hardware objects - use references instead of pointers to match Java examples. */
-	TalonSRX * _motorCntrller = new TalonSRX(2);	// could also be Victor SPX if using remote sensor features.
+	TalonSRX * _motorCntrller = new WPI_TalonSRX(2);	// could also be Victor SPX if using remote sensor features.
 
 	CANifier * _canifLimits = new CANifier(2);		/* use this CANifier for limit switches */
-	TalonSRX * _talonLimits = new TalonSRX(5);		/* use this Talon for limit switches */
+	TalonSRX * _talonLimits = new WPI_TalonSRX(5);		/* use this Talon for limit switches */
 	PigeonIMU * _imu = new PigeonIMU(3);
 
 	Joystick * _joy = new Joystick(0);
@@ -63,7 +63,7 @@ public:
 		_motorCntrller->Set(ControlMode::PercentOutput, 0);
 
 		/* pick directions */
-		_motorCntrller->SetSensorPhase(false);
+		_motorCntrller->SetSensorPhase(true);
 		_motorCntrller->SetInverted(false);
 
 		/* use feedback connector but disable feature, use-webdash to reenable */
@@ -294,7 +294,7 @@ public:
 
 	void SimulationInit() {
 		PhysicsSim::GetInstance().AddTalonSRXs( {
-        	new SimTalonSRX(_motorCntrller, 0.75, 1000),
+        	new SimTalonSRX(_motorCntrller, 0.75, 1000, true),
 			new SimTalonSRX(_talonLimits, 0.75, 1000)
     	} );
 	}

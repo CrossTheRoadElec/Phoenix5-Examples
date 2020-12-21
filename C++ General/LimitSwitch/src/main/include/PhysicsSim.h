@@ -12,6 +12,7 @@ public:
     TalonSRX* const talon;
     double const accelToFullTime;
     double const fullVel;
+    bool const sensorPhase;
 
     /**
      * Creates a new instance of simulated TalonSRX info.
@@ -22,9 +23,11 @@ public:
      *        The time the motor takes to accelerate from 0 to full, in seconds
      * @param fullVel
      *        The maximum motor velocity, in ticks per 100ms
+     * @param sensorPhase
+     *        The phase of the TalonSRX sensors
      */
-    SimTalonSRX(TalonSRX* const talon, double const accelToFullTime, double const fullVel)
-        : talon(talon), accelToFullTime(accelToFullTime), fullVel(fullVel) {}
+    SimTalonSRX(TalonSRX* const talon, double const accelToFullTime, double const fullVel, bool const sensorPhase = false)
+        : talon(talon), accelToFullTime(accelToFullTime), fullVel(fullVel), sensorPhase(sensorPhase) {}
     
 private:
     std::chrono::steady_clock::time_point lastTime;
@@ -137,6 +140,9 @@ private:
 
         // Device speed simulation
         double outPerc = simTalonSRX->talon->GetMotorOutputPercent();
+        if (simTalonSRX->sensorPhase) {
+            outPerc *= -1;
+        }
         double theoreticalVel = outPerc * simTalonSRX->fullVel * random(0.95, 1);
         if (theoreticalVel > simTalonSRX->vel + accelAmount) {
             simTalonSRX->vel += accelAmount;

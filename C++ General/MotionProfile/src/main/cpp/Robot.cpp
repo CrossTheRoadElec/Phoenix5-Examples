@@ -59,8 +59,8 @@ using namespace frc;
 class Robot: public TimedRobot {
 public:
 	/** The Talon we want to motion profile. */
-	TalonSRX _talon;
-	VictorSPX _vic;
+	WPI_TalonSRX _talon;
+	WPI_VictorSPX _vic;
 
 	/** some example logic on how one can manage an MP */
 	MotionProfileExample _example;
@@ -78,7 +78,7 @@ public:
 	}
 	void SimulationInit() {
 		PhysicsSim::GetInstance().AddTalonSRXs( {
-			new SimTalonSRX(&_talon, 0.75, 2000)
+			new SimTalonSRX(&_talon, 0.75, 2000, true)
 		} );
 		PhysicsSim::GetInstance().AddVictorSPXs( {
 			new SimVictorSPX(&_vic)
@@ -97,7 +97,7 @@ public:
 		_vic.Follow(_talon);
 		_talon.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0,
 				kTimeoutMs);
-		_talon.SetSensorPhase(false);
+		_talon.SetSensorPhase(true);
 		_talon.ConfigNeutralDeadband(Constants::kNeutralDeadbandPercent * 0.01,
 				Constants::kTimeoutMs);
 

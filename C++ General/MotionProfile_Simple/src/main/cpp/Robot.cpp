@@ -28,7 +28,7 @@
 #include "PhysicsSim.h"
 void Robot::SimulationInit() {
     PhysicsSim::GetInstance().AddTalonSRXs( {
-        new SimTalonSRX(_master, 0.75, 2000)
+        new SimTalonSRX(_master, 0.75, 2000, true)
     } );
 }
 void Robot::SimulationPeriodic() {
@@ -38,7 +38,7 @@ void Robot::SimulationPeriodic() {
 void Robot::RobotInit() 
 {
     /* Construct global variables being used */
-    _master = new TalonSRX(0);
+    _master = new WPI_TalonSRX(0);
     _joy = new frc::Joystick(0);
     _bufferedStream = new BufferedTrajectoryPointStream();
 
@@ -52,7 +52,7 @@ void Robot::RobotInit()
     _configuration = new MotionProfileConfiguration();
 
     _master->ConfigAllSettings(*_configuration);
-    _master->SetSensorPhase(false); //Flip this if you need to for your robot
+    _master->SetSensorPhase(true); //Flip this if you need to for your robot
     _master->SetInverted(false);   //Flip this if you need to for your robot
 }
 
