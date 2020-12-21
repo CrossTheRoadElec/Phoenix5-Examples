@@ -99,7 +99,7 @@ public class Robot extends TimedRobot {
     int _previousPov = 0;
 
     public void simulationPeriodic() {
-	/* enable the robot in simulation */
+        /* enable the robot in simulation */
         Unmanaged.feedEnable(100);
     }
 
