@@ -79,6 +79,7 @@ public class PhysicsSim {
 
     private final ArrayList<SimProfile> _simProfiles = new ArrayList<SimProfile>();
 
+    /* scales a random domain of [0, 2pi] to [min, max] while prioritizing the peaks */
     private static double random(double min, double max) {
         return (max - min) / 2 * Math.sin(Math.IEEEremainder(Math.random(), 2 * 3.14159)) + (max + min) / 2;
     }
@@ -179,8 +180,7 @@ public class PhysicsSim {
             _pos += _vel * period / 100;
 
             /// SET SIM PHYSICS INPUTS
-    
-            // _talon.getSimCollection().setQuadraturePosition((int)_pos);
+
             _talon.getSimCollection().addQuadraturePosition((int)(_vel * period / 100));
             _talon.getSimCollection().setQuadratureVelocity((int)_vel);
             

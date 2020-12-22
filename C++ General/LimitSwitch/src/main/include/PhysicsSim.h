@@ -75,6 +75,7 @@ private:
     /* list of simulation profiles */
     std::vector<SimProfile*> _simProfiles;
 
+    /* scales a random domain of [0, 2pi] to [min, max] while prioritizing the peaks */
     static double random(double min, double max) {
         return (max - min) / 2 * sin(fmod(rand(), 2 * 3.14159)) + (max + min) / 2;
     }
@@ -178,7 +179,6 @@ private:
 
             /// SET SIM PHYSICS INPUTS
 
-            // _talon.GetSimCollection().SetQuadraturePosition(_pos);
             _talon.GetSimCollection().AddQuadraturePosition(_vel * period / 100);
             _talon.GetSimCollection().SetQuadratureVelocity(_vel);
             
