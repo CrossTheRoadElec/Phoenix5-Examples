@@ -30,12 +30,16 @@
  *   2. Set to factory default configs and then read configs and confirm they are what is expected.
  *   3. Set to custom configs and then restart devices. Confirm that all configs persist between
  *   reboots. (See above note about pigeon and CANifier firmware)
+ *
+ * Desktop simulation is supported if using WPILIB v2021.1.1-beta-4 or greater.
+ * Otherwise comment out SimulationInit and SimulationPeriodic routines.
+ * Enter "localhost" into Tuner's Server Address to interact with simulated devices.
  */
 #include <string>
 
 #include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
-#include "ctre/phoenix/unmanaged/Unmanaged.h"
+#include "ctre/phoenix/unmanaged/Unmanaged.h" /*API for robot enabling (during sim) */
 #include "Configs.h"
 
 using namespace frc;
@@ -72,8 +76,13 @@ private:
 	} _selectedDevice;
 
 	void SimulationPeriodic() {
-		/* enable the robot in simulation */
-		unmanaged::Unmanaged::FeedEnable(100);
+		/* For desktop simulation and non-FRC applications (like Raspberry PI, Jetson, Linux based 
+			controllers outside of FRC), conditionally enable Phoenix actuators.  
+			This is not necessary for applications compiled for NI RoboRIO. */
+		if (DriverStation::GetInstance().IsEnabled()) {		
+			/* tell Phoenix to enable for another 100ms */
+			unmanaged::Unmanaged::FeedEnable(100);
+		}
 	}
 
 	void RobotInit() {
