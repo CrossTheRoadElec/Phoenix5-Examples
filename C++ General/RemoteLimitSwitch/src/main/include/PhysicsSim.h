@@ -2,7 +2,6 @@
 
 #include <vector>
 #include "ctre/Phoenix.h"
-#include "ctre/phoenix/unmanaged/Unmanaged.h"
 
 /**
  * Manages physics simulation for CTRE products.
@@ -63,8 +62,6 @@ public:
      * - simulate TalonSRX sensors
      */
     void Run() {
-        // Enable the robot
-        unmanaged::Unmanaged::FeedEnable(100);
         // Simulate devices
         for (auto simProfile : _simProfiles) {
             simProfile->Run();
@@ -82,7 +79,7 @@ private:
     static double random(double max) {
         return random(0, max);
     }
-    
+
     /**
      * Holds information about a simulated device.
      */
@@ -153,41 +150,7 @@ private:
         /**
          * Runs the simulation profile.
          */
-        void Run() override {
-            double const period = GetPeriod();
-            double const accelAmount = _fullVel / _accelToFullTime * period / 1000;
-
-            /// DEVICE SPEED SIMULATION
-
-            double outPerc = _talon.GetMotorOutputPercent();
-            if (_sensorPhase) {
-                outPerc *= -1;
-            }
-            // Calculate theoretical velocity with some randomness
-            double theoreticalVel = outPerc * _fullVel * random(0.95, 1);
-            // Simulate motor load
-            if (theoreticalVel > _vel + accelAmount) {
-                _vel += accelAmount;
-            }
-            else if (theoreticalVel < _vel - accelAmount) {
-                _vel -= accelAmount;
-            }
-            else {
-                _vel += 0.9 * (theoreticalVel - _vel);
-            }
-            _pos += _vel * period / 100;
-
-            /// SET SIM PHYSICS INPUTS
-
-            _talon.GetSimCollection().AddQuadraturePosition(_vel * period / 100);
-            _talon.GetSimCollection().SetQuadratureVelocity(_vel);
-            
-            _talon.GetSimCollection().SetSupplyCurrent(fabs(outPerc) * 30 * random(0.95, 1.05));
-            _talon.GetSimCollection().SetBusVoltage(12 - outPerc * outPerc * 3/4 * random(0.95, 1.05));
-
-            _talon.GetSimCollection().SetLimitFwd(_talon.GetSelectedSensorPosition() > 50000);
-            _talon.GetSimCollection().SetLimitRev(_talon.GetSelectedSensorPosition() < -50000);
-        }
+        void Run() override;
     };
 
     /**
@@ -209,12 +172,6 @@ private:
         /**
          * Runs the simulation profile.
          */
-        void Run() override {
-            double const period = GetPeriod();
-
-            // Device voltage simulation
-            double outPerc = _victor.GetMotorOutputPercent();
-            _victor.GetSimCollection().SetBusVoltage(12 - outPerc * outPerc * 3/4 * random(0.95, 1.05));
-        }
+        void Run() override;
     };
 };

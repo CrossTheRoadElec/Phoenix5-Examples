@@ -39,6 +39,7 @@
 #include "ctre/Phoenix.h"
 #include "MotionProfileExample.h"
 //#include "Constants.h"
+#include "PhysicsSim.h"
 
 using namespace frc;
 
@@ -175,9 +176,9 @@ public:
 	/***************************************************************************************************************************************************/
 	/***************************************************************************************************************************************************/
 	/* hardware objects */
-	TalonSRX * _talonLeft = new TalonSRX(6);
-	TalonSRX * _talonRght = new TalonSRX(2);
-	TalonSRX * _talonPigeon = new TalonSRX(5);
+	TalonSRX * _talonLeft = new WPI_TalonSRX(6);
+	TalonSRX * _talonRght = new WPI_TalonSRX(2);
+	TalonSRX * _talonPigeon = new WPI_TalonSRX(5);
 	PigeonIMU * _imu = new PigeonIMU(_talonPigeon);
 	Joystick * _joy = new Joystick(0);
 
@@ -193,6 +194,14 @@ public:
 	 * on button press. */
 	double _target0 = 0;
 	double _target1 = 0;
+
+	void SimulationInit() {
+		PhysicsSim::AddTalonSRX(*_talonLeft, 0.75, 6800, true);
+		PhysicsSim::AddTalonSRX(*_talonRght, 0.75, 6800, false);
+	}
+	void SimulationPeriodic() {
+		PhysicsSim::GetInstance().Run();
+	}
 
 	void InitRobot() {
 		/* Factory Default all hardware to prevent unexpected behaviour */

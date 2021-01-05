@@ -39,7 +39,6 @@
 
 #include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
-#include "ctre/phoenix/unmanaged/Unmanaged.h" /*API for robot enabling (during sim) */
 #include "Configs.h"
 
 using namespace frc;
@@ -47,8 +46,8 @@ using namespace frc;
 class Robot: public TimedRobot {
 private:
 	/* Hardware */
-	TalonSRX * _talon = new TalonSRX(23);
-	VictorSPX * _victor = new VictorSPX(2);
+	TalonSRX * _talon = new WPI_TalonSRX(23);
+	VictorSPX * _victor = new WPI_VictorSPX(2);
 	PigeonIMU * _pigeon = new PigeonIMU(3);
 	CANifier * _canifier = new CANifier(4);
 	CANCoder * _canCoder = new CANCoder(5);
@@ -74,16 +73,6 @@ private:
 		enumCANCoder,
 		enumTalonFX,
 	} _selectedDevice;
-
-	void SimulationPeriodic() {
-		/* For desktop simulation and non-FRC applications (like Raspberry PI, Jetson, Linux based 
-			controllers outside of FRC), conditionally enable Phoenix actuators.  
-			This is not necessary for applications compiled for NI RoboRIO. */
-		if (DriverStation::GetInstance().IsEnabled()) {		
-			/* tell Phoenix to enable for another 100ms */
-			unmanaged::Unmanaged::FeedEnable(100);
-		}
-	}
 
 	void RobotInit() {
 		/* Do nothing for init */

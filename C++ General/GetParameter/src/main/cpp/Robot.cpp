@@ -26,7 +26,6 @@
 
 #include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
-#include "ctre/phoenix/unmanaged/Unmanaged.h"
 
 using namespace frc;
 
@@ -35,14 +34,9 @@ public:
 	//Create Talon
 	TalonSRX * _talon;
 
-	void SimulationPeriodic() {
-		/* enable the robot in simulation */
-		unmanaged::Unmanaged::FeedEnable(100);
-	}
-
 	void RobotInit() {
 		//Initialize talon with ID 3
-		_talon = new TalonSRX(3);
+		_talon = new WPI_TalonSRX(3);
 		/* Factory Default all hardware to prevent unexpected behaviour */
 		_talon->ConfigFactoryDefault();
 
