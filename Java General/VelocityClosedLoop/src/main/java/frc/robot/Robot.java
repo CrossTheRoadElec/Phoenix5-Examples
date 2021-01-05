@@ -54,6 +54,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.motorcontrol.*;
 
+import frc.robot.sim.PhysicsSim;
+
 public class Robot extends TimedRobot {
     /* Hardware */
 	TalonSRX _talon = new WPI_TalonSRX(1);

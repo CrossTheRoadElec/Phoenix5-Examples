@@ -57,6 +57,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import frc.robot.sim.PhysicsSim;
+
 public class Robot extends TimedRobot {
     /* Hardware */
 	TalonSRX _tal = new WPI_TalonSRX(1);

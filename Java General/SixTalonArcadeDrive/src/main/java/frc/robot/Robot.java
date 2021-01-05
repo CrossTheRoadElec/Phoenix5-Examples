@@ -46,6 +46,8 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.*;
 
+import frc.robot.sim.PhysicsSim;
+
 public class Robot extends TimedRobot {
 	/* Master Talons for arcade drive */
 	WPI_TalonSRX _frontLeftMotor = new WPI_TalonSRX(1);

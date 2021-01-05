@@ -50,6 +50,8 @@ import com.ctre.phoenix.motorcontrol.can.*;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
+import frc.robot.sim.PhysicsSim;
+
 public class Robot extends TimedRobot {
 	/** Hardware, either Talon could be a Victor */
 	TalonSRX _leftMaster = new WPI_TalonSRX(2);

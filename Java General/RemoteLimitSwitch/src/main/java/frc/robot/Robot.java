@@ -68,6 +68,8 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.*;
 
+import frc.robot.sim.PhysicsSim;
+
 public class Robot extends TimedRobot {
     /* Hardware */
     TalonSRX _motorCntrller = new WPI_TalonSRX(1);	// Victor SPX can be used with remote sensor features.

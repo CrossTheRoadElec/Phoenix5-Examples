@@ -57,6 +57,8 @@ import com.ctre.phoenix.motion.*;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 
+import frc.robot.sim.PhysicsSim;
+
 public class Robot extends TimedRobot {
 	/** Hardware */
 	TalonSRX _talon = new WPI_TalonSRX(1);	// Talon to Motion Profile

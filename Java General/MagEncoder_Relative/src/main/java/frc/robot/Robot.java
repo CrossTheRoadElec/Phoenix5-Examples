@@ -76,9 +76,11 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.*;
 
+import frc.robot.sim.PhysicsSim;
+
 public class Robot extends TimedRobot {
 	/** Hardware */
-	VictorSPX _vic = new VictorSPX(1);		// Follower MC, Could be a victor
+	VictorSPX _vic = new WPI_VictorSPX(1);		// Follower MC, Could be a victor
 	TalonSRX _tal = new WPI_TalonSRX(2);		// Master MC, Talon SRX for Mag Encoder
 	Joystick _joystick = new Joystick(0);	// Joystick for project control
 

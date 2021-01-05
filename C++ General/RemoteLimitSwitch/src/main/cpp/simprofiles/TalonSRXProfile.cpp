@@ -36,4 +36,7 @@ void PhysicsSim::TalonSRXSimProfile::Run() {
     _talon.GetSimCollection().SetStatorCurrent(statorCurrent);
 
     _talon.GetSimCollection().SetBusVoltage(12 - outPerc * outPerc * 3/4 * random(0.95, 1.05));
+
+    _talon.GetSimCollection().SetLimitFwd(_talon.GetSelectedSensorPosition() > 50000);
+    _talon.GetSimCollection().SetLimitRev(_talon.GetSelectedSensorPosition() < -50000);
 }

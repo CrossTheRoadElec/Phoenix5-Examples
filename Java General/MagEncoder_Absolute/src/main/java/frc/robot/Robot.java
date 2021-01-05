@@ -123,7 +123,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.*;
-import com.ctre.phoenix.unmanaged.Unmanaged;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
@@ -140,11 +139,6 @@ public class Robot extends TimedRobot {
 	final boolean kDiscontinuityPresent = true;
 	final int kBookEnd_0 = 910;		/* 80 deg */
 	final int kBookEnd_1 = 1137;	/* 100 deg */
-
-	public void simulationPeriodic() {
-		/* enable the robot in simulation */
-		Unmanaged.feedEnable(100);
-	}
 
 	/**
 	 * This function is called once on roboRIO bootup

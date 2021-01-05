@@ -54,6 +54,8 @@ import com.ctre.phoenix.motion.*;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 
+import frc.robot.sim.PhysicsSim;
+
 public class Robot extends TimedRobot {
 
     /** very simple state machine to prevent calling set() while firing MP. */
