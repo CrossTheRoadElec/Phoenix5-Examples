@@ -29,7 +29,7 @@ void PhysicsSim::TalonSRXSimProfile::Run() {
 
     _talon.GetSimCollection().AddQuadraturePosition(_vel * period / 100);
     _talon.GetSimCollection().SetQuadratureVelocity(_vel);
-    
+
     double supplyCurrent = fabs(outPerc) * 20 * random(0.95, 1.05);
     double statorCurrent = outPerc == 0 ? 0 : supplyCurrent / fabs(outPerc);
     _talon.GetSimCollection().SetSupplyCurrent(supplyCurrent);
