@@ -57,8 +57,8 @@ void Robot::RobotInit()
     // _rightMaster->SetSensorPhase(true);
     // _leftMaster->SetSensorPhase(false);
 
-    _rightMaster->SetInverted(TalonFXInvertedType::Clockwise);
-    _leftMaster->SetInverted(TalonFXInvertedType::CounterClockwise);
+    _rightMaster->SetInverted(TalonFXInvertType::Clockwise);
+    _leftMaster->SetInverted(TalonFXInvertType::CounterClockwise);
 
     _rightMaster->SetStatusFramePeriod(StatusFrameEnhanced::Status_14_Turn_PIDF1, 20); //Telemetry using Phoenix Tuner
 }
