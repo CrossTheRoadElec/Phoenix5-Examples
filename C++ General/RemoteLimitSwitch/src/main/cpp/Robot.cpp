@@ -52,7 +52,6 @@ public:
 
 	void SimulationInit() {
 		PhysicsSim::GetInstance().AddTalonSRX(*_motorCntrller, 0.75, 4000, false);
-		PhysicsSim::GetInstance().AddTalonSRX(*_talonLimits, 0.75, 4000);
 	}
 	void SimulationPeriodic() {
 		PhysicsSim::GetInstance().Run();

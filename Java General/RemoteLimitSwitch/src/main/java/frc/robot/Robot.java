@@ -83,7 +83,6 @@ public class Robot extends TimedRobot {
 
 	public void simulationInit() {
 		PhysicsSim.getInstance().addTalonSRX(_motorCntrller, 0.75, 2000, false);
-		PhysicsSim.getInstance().addTalonSRX(_talonLimits, 0.75, 2000);
 	}
 	public void simulationPeriodic() {
 		PhysicsSim.getInstance().run();
