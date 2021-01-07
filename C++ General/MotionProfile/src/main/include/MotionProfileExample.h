@@ -235,7 +235,7 @@ public:
 			/* Get the motion profile status every loop */
 			_talon.GetMotionProfileStatus(_status);
 			/* Heading is used only in motion profile arc mode */
-			_heading = 0;//_talon.GetActiveTrajectoryHeading();
+			_heading = 0;//_talon.GetActiveTrajectoryPosition(1);
 			_pos = _talon.GetActiveTrajectoryPosition();
 			_vel = _talon.GetActiveTrajectoryVelocity();
 

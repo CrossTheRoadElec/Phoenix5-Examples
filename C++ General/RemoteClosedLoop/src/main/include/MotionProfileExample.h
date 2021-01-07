@@ -252,7 +252,7 @@ public:
 
 			/* Get the motion profile status every loop */
 			_motorController.GetMotionProfileStatus(_status);
-			_heading = _motorController.GetActiveTrajectoryHeading();
+			_heading = _motorController.GetActiveTrajectoryPosition(1);
 			_pos = _motorController.GetActiveTrajectoryPosition();
 			_vel = _motorController.GetActiveTrajectoryVelocity();
 
