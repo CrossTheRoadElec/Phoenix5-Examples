@@ -69,20 +69,29 @@ import com.ctre.phoenix.CANifierStatusFrame;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.sensors.PigeonIMU;
+
+import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
     /* Hardware */
-    TalonSRX _motorCntrller = new TalonSRX(1);	// Victor SPX can be used with remote sensor features.
+    TalonSRX _motorCntrller = new WPI_TalonSRX(1);	// Victor SPX can be used with remote sensor features.
     CANifier _canifLimits = new CANifier(0);	// Use this CANifier for remote limit switches
-    TalonSRX _talonLimits = new TalonSRX(3); 	// Use this Talon for remote limit switches
+    TalonSRX _talonLimits = new WPI_TalonSRX(3); 	// Use this Talon for remote limit switches
     PigeonIMU _imu = new PigeonIMU(3);
     Joystick _joy = new Joystick(0);
 
     /* a couple latched values to detect on-press events for buttons and POV */
     boolean[] _currentBtns = new boolean[Constants.kNumButtonsPlusOne];
     boolean[] _previousBtns = new boolean[Constants.kNumButtonsPlusOne];
+
+    public void simulationInit() {
+        PhysicsSim.getInstance().addTalonSRX(_motorCntrller, 0.75, 2000, true);
+    }
+    public void simulationPeriodic() {
+        PhysicsSim.getInstance().run();
+    }
 
     void initRobot() {
         /* Set robot output to neutral at start */
@@ -318,9 +327,15 @@ public class Robot extends TimedRobot {
         initRobot();
     }
 
+    private int loopCount = 0;
     @Override
     public void teleopPeriodic() {
         commonLoop();
+		if (loopCount++ >= 10) {
+			loopCount = 0;
+			System.out.println("Percent Output: " + _motorCntrller.getMotorOutputPercent() +
+					           ", Position: " + _motorCntrller.getSelectedSensorPosition());
+		}
     }
 
     // -------------- Some helpful routines ---------------//

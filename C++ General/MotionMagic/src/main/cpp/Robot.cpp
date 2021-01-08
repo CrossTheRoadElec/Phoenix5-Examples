@@ -62,8 +62,17 @@
 #include "Robot.h"
 #include <sstream>
 
+#include "PhysicsSim.h"
+
+void Robot::SimulationInit() {
+    PhysicsSim::GetInstance().AddTalonSRX(*_talon, 0.75, 3400, false);
+}
+void Robot::SimulationPeriodic() {
+    PhysicsSim::GetInstance().Run();
+}
+
 void Robot::RobotInit() {
-    _talon = new TalonSRX(1);
+    _talon = new WPI_TalonSRX(1);
     _joy = new frc::Joystick(0);
 
     /* Factory default hardware to prevent unexpected behavior */

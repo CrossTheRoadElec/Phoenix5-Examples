@@ -52,14 +52,15 @@
 #include "MotionProfileExample.h"
 #include "ctre/Phoenix.h"
 #include "Constants.h"
+#include "PhysicsSim.h"
 
 using namespace frc;
 
 class Robot: public TimedRobot {
 public:
 	/** The Talon we want to motion profile. */
-	TalonSRX _talon;
-	VictorSPX _vic;
+	WPI_TalonSRX _talon;
+	WPI_VictorSPX _vic;
 
 	/** some example logic on how one can manage an MP */
 	MotionProfileExample _example;
@@ -74,6 +75,13 @@ public:
 	Robot() :
 			_talon(Constants::kTalonID), _vic(Constants::kVictorFollower), _example(
 					_talon), _joy(0) {
+	}
+	void SimulationInit() {
+		PhysicsSim::GetInstance().AddTalonSRX(_talon, 0.75, 2000, true);
+		PhysicsSim::GetInstance().AddVictorSPX(_vic);
+	}
+	void SimulationPeriodic() {
+		PhysicsSim::GetInstance().Run();
 	}
 	void RobotInit(){
 	/* Factory Default all hardware to prevent unexpected behaviour */

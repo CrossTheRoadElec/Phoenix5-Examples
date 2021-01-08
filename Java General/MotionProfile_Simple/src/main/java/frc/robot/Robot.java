@@ -54,13 +54,15 @@ import com.ctre.phoenix.motion.*;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 
+import frc.robot.sim.PhysicsSim;
+
 public class Robot extends TimedRobot {
 
     /** very simple state machine to prevent calling set() while firing MP. */
     int _state = 0;
 
     /** a master talon, add followers if need be. */
-    TalonSRX _master = new TalonSRX(0);
+    TalonSRX _master = new WPI_TalonSRX(0);
 
     /** gamepad for control */
     Joystick _joy = new Joystick(0);
@@ -73,6 +75,13 @@ public class Robot extends TimedRobot {
     
     /* quick and dirty plotter to smartdash */
     PlotThread _plotThread = new PlotThread(_master);
+
+    public void simulationInit() {
+        PhysicsSim.getInstance().addTalonSRX(_master, 0.75, 6800, true);
+    }
+    public void simulationPeriodic() {
+        PhysicsSim.getInstance().run();
+    }
 
     public void robotInit() {
         /* fill our buffer object with the excel points */
@@ -128,6 +137,8 @@ public class Robot extends TimedRobot {
 
             /* wait for MP to finish */
             case 2:
+                System.out.println("Position: " + _master.getSelectedSensorPosition() + ", Velocity: " + _master.getSelectedSensorVelocity());
+                System.out.println("TarPos: " + _master.getActiveTrajectoryPosition() + ", TarVel: " + _master.getActiveTrajectoryVelocity());
                 if (_master.isMotionProfileFinished()) {
                     Instrum.printLine("MP finished");
                     _state = 3;

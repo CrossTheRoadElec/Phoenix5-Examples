@@ -46,6 +46,8 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.*;
 
+import frc.robot.sim.PhysicsSim;
+
 public class Robot extends TimedRobot {
 	/* Master Talons for arcade drive */
 	WPI_TalonSRX _frontLeftMotor = new WPI_TalonSRX(1);
@@ -62,6 +64,18 @@ public class Robot extends TimedRobot {
 
     /* Joystick for control */
 	Joystick _joy = new Joystick(0);
+
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonSRX(_frontLeftMotor, 0.75, 4000);
+		PhysicsSim.getInstance().addTalonSRX(_frontRightMotor, 0.75, 4000);
+		PhysicsSim.getInstance().addTalonSRX(_leftSlave1, 0.75, 4000);
+		PhysicsSim.getInstance().addTalonSRX(_leftSlave2, 0.75, 4000);
+		PhysicsSim.getInstance().addVictorSPX(_rightSlave1);
+		PhysicsSim.getInstance().addVictorSPX(_rightSlave2);
+	}
+	public void simulationPeriodic() {
+		PhysicsSim.getInstance().run();
+	}
 
 	/**
 	 * This function is called once at the beginning during operator control

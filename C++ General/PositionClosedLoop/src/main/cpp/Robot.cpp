@@ -41,18 +41,26 @@
 #include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
 #include "Constants.h"
+#include "PhysicsSim.h"
 
 using namespace frc;
 
 class Robot: public TimedRobot {
 public:
-	TalonSRX * _talon = new TalonSRX(0);
+	TalonSRX * _talon = new WPI_TalonSRX(0);
 	Joystick * _joy = new Joystick(0);
 	std::string _sb;
 	int _loops = 0;
 	bool _lastButton1 = false;
 	/** save the target position to servo to */
 	double targetPositionRotations;
+
+	void SimulationInit() {
+    	PhysicsSim::GetInstance().AddTalonSRX(*_talon, 0.75, 2000, true);
+	}
+	void SimulationPeriodic() {
+    	PhysicsSim::GetInstance().Run();
+	}
 
 	void RobotInit() {
 		/* Factory Default all hardware to prevent unexpected behaviour */

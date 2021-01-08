@@ -52,7 +52,7 @@ import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Robot extends TimedRobot {
     /* Hardware */
-	TalonSRX _tal = new TalonSRX(1);    // Test Talon
+	TalonSRX _tal = new WPI_TalonSRX(1);    // Test Talon
     Joystick _joy = new Joystick(0);    // Test Gamepad  
 
 	/** Save buttons each loop */

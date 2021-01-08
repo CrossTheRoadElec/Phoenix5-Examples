@@ -30,6 +30,10 @@
  *   2. Set to factory default configs and then read configs and confirm they are what is expected.
  *   3. Set to custom configs and then restart devices. Confirm that all configs persist between
  *   reboots. (See above note about pigeon and CANifier firmware)
+ *
+ * Desktop simulation is supported if using WPILIB v2021.1.1-beta-4 or greater.
+ * Otherwise comment out SimulationInit and SimulationPeriodic routines.
+ * Enter "localhost" into Tuner's Server Address to interact with simulated devices.
  */
 #include <string>
 
@@ -42,8 +46,8 @@ using namespace frc;
 class Robot: public TimedRobot {
 private:
 	/* Hardware */
-	TalonSRX * _talon = new TalonSRX(23);
-	VictorSPX * _victor = new VictorSPX(2);
+	TalonSRX * _talon = new WPI_TalonSRX(23);
+	VictorSPX * _victor = new WPI_VictorSPX(2);
 	PigeonIMU * _pigeon = new PigeonIMU(3);
 	CANifier * _canifier = new CANifier(4);
 	CANCoder * _canCoder = new CANCoder(5);

@@ -73,12 +73,14 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.*;
+
+import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonSRX _leftMaster = new TalonSRX(2);
-	TalonSRX _rightMaster = new TalonSRX(1);
+	TalonSRX _leftMaster = new WPI_TalonSRX(2);
+	TalonSRX _rightMaster = new WPI_TalonSRX(1);
 	Joystick _gamepad = new Joystick(0);
 	
 	/** Latched values to detect on-press events for buttons */
@@ -90,6 +92,12 @@ public class Robot extends TimedRobot {
 	boolean _state = false;
 	double _lockedDistance = 0;
 	double _targetAngle = 0;
+
+	@Override
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonSRX(_leftMaster, 1.5, 6800, true);
+		PhysicsSim.getInstance().addTalonSRX(_rightMaster, 1.5, 6800, false);
+	}
 
 	@Override
 	public void robotInit() {

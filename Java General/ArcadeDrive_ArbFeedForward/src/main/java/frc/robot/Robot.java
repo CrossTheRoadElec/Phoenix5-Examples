@@ -45,16 +45,29 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.*;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
+import frc.robot.sim.PhysicsSim;
+
 public class Robot extends TimedRobot {
 	/** Hardware, either Talon could be a Victor */
-	TalonSRX _leftMaster = new TalonSRX(2);
-	TalonSRX _rightMaster = new TalonSRX(1);
+	TalonSRX _leftMaster = new WPI_TalonSRX(2);
+	TalonSRX _rightMaster = new WPI_TalonSRX(1);
 	Joystick _gamepad = new Joystick(0);
+
+	@Override
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonSRX(_leftMaster, 0.75, 4000);
+		PhysicsSim.getInstance().addTalonSRX(_rightMaster, 0.75, 4000);
+	}
+
+	@Override
+	public void simulationPeriodic() {
+		PhysicsSim.getInstance().run();
+	}
 
 	@Override
 	public void robotInit() {
@@ -93,6 +106,9 @@ public class Robot extends TimedRobot {
 		/* Arcade Drive using PercentOutput along with Arbitrary Feed Forward supplied by turn */
 		_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
 		_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
+
+		System.out.printf("L: %.4f R: %.4f L vel: %d R vel: %d\n", _leftMaster.getMotorOutputPercent(), _rightMaster.getMotorOutputPercent(),
+			              _leftMaster.getSelectedSensorVelocity(), _rightMaster.getSelectedSensorVelocity());
 	}
 
 	/** Deadband 5 percent, used on the gamepad */

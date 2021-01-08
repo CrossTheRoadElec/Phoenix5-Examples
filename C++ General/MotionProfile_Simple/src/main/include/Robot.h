@@ -21,6 +21,9 @@ public:
 	void TestInit() override;
 	void TestPeriodic() override;
 
+	void SimulationInit() override;
+	void SimulationPeriodic() override;
+
 private:
 	int _state;
 	TalonSRX *_master;

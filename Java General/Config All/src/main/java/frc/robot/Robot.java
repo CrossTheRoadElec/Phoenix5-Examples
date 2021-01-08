@@ -80,8 +80,8 @@ public class Robot extends TimedRobot {
     Devices _currentDevice = Devices.TalonSRX;
 
     /** Hardware */
-    TalonSRX  _talon = new TalonSRX(1);
-    VictorSPX  _victor = new VictorSPX(2);
+    TalonSRX  _talon = new WPI_TalonSRX(1);
+    VictorSPX  _victor = new WPI_VictorSPX(2);
     PigeonIMU  _pigeon = new PigeonIMU(3);
     CANifier  _canifier = new CANifier(4);
     CANCoder _canCoder = new CANCoder(5);
@@ -96,6 +96,7 @@ public class Robot extends TimedRobot {
     boolean[] _previousBtns = { false, false, false, false, false, 
                                 false, false, false, false, false};
     int _previousPov = 0;
+
     /**
      * Run Forever in TeleOperated Mode
      */

@@ -44,15 +44,23 @@
 #include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
 #include "Constants.h"
+#include "PhysicsSim.h"
 
 using namespace frc;
 
 class Robot: public TimedRobot {
 public:
-	TalonSRX * _talon = new TalonSRX(3);
+	TalonSRX * _talon = new WPI_TalonSRX(3);
 	Joystick * _joy = new Joystick(0);
 	std::string _sb;
 	int _loops = 0;
+
+	void SimulationInit() {
+		PhysicsSim::GetInstance().AddTalonSRX(*_talon, 1.5, 9325, true);
+	}
+	void SimulationPeriodic() {
+		PhysicsSim::GetInstance().Run();
+	}
 
 	void RobotInit() {
 		_talon->ConfigFactoryDefault();

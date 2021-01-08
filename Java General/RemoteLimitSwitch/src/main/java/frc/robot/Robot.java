@@ -66,18 +66,27 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.*;
+
+import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
     /* Hardware */
-    TalonSRX _motorCntrller = new TalonSRX(1);	// Victor SPX can be used with remote sensor features.
+    TalonSRX _motorCntrller = new WPI_TalonSRX(1);	// Victor SPX can be used with remote sensor features.
     CANifier _canifLimits = new CANifier(0);	// Use this CANifier for limit switches
-    TalonSRX _talonLimits = new TalonSRX(2); 	// Use this Talon for limit switches
+    TalonSRX _talonLimits = new WPI_TalonSRX(2); 	// Use this Talon for limit switches
     Joystick _joy = new Joystick(0);			// Input
 
 	/** A couple latched values to detect on-press events for buttons */
 	boolean[] _previousBtns = new boolean[Constants.kNumButtonsPlusOne];
 	boolean[] _currentBtns = new boolean[Constants.kNumButtonsPlusOne];
+
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonSRX(_motorCntrller, 0.75, 2000, false);
+	}
+	public void simulationPeriodic() {
+		PhysicsSim.getInstance().run();
+	}
 
 	void InitRobot() {
         /* Set robot output to neutral at start */
@@ -145,6 +154,7 @@ public class Robot extends TimedRobot {
 		}
 	}
 	
+	private int loopCount = 0;
 	void CommonLoop() {
         /* Gamepad processing */
         getButtons(_currentBtns);               // Update buttons
@@ -175,6 +185,12 @@ public class Robot extends TimedRobot {
 
 		/* Drive Talon in Percent Output with gamepad*/
 		_motorCntrller.set(ControlMode.PercentOutput, joyForward);
+
+		if (loopCount++ >= 10) {
+			loopCount = 0;
+			System.out.println("Fwd lim: " + (_motorCntrller.isFwdLimitSwitchClosed() == 1 ? "Closed" : "Open") +
+							   ", Rev lim: " + (_motorCntrller.isRevLimitSwitchClosed() == 1 ? "Closed" : "Open"));
+		}
 	}
 	
 	//------------------------- Loops -------------------------------//

@@ -69,9 +69,11 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 
+import frc.robot.sim.PhysicsSim;
+
 public class Robot extends TimedRobot {
 	/* Hardware */
-	TalonSRX _talon = new TalonSRX(1);
+	TalonSRX _talon = new WPI_TalonSRX(1);
 	Joystick _joy = new Joystick(0);
 
 	/* create some followers */
@@ -87,6 +89,13 @@ public class Robot extends TimedRobot {
 
 	/** save the last Point Of View / D-pad value */
 	int _pov = -1;
+
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonSRX(_talon, 0.75, 5100, false);
+	}
+	public void simulationPeriodic() {
+		PhysicsSim.getInstance().run();
+	}
 
 	public void robotInit() {
 		/* setup some followers */
@@ -134,8 +143,8 @@ public class Robot extends TimedRobot {
 		_talon.config_kD(Constants.kSlotIdx, Constants.kGains.kD, Constants.kTimeoutMs);
 
 		/* Set acceleration and vcruise velocity - see documentation */
-		_talon.configMotionCruiseVelocity(15000, Constants.kTimeoutMs);
-		_talon.configMotionAcceleration(6000, Constants.kTimeoutMs);
+		_talon.configMotionCruiseVelocity(3000, Constants.kTimeoutMs);
+		_talon.configMotionAcceleration(3000, Constants.kTimeoutMs);
 
 		/* Zero the sensor once on robot boot up */
 		_talon.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);

@@ -24,11 +24,19 @@
 #include "Robot.h"
 #include "MotionProfile.h"
 #include "Instrum.h"
+#include "PhysicsSim.h"
+
+void Robot::SimulationInit() {
+    PhysicsSim::GetInstance().AddTalonSRX(*_master, 0.75, 2000, true);
+}
+void Robot::SimulationPeriodic() {
+    PhysicsSim::GetInstance().Run();
+}
 
 void Robot::RobotInit() 
 {
     /* Construct global variables being used */
-    _master = new TalonSRX(0);
+    _master = new WPI_TalonSRX(0);
     _joy = new frc::Joystick(0);
     _bufferedStream = new BufferedTrajectoryPointStream();
 
@@ -82,6 +90,8 @@ void Robot::TeleopPeriodic()
 
         /* wait for MP to finish */
         case 2:
+            std::cout << "Position: " << _master->GetSelectedSensorPosition() << ", Velocity: " << _master->GetSelectedSensorVelocity() << std::endl;
+            std::cout << "TarPos: " << _master->GetActiveTrajectoryPosition() << ", TarVel: " << _master->GetActiveTrajectoryVelocity() << std::endl;
             if (_master->IsMotionProfileFinished()) {
                 Instrum::PrintLine("MP finished");
                 _state = 3;

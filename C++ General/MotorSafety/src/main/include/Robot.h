@@ -6,6 +6,9 @@ class Robot : public frc::TimedRobot {
  public:
   void RobotInit() override;
 
+  void SimulationInit() override;
+  void SimulationPeriodic() override;
+
   void AutonomousInit() override;
   void AutonomousPeriodic() override;
 

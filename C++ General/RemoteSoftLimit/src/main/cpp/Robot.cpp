@@ -35,22 +35,31 @@
 #include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
 #include "Constants.h"
+#include "PhysicsSim.h"
 
 using namespace frc;
 
 class Robot: public TimedRobot {
 public:
 	/* hardware objects - use references instead of pointers to match Java examples. */
-	TalonSRX * _motorCntrller = new TalonSRX(2);	// could also be Victor SPX if using remote sensor features.
+	TalonSRX * _motorCntrller = new WPI_TalonSRX(2);	// could also be Victor SPX if using remote sensor features.
 
 	CANifier * _canifLimits = new CANifier(2);		/* use this CANifier for limit switches */
-	TalonSRX * _talonLimits = new TalonSRX(5);		/* use this Talon for limit switches */
+	TalonSRX * _talonLimits = new WPI_TalonSRX(5);		/* use this Talon for limit switches */
 	PigeonIMU * _imu = new PigeonIMU(3);
 
 	Joystick * _joy = new Joystick(0);
 
 	/* a couple latched values to detect on-press events for buttons and POV */
 	bool _btns[Constants.kNumButtonsPlusOne];
+
+	void SimulationInit() {
+		PhysicsSim::GetInstance().AddTalonSRX(*_motorCntrller, 0.75, 1000, true);
+		PhysicsSim::GetInstance().AddTalonSRX(*_talonLimits, 0.75, 1000);
+	}
+	void SimulationPeriodic() {
+		PhysicsSim::GetInstance().Run();
+	}
 
 	void InitRobot() {
 		/* Factory Default all hardware to prevent unexpected behaviour */
@@ -305,8 +314,15 @@ public:
 		 * All params are persistent except for status frame periods. */
 		InitRobot();
 	}
+
+	int loopCount = 0;
 	void TeleopPeriodic() {
 		CommonLoop();
+		if (loopCount++ >= 10) {
+			loopCount = 0;
+			std::cout << "Percent Output: " << _motorCntrller->GetMotorOutputPercent()
+					  << ", Position: " << _motorCntrller->GetSelectedSensorPosition() << std::endl;
+		}
 	}
 
 	//-------------- Some helpful routines ---------------//

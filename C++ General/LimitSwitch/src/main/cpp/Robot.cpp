@@ -36,12 +36,13 @@
 
 #include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
+#include "PhysicsSim.h"
 
 using namespace frc;
 
 class Robot: public TimedRobot {
 public:
-	TalonSRX *_srx = new TalonSRX(0);
+	TalonSRX *_srx = new WPI_TalonSRX(0);
 	Joystick * _joy = new Joystick(0);
 	std::stringstream _work;
 
@@ -52,6 +53,13 @@ public:
 	bool _btn4 = false;
 	int _isFwdLimitSwitchClosed = 0;
 	int _isRevLimitSwitchClosed = 0;
+
+	void SimulationInit() {
+		PhysicsSim::GetInstance().AddTalonSRX(*_srx, 0.75, 2000);
+	}
+	void SimulationPeriodic() {
+    	PhysicsSim::GetInstance().Run();
+	}
 
 	/* nonzero to block the config until success, zero to skip checking */
 	const int kTimeoutMs = 30;
