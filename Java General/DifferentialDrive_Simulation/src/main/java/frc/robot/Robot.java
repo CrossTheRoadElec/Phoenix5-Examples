@@ -82,6 +82,9 @@ public class Robot extends TimedRobot {
   // center of the field along the short end, facing forward.
   DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
 
+  double m_SimVel = 0;
+
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -89,7 +92,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_rightDrive.configFactoryDefault();
-    m_rightDrive.setInverted(InvertType.InvertMotorOutput); //Right Drive is reversed because of motor orientation
     m_rightFollower.configFactoryDefault();
     m_rightFollower.follow(m_rightDrive);
     m_rightFollower.setInverted(InvertType.FollowMaster);
