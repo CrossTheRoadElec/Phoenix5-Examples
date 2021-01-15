@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
     // heading:          0.001 rad
     // l and r velocity: 0.1   m/s
     // l and r position: 0.005 m
-    null//VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
+    VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
   );
 
   Field2d m_field = new Field2d();
