@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
     // heading:          0.001 rad
     // l and r velocity: 0.1   m/s
     // l and r position: 0.005 m
-    VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)
+    null //VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005) //Uncomment this line to add measurement noise.
   );
 
   Field2d m_field = new Field2d();
@@ -81,9 +81,6 @@ public class Robot extends TimedRobot {
   // our starting pose is 5 meters along the long end of the field and in the
   // center of the field along the short end, facing forward.
   DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
-
-  double m_SimVel = 0;
-
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -102,7 +99,6 @@ public class Robot extends TimedRobot {
     m_leftFollower.setInverted(InvertType.FollowMaster);
 
     SmartDashboard.putData("Field", m_field);
-
 
     // These "Real" settings should be changed to match your robot.
     if(isReal()){
@@ -178,8 +174,6 @@ public class Robot extends TimedRobot {
     m_gyroSim.setAngle(-m_driveSim.getHeading().getDegrees());
 
     //Update other inputs to Talons
-    m_leftDriveSim.setSupplyCurrent(m_driveSim.getLeftCurrentDrawAmps());
-    m_rightDriveSim.setSupplyCurrent(m_driveSim.getRightCurrentDrawAmps());
     m_leftDriveSim.setBusVoltage(RobotController.getBatteryVoltage());
     m_rightDriveSim.setBusVoltage(RobotController.getBatteryVoltage());
   }
