@@ -55,8 +55,8 @@ public class Robot extends TimedRobot {
   //Note you can utilize results from robot characterization instead of theoretical numbers.
   //https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-characterization/introduction.html#introduction-to-robot-characterization
   final int kCountsPerRev = 4096;  //Encoder counts per revolution of the motor shaft.
-  final double kGearRatio = 1; //Gear ratio is the ratio between the *encoder* and the wheels.  On the AndyMark drivetrain, encoders mount 1:1 with the gearbox shaft.
-  //final double kGearRatio = 10.71; //Switch to this gear ratio if encoder is on the motor instead of on the gearbox.
+  final double kSensorGearRatio = 1; //Gear ratio is the ratio between the *encoder* and the wheels.  On the AndyMark drivetrain, encoders mount 1:1 with the gearbox shaft.
+  final double kGearRatio = 10.71; //Switch kSensorGearRatio to this gear ratio if encoder is on the motor instead of on the gearbox.
   final double kWheelRadiusInches = 3;
   final int k100msPerSecond = 10;
 
@@ -182,14 +182,14 @@ public class Robot extends TimedRobot {
 
   private int distanceToNativeUnits(double positionMeters){
     double wheelRotations = positionMeters/(2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
-    double motorRotations = wheelRotations * kGearRatio;
+    double motorRotations = wheelRotations * kSensorGearRatio;
     int sensorCounts = (int)(motorRotations * kCountsPerRev);
     return sensorCounts;
   }
 
   private int velocityToNativeUnits(double velocityMetersPerSecond){
     double wheelRotationsPerSecond = velocityMetersPerSecond/(2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
-    double motorRotationsPerSecond = wheelRotationsPerSecond * kGearRatio;
+    double motorRotationsPerSecond = wheelRotationsPerSecond * kSensorGearRatio;
     double motorRotationsPer100ms = motorRotationsPerSecond / k100msPerSecond;
     int sensorCountsPer100ms = (int)(motorRotationsPer100ms * kCountsPerRev);
     return sensorCountsPer100ms;
@@ -197,7 +197,7 @@ public class Robot extends TimedRobot {
 
   private double nativeUnitsToDistanceMeters(double sensorCounts){
     double motorRotations = (double)sensorCounts / kCountsPerRev;
-    double wheelRotations = motorRotations / kGearRatio;
+    double wheelRotations = motorRotations / kSensorGearRatio;
     double positionMeters = wheelRotations * (2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
     return positionMeters;
   }
