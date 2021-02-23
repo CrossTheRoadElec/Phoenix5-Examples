@@ -10,6 +10,8 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.TalonSRXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.sensors.PigeonIMUSimCollection;
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.RobotController;
@@ -43,13 +45,12 @@ public class Robot extends TimedRobot {
   WPI_TalonSRX m_rightDrive = new WPI_TalonSRX(2);
   WPI_VictorSPX m_rightFollower = new WPI_VictorSPX(3);
 
-  // Object for simulated inputs into Talon.
+  WPI_PigeonIMU m_pigeon = new WPI_PigeonIMU(0);
+
+  // Object for simulated inputs into Talon and Pigeon.
   TalonSRXSimCollection m_leftDriveSim = m_leftDrive.getSimCollection();
   TalonSRXSimCollection m_rightDriveSim = m_rightDrive.getSimCollection();
-
-  //Use a standard analog gyro since Pigeon doesn't have sim support yet
-  AnalogGyro m_gyro = new AnalogGyro(1);
-  AnalogGyroSim m_gyroSim = new AnalogGyroSim(m_gyro);
+  PigeonIMUSimCollection m_pigeonSim = m_pigeon.getSimCollection();
 
   //These numbers are an example AndyMark Drivetrain with some additional weight.  This is a fairly light robot.
   //Note you can utilize results from robot characterization instead of theoretical numbers.
@@ -81,7 +82,7 @@ public class Robot extends TimedRobot {
   // Creating my odometry object. Here,
   // our starting pose is 5 meters along the long end of the field and in the
   // center of the field along the short end, facing forward.
-  DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
+  DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_pigeon.getRotation2d());
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -128,7 +129,7 @@ public class Robot extends TimedRobot {
     // This will get the simulated sensor readings that we set
     // in the previous article while in simulation, but will use
     // real values on the robot itself.
-    m_odometry.update(m_gyro.getRotation2d(),
+    m_odometry.update(m_pigeon.getRotation2d(),
                       nativeUnitsToDistanceMeters(m_leftDrive.getSelectedSensorPosition()),
                       nativeUnitsToDistanceMeters(m_rightDrive.getSelectedSensorPosition()));
     m_field.setRobotPose(m_odometry.getPoseMeters());
@@ -172,7 +173,7 @@ public class Robot extends TimedRobot {
     m_rightDriveSim.setQuadratureVelocity(
                     velocityToNativeUnits(
                     m_driveSim.getRightVelocityMetersPerSecond()));
-    m_gyroSim.setAngle(-m_driveSim.getHeading().getDegrees());
+    m_pigeonSim.setRawHeading(m_driveSim.getHeading().getDegrees());
 
     //Update other inputs to Talons
     m_leftDriveSim.setBusVoltage(RobotController.getBatteryVoltage());
