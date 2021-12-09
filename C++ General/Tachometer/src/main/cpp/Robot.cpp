@@ -24,7 +24,8 @@
 #include <iostream>
 #include <string>
 
-#include "frc/WPILib.h"
+#include "frc/TimedRobot.h"
+#include "frc/Joystick.h"
 #include "ctre/Phoenix.h"
 
 using namespace frc;
@@ -32,18 +33,14 @@ using namespace frc;
 class Robot: public TimedRobot {
 public:
 
-	TalonSRX * _magTalon;
-	TalonSRX * _tachTalon;
-	Joystick * _joy;
+	TalonSRX _magTalon{4};
+	TalonSRX _tachTalon{5};
+	Joystick _joy{0};
 
 	void RobotInit() {
-		_magTalon = new TalonSRX(4);
-		_tachTalon = new TalonSRX(5);
-		_joy = new Joystick(0);
-
 		/* Factory Default all hardware to prevent unexpected behaviour */
-		_magTalon->ConfigFactoryDefault();
-		_tachTalon->ConfigFactoryDefault();
+		_magTalon.ConfigFactoryDefault();
+		_tachTalon.ConfigFactoryDefault();
 	}
 
 	void TeleopInit() {
@@ -52,28 +49,28 @@ public:
     	const int kTimeoutMs = 30;
 
         //Configure talon to read magencoder values
-		_magTalon->ConfigSelectedFeedbackSensor(
+		_magTalon.ConfigSelectedFeedbackSensor(
 				FeedbackDevice::CTRE_MagEncoder_Relative, 0, kTimeoutMs);
 
 		//Configure talon to read tachometer values
-		_tachTalon->ConfigSelectedFeedbackSensor(
+		_tachTalon.ConfigSelectedFeedbackSensor(
 				FeedbackDevice::Tachometer, 0, kTimeoutMs);
 
 		/* read section 7.9 Tachometer Measurement in software reference manual */
 		//Edges per cycle = 2 (WHITE black WHITE black per revolution)
 		int edgesPerCycle = 2;
-		_tachTalon->ConfigSetParameter((ParamEnum) 430, edgesPerCycle, 0, 0, kTimeoutMs);
+		_tachTalon.ConfigSetParameter((ParamEnum) 430, edgesPerCycle, 0, 0, kTimeoutMs);
 		// additional filtering if need be.
 		int filterWindowSize = 1;
-		_tachTalon->ConfigSetParameter((ParamEnum) 431, filterWindowSize, 0, 0, kTimeoutMs);
+		_tachTalon.ConfigSetParameter((ParamEnum) 431, filterWindowSize, 0, 0, kTimeoutMs);
 	}
 
 	void TeleopPeriodic() {
-		_magTalon->Set(ControlMode::PercentOutput, _joy->GetY());
+		_magTalon.Set(ControlMode::PercentOutput, _joy.GetY());
 		/* get the velocities of two talons,
 		 * one uses quadrature (mag encoder), the other uses Talon-Tach */
-		double magVel_UnitsPer100ms = _magTalon->GetSelectedSensorVelocity(0);
-		double tachVel_UnitsPer100ms = _tachTalon->GetSelectedSensorVelocity(0);
+		double magVel_UnitsPer100ms = _magTalon.GetSelectedSensorVelocity(0);
+		double tachVel_UnitsPer100ms = _tachTalon.GetSelectedSensorVelocity(0);
 
 		/* convert to RPM */
 		// https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor

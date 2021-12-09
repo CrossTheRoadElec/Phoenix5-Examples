@@ -25,7 +25,7 @@
 /**
  * Description:
  * The PositiionClosedLoop_AuxStraightQuadrature example demonstrates the new Talon/Victor Auxiliary
- * and Remote Features to peform more complex. This example has the robot performing Position 
+ * and Remote Features to perform more complex. This example has the robot performing Position 
  * Closed Loop with an auxiliary closed loop on Quadrature Encoders difference (Heading)
  * to keep the robot straight.
  * 
@@ -79,8 +79,8 @@ import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonSRX _leftMaster = new WPI_TalonSRX(2);
-	TalonSRX _rightMaster = new WPI_TalonSRX(1);
+	WPI_TalonSRX _leftMaster = new WPI_TalonSRX(2);
+	WPI_TalonSRX _rightMaster = new WPI_TalonSRX(1);
 	Joystick _gamepad = new Joystick(0);
 	
 	/** Latched values to detect on-press events for buttons */

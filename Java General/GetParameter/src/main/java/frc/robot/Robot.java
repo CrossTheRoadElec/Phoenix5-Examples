@@ -40,7 +40,7 @@ import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Robot extends TimedRobot {
 	/* Create a Talon SRX */
-	TalonSRX _talon = new WPI_TalonSRX(2);
+	WPI_TalonSRX _talon = new WPI_TalonSRX(2);
 
 	/**
 	 * This function is run when the robot is first started up and should be

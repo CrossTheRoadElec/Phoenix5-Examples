@@ -35,7 +35,8 @@
 #include <iostream>
 #include <string>
 
-#include "frc/WPILib.h"
+#include "frc/TimedRobot.h"
+#include "frc/Joystick.h"
 #include "ctre/Phoenix.h"
 #include "MotionProfileExample.h"
 //#include "Constants.h"
@@ -176,14 +177,14 @@ public:
 	/***************************************************************************************************************************************************/
 	/***************************************************************************************************************************************************/
 	/* hardware objects */
-	TalonSRX * _talonLeft = new WPI_TalonSRX(6);
-	TalonSRX * _talonRght = new WPI_TalonSRX(2);
-	TalonSRX * _talonPigeon = new WPI_TalonSRX(5);
-	PigeonIMU * _imu = new PigeonIMU(_talonPigeon);
-	Joystick * _joy = new Joystick(0);
+	WPI_TalonSRX _talonLeft{2};
+	WPI_TalonSRX _talonRght{1};
+	// WPI_TalonSRX _talonPigeon{5};
+	WPI_PigeonIMU _imu{0};
+	Joystick _joy{0};
 
 	/** Motion profile example manager*/
-	MotionProfileExample * _motProfExample = new MotionProfileExample(*_talonRght);
+	MotionProfileExample _motProfExample{_talonRght};
 
 	/* a couple latched values to detect on-press events for buttons and POV */
 	bool _btns[kNumButtonsPlusOne];
@@ -196,8 +197,8 @@ public:
 	double _target1 = 0;
 
 	void SimulationInit() {
-		PhysicsSim::GetInstance().AddTalonSRX(*_talonLeft, 0.75, 6800, true);
-		PhysicsSim::GetInstance().AddTalonSRX(*_talonRght, 0.75, 6800, false);
+		PhysicsSim::GetInstance().AddTalonSRX(_talonLeft, 0.75, 6800, true);
+		PhysicsSim::GetInstance().AddTalonSRX(_talonRght, 0.75, 6800, true);
 	}
 	void SimulationPeriodic() {
 		PhysicsSim::GetInstance().Run();
@@ -205,53 +206,53 @@ public:
 
 	void InitRobot() {
 		/* Factory Default all hardware to prevent unexpected behaviour */
-		_talonRght->ConfigFactoryDefault();
-		_talonLeft->ConfigFactoryDefault();	
-		_talonPigeon->ConfigFactoryDefault();	
-		_imu->ConfigFactoryDefault();	
+		_talonRght.ConfigFactoryDefault();
+		_talonLeft.ConfigFactoryDefault();	
+		// _talonPigeon.ConfigFactoryDefault();	
+		_imu.ConfigFactoryDefault();	
 		/* Ensure robot starts in neutral mode */
-		_talonRght->Set(ControlMode::PercentOutput, 0);
-		_talonLeft->Set(ControlMode::PercentOutput, 0);
+		_talonRght.Set(ControlMode::PercentOutput, 0);
+		_talonLeft.Set(ControlMode::PercentOutput, 0);
 
 		//------------ talons -----------------//
-		_talonLeft->SetInverted(false);
-		_talonLeft->SetSensorPhase(true);
-		_talonRght->SetInverted(true);
-		_talonRght->SetSensorPhase(true);
+		_talonLeft.SetInverted(false);
+		_talonLeft.SetSensorPhase(true);
+		_talonRght.SetInverted(true);
+		_talonRght.SetSensorPhase(true);
 
 		//------------ setup filters -----------------//
 		/* other side is quad */
-		_talonLeft->ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder,
+		_talonLeft.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder,
 												PID_PRIMARY,
 												kTimeoutMs);
 
 		/* Remote 0 will be the other side's Talon */
-		_talonRght->ConfigRemoteFeedbackFilter(	_talonLeft->GetDeviceID(),
+		_talonRght.ConfigRemoteFeedbackFilter(	_talonLeft.GetDeviceID(),
 												RemoteSensorSource::RemoteSensorSource_TalonSRX_SelectedSensor,
 												REMOTE_0,
 												kTimeoutMs);
 		/* Remote 1 will be a pigeon */
-		_talonRght->ConfigRemoteFeedbackFilter(	_talonPigeon->GetDeviceID(),
-												RemoteSensorSource::RemoteSensorSource_GadgeteerPigeon_Yaw,
+		_talonRght.ConfigRemoteFeedbackFilter(	_imu.GetDeviceNumber(),
+												RemoteSensorSource::RemoteSensorSource_Pigeon_Yaw,
 												REMOTE_1,
 												kTimeoutMs);
 
 		/* setup sum and difference signals */
-		_talonRght->ConfigSensorTerm(SensorTerm::SensorTerm_Sum0, FeedbackDevice::RemoteSensor0, kTimeoutMs);
-		_talonRght->ConfigSensorTerm(SensorTerm::SensorTerm_Sum1, FeedbackDevice::QuadEncoder, kTimeoutMs);
-		_talonRght->ConfigSensorTerm(SensorTerm::SensorTerm_Diff1, FeedbackDevice::RemoteSensor0, kTimeoutMs);
-		_talonRght->ConfigSensorTerm(SensorTerm::SensorTerm_Diff0, FeedbackDevice::QuadEncoder, kTimeoutMs);
+		_talonRght.ConfigSensorTerm(SensorTerm::SensorTerm_Sum0, FeedbackDevice::RemoteSensor0, kTimeoutMs);
+		_talonRght.ConfigSensorTerm(SensorTerm::SensorTerm_Sum1, FeedbackDevice::QuadEncoder, kTimeoutMs);
+		_talonRght.ConfigSensorTerm(SensorTerm::SensorTerm_Diff1, FeedbackDevice::RemoteSensor0, kTimeoutMs);
+		_talonRght.ConfigSensorTerm(SensorTerm::SensorTerm_Diff0, FeedbackDevice::QuadEncoder, kTimeoutMs);
 
 		/* select sum for distance(0), different for turn(1) */
-		_talonRght->ConfigSelectedFeedbackSensor(FeedbackDevice::SensorSum, PID_PRIMARY, kTimeoutMs);
+		_talonRght.ConfigSelectedFeedbackSensor(FeedbackDevice::SensorSum, PID_PRIMARY, kTimeoutMs);
 
 		if (kHeadingSensorChoice == 0) {
-			_talonRght->ConfigSelectedFeedbackSensor(FeedbackDevice::SensorDifference,
+			_talonRght.ConfigSelectedFeedbackSensor(FeedbackDevice::SensorDifference,
 													PID_TURN,
 													kTimeoutMs);
 
 			/* do not scale down the primary sensor (distance) */
-			_talonRght->ConfigSelectedFeedbackCoefficient(1, PID_PRIMARY, kTimeoutMs);
+			_talonRght.ConfigSelectedFeedbackCoefficient(1, PID_PRIMARY, kTimeoutMs);
 
 			/* scale empirically measured units to 3600units, this gives us
 			 * - 0.1 deg resolution
@@ -264,82 +265,82 @@ public:
 			 *  ... so at 3600 units per 360', that ensures 0.1 deg precision in firmware closed-loop
 			 *  and motion profile trajectory points can range �2 rotations.
 			 */
-			_talonRght->ConfigSelectedFeedbackCoefficient(kTurnTravelUnitsPerRotation / kEncoderUnitsPerRotation, PID_TURN, kTimeoutMs);
+			_talonRght.ConfigSelectedFeedbackCoefficient(kTurnTravelUnitsPerRotation / kEncoderUnitsPerRotation, PID_TURN, kTimeoutMs);
 		} else {
 			/* do not scale down the primary sensor (distance).  If selected sensor is going to be a sensorSum
 			 * user can pass 0.5 to produce an average. */
-			_talonRght->ConfigSelectedFeedbackCoefficient(1.0, PID_PRIMARY, kTimeoutMs);
+			_talonRght.ConfigSelectedFeedbackCoefficient(1.0, PID_PRIMARY, kTimeoutMs);
 
-			_talonRght->ConfigSelectedFeedbackSensor(FeedbackDevice::RemoteSensor1,
+			_talonRght.ConfigSelectedFeedbackSensor(FeedbackDevice::RemoteSensor1,
 													PID_TURN,
 													kTimeoutMs);
 
-			_talonRght->ConfigSelectedFeedbackCoefficient(kTurnTravelUnitsPerRotation / kPigeonUnitsPerRotation, PID_TURN, kTimeoutMs);
+			_talonRght.ConfigSelectedFeedbackCoefficient(kTurnTravelUnitsPerRotation / kPigeonUnitsPerRotation, PID_TURN, kTimeoutMs);
 		}
 		//------------ telemetry-----------------//
-		_talonRght->SetStatusFramePeriod(StatusFrame::Status_12_Feedback1_, 20, kTimeoutMs);
-		_talonRght->SetStatusFramePeriod(StatusFrame::Status_13_Base_PIDF0_, 20, kTimeoutMs);
-		_talonRght->SetStatusFramePeriod(StatusFrame::Status_14_Turn_PIDF1_, 20, kTimeoutMs);
-		_talonRght->SetStatusFramePeriod(StatusFrame::Status_10_Targets_, 20, kTimeoutMs);
+		_talonRght.SetStatusFramePeriod(StatusFrame::Status_12_Feedback1_, 20, kTimeoutMs);
+		_talonRght.SetStatusFramePeriod(StatusFrame::Status_13_Base_PIDF0_, 20, kTimeoutMs);
+		_talonRght.SetStatusFramePeriod(StatusFrame::Status_14_Turn_PIDF1_, 20, kTimeoutMs);
+		_talonRght.SetStatusFramePeriod(StatusFrame::Status_10_Targets_, 20, kTimeoutMs);
 		/* speed up the left since we are polling it's sensor */
-		_talonLeft->SetStatusFramePeriod(StatusFrame::Status_2_Feedback0_, 5, kTimeoutMs);
+		_talonLeft.SetStatusFramePeriod(StatusFrame::Status_2_Feedback0_, 5, kTimeoutMs);
 
-		_talonLeft->ConfigNeutralDeadband(kNeutralDeadband, kTimeoutMs);
-		_talonRght->ConfigNeutralDeadband(kNeutralDeadband, kTimeoutMs);
+		_talonLeft.ConfigNeutralDeadband(kNeutralDeadband, kTimeoutMs);
+		_talonRght.ConfigNeutralDeadband(kNeutralDeadband, kTimeoutMs);
 
-		_talonRght->ConfigMotionAcceleration(1000, kTimeoutMs);
-		_talonRght->ConfigMotionCruiseVelocity(1000, kTimeoutMs);
+		_talonRght.ConfigMotionAcceleration(1000, kTimeoutMs);
+		_talonRght.ConfigMotionCruiseVelocity(1000, kTimeoutMs);
 
 		/* max out the peak output (for all modes).  However you can
 		 * limit the output of a given PID object with ConfigClosedLoopPeakOutput().
 		 */
-		_talonLeft->ConfigPeakOutputForward(+1.0, kTimeoutMs);
-		_talonLeft->ConfigPeakOutputReverse(-1.0, kTimeoutMs);
-		_talonRght->ConfigPeakOutputForward(+1.0, kTimeoutMs);
-		_talonRght->ConfigPeakOutputReverse(-1.0, kTimeoutMs);
+		_talonLeft.ConfigPeakOutputForward(+1.0, kTimeoutMs);
+		_talonLeft.ConfigPeakOutputReverse(-1.0, kTimeoutMs);
+		_talonRght.ConfigPeakOutputForward(+1.0, kTimeoutMs);
+		_talonRght.ConfigPeakOutputReverse(-1.0, kTimeoutMs);
 
 		/* distance servo */
-		_talonRght->Config_kP(kSlot_Distanc, kGains_Distanc.kP, kTimeoutMs);
-		_talonRght->Config_kI(kSlot_Distanc, kGains_Distanc.kI, kTimeoutMs);
-		_talonRght->Config_kD(kSlot_Distanc, kGains_Distanc.kD, kTimeoutMs);
-		_talonRght->Config_kF(kSlot_Distanc, kGains_Distanc.kF, kTimeoutMs);
-		_talonRght->Config_IntegralZone(kSlot_Distanc, kGains_Distanc.kIzone, kTimeoutMs);
-		_talonRght->ConfigClosedLoopPeakOutput(	kSlot_Distanc,
+		_talonRght.Config_kP(kSlot_Distanc, kGains_Distanc.kP, kTimeoutMs);
+		_talonRght.Config_kI(kSlot_Distanc, kGains_Distanc.kI, kTimeoutMs);
+		_talonRght.Config_kD(kSlot_Distanc, kGains_Distanc.kD, kTimeoutMs);
+		_talonRght.Config_kF(kSlot_Distanc, kGains_Distanc.kF, kTimeoutMs);
+		_talonRght.Config_IntegralZone(kSlot_Distanc, kGains_Distanc.kIzone, kTimeoutMs);
+		_talonRght.ConfigClosedLoopPeakOutput(	kSlot_Distanc,
 												kGains_Distanc.kPeakOutput,
 												kTimeoutMs);
 
 		/* turn servo */
-		_talonRght->Config_kP(kSlot_Turning, kGains_Turning.kP, kTimeoutMs);
-		_talonRght->Config_kI(kSlot_Turning, kGains_Turning.kI, kTimeoutMs);
-		_talonRght->Config_kD(kSlot_Turning, kGains_Turning.kD, kTimeoutMs);
-		_talonRght->Config_kF(kSlot_Turning, kGains_Turning.kF, kTimeoutMs);
-		_talonRght->Config_IntegralZone(kSlot_Turning, kGains_Turning.kIzone, kTimeoutMs);
-		_talonRght->ConfigClosedLoopPeakOutput(	kSlot_Turning,
+		_talonRght.Config_kP(kSlot_Turning, kGains_Turning.kP, kTimeoutMs);
+		_talonRght.Config_kI(kSlot_Turning, kGains_Turning.kI, kTimeoutMs);
+		_talonRght.Config_kD(kSlot_Turning, kGains_Turning.kD, kTimeoutMs);
+		_talonRght.Config_kF(kSlot_Turning, kGains_Turning.kF, kTimeoutMs);
+		_talonRght.Config_IntegralZone(kSlot_Turning, kGains_Turning.kIzone, kTimeoutMs);
+		_talonRght.ConfigClosedLoopPeakOutput(	kSlot_Turning,
 												kGains_Turning.kPeakOutput,
 												kTimeoutMs);
 
 		/* magic servo */
-		_talonRght->Config_kP(kSlot_MotProf, kGains_MotProf.kP, kTimeoutMs);
-		_talonRght->Config_kI(kSlot_MotProf, kGains_MotProf.kI, kTimeoutMs);
-		_talonRght->Config_kD(kSlot_MotProf, kGains_MotProf.kD, kTimeoutMs);
-		_talonRght->Config_kF(kSlot_MotProf, kGains_MotProf.kF, kTimeoutMs);
-		_talonRght->Config_IntegralZone(kSlot_MotProf, kGains_MotProf.kIzone, kTimeoutMs);
-		_talonRght->ConfigClosedLoopPeakOutput(	kSlot_MotProf,
+		_talonRght.Config_kP(kSlot_MotProf, kGains_MotProf.kP, kTimeoutMs);
+		_talonRght.Config_kI(kSlot_MotProf, kGains_MotProf.kI, kTimeoutMs);
+		_talonRght.Config_kD(kSlot_MotProf, kGains_MotProf.kD, kTimeoutMs);
+		_talonRght.Config_kF(kSlot_MotProf, kGains_MotProf.kF, kTimeoutMs);
+		_talonRght.Config_IntegralZone(kSlot_MotProf, kGains_MotProf.kIzone, kTimeoutMs);
+		_talonRght.ConfigClosedLoopPeakOutput(	kSlot_MotProf,
 												kGains_MotProf.kPeakOutput,
 												kTimeoutMs);
 
 		/* velocity servo */
-		_talonRght->Config_kP(kSlot_Velocit, kGains_Velocit.kP, kTimeoutMs);
-		_talonRght->Config_kI(kSlot_Velocit, kGains_Velocit.kI, kTimeoutMs);
-		_talonRght->Config_kD(kSlot_Velocit, kGains_Velocit.kD, kTimeoutMs);
-		_talonRght->Config_kF(kSlot_Velocit, kGains_Velocit.kF, kTimeoutMs);
-		_talonRght->Config_IntegralZone(kSlot_Velocit, kGains_Velocit.kIzone, kTimeoutMs);
-		_talonRght->ConfigClosedLoopPeakOutput(	kSlot_Velocit,
+		_talonRght.Config_kP(kSlot_Velocit, kGains_Velocit.kP, kTimeoutMs);
+		_talonRght.Config_kI(kSlot_Velocit, kGains_Velocit.kI, kTimeoutMs);
+		_talonRght.Config_kD(kSlot_Velocit, kGains_Velocit.kD, kTimeoutMs);
+		_talonRght.Config_kF(kSlot_Velocit, kGains_Velocit.kF, kTimeoutMs);
+		_talonRght.Config_IntegralZone(kSlot_Velocit, kGains_Velocit.kIzone, kTimeoutMs);
+		_talonRght.ConfigClosedLoopPeakOutput(	kSlot_Velocit,
 												kGains_Velocit.kPeakOutput,
 												kTimeoutMs);
 
-		_talonLeft->SetNeutralMode(NeutralMode::Brake);
-		_talonRght->SetNeutralMode(NeutralMode::Brake);
+		_talonLeft.SetNeutralMode(NeutralMode::Brake);
+		_talonRght.SetNeutralMode(NeutralMode::Brake);
 
 		/* 1ms per loop.  PID loop can be slowed down if need be.
 		 * For example,
@@ -348,27 +349,27 @@ public:
 		 * - sensor movement is very slow causing the derivative error to be near zero.
 		 */
 		int closedLoopTimeMs = 1;
-		_talonRght->ConfigSetParameter(ParamEnum::ePIDLoopPeriod, closedLoopTimeMs, 0x00, PID_PRIMARY, kTimeoutMs);
-		_talonRght->ConfigSetParameter(ParamEnum::ePIDLoopPeriod, closedLoopTimeMs, 0x00, PID_TURN, kTimeoutMs);
+		_talonRght.ConfigSetParameter(ParamEnum::ePIDLoopPeriod, closedLoopTimeMs, 0x00, PID_PRIMARY, kTimeoutMs);
+		_talonRght.ConfigSetParameter(ParamEnum::ePIDLoopPeriod, closedLoopTimeMs, 0x00, PID_TURN, kTimeoutMs);
 
 		/**
 		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
 		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
 		 */
-		_talonRght->ConfigAuxPIDPolarity(false, kTimeoutMs);
+		_talonRght.ConfigAuxPIDPolarity(false, kTimeoutMs);
 
 		ZeroSensors();
 	}
 	void ZeroSensors() {
-		_talonLeft->GetSensorCollection().SetQuadraturePosition(0, kTimeoutMs);
-		_talonRght->GetSensorCollection().SetQuadraturePosition(0, kTimeoutMs);
-		_imu->SetYaw(0, kTimeoutMs);
-		_imu->SetAccumZAngle(0, kTimeoutMs);
+		_talonLeft.GetSensorCollection().SetQuadraturePosition(0, kTimeoutMs);
+		_talonRght.GetSensorCollection().SetQuadraturePosition(0, kTimeoutMs);
+		_imu.SetYaw(0, kTimeoutMs);
+		_imu.SetAccumZAngle(0, kTimeoutMs);
 		printf("        [Sensors] All sensors are zeroed.\n");
 	}
 	void NeutralMotors(const char * reason) {
-		_talonLeft->NeutralOutput();
-		_talonRght->NeutralOutput();
+		_talonLeft.NeutralOutput();
+		_talonRght.NeutralOutput();
 
 		/* if caller is reporting WHY motors are being neutralized, report it */
 		if (reason != nullptr) {
@@ -383,10 +384,10 @@ public:
 
 		/* grab the joystick inputs */
 		bool btns[kNumButtonsPlusOne];
-		double joyFwd = -1 * _joy->GetY(); /* positive stick => forward */
-		double joyTurn = +1 * _joy->GetTwist(); /* positive stick => right */
-		double joyX = +1 * _joy->GetX();
-		int pov = _joy->GetPOV();
+		double joyFwd = -_joy.GetY(); /* positive stick => forward */
+		double joyTurn = _joy.GetTwist(); /* positive stick => right */
+		double joyX = _joy.GetX();
+		int pov = _joy.GetPOV();
 		GetButtons(btns);
 
 		/* dead-band the sticks */
@@ -414,7 +415,7 @@ public:
 				case 0: /* 0 deg, D-PAD Up */
 				{ /* enable neutral-if-remote-LOSS-OF-SIGNAL */
 					double value = 0;
-					_talonRght->ConfigSetParameter(	ParamEnum::eRemoteSensorClosedLoopDisableNeutralOnLOS,
+					_talonRght.ConfigSetParameter(	ParamEnum::eRemoteSensorClosedLoopDisableNeutralOnLOS,
 													value,
 													0x00,
 													0x00,
@@ -425,7 +426,7 @@ public:
 				case 180: /* 180 deg, D-PAD Down */
 				{ /* disable neutral-if-remote-LOSS-OF-SIGNAL */
 					double value = 1;
-					_talonRght->ConfigSetParameter(	ParamEnum::eRemoteSensorClosedLoopDisableNeutralOnLOS,
+					_talonRght.ConfigSetParameter(	ParamEnum::eRemoteSensorClosedLoopDisableNeutralOnLOS,
 													value,
 													0x00,
 													0x00,
@@ -548,8 +549,8 @@ public:
 			printf("This is a basic arcade drove. \n");
 		}
 
-		_talonLeft->Set(ControlMode::PercentOutput, left);
-		_talonRght->Set(ControlMode::PercentOutput, rght);
+		_talonLeft.Set(ControlMode::PercentOutput, left);
+		_talonRght.Set(ControlMode::PercentOutput, rght);
 	}
 	void Two_Axis_PercentOutput(bool bFirstCall, ButtonEvent bExecuteAction, double joyForward, double joyTurn) {
 
@@ -562,8 +563,8 @@ public:
 			printf("This is a basic arcade drove. \n");
 		}
 
-		_talonLeft->Set(ControlMode::PercentOutput, joyForward, DemandType::DemandType_ArbitraryFeedForward, +joyTurn);
-		_talonRght->Set(ControlMode::PercentOutput, joyForward, DemandType::DemandType_ArbitraryFeedForward, -joyTurn);
+		_talonLeft.Set(ControlMode::PercentOutput, joyForward, DemandType::DemandType_ArbitraryFeedForward, +joyTurn);
+		_talonRght.Set(ControlMode::PercentOutput, joyForward, DemandType::DemandType_ArbitraryFeedForward, -joyTurn);
 	}
 	void One_Axis_Position(bool bFirstCall, ButtonEvent bExecuteAction, double joyForward, double joyTurn) {
 
@@ -577,15 +578,15 @@ public:
 			NeutralMotors("Target not set yet.\n");
 			ZeroSensors();
 
-			_talonRght->SelectProfileSlot(kSlot_Distanc, PID_PRIMARY);
+			_talonRght.SelectProfileSlot(kSlot_Distanc, PID_PRIMARY);
 		}
 
 		if (bExecuteAction == ButtonEvent::ButtonOffToOn) {
 
 		} else if (bExecuteAction == ButtonEvent::ButtonOn) {
 			_target0 = target_sensorUnits;
-			_talonRght->Set(ControlMode::Position, _target0);
-			_talonLeft->Follow(*_talonRght);
+			_talonRght.Set(ControlMode::Position, _target0);
+			_talonLeft.Follow(_talonRght);
 		} else if (bExecuteAction == ButtonEvent::ButtonOnToOff) {
 			//NeutralMotors("Button let go\n");
 		}
@@ -605,7 +606,7 @@ public:
 			NeutralMotors("Target not set yet.\n");
 			ZeroSensors();
 
-			_talonRght->SelectProfileSlot(kSlot_Distanc, PID_PRIMARY);
+			_talonRght.SelectProfileSlot(kSlot_Distanc, PID_PRIMARY);
 		}
 
 		if (bExecuteAction == ButtonEvent::ButtonOffToOn) {
@@ -613,8 +614,8 @@ public:
 		} else if (bExecuteAction == ButtonEvent::ButtonOn) {
 			_target0 = target_sensorUnits;
 			_target1 = feedFwdTerm;
-			_talonRght->Set(ControlMode::Position, _target0, DemandType::DemandType_ArbitraryFeedForward, _target1);
-			_talonLeft->Follow(*_talonRght);
+			_talonRght.Set(ControlMode::Position, _target0, DemandType::DemandType_ArbitraryFeedForward, _target1);
+			_talonLeft.Follow(_talonRght);
 		} else if (bExecuteAction == ButtonEvent::ButtonOnToOff) {
 			//NeutralMotors("Button let go\n");
 		}
@@ -632,8 +633,8 @@ public:
 			NeutralMotors("Target not set yet.\n");
 			ZeroSensors();
 
-			_talonRght->SelectProfileSlot(kSlot_Distanc, PID_PRIMARY);
-			_talonRght->SelectProfileSlot(kSlot_Turning, PID_TURN);
+			_talonRght.SelectProfileSlot(kSlot_Distanc, PID_PRIMARY);
+			_talonRght.SelectProfileSlot(kSlot_Turning, PID_TURN);
 		}
 
 		if (bExecuteAction == ButtonEvent::ButtonOffToOn) {
@@ -641,8 +642,8 @@ public:
 		} else if (bExecuteAction == ButtonEvent::ButtonOn) {
 			_target0 = target_sensorUnits;
 			_target1 = target_turn;
-			_talonRght->Set(ControlMode::Position, _target0, DemandType::DemandType_AuxPID, _target1);
-			_talonLeft->Follow(*_talonRght, FollowerType::FollowerType_AuxOutput1);
+			_talonRght.Set(ControlMode::Position, _target0, DemandType::DemandType_AuxPID, _target1);
+			_talonLeft.Follow(_talonRght, FollowerType::FollowerType_AuxOutput1);
 		} else if (bExecuteAction == ButtonEvent::ButtonOnToOff) {
 			//NeutralMotors("Button let go\n");
 		}
@@ -659,15 +660,15 @@ public:
 			printf("Press Button 6 to set target. ");
 			NeutralMotors("Target not set yet.\n");
 
-			_talonRght->SelectProfileSlot(kSlot_Velocit, PID_PRIMARY);
+			_talonRght.SelectProfileSlot(kSlot_Velocit, PID_PRIMARY);
 		}
 
 		if (bExecuteAction == ButtonEvent::ButtonOffToOn) {
 
 		} else if (bExecuteAction == ButtonEvent::ButtonOn) {
 			_target0 = target_unitsPer100ms;
-			_talonRght->Set(ControlMode::Velocity, _target0);
-			_talonLeft->Follow(*_talonRght);
+			_talonRght.Set(ControlMode::Velocity, _target0);
+			_talonLeft.Follow(_talonRght);
 		} else if (bExecuteAction == ButtonEvent::ButtonOnToOff) {
 			//NeutralMotors("Button let go\n");
 		}
@@ -687,7 +688,7 @@ public:
 			printf("Press Button 6 to set target. ");
 			NeutralMotors("Target not set yet.\n");
 
-			_talonRght->SelectProfileSlot(kSlot_Velocit, PID_PRIMARY);
+			_talonRght.SelectProfileSlot(kSlot_Velocit, PID_PRIMARY);
 		}
 
 		if (bExecuteAction == ButtonEvent::ButtonOffToOn) {
@@ -695,8 +696,8 @@ public:
 		} else if (bExecuteAction == ButtonEvent::ButtonOn) {
 			_target0 = target_unitsPer100ms;
 			_target1 = feedFwdTerm;
-			_talonRght->Set(ControlMode::Velocity, _target0, DemandType::DemandType_ArbitraryFeedForward, _target1);
-			_talonLeft->Follow(*_talonRght);
+			_talonRght.Set(ControlMode::Velocity, _target0, DemandType::DemandType_ArbitraryFeedForward, _target1);
+			_talonLeft.Follow(_talonRght);
 		} else if (bExecuteAction == ButtonEvent::ButtonOnToOff) {
 			//NeutralMotors("Button let go\n");
 		}
@@ -715,8 +716,8 @@ public:
 			printf("Press Button 6 to set target. ");
 			NeutralMotors("Target not set yet.\n");
 
-			_talonRght->SelectProfileSlot(kSlot_Velocit, PID_PRIMARY);
-			_talonRght->SelectProfileSlot(kSlot_Turning, PID_TURN);
+			_talonRght.SelectProfileSlot(kSlot_Velocit, PID_PRIMARY);
+			_talonRght.SelectProfileSlot(kSlot_Turning, PID_TURN);
 		}
 
 		if (bExecuteAction == ButtonEvent::ButtonOffToOn) {
@@ -724,8 +725,8 @@ public:
 		} else if (bExecuteAction == ButtonEvent::ButtonOn) {
 			_target0 = target_unitsPer100ms;
 			_target1 = heading_units;
-			_talonRght->Set(ControlMode::Velocity, _target0, DemandType_AuxPID, _target1);
-			_talonLeft->Follow(*_talonRght, FollowerType::FollowerType_AuxOutput1);
+			_talonRght.Set(ControlMode::Velocity, _target0, DemandType_AuxPID, _target1);
+			_talonLeft.Follow(_talonRght, FollowerType::FollowerType_AuxOutput1);
 		} else if (bExecuteAction == ButtonEvent::ButtonOnToOff) {
 			//NeutralMotors("Button let go\n");
 		}
@@ -741,15 +742,15 @@ public:
 			NeutralMotors("Target not set yet.\n");
 			ZeroSensors();
 
-			_talonRght->SelectProfileSlot(kSlot_MotProf, PID_PRIMARY);
+			_talonRght.SelectProfileSlot(kSlot_MotProf, PID_PRIMARY);
 		}
 
 		if (bExecuteAction == ButtonEvent::ButtonOffToOn) {
 
 		} else if (bExecuteAction == ButtonEvent::ButtonOn) {
 			_target0 = target_sensorUnits;
-			_talonRght->Set(ControlMode::MotionMagic, _target0);
-			_talonLeft->Follow(*_talonRght);
+			_talonRght.Set(ControlMode::MotionMagic, _target0);
+			_talonLeft.Follow(_talonRght);
 		} else if (bExecuteAction == ButtonEvent::ButtonOnToOff) {
 			//NeutralMotors("Button let go\n");
 		}
@@ -769,7 +770,7 @@ public:
 			NeutralMotors("Target not set yet.\n");
 			ZeroSensors();
 
-			_talonRght->SelectProfileSlot(kSlot_MotProf, PID_PRIMARY);
+			_talonRght.SelectProfileSlot(kSlot_MotProf, PID_PRIMARY);
 		}
 
 		if (bExecuteAction == ButtonEvent::ButtonOffToOn) {
@@ -777,8 +778,8 @@ public:
 		} else if (bExecuteAction == ButtonEvent::ButtonOn) {
 			_target0 = target_sensorUnits;
 			_target1 = feedFwdTerm;
-			_talonRght->Set(ControlMode::MotionMagic, _target0, DemandType::DemandType_ArbitraryFeedForward, _target1);
-			_talonLeft->Follow(*_talonRght);
+			_talonRght.Set(ControlMode::MotionMagic, _target0, DemandType::DemandType_ArbitraryFeedForward, _target1);
+			_talonLeft.Follow(_talonRght);
 		} else if (bExecuteAction == ButtonEvent::ButtonOnToOff) {
 			//NeutralMotors("Button let go\n");
 		}
@@ -794,8 +795,8 @@ public:
 			printf("Press Button 6 to set target. ");
 			NeutralMotors("Target not set yet.\n");
 			ZeroSensors();
-			_talonRght->SelectProfileSlot(kSlot_MotProf, PID_PRIMARY);
-			_talonRght->SelectProfileSlot(kSlot_Turning, PID_TURN);
+			_talonRght.SelectProfileSlot(kSlot_MotProf, PID_PRIMARY);
+			_talonRght.SelectProfileSlot(kSlot_Turning, PID_TURN);
 		}
 
 		if (bExecuteAction == ButtonEvent::ButtonOffToOn) {
@@ -804,8 +805,8 @@ public:
 			_target0 = target_sensorUnits;
 			_target1 = heading_units;
 
-			_talonRght->Set(ControlMode::MotionMagic, _target0, DemandType_AuxPID, _target1);
-			_talonLeft->Follow(*_talonRght, FollowerType::FollowerType_AuxOutput1);
+			_talonRght.Set(ControlMode::MotionMagic, _target0, DemandType_AuxPID, _target1);
+			_talonLeft.Follow(_talonRght, FollowerType::FollowerType_AuxOutput1);
 		} else if (bExecuteAction == ButtonEvent::ButtonOnToOff) {
 			//NeutralMotors("Button let go\n");
 		}
@@ -830,19 +831,19 @@ public:
 
 			NeutralMotors("Button let go\n");
 			ZeroSensors();
-			_motProfExample->reset();
-			_motProfExample->start(0, bMoveForward); /*final target heading is ignored, doesn't matter */
+			_motProfExample.reset();
+			_motProfExample.start(0, bMoveForward); /*final target heading is ignored, doesn't matter */
 
 
 		} else if (bExecuteAction == ButtonEvent::ButtonOn) {
 
-			_talonRght->Set(ControlMode::MotionProfile, _motProfExample->getSetValue());
-			_talonLeft->Follow(*_talonRght);
+			_talonRght.Set(ControlMode::MotionProfile, _motProfExample.getSetValue());
+			_talonLeft.Follow(_talonRght);
 		}
 
 		/* call this periodically, and catch the output.  Only apply it if user wants to run MP. */
-		_motProfExample->control();
-		_motProfExample->PeriodicTask();
+		_motProfExample.control();
+		_motProfExample.PeriodicTask();
 	}
 	void One_Axis_MotionProfile_WithCustomFeedFwd(	bool bFirstCall,
 													ButtonEvent bExecuteAction,
@@ -866,19 +867,19 @@ public:
 		} else if (bExecuteAction == ButtonEvent::ButtonOffToOn) {
 			NeutralMotors("Button let go\n");
 			ZeroSensors();
-			_motProfExample->reset();
-			_motProfExample->start(0, bMoveForward); /*final target heading is ignored, doesn't matter */
+			_motProfExample.reset();
+			_motProfExample.start(0, bMoveForward); /*final target heading is ignored, doesn't matter */
 		} else if (bExecuteAction == ButtonEvent::ButtonOn) {
 
-			_talonRght->Set(ControlMode::MotionProfile,
-							_motProfExample->getSetValue(),
+			_talonRght.Set(ControlMode::MotionProfile,
+							_motProfExample.getSetValue(),
 							DemandType::DemandType_ArbitraryFeedForward,
 							feedFwdTerm);
-			_talonLeft->Follow(*_talonRght);
+			_talonLeft.Follow(_talonRght);
 		}
 		/* call this periodically, and catch the output.  Only apply it if user wants to run MP. */
-		_motProfExample->control();
-		_motProfExample->PeriodicTask();
+		_motProfExample.control();
+		_motProfExample.PeriodicTask();
 
 	}
 	void Two_Axis_MotionProfile(bool bFirstCall, ButtonEvent bExecuteAction, double joyForward, double joyTurn) {
@@ -899,16 +900,16 @@ public:
 		} else if (bExecuteAction == ButtonEvent::ButtonOffToOn) {
 			NeutralMotors("Button let go\n");
 			ZeroSensors();
-			_motProfExample->reset();
-			_motProfExample->start(finalHeading_units, bMoveForward);
+			_motProfExample.reset();
+			_motProfExample.start(finalHeading_units, bMoveForward);
 		} else if (bExecuteAction == ButtonEvent::ButtonOn) {
 
-			_talonRght->Set(ControlMode::MotionProfileArc, _motProfExample->getSetValue());
-			_talonLeft->Follow(*_talonRght, FollowerType::FollowerType_AuxOutput1);
+			_talonRght.Set(ControlMode::MotionProfileArc, _motProfExample.getSetValue());
+			_talonLeft.Follow(_talonRght, FollowerType::FollowerType_AuxOutput1);
 		}
 		/* call this periodically, and catch the output.  Only apply it if user wants to run MP. */
-		_motProfExample->control();
-		_motProfExample->PeriodicTask();
+		_motProfExample.control();
+		_motProfExample.PeriodicTask();
 
 	}
 	void Two_Axis_MotionProfile_WithCustomFeedFwd(	bool bFirstCall,
@@ -933,24 +934,24 @@ public:
 		} else if (bExecuteAction == ButtonEvent::ButtonOffToOn) {
 			NeutralMotors("Button let go\n");
 			ZeroSensors();
-			_motProfExample->reset();
-			_motProfExample->start(finalHeading_units, bMoveForward);
+			_motProfExample.reset();
+			_motProfExample.start(finalHeading_units, bMoveForward);
 		} else if (bExecuteAction == ButtonEvent::ButtonOn) {
-			_talonRght->Set(ControlMode::MotionProfileArc,
-							_motProfExample->getSetValue(),
+			_talonRght.Set(ControlMode::MotionProfileArc,
+							_motProfExample.getSetValue(),
 							DemandType::DemandType_ArbitraryFeedForward,
 							feedFwdTerm);
-			_talonLeft->Follow(*_talonRght, FollowerType::FollowerType_AuxOutput1);
+			_talonLeft.Follow(_talonRght, FollowerType::FollowerType_AuxOutput1);
 		}
 
 		/* call this periodically, and catch the output.  Only apply it if user wants to run MP. */
-		_motProfExample->control();
-		_motProfExample->PeriodicTask();
+		_motProfExample.control();
+		_motProfExample.PeriodicTask();
 	}
 	//-------------- Some helpful routines ---------------//
 	void GetButtons(bool * btns) {
 		for (int i = 1; i < kNumButtonsPlusOne; ++i) {
-			btns[i] = _joy->GetRawButton(i);
+			btns[i] = _joy.GetRawButton(i);
 		}
 	}
 	void CopyButtons(bool * destination, const bool * source) {
@@ -959,7 +960,7 @@ public:
 		}
 	}
 	double Deadband(double value) {
-		if (value >= +0.05) {
+		if (value >= 0.05) {
 			return value;
 		}
 		if (value <= -0.05) {

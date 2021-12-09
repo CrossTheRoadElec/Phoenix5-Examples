@@ -64,9 +64,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
@@ -78,10 +78,10 @@ import com.ctre.phoenix.motorcontrol.FollowerType;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonSRX _leftMaster = new TalonSRX(2);
-	TalonSRX _rightMaster = new TalonSRX(1);
-	VictorSPX _tempMaster = new VictorSPX(2);
-	PigeonIMU _pidgey = new PigeonIMU(3);
+	WPI_TalonSRX _leftMaster = new WPI_TalonSRX(2);
+	WPI_TalonSRX _rightMaster = new WPI_TalonSRX(1);
+	WPI_VictorSPX _tempMaster = new WPI_VictorSPX(2);
+	WPI_PigeonIMU _pidgey = new WPI_PigeonIMU(3);
 
 	Joystick _gamepad = new Joystick(0);
 	

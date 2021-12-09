@@ -29,10 +29,10 @@ class VictorSPXSimProfile extends SimProfile {
      * Users may modify this to utilize more accurate physics simulation.
      */
     public void run() {
-        final double period = getPeriod();
+        // final double period = getPeriod();
 
         // Device voltage simulation
-        double outPerc = _victor.getMotorOutputPercent();
+        double outPerc = _victor.getSimCollection().getMotorOutputLeadVoltage() / 12;
         _victor.getSimCollection().setBusVoltage(12 - outPerc * outPerc * 3/4 * random(0.95, 1.05));
     }
 }

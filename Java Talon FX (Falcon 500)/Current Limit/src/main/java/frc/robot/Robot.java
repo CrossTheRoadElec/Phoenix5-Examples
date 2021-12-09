@@ -28,7 +28,7 @@
  * The Current Limit Feature expands across 4 different functions:
  * 1.) configPeakCurrentLimit(), Config current threshold to trigger current limit
  * 2.) configPeakCurrentDuration(), Config duration after peak current to trigger current limit
- * 3.) configContinousCurrentLimit(), Config current to mantain after limit is triggered
+ * 3.) configContinousCurrentLimit(), Config current to maintain after limit is triggered
  * 4.) enableCurrentLimit(bool enable), Enable/Disable Current Limiting on Talon
  *
  * This example has been configured to hold 10 Amps almost instantly after current
@@ -36,7 +36,7 @@
  * 
  * Controls:
  * Button 1: When held, enable Percent Output. To be used with Left Joystick Y-Axis
- * Button 2: When pressed, peform Postion Closed Loop servo to 0 position
+ * Button 2: When pressed, perform Position Closed Loop servo to 0 position
  * Button 5: When pressed, toggle between current limit Enable and Disable.
  * 	Enable/Disable state indcated through prints
  * Left Joystick Y-Axis: Throttle Talon forward and reverse when Button 1 is held
@@ -49,21 +49,30 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 
+import frc.robot.sim.PhysicsSim;
+
 public class Robot extends TimedRobot {
     /* Hardware */
-	TalonFX _tal = new TalonFX(1);
+	WPI_TalonFX _tal = new WPI_TalonFX(1, "FastFD");
     Joystick _joy = new Joystick(0);
     
     /* Tracking variables */    
 	boolean _currentLimEn = true;
 	boolean _btn5 = false;
+
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonFX(_tal, 0.5, 6800);
+	}
+	public void simulationPeriodic() {
+		PhysicsSim.getInstance().run();
+	}
 
 	public void teleopInit() {
         /* Factory Default Hardware to prevent unexpected behaviour */
@@ -97,7 +106,7 @@ public class Robot extends TimedRobot {
 		 */
         // _tal.setSensorPhase(true);
         
-        /* Gains for Postion Closed Loop servo */
+        /* Gains for Position Closed Loop servo */
 		_tal.config_kP(Constants.SLOT_0, Constants.kGains.kP, Constants.kTimeoutMs);
 		_tal.config_kI(Constants.SLOT_0, Constants.kGains.kI, Constants.kTimeoutMs);
 		_tal.config_kD(Constants.SLOT_0, Constants.kGains.kD, Constants.kTimeoutMs);

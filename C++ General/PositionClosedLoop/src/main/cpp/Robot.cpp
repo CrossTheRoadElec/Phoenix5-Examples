@@ -23,7 +23,7 @@
  */
 /**
  * Example demonstrating the Position closed-loop servo.
- * Tested with Logitech F350 USB Gamepad inserted into Driver Station]
+ * Tested with Logitech F350 USB Gamepad inserted into Driver Station.
  *
  * Be sure to select the correct feedback sensor using configSelectedFeedbackSensor() below.
  *
@@ -38,7 +38,8 @@
  *
  * Tweak the PID gains accordingly.
  */
-#include "frc/WPILib.h"
+#include "frc/TimedRobot.h"
+#include "frc/Joystick.h"
 #include "ctre/Phoenix.h"
 #include "Constants.h"
 #include "PhysicsSim.h"
@@ -47,8 +48,8 @@ using namespace frc;
 
 class Robot: public TimedRobot {
 public:
-	TalonSRX * _talon = new WPI_TalonSRX(0);
-	Joystick * _joy = new Joystick(0);
+	WPI_TalonSRX _talon{1};
+	Joystick _joy{0};
 	std::string _sb;
 	int _loops = 0;
 	bool _lastButton1 = false;
@@ -56,7 +57,7 @@ public:
 	double targetPositionRotations;
 
 	void SimulationInit() {
-    	PhysicsSim::GetInstance().AddTalonSRX(*_talon, 0.75, 2000, true);
+    	PhysicsSim::GetInstance().AddTalonSRX(_talon, 0.75, 2000, true);
 	}
 	void SimulationPeriodic() {
     	PhysicsSim::GetInstance().Run();
@@ -64,31 +65,34 @@ public:
 
 	void RobotInit() {
 		/* Factory Default all hardware to prevent unexpected behaviour */
-		_talon->ConfigFactoryDefault();
-		
-		/* lets grab the 360 degree position of the MagEncoder's absolute position */
-		int absolutePosition = _talon->GetSensorCollection().GetPulseWidthPosition() & 0xFFF; /* mask out the bottom12 bits, we don't care about the wrap arounds */
+		_talon.ConfigFactoryDefault();
+
+		/**
+		 * Grab the 360 degree position of the MagEncoder's absolute
+		 * position, and intitally set the relative sensor to match.
+		 */
+		int absolutePosition = _talon.GetSensorCollection().GetPulseWidthPosition();
 		/* use the low level API to set the quad encoder signal */
-		_talon->SetSelectedSensorPosition(absolutePosition, kPIDLoopIdx,
+		_talon.SetSelectedSensorPosition(absolutePosition, kPIDLoopIdx,
 				kTimeoutMs);
 
 		/* choose the sensor and sensor direction */
-		_talon->ConfigSelectedFeedbackSensor(
+		_talon.ConfigSelectedFeedbackSensor(
 				FeedbackDevice::CTRE_MagEncoder_Relative, kPIDLoopIdx,
 				kTimeoutMs);
-		_talon->SetSensorPhase(true);
+		_talon.SetSensorPhase(true);
 
 		/* set the peak and nominal outputs, 12V means full */
-		_talon->ConfigNominalOutputForward(0, kTimeoutMs);
-		_talon->ConfigNominalOutputReverse(0, kTimeoutMs);
-		_talon->ConfigPeakOutputForward(1, kTimeoutMs);
-		_talon->ConfigPeakOutputReverse(-1, kTimeoutMs);
+		_talon.ConfigNominalOutputForward(0, kTimeoutMs);
+		_talon.ConfigNominalOutputReverse(0, kTimeoutMs);
+		_talon.ConfigPeakOutputForward(1, kTimeoutMs);
+		_talon.ConfigPeakOutputReverse(-1, kTimeoutMs);
 
 		/* set closed loop gains in slot0 */
-		_talon->Config_kF(kPIDLoopIdx, 0.0, kTimeoutMs);
-		_talon->Config_kP(kPIDLoopIdx, 0.1, kTimeoutMs);
-		_talon->Config_kI(kPIDLoopIdx, 0.0, kTimeoutMs);
-		_talon->Config_kD(kPIDLoopIdx, 0.0, kTimeoutMs);
+		_talon.Config_kF(kPIDLoopIdx, 0.0, kTimeoutMs);
+		_talon.Config_kP(kPIDLoopIdx, 0.1, kTimeoutMs);
+		_talon.Config_kI(kPIDLoopIdx, 0.0, kTimeoutMs);
+		_talon.Config_kD(kPIDLoopIdx, 0.0, kTimeoutMs);
 	}
 
 	/**
@@ -96,31 +100,31 @@ public:
 	 */
 	void TeleopPeriodic() {
 		/* get gamepad axis */
-		double leftYstick = _joy->GetY();
-		double motorOutput = _talon->GetMotorOutputPercent();
-		bool button1 = _joy->GetRawButton(1);
-		bool button2 = _joy->GetRawButton(2);
+		double leftYstick = _joy.GetY();
+		double motorOutput = _talon.GetMotorOutputPercent();
+		bool button1 = _joy.GetRawButton(1);
+		bool button2 = _joy.GetRawButton(2);
 		/* prepare line to print */
 		_sb.append("\tout:");
 		_sb.append(std::to_string(motorOutput));
 		_sb.append("\tpos:");
-		_sb.append(std::to_string(_talon->GetSelectedSensorPosition(kPIDLoopIdx)));
+		_sb.append(std::to_string(_talon.GetSelectedSensorPosition(kPIDLoopIdx)));
 		/* on button1 press enter closed-loop mode on target position */
 		if (!_lastButton1 && button1) {
 			/* Position mode - button just pressed */
 			targetPositionRotations = leftYstick * 10.0 * 4096; /* 10 Rotations in either direction */
-			_talon->Set(ControlMode::Position, targetPositionRotations); /* 10 rotations in either direction */
+			_talon.Set(ControlMode::Position, targetPositionRotations); /* 10 rotations in either direction */
 		}
 		/* on button2 just straight drive */
 		if (button2) {
 			/* Percent voltage mode */
-			_talon->Set(ControlMode::PercentOutput, leftYstick);
+			_talon.Set(ControlMode::PercentOutput, leftYstick);
 		}
 		/* if Talon is in position closed-loop, print some more info */
-		if (_talon->GetControlMode() == ControlMode::Position) {
+		if (_talon.GetControlMode() == ControlMode::Position) {
 			/* append more signals to print when in speed mode. */
 			_sb.append("\terrNative:");
-			_sb.append(std::to_string(_talon->GetClosedLoopError(kPIDLoopIdx)));
+			_sb.append(std::to_string(_talon.GetClosedLoopError(kPIDLoopIdx)));
 			_sb.append("\ttrg:");
 			_sb.append(std::to_string(targetPositionRotations));
 		}

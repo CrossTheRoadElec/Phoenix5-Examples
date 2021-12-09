@@ -23,8 +23,8 @@ public:
 	void SimulationPeriodic() override;
 
 private:
-	TalonSRX *_talon;
-	frc::Joystick *_joy;
+	WPI_TalonSRX _talon{1};
+	frc::Joystick _joy{0};
 
 	int _smoothing;
 };

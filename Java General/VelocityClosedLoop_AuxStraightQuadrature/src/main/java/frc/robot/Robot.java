@@ -25,7 +25,7 @@
 /**
  * Description:
  * The VelocityClosedLoop_AuxStraightQuadrature example demonstrates the new Talon/Victor auxiliary
- * and remote features used to peform complex closed loops. This example has the robot performing 
+ * and remote features used to perform complex closed loops. This example has the robot performing 
  * Velocity closed loop with an auxiliary closed loop on quadrature encoders difference (Heading)
  * to keep the robot straight.
  * 
@@ -79,8 +79,8 @@ import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonSRX _leftMaster = new WPI_TalonSRX(2);
-	TalonSRX _rightMaster = new WPI_TalonSRX(1);
+	WPI_TalonSRX _leftMaster = new WPI_TalonSRX(2);
+	WPI_TalonSRX _rightMaster = new WPI_TalonSRX(1);
 	Joystick _gamepad = new Joystick(0);
 	
 	/** Latched values to detect on-press events for buttons */

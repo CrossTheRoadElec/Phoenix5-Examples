@@ -76,16 +76,16 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.RemoteFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.can.*;
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
 public class Robot extends TimedRobot {
 
     /** pigeon instance, this is instantiated later, leave this alone */
-    PigeonIMU _pidgey;
+    WPI_PigeonIMU _pidgey;
 
     /* pick one of these */
-    TalonSRX _pigeonTalon = null;//new TalonSRX(0); /* Pigeon is ribbon cabled to this Talon */
-    // TalonSRX _pigeonTalon = null; /* Pigeon is on CAN bus, so there is no Talon to create
+    WPI_TalonSRX _pigeonTalon = null;//new WPI_TalonSRX(0); /* Pigeon is ribbon cabled to this Talon */
+    // WPI_TalonSRX _pigeonTalon = null; /* Pigeon is on CAN bus, so there is no Talon to create
 
     /**
      * if Pigeon is on CAN-bus, enter the device ID. its connected to Talon, this
@@ -125,9 +125,9 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         /* create the pigeon */
         if (IsPigeonOnCanbus())
-            _pidgey = new PigeonIMU(kPigeonID);
+            _pidgey = new WPI_PigeonIMU(kPigeonID);
         else
-            _pidgey = new PigeonIMU(_pigeonTalon);
+            _pidgey = new WPI_PigeonIMU(_pigeonTalon);
 
         /*
          * if using the pigeon in your Talon closed loop, setup talon to capture Pigeon
@@ -180,7 +180,6 @@ public class Robot extends TimedRobot {
         } else {
 
             RemoteSensorSource senSource = RemoteSensorSource.Pigeon_Yaw;
-            String msg = "";
 
             switch (_axisSelection) {
                 case 0:

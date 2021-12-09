@@ -26,11 +26,11 @@ public:
 
 private:
 	int _state;
-	TalonSRX *_master;
-	frc::Joystick *_joy;
-	BufferedTrajectoryPointStream *_bufferedStream;
-	MotionProfileConfiguration *_configuration;
-	PlotThread *_plotThread;
+	WPI_TalonSRX _master{1};
+	frc::Joystick _joy{0};
+	BufferedTrajectoryPointStream _bufferedStream;
+	MotionProfileConfiguration _configuration;
+	PlotThread _plotThread{&_master};
 
 	void InitBuffer(const double profile[][3], int totalCnt);
 };

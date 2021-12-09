@@ -57,20 +57,22 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.sensors.*;
 
 public class Robot extends TimedRobot {
     /* Hardware */
-	TalonSRX _leftFront;    // Drivetrain
-	VictorSPX _rightFront;  // Drivetrain
-	TalonSRX _leftRear;     // Drivetrain
-	TalonSRX _rightRear;    // Drivetrain
-    TalonSRX _spareTalon;   // Optional Talon, Can be used for Remote Talon (Can be removed)
-    PigeonIMU _pidgey;      // Pigeon IMU used to enforce straight drive
+	WPI_TalonSRX _leftFront;    // Drivetrain
+	WPI_TalonSRX _rightFront;  // Drivetrain
+	WPI_TalonSRX _leftRear;     // Drivetrain
+	WPI_TalonSRX _rightRear;    // Drivetrain
+    WPI_TalonSRX _spareTalon;   // Optional Talon, Can be used for Remote Talon (Can be removed)
+    WPI_PigeonIMU _pidgey;      // Pigeon IMU used to enforce straight drive
 	Joystick _driveStick;	// Joystick object on USB port 1
 
 	/** States for tracking whats controlling the drivetrain */
@@ -96,53 +98,70 @@ public class Robot extends TimedRobot {
 	/** Count loops to print every second or so */
 	int _printLoops = 0;
 
-	public Robot() {
-        /* Init Hardware */
-		_leftFront = new TalonSRX(1);
-		_rightFront = new VictorSPX(2);
-		_leftRear = new TalonSRX(3);
-		_rightRear = new TalonSRX(2);
-		//_spareTalon = new TalonSRX(0);	
+	DrivebaseSimSRX _driveSim;
+
+	public void simulationPeriodic() {
+		_driveSim.run();
+	}
+
+	public void robotInit() {
+		/* Init Hardware */
+		_leftFront = new WPI_TalonSRX(1);
+		_rightFront = new WPI_TalonSRX(2);
+		_leftRear = new WPI_TalonSRX(3);
+		_rightRear = new WPI_TalonSRX(4);
+		_spareTalon = new WPI_TalonSRX(0);	
 
         /**
 		 * Set isPigeonOnCAN to:
          * True if Pigeon is Connected through CAN 
          * False if connected through gadgeteer (Constructor takes the Talon it is connected to)
          */
-        boolean isPigeonOnCAN = true;
+        boolean isPigeonOnCAN = false;
         if(isPigeonOnCAN){
             /* Pigeon is on CANBus (powered from ~12V, and has a device ID of zero) */
-            _pidgey = new PigeonIMU(3);             // Change ID accordingly 
+            _pidgey = new WPI_PigeonIMU(3);             // Change ID accordingly 
         }else{
             /* Pigeon is ribbon cabled to the specified CANTalon. */
-            _pidgey = new PigeonIMU(_spareTalon);   // Change Talon Accordingly
+            _pidgey = new WPI_PigeonIMU(_spareTalon);   // Change Talon Accordingly
         }
 
 		/* Define joystick being used at USB port #0 on the Drivers Station */
-		_driveStick = new Joystick(0);	
+		_driveStick = new Joystick(0);
+
+		_driveSim = new DrivebaseSimSRX(_leftFront, _rightFront, _pidgey);
+		SmartDashboard.putData("Field", _driveSim.getField());
 	}
 	
-    public void teleopInit() {
-        /* Factory Default all Hardware to prevent unexpected behaviour */
-        _rightFront.configFactoryDefault();
-        _leftFront.configFactoryDefault();
-        _rightRear.configFactoryDefault();
-        _leftRear.configFactoryDefault();
-        _pidgey.configFactoryDefault();
+	public void teleopInit() {
+		/* Factory Default all Hardware to prevent unexpected behaviour */
+		_rightFront.configFactoryDefault();
+		_leftFront.configFactoryDefault();
+		_rightRear.configFactoryDefault();
+		_leftRear.configFactoryDefault();
+		_pidgey.configFactoryDefault();
+		
+		_leftRear.follow(_leftFront);
+		_rightRear.follow(_rightFront);
+		
+		_leftFront.setInverted(InvertType.None);
+		_leftRear.setInverted(InvertType.FollowMaster);
+		_rightFront.setInverted(InvertType.InvertMotorOutput);
+		_rightRear.setInverted(InvertType.FollowMaster);
 
-        /* nonzero to block the config until success, zero to skip checking */
-        final int kTimeoutMs = 30;
-    
-        /* reset heading, angle measurement wraps at plus/minus 23,040 degrees (64 rotations) */
-    	_pidgey.setFusedHeading(0.0, kTimeoutMs);
-		_goStraight = GoStraight.Off;    //Start example with GoStraight Off
-    }
+		/* nonzero to block the config until success, zero to skip checking */
+		final int kTimeoutMs = 30;
 	
-    /**
-     * This function is called periodically during operator control
-     */
-    public void teleopPeriodic() {
-    	/* get Pigeon status information from Pigeon API */
+		/* reset heading, angle measurement wraps at plus/minus 23,040 degrees (64 rotations) */
+		_pidgey.setFusedHeading(0.0, kTimeoutMs);
+		_goStraight = GoStraight.Off;    //Start example with GoStraight Off
+	}
+	
+	/**
+	 * This function is called periodically during operator control
+	 */
+	public void teleopPeriodic() {
+		/* get Pigeon status information from Pigeon API */
 		PigeonIMU.GeneralStatus genStatus = new PigeonIMU.GeneralStatus();
 		PigeonIMU.FusionStatus fusionStatus = new PigeonIMU.FusionStatus();
 		double [] xyz_dps = new double [3];
@@ -150,7 +169,7 @@ public class Robot extends TimedRobot {
 		_pidgey.getGeneralStatus(genStatus);
 		_pidgey.getRawGyro(xyz_dps);
 		_pidgey.getFusedHeading(fusionStatus);
-        double currentAngle = fusionStatus.heading;
+		double currentAngle = fusionStatus.heading;
 		boolean angleIsGood = (_pidgey.getState() == PigeonIMU.PigeonState.Ready) ? true : false;
 		double currentAngularRate = xyz_dps[2];
 		/* get input from gamepad */
@@ -159,8 +178,8 @@ public class Robot extends TimedRobot {
 		double turnThrottle = _driveStick.getTwist() * -0.5;/* sign so that positive means turn left */
 		/* deadbands so centering joysticks always results in zero output */
 		forwardThrottle = Deadband(forwardThrottle);
-        turnThrottle = Deadband(turnThrottle);
-        
+		turnThrottle = Deadband(turnThrottle);
+		
 		/* state machine to update our goStraight selection */
 		switch (_goStraight) {
 			/* go straight is off, better check gamepad to see if we should enable the feature */
@@ -175,8 +194,8 @@ public class Robot extends TimedRobot {
 					_goStraight = GoStraight.UsePigeon;
 					_targetAngle = currentAngle;
 				}
-                break;
-                
+				break;
+				
 			/* we are servo-ing heading with Pigeon */
 			case UsePigeon:
 				if (userWantsGoStraight == false) {
@@ -223,9 +242,7 @@ public class Robot extends TimedRobot {
 
 		/* our right side motors need to drive negative to move robot forward */
 		_leftFront.set(ControlMode.PercentOutput, left);
-		_leftRear.set(ControlMode.PercentOutput, left);
-		_rightFront.set(ControlMode.PercentOutput, -1. * right);
-		_rightRear.set(ControlMode.PercentOutput, -1. * right);
+		_rightFront.set(ControlMode.PercentOutput, right);
 
 		/* Prints for debugging */
 		if (++_printLoops > 50){
@@ -240,7 +257,7 @@ public class Robot extends TimedRobot {
 			System.out.println( angleIsGood ? "Angle is good" : "Angle is NOT GOOD");
 			System.out.println("------------------------------------------");
 		}
-    }
+	}
 
     /** 
      * @param axisVal to deadband.

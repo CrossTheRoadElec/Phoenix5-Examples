@@ -38,6 +38,7 @@ import java.util.ArrayList;
 
 import com.ctre.phoenix.music.Orchestra;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -52,7 +53,7 @@ public class Robot extends TimedRobot {
 
     /* Talon FXs to play music through.  
     More complex music MIDIs will contain several tracks, requiring multiple instruments.  */
-    TalonFX [] _fxes =  { new TalonFX(1), new TalonFX(2) };
+    WPI_TalonFX [] _fxes =  { new WPI_TalonFX(1, "FastFD"), new WPI_TalonFX(2, "FastFD") };
 
     /* An array of songs that are available to be played, can you guess the song/artists? */
   String[] _songs = new String[] {

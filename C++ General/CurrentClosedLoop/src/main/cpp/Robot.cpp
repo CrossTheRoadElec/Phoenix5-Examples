@@ -24,7 +24,8 @@
 #include <iostream>
 #include <string>
 
-#include "frc/WPILib.h"
+#include "frc/TimedRobot.h"
+#include "frc/Joystick.h"
 #include "ctre/Phoenix.h"
 #include "Constants.h"
 
@@ -32,26 +33,26 @@ using namespace frc;
 
 class Robot: public TimedRobot {
 private:
-	TalonSRX * _talon = new TalonSRX(0);
-	Joystick * _joy = new Joystick(0);
+	TalonSRX _talon{1};
+	Joystick _joy{0};
 	std::string _sb;
 	int _loops = 0;
 
 	void RobotInit() {
 		/* Factory Default all hardware to prevent unexpected behaviour */
-		_talon->ConfigFactoryDefault();
+		_talon.ConfigFactoryDefault();
 
 		/* set the peak and nominal outputs, 12V means full */
-		_talon->ConfigNominalOutputForward(0, kTimeoutMs);
-		_talon->ConfigNominalOutputReverse(0, kTimeoutMs);
-		_talon->ConfigPeakOutputForward(1, kTimeoutMs);
-		_talon->ConfigPeakOutputReverse(-1, kTimeoutMs);
+		_talon.ConfigNominalOutputForward(0, kTimeoutMs);
+		_talon.ConfigNominalOutputReverse(0, kTimeoutMs);
+		_talon.ConfigPeakOutputForward(1, kTimeoutMs);
+		_talon.ConfigPeakOutputReverse(-1, kTimeoutMs);
 
 		/* set closed loop gains in slot0 */
-		_talon->Config_kF(kPIDLoopIdx, 0.0, kTimeoutMs);
-		_talon->Config_kP(kPIDLoopIdx, 0.0, kTimeoutMs);
-		_talon->Config_kI(kPIDLoopIdx, 0.0, kTimeoutMs);
-		_talon->Config_kD(kPIDLoopIdx, 0.0, kTimeoutMs);
+		_talon.Config_kF(kPIDLoopIdx, 0.0, kTimeoutMs);
+		_talon.Config_kP(kPIDLoopIdx, 0.1, kTimeoutMs);
+		_talon.Config_kI(kPIDLoopIdx, 0.001, kTimeoutMs);
+		_talon.Config_kD(kPIDLoopIdx, 0.0, kTimeoutMs);
 	}
 
 	/**
@@ -59,27 +60,27 @@ private:
 	 */
 	void TeleopPeriodic() {
 		/* get gamepad axis */
-		double leftYstick = _joy->GetY();
-		double motorOutput = _talon->GetMotorOutputPercent();
-		bool button1 = _joy->GetRawButton(1);
+		double leftYstick = _joy.GetY();
+		double motorOutput = _talon.GetMotorOutputPercent();
+		bool button1 = _joy.GetRawButton(1);
 
 		/* prepare line to print */
 		_sb.append("\tout:");
 		_sb.append(std::to_string(motorOutput));
 		_sb.append("\tcur:");
-		_sb.append(std::to_string(_talon->GetOutputCurrent()));
+		_sb.append(std::to_string(_talon.GetOutputCurrent()));
 		/* on button1 press enter closed-loop mode on target position */
 		if (button1) {
 			/* Position mode - button just pressed */
-			_talon->Set(ControlMode::Current, leftYstick * 40); /* 40 Amps in either direction */
+			_talon.Set(ControlMode::Current, leftYstick * 40); /* 40 Amps in either direction */
 		} else {
-			_talon->Set(ControlMode::PercentOutput, leftYstick);
+			_talon.Set(ControlMode::PercentOutput, leftYstick);
 		}
 		/* if Talon is in position closed-loop, print some more info */
-		if (_talon->GetControlMode() == ControlMode::Current) {
+		if (_talon.GetControlMode() == ControlMode::Current) {
 			/* append more signals to print when in speed mode. */
 			_sb.append("\terrNative:");
-			_sb.append(std::to_string(_talon->GetClosedLoopError(kPIDLoopIdx)));
+			_sb.append(std::to_string(_talon.GetClosedLoopError(kPIDLoopIdx)));
 			_sb.append("\ttrg:");
 			_sb.append(std::to_string(leftYstick * 40));
 		}

@@ -54,7 +54,7 @@ import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Robot extends TimedRobot {
     /** Hardware */
-	TalonSRX _talon = new TalonSRX(1);
+	WPI_TalonSRX _talon = new WPI_TalonSRX(1);
 	Joystick _joy = new Joystick(0);
 	
     /** Used to build string throughout loop */
@@ -110,7 +110,7 @@ public class Robot extends TimedRobot {
 		_sb.append("%");	// Percent
 
 		_sb.append("\tcur:");
-		_sb.append(_talon.getOutputCurrent());
+		_sb.append(_talon.getSupplyCurrent());
 		_sb.append("A");	// Amps
 
 		/** 

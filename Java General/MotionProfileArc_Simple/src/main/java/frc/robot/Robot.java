@@ -63,12 +63,11 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
-import com.ctre.phoenix.platform.can.AutocacheState;
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 import com.ctre.phoenix.motion.*;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
 
@@ -76,11 +75,11 @@ public class Robot extends TimedRobot {
     int _state = 0;
 
     /** a master talon, add followers if need be. */
-    TalonSRX _rightMaster = new TalonSRX(0);
+    WPI_TalonSRX _rightMaster = new WPI_TalonSRX(0);
 
-    TalonSRX _leftAuxFollower = new TalonSRX(1);
+    WPI_TalonSRX _leftAuxFollower = new WPI_TalonSRX(1);
 
-    PigeonIMU _pidgy = new PigeonIMU(0);
+    WPI_PigeonIMU _pidgy = new WPI_PigeonIMU(0);
 
     /** gamepad for control */
     Joystick _joy = new Joystick(0);
@@ -93,6 +92,13 @@ public class Robot extends TimedRobot {
     
     /* quick and dirty plotter to smartdash */
     PlotThread _plotThread = new PlotThread(_rightMaster);
+
+    DrivebaseSimSRX _driveSim = new DrivebaseSimSRX(_leftAuxFollower, _rightMaster, _pidgy);
+
+    @Override
+    public void simulationPeriodic() {
+        _driveSim.run();
+    }
 
     public void robotInit() {
 
@@ -149,6 +155,8 @@ public class Robot extends TimedRobot {
         _rightMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20); /* plotthread is polling aux-pid-sensor-pos */
         _rightMaster.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20);
         _rightMaster.setStatusFramePeriod(StatusFrame.Status_17_Targets1, 20);
+        
+		SmartDashboard.putData("Field", _driveSim.getField());
     }
 
     public void robotPeriodic() {

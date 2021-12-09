@@ -58,12 +58,14 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+
+import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonFX _talon = new TalonFX(1);	// Talon to Motion Profile
+	WPI_TalonFX _talon = new WPI_TalonFX(1, "FastFD");	// Talon to Motion Profile
 	Joystick _joy = new Joystick(0);	// Joystick for testing
 
 	/** Invert Directions for Left and Right */
@@ -82,6 +84,13 @@ public class Robot extends TimedRobot {
 	 */
 	boolean[] _previousBtns = {	false, false, false, false, false, 
 								false, false, false, false, false};
+	
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonFX(_talon, 0.5, 7200);
+	}
+	public void simulationPeriodic() {
+		PhysicsSim.getInstance().run();
+	}
 
 	/** Run once after booting/enter-disable */
 	public void disabledInit() {
@@ -131,7 +140,7 @@ public class Robot extends TimedRobot {
 
 		/**
 		 * Get the left joystick axis on Logitech Gampead, 
-		 * Joystick forward should be postive 
+		 * Joystick forward should be positive 
 		 */
 		double leftYjoystick = -1 * _joy.getY();
 

@@ -51,11 +51,7 @@ void PrintValue(MagnetFieldStrength val, std::string units, double timestamp)
     printf("%20d %-20s @ %f\n", val, units.c_str(), timestamp);
 }
 
-void Robot::RobotInit()
-{
-    _CANCoder = new CANCoder(0);
-    _joy = new frc::Joystick(0);
-}
+void Robot::RobotInit() {}
 
 int count = 0;
 void Robot::RobotPeriodic()
@@ -65,26 +61,26 @@ void Robot::RobotPeriodic()
         count = 0;
 
         /* Report position, absolute position, velocity, battery voltage */
-        double posValue = _CANCoder->GetPosition();
-        std::string posUnits = _CANCoder->GetLastUnitString();
-        double posTstmp = _CANCoder->GetLastTimestamp();
+        double posValue = _CANCoder.GetPosition();
+        std::string posUnits = _CANCoder.GetLastUnitString();
+        double posTstmp = _CANCoder.GetLastTimestamp();
 
-        double absValue = _CANCoder->GetAbsolutePosition();
-        std::string absUnits = _CANCoder->GetLastUnitString();
-        double absTstmp = _CANCoder->GetLastTimestamp();
+        double absValue = _CANCoder.GetAbsolutePosition();
+        std::string absUnits = _CANCoder.GetLastUnitString();
+        double absTstmp = _CANCoder.GetLastTimestamp();
 
-        double velValue = _CANCoder->GetVelocity();
-        std::string velUnits = _CANCoder->GetLastUnitString();
-        double velTstmp = _CANCoder->GetLastTimestamp();
+        double velValue = _CANCoder.GetVelocity();
+        std::string velUnits = _CANCoder.GetLastUnitString();
+        double velTstmp = _CANCoder.GetLastTimestamp();
 
-        double batValue = _CANCoder->GetBusVoltage();
-        std::string batUnits = _CANCoder->GetLastUnitString();
-        double batTstmp = _CANCoder->GetLastTimestamp();
+        double batValue = _CANCoder.GetBusVoltage();
+        std::string batUnits = _CANCoder.GetLastUnitString();
+        double batTstmp = _CANCoder.GetLastTimestamp();
 
         /* Report miscellaneous attributes about the CANCoder */
-        MagnetFieldStrength magnetStrength = _CANCoder->GetMagnetFieldStrength();
-        std::string magnetStrengthUnits = _CANCoder->GetLastUnitString();
-        double magnetStrengthTstmp = _CANCoder->GetLastTimestamp();
+        MagnetFieldStrength magnetStrength = _CANCoder.GetMagnetFieldStrength();
+        std::string magnetStrengthUnits = _CANCoder.GetLastUnitString();
+        double magnetStrengthTstmp = _CANCoder.GetLastTimestamp();
 
         printf("Position: ");
         PrintValue(posValue, posUnits, posTstmp);
@@ -99,9 +95,9 @@ void Robot::RobotPeriodic()
 
         /* Fault reporting */
         CANCoderFaults faults = {0};
-        _CANCoder->GetFaults(faults);
+        _CANCoder.GetFaults(faults);
         CANCoderStickyFaults stickyFaults = {0};
-        _CANCoder->GetStickyFaults(stickyFaults);
+        _CANCoder.GetStickyFaults(stickyFaults);
 
         printf("Faults:\n");
         PrintFaults(faults);
@@ -110,9 +106,9 @@ void Robot::RobotPeriodic()
 
         printf("\n\n");
     }
-    if (_joy->GetRawButton(1))
+    if (_joy.GetRawButton(1))
     {
-        _CANCoder->ClearStickyFaults();
+        _CANCoder.ClearStickyFaults();
     }
 }
 

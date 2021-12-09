@@ -43,16 +43,29 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
+import frc.robot.sim.PhysicsSim;
+
 public class Robot extends TimedRobot {
 	/** Hardware, either Talon could be a Victor */
-	TalonFX _leftMaster = new TalonFX(2);
-	TalonFX _rightMaster = new TalonFX(1);
+	WPI_TalonFX _leftMaster = new WPI_TalonFX(2, "FastFD");
+	WPI_TalonFX _rightMaster = new WPI_TalonFX(1, "FastFD");
 	Joystick _gamepad = new Joystick(0);
+
+	@Override
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonFX(_leftMaster, 0.5, 6800);
+		PhysicsSim.getInstance().addTalonFX(_rightMaster, 0.5, 6800);
+	}
+
+	@Override
+	public void simulationPeriodic() {
+		PhysicsSim.getInstance().run();
+	}
 
 	@Override
 	public void robotInit() {

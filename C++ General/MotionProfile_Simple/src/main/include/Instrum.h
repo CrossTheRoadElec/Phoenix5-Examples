@@ -18,7 +18,7 @@ public:
 		std::cout << s << std::endl;
 	}
 
-	static void Loop(bool bPrintValues, TalonSRX *talon) {
+	static void Loop(bool bPrintValues, TalonSRX& talon) {
 		if (!_bPrintValues && bPrintValues) {
 			/* user just pressed button, immediete print */
 			_loops = 999;
@@ -36,7 +36,7 @@ public:
 			_loops = 0;
 			/* get status info */
 			MotionProfileStatus status;
-			talon->GetMotionProfileStatus(status);
+			talon.GetMotionProfileStatus(status);
 
 			std::stringstream line;
 			line << "  topBufferRem: " << status.topBufferRem << "\n";

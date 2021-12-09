@@ -34,7 +34,8 @@
 #include <memory>
 #include <string>
 
-#include "frc/WPILib.h"
+#include "frc/TimedRobot.h"
+#include "frc/Joystick.h"
 #include "ctre/Phoenix.h"
 #include "PhysicsSim.h"
 
@@ -42,8 +43,8 @@ using namespace frc;
 
 class Robot: public TimedRobot {
 public:
-	TalonSRX *_srx = new WPI_TalonSRX(0);
-	Joystick * _joy = new Joystick(0);
+	WPI_TalonSRX _srx{1};
+	Joystick _joy{0};
 	std::stringstream _work;
 
 	/* temps for compare */
@@ -55,7 +56,7 @@ public:
 	int _isRevLimitSwitchClosed = 0;
 
 	void SimulationInit() {
-		PhysicsSim::GetInstance().AddTalonSRX(*_srx, 0.75, 2000);
+		PhysicsSim::GetInstance().AddTalonSRX(_srx, 0.75, 2000);
 	}
 	void SimulationPeriodic() {
     	PhysicsSim::GetInstance().Run();
@@ -65,31 +66,31 @@ public:
 	const int kTimeoutMs = 30;
 	void RobotInit(){
 		/* Factory Default all hardware to prevent unexpected behaviour */
-		_srx->ConfigFactoryDefault();
+		_srx.ConfigFactoryDefault();
 	}
 	/* everytime we enter disable, reinit*/
 	void DisabledInit() {
-		_srx->ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10); /* MagEncoder meets the requirements for Unit-Scaling */
-		_srx->SetStatusFramePeriod(StatusFrame::Status_1_General_, 5, 10); /* Talon will send new frame every 5ms */
+		_srx.ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, 10); /* MagEncoder meets the requirements for Unit-Scaling */
+		_srx.SetStatusFramePeriod(StatusFrame::Status_1_General_, 5, 10); /* Talon will send new frame every 5ms */
 	}
 	/* every loop */
 	void TeleopPeriodic() {
-		bool btn1 = _joy->GetRawButton(1); /* get buttons */
-		bool btn2 = _joy->GetRawButton(2);
-		bool btn3 = _joy->GetRawButton(3);
-		bool btn4 = _joy->GetRawButton(4);
-		double output = -1.0 * _joy->GetY(); /* forward is positive */
-		int isFwdLimitSwitchClosed =_srx->GetSensorCollection().IsFwdLimitSwitchClosed();
-		int isRevLimitSwitchClosed =_srx->GetSensorCollection().IsRevLimitSwitchClosed();
+		bool btn1 = _joy.GetRawButton(1); /* get buttons */
+		bool btn2 = _joy.GetRawButton(2);
+		bool btn3 = _joy.GetRawButton(3);
+		bool btn4 = _joy.GetRawButton(4);
+		double output = -_joy.GetY(); /* forward is positive */
+		int isFwdLimitSwitchClosed =_srx.GetSensorCollection().IsFwdLimitSwitchClosed();
+		int isRevLimitSwitchClosed =_srx.GetSensorCollection().IsRevLimitSwitchClosed();
 
 		/* on button unpress => press, change pos register */
 		if (!_btn1 && btn1) {
-			_srx->ConfigForwardLimitSwitchSource(
+			_srx.ConfigForwardLimitSwitchSource(
 					LimitSwitchSource::LimitSwitchSource_FeedbackConnector,
 					LimitSwitchNormal::LimitSwitchNormal_NormallyOpen,
 					kTimeoutMs);
 
-			_srx->ConfigReverseLimitSwitchSource(
+			_srx.ConfigReverseLimitSwitchSource(
 					LimitSwitchSource::LimitSwitchSource_FeedbackConnector,
 					LimitSwitchNormal::LimitSwitchNormal_NormallyOpen,
 					kTimeoutMs);
@@ -99,12 +100,12 @@ public:
 		}
 		/* on button unpress => press, change pos register */
 		if (!_btn2 && btn2) {
-			_srx->ConfigForwardLimitSwitchSource(
+			_srx.ConfigForwardLimitSwitchSource(
 					LimitSwitchSource::LimitSwitchSource_FeedbackConnector,
 					LimitSwitchNormal::LimitSwitchNormal_NormallyClosed,
 					kTimeoutMs);
 
-			_srx->ConfigReverseLimitSwitchSource(
+			_srx.ConfigReverseLimitSwitchSource(
 					LimitSwitchSource::LimitSwitchSource_FeedbackConnector,
 					LimitSwitchNormal::LimitSwitchNormal_NormallyClosed,
 					kTimeoutMs);
@@ -118,7 +119,7 @@ public:
 			/* only print on change */
 			_work << "OverrideLimitSwitchesEnable(" << (!btn3 ? "1" : "0") << ")" << std::endl;
 		}
-		_srx->OverrideLimitSwitchesEnable(!btn3);/* when button is down, force off the limit switch */
+		_srx.OverrideLimitSwitchesEnable(!btn3);/* when button is down, force off the limit switch */
 
 		/* print any changes to limit switch input */
 		if (isFwdLimitSwitchClosed != _isFwdLimitSwitchClosed) {
@@ -131,7 +132,7 @@ public:
 		}
 
 		/* direct control of motor controller */
-		_srx->Set(ControlMode::PercentOutput, output);
+		_srx.Set(ControlMode::PercentOutput, output);
 
 		/* print any rendered strings, and clear work */
 		printf(_work.str().c_str());

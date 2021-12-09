@@ -37,7 +37,8 @@
  */
 #include <string>
 
-#include "frc/WPILib.h"
+#include "frc/TimedRobot.h"
+#include "frc/Joystick.h"
 #include "ctre/Phoenix.h"
 #include "Configs.h"
 
@@ -46,13 +47,13 @@ using namespace frc;
 class Robot: public TimedRobot {
 private:
 	/* Hardware */
-	TalonSRX * _talon = new WPI_TalonSRX(23);
-	VictorSPX * _victor = new WPI_VictorSPX(2);
-	PigeonIMU * _pigeon = new PigeonIMU(3);
-	CANifier * _canifier = new CANifier(4);
-	CANCoder * _canCoder = new CANCoder(5);
-	TalonFX * _fx = new TalonFX(6);
-	Joystick * _joy = new Joystick(0);
+	WPI_TalonSRX _talon{23};
+	WPI_VictorSPX _victor{2};
+	WPI_PigeonIMU _pigeon{3};
+	CANifier _canifier{4};
+	WPI_CANCoder _canCoder{5};
+	WPI_TalonFX _fx{6};
+	Joystick _joy{0};
 
 	/* Config Class */
 	configs _custom_configs;
@@ -83,12 +84,12 @@ private:
 	 */
 	void TeleopPeriodic() {
 		/* get gamepad buttons */
-		int pov = _joy->GetPOV();
+		int pov = _joy.GetPOV();
 		bool leftArrow = pov == 270;
 		bool rightArrow = pov == 90;
-        bool button1 = _joy->GetRawButton(1); // read device
-		bool button5 = _joy->GetRawButton(5); // custom configs
-		bool button6 = _joy->GetRawButton(6); // factory default
+        bool button1 = _joy.GetRawButton(1); // read device
+		bool button5 = _joy.GetRawButton(5); // custom configs
+		bool button6 = _joy.GetRawButton(6); // factory default
 
 		/* Change selected device based on directional input */
 		if(leftArrow && ! _leftArrowLast) {
@@ -121,7 +122,7 @@ private:
 					printf("read talon\n");
 					
 					TalonSRXConfiguration read_talon;
-					_talon->GetAllConfigs(read_talon);
+					_talon.GetAllConfigs(read_talon);
 
 					printf(read_talon.toString("_talon").c_str());
 					break;
@@ -130,7 +131,7 @@ private:
 					printf("read victor\n");
 
 					VictorSPXConfiguration read_victor;
-					_victor->GetAllConfigs(read_victor);
+					_victor.GetAllConfigs(read_victor);
 
 					printf(read_victor.toString("_victor").c_str());
 					break;
@@ -139,7 +140,7 @@ private:
 					printf("read canifier\n");
 
 					CANifierConfiguration read_canifier;
-					_canifier->GetAllConfigs(read_canifier);
+					_canifier.GetAllConfigs(read_canifier);
 
 					printf(read_canifier.toString("_canifier").c_str());
 					break;
@@ -148,7 +149,7 @@ private:
 					printf("read pigeon\n");
 
 					PigeonIMUConfiguration read_pigeon;
-					_pigeon->GetAllConfigs(read_pigeon);
+					_pigeon.GetAllConfigs(read_pigeon);
 
 					printf(read_pigeon.toString("_pigeon").c_str());
 					break;
@@ -157,7 +158,7 @@ private:
 					printf("read cancoder\n");
 
 					CANCoderConfiguration read_cancoder;
-					_canCoder->GetAllConfigs(read_cancoder);
+					_canCoder.GetAllConfigs(read_cancoder);
 
 					printf(read_cancoder.toString("_canCoder").c_str());
 					break;
@@ -166,7 +167,7 @@ private:
 					printf("read talonfx\n");
 
 					TalonFXConfiguration read_talonfx;
-					_fx->GetAllConfigs(read_talonfx);
+					_fx.GetAllConfigs(read_talonfx);
 
 					printf(read_talonfx.toString("_fx").c_str());
 					break;
@@ -179,12 +180,12 @@ private:
 		else if(button5 && !_button5_last) {
 			printf("custom config start\n");
 
-			_talon->ConfigAllSettings(_custom_configs._talon);
-			_victor->ConfigAllSettings(_custom_configs._victor);
-			_pigeon->ConfigAllSettings(_custom_configs._pigeon);
-			_canifier->ConfigAllSettings(_custom_configs._canifier);
-			_canCoder->ConfigAllSettings(_custom_configs._canCoder);
-			_fx->ConfigAllSettings(_custom_configs._fx);
+			_talon.ConfigAllSettings(_custom_configs._talon);
+			_victor.ConfigAllSettings(_custom_configs._victor);
+			_pigeon.ConfigAllSettings(_custom_configs._pigeon);
+			_canifier.ConfigAllSettings(_custom_configs._canifier);
+			_canCoder.ConfigAllSettings(_custom_configs._canCoder);
+			_fx.ConfigAllSettings(_custom_configs._fx);
 
 			printf("custom config finish\n");
 		}
@@ -192,12 +193,12 @@ private:
 		else if(button6 && !_button6_last) {
 			printf("factory default start\n");
 
-			_talon->ConfigFactoryDefault();
-        	_victor->ConfigFactoryDefault();
-			_pigeon->ConfigFactoryDefault();
-        	_canifier->ConfigFactoryDefault();
-			_canCoder->ConfigFactoryDefault();
-			_fx->ConfigFactoryDefault();
+			_talon.ConfigFactoryDefault();
+        	_victor.ConfigFactoryDefault();
+			_pigeon.ConfigFactoryDefault();
+        	_canifier.ConfigFactoryDefault();
+			_canCoder.ConfigFactoryDefault();
+			_fx.ConfigFactoryDefault();
         	
             printf("factory default finish\n");
 		}

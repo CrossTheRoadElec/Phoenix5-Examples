@@ -47,7 +47,8 @@
  * 
  * Release button5 to allow OpenVoltage control with left y axis.
  */
-#include "frc/WPILib.h"
+#include "frc/TimedRobot.h"
+#include "frc/Joystick.h"
 #include "Instrumentation.h"
 #include "MotionProfileExample.h"
 #include "ctre/Phoenix.h"
@@ -59,23 +60,19 @@ using namespace frc;
 class Robot: public TimedRobot {
 public:
 	/** The Talon we want to motion profile. */
-	WPI_TalonSRX _talon;
-	WPI_VictorSPX _vic;
+	WPI_TalonSRX _talon{Constants::kTalonID};
+	WPI_VictorSPX _vic{Constants::kVictorFollower};
 
 	/** some example logic on how one can manage an MP */
-	MotionProfileExample _example;
+	MotionProfileExample _example{_talon};
 
 	/** joystick for testing */
-	Joystick _joy;
+	Joystick _joy{0};
 
 	/** cache last buttons so we can detect press events.  In a command-based project you can leverage the on-press event
 	 * but for this simple example, lets just do quick compares to prev-btn-states */
 	bool _btnsLast[10] = { false, false, false, false, false, false, false, false, false, false };
 
-	Robot() :
-			_talon(Constants::kTalonID), _vic(Constants::kVictorFollower), _example(
-					_talon), _joy(0) {
-	}
 	void SimulationInit() {
 		PhysicsSim::GetInstance().AddTalonSRX(_talon, 0.75, 2000, true);
 		PhysicsSim::GetInstance().AddVictorSPX(_vic);
@@ -115,7 +112,7 @@ public:
 			btns[i] = _joy.GetRawButton(i);
 
 		/* get the left joystick axis on Logitech Gampead */
-		double leftYjoystick = -1 * _joy.GetY(); /* multiple by -1 so joystick forward is positive */
+		double leftYjoystick = -_joy.GetY(); /* multiple by -1 so joystick forward is positive */
 
 		/* call this periodically, and catch the output.  Only apply it if user wants to run MP. */
 		_example.control();

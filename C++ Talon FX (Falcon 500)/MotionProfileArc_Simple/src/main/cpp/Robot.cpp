@@ -25,27 +25,18 @@
 #include "MotionProfile.h"
 #include "Instrum.h"
 
+void Robot::SimulationPeriodic() {
+    _driveSim.Run();
+}
+
 void Robot::RobotInit() 
 {
-    /* Construct global variables */
-    _rightMaster = new TalonFX(1);
-    _leftMaster = new TalonFX(2);
-    _pidgey = new PigeonIMU(3); //This uses a CAN pigeon, as opposed to a gadgeteer pigeon
-    _joystick = new frc::Joystick(0);
-    _bufferedStream = new BufferedTrajectoryPointStream();
-
-    _plotThread = new PlotThread(_rightMaster);
-
     /* Initialize buffer with motion profile */
     InitBuffer(kMotionProfile, kMotionProfileSz, 0.25); //Do a quarter (0.25) rotation to the left
     _state = 0;
 
-
-    _masterConfig = new MasterProfileConfiguration(_leftMaster, _pidgey);
-    _followConfig = new FollowerProfileConfiguration();
-
-    _rightMaster->ConfigAllSettings(*_masterConfig);
-    _leftMaster->ConfigAllSettings(*_followConfig);
+    _rightMaster.ConfigAllSettings(_masterConfig);
+    _leftMaster.ConfigAllSettings(_followConfig);
 
     /*
      * Talon FX does not need sensor phase set for its integrated sensor
@@ -54,13 +45,15 @@ void Robot::RobotInit()
      * 
      * https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#sensor-phase
      */
-    // _rightMaster->SetSensorPhase(true);
-    // _leftMaster->SetSensorPhase(false);
+    // _rightMaster.SetSensorPhase(true);
+    // _leftMaster.SetSensorPhase(false);
 
-    _rightMaster->SetInverted(TalonFXInvertType::Clockwise);
-    _leftMaster->SetInverted(TalonFXInvertType::CounterClockwise);
+    _rightMaster.SetInverted(TalonFXInvertType::Clockwise);
+    _leftMaster.SetInverted(TalonFXInvertType::CounterClockwise);
 
-    _rightMaster->SetStatusFramePeriod(StatusFrameEnhanced::Status_14_Turn_PIDF1, 20); //Telemetry using Phoenix Tuner
+    _rightMaster.SetStatusFramePeriod(StatusFrameEnhanced::Status_14_Turn_PIDF1, 20); //Telemetry using Phoenix Tuner
+
+	frc::SmartDashboard::PutData("Field", &_driveSim.GetField());
 }
 
 void Robot::AutonomousInit() {}
@@ -70,10 +63,10 @@ void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() 
 {
     /* get joystick button and stick */
-    bool bPrintValues = _joystick->GetRawButton(2);
-    bool bFireMp = _joystick->GetRawButton(1);
-    double axis = -_joystick->GetRawAxis(1);
-    double turn = _joystick->GetRawAxis(2);
+    bool bPrintValues = _joystick.GetRawButton(2);
+    bool bFireMp = _joystick.GetRawButton(1);
+    double axis = -_joystick.GetRawAxis(1);
+    double turn = _joystick.GetRawAxis(2);
 
     /* if button is up, just drive the motor in PercentOutput */
     if (bFireMp == false) {
@@ -83,8 +76,8 @@ void Robot::TeleopPeriodic()
     switch (_state) {
         /* drive master talon normally */
         case 0:
-            _rightMaster->Set(ControlMode::PercentOutput, axis, DemandType_ArbitraryFeedForward, -turn);
-            _leftMaster->Set(ControlMode::PercentOutput, axis, DemandType_ArbitraryFeedForward, turn);
+            _rightMaster.Set(ControlMode::PercentOutput, axis, DemandType_ArbitraryFeedForward, -turn);
+            _leftMaster.Set(ControlMode::PercentOutput, axis, DemandType_ArbitraryFeedForward, turn);
             if (bFireMp == true) {
                 /* go to MP logic */
                 _state = 1;
@@ -93,19 +86,19 @@ void Robot::TeleopPeriodic()
 
         /* fire the MP, and stop calling set() since that will cancel the MP */
         case 1:
-            _rightMaster->GetSensorCollection().SetIntegratedSensorPosition(0);
-            _leftMaster->GetSensorCollection().SetIntegratedSensorPosition(0);
-            _pidgey->SetYaw(0);
+            _rightMaster.GetSensorCollection().SetIntegratedSensorPosition(0);
+            _leftMaster.GetSensorCollection().SetIntegratedSensorPosition(0);
+            _pidgey.SetYaw(0);
             /* wait for 10 points to buffer in firmware, then transition to MP */
-            _leftMaster->Follow(*_rightMaster, FollowerType_AuxOutput1);
-            _rightMaster->StartMotionProfile(*_bufferedStream, 10, ControlMode::MotionProfileArc);
+            _leftMaster.Follow(_rightMaster, FollowerType_AuxOutput1);
+            _rightMaster.StartMotionProfile(_bufferedStream, 10, ControlMode::MotionProfileArc);
             _state = 2;
             Instrum::PrintLine("MP started");
             break;
 
         /* wait for MP to finish */
         case 2:
-            if (_rightMaster->IsMotionProfileFinished()) {
+            if (_rightMaster.IsMotionProfileFinished()) {
                 Instrum::PrintLine("MP finished");
                 _state = 3;
             }
@@ -132,7 +125,7 @@ void Robot::InitBuffer(const double profile[][3], int totalCnt, double rotations
                            // automatically, you can alloc just one
 
     /* clear the buffer, in case it was used elsewhere */
-    _bufferedStream->Clear();
+    _bufferedStream.Clear();
 
     double turnAmount = rotations * 8192.0; //8192 units per rotation for a pigeon
 
@@ -140,7 +133,7 @@ void Robot::InitBuffer(const double profile[][3], int totalCnt, double rotations
     /* Insert every point into buffer, no limit on size */
     for (int i = 0; i < totalCnt; ++i) {
 
-        double direction = forward ? +1 : -1;
+        double direction = forward ? 1 : -1;
         double positionRot = profile[i][0];
         double velocityRPM = profile[i][1];
         int durationMilliseconds = (int) profile[i][2];
@@ -167,7 +160,7 @@ void Robot::InitBuffer(const double profile[][3], int totalCnt, double rotations
         point.arbFeedFwd = 0; /* you can add a constant offset to add to PID[0] output here */
 
         point.useAuxPID = true; /* Using auxiliary PID */
-        _bufferedStream->Write(point);
+        _bufferedStream.Write(point);
     }
 }
 

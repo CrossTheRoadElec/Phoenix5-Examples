@@ -29,7 +29,7 @@
  * 
  * Be sure to select the correct feedback sensor using configSelectedFeedbackSensor() below.
  * Use Percent Output Mode (Holding A and using Left Joystick) to confirm talon is driving 
- * forward (Green LED on Talon/Victor) when the position sensor is moving in the postive 
+ * forward (Green LED on Talon/Victor) when the position sensor is moving in the positive 
  * direction. If this is not the case, flip the boolean input in setSensorPhase().
  * 
  * Controls:
@@ -60,7 +60,7 @@ import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
     /** Hardware */
-	TalonSRX _talon = new WPI_TalonSRX(2);
+	WPI_TalonSRX _talon = new WPI_TalonSRX(2);
 	Joystick _joy = new Joystick(0);
 	
     /** Used to create string thoughout loop */

@@ -8,6 +8,9 @@
 class Robot : public frc::TimedRobot
 {
 public:
+	void SimulationInit() override;
+	void SimulationPeriodic() override;
+
 	void RobotInit() override;
 
 	void AutonomousInit() override;
@@ -20,8 +23,8 @@ public:
 	void TestPeriodic() override;
 
 private:
-	TalonFX *_talon;
-	frc::Joystick *_joy;
+	WPI_TalonFX _talon{1, "fastfd"}; // Put Talon FX on CANivore's faster CAN FD bus
+	frc::Joystick _joy{0};
 
 	int _smoothing;
 };

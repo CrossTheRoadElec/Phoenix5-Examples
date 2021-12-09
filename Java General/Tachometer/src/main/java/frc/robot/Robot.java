@@ -51,8 +51,8 @@ import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Robot extends TimedRobot {
 	/* Create talon's to measure the tach and the mag encoder */
-	TalonSRX _magTalon = new TalonSRX(1);
-	TalonSRX _tachTalon = new TalonSRX(0);
+	WPI_TalonSRX _magTalon = new WPI_TalonSRX(1);
+	WPI_TalonSRX _tachTalon = new WPI_TalonSRX(0);
 
 	/* Joystick to control motor */
 	Joystick _joy = new Joystick(0);

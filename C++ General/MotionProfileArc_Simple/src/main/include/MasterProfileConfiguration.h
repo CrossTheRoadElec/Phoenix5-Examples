@@ -7,7 +7,7 @@ class MasterProfileConfiguration : public TalonSRXConfiguration
 {
 public:
     /* Constructor takes a talon and pigeon so it can reference it with their ID */
-    MasterProfileConfiguration(TalonSRX *otherTalon, PigeonIMU *pigeon) : TalonSRXConfiguration()
+    MasterProfileConfiguration(TalonSRX& otherTalon, PigeonIMU& pigeon) : TalonSRXConfiguration()
     {
         /* Primary PID will be the sensor sum so it includes both sides */
         primaryPID.selectedFeedbackSensor = FeedbackDevice::SensorSum;
@@ -32,11 +32,11 @@ public:
 
         /* Remote Sensor 0 is the other talon's quadrature encoder */
         remoteFilter0.remoteSensorSource = RemoteSensorSource::RemoteSensorSource_TalonSRX_SelectedSensor;
-        remoteFilter0.remoteSensorDeviceID = otherTalon->GetDeviceID();
+        remoteFilter0.remoteSensorDeviceID = otherTalon.GetDeviceID();
 
         /* Remote Sensor 1 is the Pigeon over CAN */
         remoteFilter1.remoteSensorSource = RemoteSensorSource::RemoteSensorSource_Pigeon_Yaw;
-        remoteFilter1.remoteSensorDeviceID = pigeon->GetDeviceNumber();
+        remoteFilter1.remoteSensorDeviceID = pigeon.GetDeviceNumber();
 
         /* Configure sensor sum to be this quad encoder and the other talon's encoder */
         sum0Term = FeedbackDevice::QuadEncoder;

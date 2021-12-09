@@ -64,18 +64,28 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
+import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
     /* Hardware */
-    TalonFX _motorCntrller = new TalonFX(1);	// Victor SPX can be used with remote sensor features.
+    WPI_TalonFX _motorCntrller = new WPI_TalonFX(1);	// Victor SPX can be used with remote sensor features.
     CANifier _canifLimits = new CANifier(0);	// Use this CANifier for limit switches
-    TalonFX _talonLimits = new TalonFX(2); 	// Use this Talon for limit switches
+    WPI_TalonFX _talonLimits = new WPI_TalonFX(2); 	// Use this Talon for limit switches
     Joystick _joy = new Joystick(0);			// Input
 
 	/** A couple latched values to detect on-press events for buttons */
 	boolean[] _previousBtns = new boolean[Constants.kNumButtonsPlusOne];
 	boolean[] _currentBtns = new boolean[Constants.kNumButtonsPlusOne];
+
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonFX(_motorCntrller, 0.5, 2000);
+	}
+	public void simulationPeriodic() {
+		PhysicsSim.getInstance().run();
+	}
 
 	void InitRobot() {
         /* Set robot output to neutral at start */
@@ -85,6 +95,9 @@ public class Robot extends TimedRobot {
 		_motorCntrller.configFactoryDefault();
 		_canifLimits.configFactoryDefault();
 		_talonLimits.configFactoryDefault();
+		
+		/* Use the integrated sensor */
+		_motorCntrller.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
 
 		/* Pick directions */
 		_motorCntrller.setSensorPhase(false);

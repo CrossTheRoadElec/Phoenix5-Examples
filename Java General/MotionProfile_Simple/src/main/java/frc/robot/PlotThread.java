@@ -1,7 +1,7 @@
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -9,10 +9,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 class PlotThread implements Runnable {
 
-	private TalonSRX _talon;
+	private WPI_TalonSRX _talon;
 	private Thread _thread;
 
-	public PlotThread(TalonSRX talon)
+	public PlotThread(WPI_TalonSRX talon)
 	{
 		_talon = talon;
 

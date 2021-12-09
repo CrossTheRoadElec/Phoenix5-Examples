@@ -47,21 +47,7 @@
  * 
  */
 #include "Robot.h"
-#include "ctre/Phoenix.h"
-#include "frc/PWMTalonSRX.h"
-#include "frc/drive/DifferentialDrive.h"
-#include "frc/Joystick.h"
 #include "PhysicsSim.h"
-
-/* Master Talons for arcade drive */
-WPI_TalonSRX _left(1);
-WPI_TalonSRX _rght(0);
-
-/* Construct drivetrain by providing master motor controllers */
-frc::DifferentialDrive *_drive;
-frc::Joystick * _joy;  /* Joystick for control */
-
-int _loops = 0; // slow print to the DS
 
 void Robot::SimulationInit() {
     PhysicsSim::GetInstance().AddTalonSRX(_left, 0.75, 4000);
@@ -73,8 +59,6 @@ void Robot::SimulationPeriodic() {
 
 void Robot::RobotInit()
 {
-    _drive = new frc::DifferentialDrive(_left, _rght);
-    _joy =  new frc::Joystick(0); 
     /* Factory Default all hardware to prevent unexpected behaviour */
     _left.ConfigFactoryDefault();
     _rght.ConfigFactoryDefault();
@@ -88,7 +72,7 @@ void Robot::TeleopInit()
         Experiment with different enables below.... */
     //_left.SetSafetyEnabled(true);
     //_rght.SetSafetyEnabled(true);
-    //_drive->SetSafetyEnabled(false); 
+    //_drive.SetSafetyEnabled(false); 
 
     /* Factory Default all hardware to prevent unexpected behaviour */
     _left.ConfigFactoryDefault();
@@ -100,18 +84,12 @@ void Robot::TeleopInit()
      */
     _left.SetInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
     _rght.SetInverted(true);  // <<<<<< Adjust this until robot drives forward when stick is forward
-
-    /*
-     * diff drive assumes (by default) that right side must be negative to move
-     * forward. Change to 'false' so positive/green-LEDs moves robot forward
-     */
-    _drive->SetRightSideInverted(false); // do not change this
 }
 void Robot::TeleopPeriodic()
 {
     /* Gamepad processing */
-    double forward = -1.0 * _joy->GetY(); // Sign this so forward is positive
-    double turn = +1.0 * _joy->GetZ();    // Sign this so right is positive
+    double forward = -_joy.GetY(); // Sign this so forward is positive
+    double turn = _joy.GetZ();    // Sign this so right is positive
 
     /**
      * Print the joystick values to sign them, comment out this line after checking
@@ -123,14 +101,14 @@ void Robot::TeleopPeriodic()
         printf("JoyY:%f  turn:%f \n", forward, turn);
     }
 
-    if (_joy->GetRawButton(1))
+    if (_joy.GetRawButton(1))
     {
         /* if button 0 is pressed, stop calling arcadeDrive, which calls set() */
     }
     else
     {
         /* button is not held, update the drivetrain like normal */
-        _drive->ArcadeDrive(forward, turn);
+        _drive.ArcadeDrive(forward, turn);
     }
 }
 

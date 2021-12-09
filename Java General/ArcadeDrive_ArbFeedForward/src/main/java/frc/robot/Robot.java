@@ -54,8 +54,8 @@ import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
 	/** Hardware, either Talon could be a Victor */
-	TalonSRX _leftMaster = new WPI_TalonSRX(2);
-	TalonSRX _rightMaster = new WPI_TalonSRX(1);
+	WPI_TalonSRX _leftMaster = new WPI_TalonSRX(2);
+	WPI_TalonSRX _rightMaster = new WPI_TalonSRX(1);
 	Joystick _gamepad = new Joystick(0);
 
 	@Override
@@ -107,7 +107,7 @@ public class Robot extends TimedRobot {
 		_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
 		_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
 
-		System.out.printf("L: %.4f R: %.4f L vel: %d R vel: %d\n", _leftMaster.getMotorOutputPercent(), _rightMaster.getMotorOutputPercent(),
+		System.out.printf("L: %.4f R: %.4f L vel: %f R vel: %f\n", _leftMaster.getMotorOutputPercent(), _rightMaster.getMotorOutputPercent(),
 			              _leftMaster.getSelectedSensorVelocity(), _rightMaster.getSelectedSensorVelocity());
 	}
 

@@ -14,7 +14,7 @@ void PhysicsSim::TalonSRXSimProfile::Run() {
 
     /// DEVICE SPEED SIMULATION
 
-    double outPerc = _talon.GetMotorOutputPercent();
+    double outPerc = _talon.GetSimCollection().GetMotorOutputLeadVoltage() / 12;
     if (_sensorPhase) {
         outPerc *= -1;
     }

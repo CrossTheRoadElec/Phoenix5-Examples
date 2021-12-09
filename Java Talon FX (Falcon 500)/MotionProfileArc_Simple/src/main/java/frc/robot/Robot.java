@@ -66,12 +66,13 @@ import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.ctre.phoenix.motion.*;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
 
@@ -79,11 +80,11 @@ public class Robot extends TimedRobot {
     int _state = 0;
 
     /** a master talon, add followers if need be. */
-    TalonFX _rightMaster = new TalonFX(1);
+    WPI_TalonFX _rightMaster = new WPI_TalonFX(1, "FastFD");
 
-    TalonFX _leftAuxFollower = new TalonFX(2);
+    WPI_TalonFX _leftAuxFollower = new WPI_TalonFX(2, "FastFD");
 
-    PigeonIMU _pidgy = new PigeonIMU(3);
+    WPI_Pigeon2 _pidgy = new WPI_Pigeon2(3, "FastFD");
 
     /** gamepad for control */
     Joystick _joy = new Joystick(0);
@@ -100,6 +101,13 @@ public class Robot extends TimedRobot {
     
     /* quick and dirty plotter to smartdash */
 //    PlotThread _plotThread = new PlotThread(_rightMaster);
+
+    DrivebaseSimFX _driveSim = new DrivebaseSimFX(_leftAuxFollower, _rightMaster, _pidgy);
+
+    @Override
+    public void simulationPeriodic() {
+        _driveSim.run();
+    }
 
     public void robotInit() {
 
@@ -162,6 +170,8 @@ public class Robot extends TimedRobot {
         _rightMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20); /* plotthread is polling aux-pid-sensor-pos */
         _rightMaster.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20);
         _rightMaster.setStatusFramePeriod(StatusFrame.Status_17_Targets1, 20);
+        
+        SmartDashboard.putData("Field", _driveSim.getField());
     }
 
     public void robotPeriodic() {
@@ -322,9 +332,9 @@ public class Robot extends TimedRobot {
 				Auxiliary is the other side's distance.
 
 					Phase | Term 0   |   Term 1  | Result
-				Sum:  -1 *((-)Master + (+)Aux   )| NOT OK, will cancel each other out
-				Diff: -1 *((-)Master - (+)Aux   )| OK - This is what we want, magnitude will be correct and positive.
-				Diff: -1 *((+)Aux    - (-)Master)| NOT OK, magnitude will be correct but negative
+				Sum:  -((-)Master + (+)Aux   )| NOT OK, will cancel each other out
+				Diff: -((-)Master - (+)Aux   )| OK - This is what we want, magnitude will be correct and positive.
+				Diff: -((+)Aux    - (-)Master)| NOT OK, magnitude will be correct but negative
 			*/
 
 			masterConfig.diff0Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local Integrated Sensor

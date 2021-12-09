@@ -49,7 +49,7 @@
  * Left Joystick Y-Axis:
  * 	+ Percent Output: Throttle Talon SRX forward and reverse, use to confirm hardware setup.
  * Right Joystick Y-Axis:
- * 	+ Motion Maigic: Servo Talon SRX forward and reverse, [-10, 10] rotations.
+ * 	+ Motion Magic: Servo Talon SRX forward and reverse, [-10, 10] rotations.
  * 
  * Gains for Motion Magic may need to be adjusted in Constants.java
  * 
@@ -73,13 +73,13 @@ import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
 	/* Hardware */
-	TalonSRX _talon = new WPI_TalonSRX(1);
+	WPI_TalonSRX _talon = new WPI_TalonSRX(1);
 	Joystick _joy = new Joystick(0);
 
 	/* create some followers */
-	BaseMotorController _follower1 = new TalonSRX(0);
-	BaseMotorController _follower2 = new VictorSPX(0);
-	BaseMotorController _follower3 = new VictorSPX(1);
+	BaseMotorController _follower1 = new WPI_TalonSRX(0);
+	BaseMotorController _follower2 = new WPI_VictorSPX(0);
+	BaseMotorController _follower3 = new WPI_VictorSPX(1);
 
 	/* Used to build string throughout loop */
 	StringBuilder _sb = new StringBuilder();
@@ -118,11 +118,11 @@ public class Robot extends TimedRobot {
 		_talon.configNeutralDeadband(0.001, Constants.kTimeoutMs);
 
 		/**
-		 * Configure Talon SRX Output and Sesnor direction accordingly Invert Motor to
+		 * Configure Talon SRX Output and Sensor direction accordingly Invert Motor to
 		 * have green LEDs when driving Talon Forward / Requesting Postiive Output Phase
 		 * sensor to have positive increment when driving Talon Forward (Green LED)
 		 */
-		_talon.setSensorPhase(false);
+		_talon.setSensorPhase(true);
 		_talon.setInverted(false);
 
 		/* Set relevant frame periods to be at least as fast as periodic rate */
@@ -170,7 +170,7 @@ public class Robot extends TimedRobot {
 		_sb.append(_talon.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
 
 		/**
-		 * Peform Motion Magic when Button 1 is held, else run Percent Output, which can
+		 * Perform Motion Magic when Button 1 is held, else run Percent Output, which can
 		 * be used to confirm hardware setup.
 		 */
 		if (_joy.getRawButton(1)) {

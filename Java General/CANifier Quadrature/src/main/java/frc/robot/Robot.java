@@ -50,6 +50,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.*;
+import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.ctre.phoenix.*;
 
 public class Robot extends TimedRobot {
@@ -85,7 +86,7 @@ public class Robot extends TimedRobot {
 		_can.setQuadraturePosition(-745, kTimeoutMs);
 		
 		/* Configure velocity measurements to be what we want */
-		_can.configVelocityMeasurementPeriod(VelocityPeriod.Period_100Ms, kTimeoutMs);
+		_can.configVelocityMeasurementPeriod(SensorVelocityMeasPeriod.Period_100Ms, kTimeoutMs);
 		_can.configVelocityMeasurementWindow(64, kTimeoutMs);
 	}
 

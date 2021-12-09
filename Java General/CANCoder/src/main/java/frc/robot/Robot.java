@@ -24,11 +24,11 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.CANCoderFaults;
 import com.ctre.phoenix.sensors.CANCoderStickyFaults;
 import com.ctre.phoenix.sensors.MagnetFieldStrength;
+import com.ctre.phoenix.sensors.WPI_CANCoder;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -42,7 +42,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
  */
 public class Robot extends TimedRobot {
   final int PRINTOUT_DELAY = 100; // in Milliseconds
-  CANCoder _CANCoder = new CANCoder(0);
+  WPI_CANCoder _CANCoder = new WPI_CANCoder(0, "FastFD"); // Put CANcoder on the FD bus with CANivore for faster data acquisition
   CANCoderConfiguration _canCoderConfiguration = new CANCoderConfiguration();
   Joystick joy = new Joystick(0);
 

@@ -61,7 +61,7 @@ import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonSRX _talon = new WPI_TalonSRX(1);	// Talon to Motion Profile
+	WPI_TalonSRX _talon = new WPI_TalonSRX(1);	// Talon to Motion Profile
 	Joystick _joy = new Joystick(0);	// Joystick for testing
 
 	/** Some example logic on how one can manage an MP */
@@ -91,7 +91,7 @@ public class Robot extends TimedRobot {
 		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,
 											Constants.kPIDLoopIdx,
 											Constants.kTimeoutMs);
-		/* Keep sensor and motor in phase, postive sensor values when MC LEDs are green */
+		/* Keep sensor and motor in phase, positive sensor values when MC LEDs are green */
 		_talon.setSensorPhase(true);
 		
 		/**
@@ -124,7 +124,7 @@ public class Robot extends TimedRobot {
 
 		/**
 		 * Get the left joystick axis on Logitech Gampead, 
-		 * Joystick forward should be postive 
+		 * Joystick forward should be positive 
 		 */
 		double leftYjoystick = -1 * _joy.getY();
 

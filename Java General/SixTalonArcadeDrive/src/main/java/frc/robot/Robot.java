@@ -54,10 +54,10 @@ public class Robot extends TimedRobot {
 	WPI_TalonSRX _frontRightMotor = new WPI_TalonSRX(2);
 
 	/* Follower Talons + Victors for six motor drives */
-	WPI_TalonSRX _leftSlave1 = new WPI_TalonSRX(5);
-	WPI_VictorSPX _rightSlave1 = new WPI_VictorSPX(7);
-	WPI_TalonSRX _leftSlave2 = new WPI_TalonSRX(4);
-	WPI_VictorSPX _rightSlave2 = new WPI_VictorSPX(17);
+	WPI_TalonSRX _leftFollower1 = new WPI_TalonSRX(5);
+	WPI_VictorSPX _rightFollower1 = new WPI_VictorSPX(7);
+	WPI_TalonSRX _leftFollower2 = new WPI_TalonSRX(4);
+	WPI_VictorSPX _rightFollower2 = new WPI_VictorSPX(17);
 
     /* Construct drivetrain by providing master motor controllers */
 	DifferentialDrive _drive = new DifferentialDrive(_frontLeftMotor, _frontRightMotor);
@@ -68,10 +68,10 @@ public class Robot extends TimedRobot {
 	public void simulationInit() {
 		PhysicsSim.getInstance().addTalonSRX(_frontLeftMotor, 0.75, 4000);
 		PhysicsSim.getInstance().addTalonSRX(_frontRightMotor, 0.75, 4000);
-		PhysicsSim.getInstance().addTalonSRX(_leftSlave1, 0.75, 4000);
-		PhysicsSim.getInstance().addTalonSRX(_leftSlave2, 0.75, 4000);
-		PhysicsSim.getInstance().addVictorSPX(_rightSlave1);
-		PhysicsSim.getInstance().addVictorSPX(_rightSlave2);
+		PhysicsSim.getInstance().addTalonSRX(_leftFollower1, 0.75, 4000);
+		PhysicsSim.getInstance().addTalonSRX(_leftFollower2, 0.75, 4000);
+		PhysicsSim.getInstance().addVictorSPX(_rightFollower1);
+		PhysicsSim.getInstance().addVictorSPX(_rightFollower2);
 	}
 	public void simulationPeriodic() {
 		PhysicsSim.getInstance().run();
@@ -84,19 +84,19 @@ public class Robot extends TimedRobot {
 		/* Factory Default all hardware to prevent unexpected behaviour */
 		_frontLeftMotor.configFactoryDefault();
 		_frontRightMotor.configFactoryDefault();
-		_leftSlave1.configFactoryDefault();
-		_leftSlave2.configFactoryDefault();
-		_rightSlave1.configFactoryDefault();
-		_rightSlave2.configFactoryDefault();
+		_leftFollower1.configFactoryDefault();
+		_leftFollower2.configFactoryDefault();
+		_rightFollower1.configFactoryDefault();
+		_rightFollower2.configFactoryDefault();
 
 		/**
 		 * Take our extra motor controllers and have them
 		 * follow the Talons updated in arcadeDrive 
 		 */
-		_leftSlave1.follow(_frontLeftMotor);
-		_leftSlave2.follow(_frontLeftMotor);
-		_rightSlave1.follow(_frontRightMotor);
-		_rightSlave2.follow(_frontRightMotor);
+		_leftFollower1.follow(_frontLeftMotor);
+		_leftFollower2.follow(_frontLeftMotor);
+		_rightFollower1.follow(_frontRightMotor);
+		_rightFollower2.follow(_frontRightMotor);
 
 		/**
 		 * Drive robot forward and make sure all motors spin the correct way.
@@ -104,15 +104,10 @@ public class Robot extends TimedRobot {
 		 */
 		_frontLeftMotor.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
 		_frontRightMotor.setInverted(true); // <<<<<< Adjust this until robot drives forward when stick is forward
-		_leftSlave1.setInverted(InvertType.FollowMaster);
-		_leftSlave2.setInverted(InvertType.FollowMaster);
-		_rightSlave1.setInverted(InvertType.FollowMaster);
-		_rightSlave2.setInverted(InvertType.FollowMaster);
-
-		/* diff drive assumes (by default) that 
-			right side must be negative to move forward.
-			Change to 'false' so positive/green-LEDs moves robot forward  */
-		_drive.setRightSideInverted(false); // do not change this
+		_leftFollower1.setInverted(InvertType.FollowMaster);
+		_leftFollower2.setInverted(InvertType.FollowMaster);
+		_rightFollower1.setInverted(InvertType.FollowMaster);
+		_rightFollower2.setInverted(InvertType.FollowMaster);
 	}
 
 	/**

@@ -64,7 +64,7 @@ public class Configs {
         _talon.neutralDeadband = 0.199413;
         _talon.voltageCompSaturation = 9.296875;
         _talon.voltageMeasurementFilter = 16;
-        _talon.velocityMeasurementPeriod = VelocityMeasPeriod.Period_25Ms;
+        _talon.velocityMeasurementPeriod = SensorVelocityMeasPeriod.Period_20Ms;
         _talon.velocityMeasurementWindow = 8;
         _talon.forwardLimitSwitchDeviceID = 6;
         _talon.reverseLimitSwitchDeviceID = 5;
@@ -150,7 +150,7 @@ public class Configs {
         _victor.neutralDeadband = 0.049853;
         _victor.voltageCompSaturation = 10.699219;
         _victor.voltageMeasurementFilter = 32;
-        _victor.velocityMeasurementPeriod = VelocityMeasPeriod.Period_50Ms;
+        _victor.velocityMeasurementPeriod = SensorVelocityMeasPeriod.Period_20Ms;
         _victor.velocityMeasurementWindow = 4;
         _victor.forwardLimitSwitchDeviceID = 8;
         _victor.reverseLimitSwitchDeviceID = 7;
@@ -260,7 +260,7 @@ public class Configs {
         _fx.neutralDeadband = 0.199413;
         _fx.voltageCompSaturation = 9.296875;
         _fx.voltageMeasurementFilter = 16;
-        _fx.velocityMeasurementPeriod = VelocityMeasPeriod.Period_25Ms;
+        _fx.velocityMeasurementPeriod = SensorVelocityMeasPeriod.Period_5Ms;
         _fx.velocityMeasurementWindow = 8;
         _fx.forwardLimitSwitchDeviceID = 6;
         _fx.reverseLimitSwitchDeviceID = 5;

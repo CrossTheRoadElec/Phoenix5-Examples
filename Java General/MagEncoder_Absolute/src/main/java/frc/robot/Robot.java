@@ -126,7 +126,7 @@ import com.ctre.phoenix.motorcontrol.can.*;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonSRX _talon = new WPI_TalonSRX(2);
+	WPI_TalonSRX _talon = new WPI_TalonSRX(2);
 	Joystick _joy = new Joystick(0);
 
     /* Nonzero to block the config until success, zero to skip checking */
@@ -174,7 +174,7 @@ public class Robot extends TimedRobot {
 		 * Quadrature is selected for soft-lim/closed-loop/etc. initQuadrature()
 		 * will initialize quad to become absolute by using PWD
 		 */
-		int selSenPos = _talon.getSelectedSensorPosition(0);
+		double selSenPos = _talon.getSelectedSensorPosition(0);
 		int pulseWidthWithoutOverflows = 
 				_talon.getSensorCollection().getPulseWidthPosition() & 0xFFF;
 
@@ -231,7 +231,7 @@ public class Robot extends TimedRobot {
 	 * @param units CTRE mag encoder sensor units 
 	 * @return degrees rounded to tenths.
 	 */
-	String ToDeg(int units) {
+	String ToDeg(double units) {
 		double deg = units * 360.0 / 4096.0;
 
 		/* truncate to 0.1 res */

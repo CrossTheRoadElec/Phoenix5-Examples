@@ -56,6 +56,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -66,15 +67,14 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	VictorSPX _leftMaster = new VictorSPX(2);
-	TalonSRX _rightMaster = new TalonSRX(1);
-	PigeonIMU _pidgey = new PigeonIMU(3);
+	WPI_TalonSRX _leftMaster = new WPI_TalonSRX(2);
+	WPI_TalonSRX _rightMaster = new WPI_TalonSRX(1);
+	WPI_PigeonIMU _pidgey = new WPI_PigeonIMU(3);
 	Joystick _gamepad = new Joystick(0);
 	
 	/** Latched values to detect on-press events for buttons */
@@ -87,9 +87,16 @@ public class Robot extends TimedRobot {
 	double _targetAngle = 0;
 	int _printCount = 0;
 
+	DrivebaseSimSRX _driveSim = new DrivebaseSimSRX(_leftMaster, _rightMaster, _pidgey);
+
+	@Override
+	public void simulationPeriodic() {
+		_driveSim.run();
+	}
+
 	@Override
 	public void robotInit() {
-		/* Not used in this example */
+		SmartDashboard.putData("Field", _driveSim.getField());
 	}
 	
 	@Override
@@ -183,7 +190,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		/* Gamepad processing */
-		double forward = -1 * _gamepad.getY();
+		double forward = -_gamepad.getY();
 		double turn = _gamepad.getTwist();
 		forward = Deadband(forward);
 		turn = Deadband(turn);
@@ -205,7 +212,7 @@ public class Robot extends TimedRobot {
 			if (_firstCall)
 				System.out.println("This is a basic arcade drive.\n");
 			
-			_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
+			_leftMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, turn);
 			_rightMaster.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
 		}else{
 			if (_firstCall) {
@@ -240,7 +247,7 @@ public class Robot extends TimedRobot {
 	/** Deadband 5 percent, used on the gamepad */
 	double Deadband(double value) {
 		/* Upper deadband */
-		if (value >= +0.05) 
+		if (value >= 0.05) 
 			return value;
 		
 		/* Lower deadband */

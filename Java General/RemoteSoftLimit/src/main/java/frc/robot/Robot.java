@@ -70,16 +70,16 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.can.*;
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
 import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
     /* Hardware */
-    TalonSRX _motorCntrller = new WPI_TalonSRX(1);	// Victor SPX can be used with remote sensor features.
+    WPI_TalonSRX _motorCntrller = new WPI_TalonSRX(1);	// Victor SPX can be used with remote sensor features.
     CANifier _canifLimits = new CANifier(0);	// Use this CANifier for remote limit switches
-    TalonSRX _talonLimits = new WPI_TalonSRX(3); 	// Use this Talon for remote limit switches
-    PigeonIMU _imu = new PigeonIMU(3);
+    WPI_TalonSRX _talonLimits = new WPI_TalonSRX(3); 	// Use this Talon for remote limit switches
+    WPI_PigeonIMU _imu = new WPI_PigeonIMU(3);
     Joystick _joy = new Joystick(0);
 
     /* a couple latched values to detect on-press events for buttons and POV */

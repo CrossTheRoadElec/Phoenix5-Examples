@@ -51,11 +51,13 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motion.*;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+
+import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
 
@@ -63,7 +65,7 @@ public class Robot extends TimedRobot {
     int _state = 0;
 
     /** a master talon, add followers if need be. */
-    TalonFX _master = new TalonFX(1);
+    WPI_TalonFX _master = new WPI_TalonFX(1, "FastFD");
 
     /** gamepad for control */
     Joystick _joy = new Joystick(0);
@@ -76,6 +78,13 @@ public class Robot extends TimedRobot {
     
     /* quick and dirty plotter to smartdash */
     PlotThread _plotThread = new PlotThread(_master);
+
+    public void simulationInit() {
+        PhysicsSim.getInstance().addTalonFX(_master, 0.5, 6800);
+    }
+    public void simulationPeriodic() {
+        PhysicsSim.getInstance().run();
+    }
 
     public void robotInit() {
         /* fill our buffer object with the excel points */

@@ -25,12 +25,12 @@
 /**
  * Description:
  * The MotionMagic_AuxStraightIntegratedSensor example demonstrates the new Talon/Victor auxiliary and 
- * remote features used to peform complex closed loops. This example has the robot performing 
+ * remote features used to perform complex closed loops. This example has the robot performing 
  * Motion Magic with an auxiliary closed loop on Integrated Sensor Difference to keep the robot straight.
  * 
  * This example uses:
  * - 2x Falcon Integrated Sensor, one of both sides of robot for Auxiliary Closed Loop on heading
- * A Talon/Victor calculates the heading by taking the difference between both sesnors.
+ * A Talon/Victor calculates the heading by taking the difference between both sensors.
  * - 2x Falcon Integrated Sensor, One on both sides of robot for Primary Closed Loop on Position
  * A Talon/Victor calculates the distance by taking the average between both sensors.
  * 
@@ -72,13 +72,15 @@ import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+
+import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonFX _leftMaster = new TalonFX(2);
-	TalonFX _rightMaster = new TalonFX(1);
+	WPI_TalonFX _leftMaster = new WPI_TalonFX(2, "FastFD");
+	WPI_TalonFX _rightMaster = new WPI_TalonFX(1, "FastFD");
 	Joystick _gamepad = new Joystick(0);
 	
 	/** Invert Directions for Left and Right */
@@ -101,6 +103,17 @@ public class Robot extends TimedRobot {
 
 	/** How much smoothing [0,8] to use during MotionMagic */
 	int _smoothing;
+
+	@Override
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonFX(_leftMaster, 0.5, 6800);
+		PhysicsSim.getInstance().addTalonFX(_rightMaster, 0.5, 6800);
+	}
+	
+	@Override
+	public void simulationPeriodic() {
+		PhysicsSim.getInstance().run();
+	}
 
 	@Override
 	public void robotInit() {
@@ -349,9 +362,9 @@ public class Robot extends TimedRobot {
 				Auxiliary is the other side's distance.
 
 					Phase | Term 0   |   Term 1  | Result
-				Sum:  -1 *((-)Master + (+)Aux   )| NOT OK, will cancel each other out
-				Diff: -1 *((-)Master - (+)Aux   )| OK - This is what we want, magnitude will be correct and positive.
-				Diff: -1 *((+)Aux    - (-)Master)| NOT OK, magnitude will be correct but negative
+				Sum:  -((-)Master + (+)Aux   )| NOT OK, will cancel each other out
+				Diff: -((-)Master - (+)Aux   )| OK - This is what we want, magnitude will be correct and positive.
+				Diff: -((+)Aux    - (-)Master)| NOT OK, magnitude will be correct but negative
 			*/
 
 			masterConfig.diff0Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local Integrated Sensor
@@ -417,9 +430,9 @@ public class Robot extends TimedRobot {
 				Auxiliary is the other side's distance.
 
 					Phase | Term 0   |   Term 1  | Result
-				Sum:  -1 *((-)Master + (+)Aux   )| OK - magnitude will cancel each other out
-				Diff: -1 *((-)Master - (+)Aux   )| NOT OK - magnitude increases with forward distance.
-				Diff: -1 *((+)Aux    - (-)Master)| NOT OK - magnitude decreases with forward distance
+				Sum:  -((-)Master + (+)Aux   )| OK - magnitude will cancel each other out
+				Diff: -((-)Master - (+)Aux   )| NOT OK - magnitude increases with forward distance.
+				Diff: -((+)Aux    - (-)Master)| NOT OK - magnitude decreases with forward distance
 			*/
 
 			masterConfig.sum0Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local Integrated Sensor

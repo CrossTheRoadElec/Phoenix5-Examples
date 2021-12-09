@@ -54,17 +54,22 @@
  * - Talon FX: 20.2.3.0
  */
 #include "Robot.h"
+#include "PhysicsSim.h"
 #include <sstream>
 
-void Robot::RobotInit() {
-    _talon = new TalonFX(1);
-    _joy = new frc::Joystick(0);
+void Robot::SimulationInit() {
+    PhysicsSim::GetInstance().AddTalonFX(_talon, 0.5, 3400);
+}
+void Robot::SimulationPeriodic() {
+    PhysicsSim::GetInstance().Run();
+}
 
+void Robot::RobotInit() {
     /* Factory default hardware to prevent unexpected behavior */
-    _talon->ConfigFactoryDefault();
+    _talon.ConfigFactoryDefault();
 
     /* Configure Sensor Source for Pirmary PID */
-    _talon->ConfigSelectedFeedbackSensor(FeedbackDevice::IntegratedSensor,
+    _talon.ConfigSelectedFeedbackSensor(FeedbackDevice::IntegratedSensor,
                                         0, 
                                         10);
 
@@ -75,32 +80,32 @@ void Robot::RobotInit() {
      * 
      * https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#sensor-phase
      */
-    //_talon->SetSensorPhase(false);
-    _talon->SetInverted(TalonFXInvertType::CounterClockwise);
+    //_talon.SetSensorPhase(false);
+    _talon.SetInverted(TalonFXInvertType::CounterClockwise);
 
     /* Set relevant frame periods to be at least as fast as periodic rate */
-    _talon->SetStatusFramePeriod(StatusFrameEnhanced::Status_13_Base_PIDF0, 10, 10);
-    _talon->SetStatusFramePeriod(StatusFrameEnhanced::Status_10_MotionMagic, 10, 10);
+    _talon.SetStatusFramePeriod(StatusFrameEnhanced::Status_13_Base_PIDF0, 10, 10);
+    _talon.SetStatusFramePeriod(StatusFrameEnhanced::Status_10_MotionMagic, 10, 10);
 
     /* Set the peak and nominal outputs */
-    _talon->ConfigNominalOutputForward(0, 10);
-    _talon->ConfigNominalOutputReverse(0, 10);
-    _talon->ConfigPeakOutputForward(1, 10);
-    _talon->ConfigPeakOutputReverse(-1, 10);
+    _talon.ConfigNominalOutputForward(0, 10);
+    _talon.ConfigNominalOutputReverse(0, 10);
+    _talon.ConfigPeakOutputForward(1, 10);
+    _talon.ConfigPeakOutputReverse(-1, 10);
 
     /* Set Motion Magic gains in slot0 - see documentation */
-    _talon->SelectProfileSlot(0, 0);
-    _talon->Config_kF(0, 0.3, 10);
-    _talon->Config_kP(0, 0.1, 10);
-    _talon->Config_kI(0, 0.0, 10);
-    _talon->Config_kD(0, 0.0, 10);
+    _talon.SelectProfileSlot(0, 0);
+    _talon.Config_kF(0, 0.3, 10);
+    _talon.Config_kP(0, 0.1, 10);
+    _talon.Config_kI(0, 0.0, 10);
+    _talon.Config_kD(0, 0.0, 10);
 
     /* Set acceleration and vcruise velocity - see documentation */
-    _talon->ConfigMotionCruiseVelocity(1500, 10);
-    _talon->ConfigMotionAcceleration(1500, 10);
+    _talon.ConfigMotionCruiseVelocity(1500, 10);
+    _talon.ConfigMotionAcceleration(1500, 10);
 
     /* Zero the sensor */
-    _talon->SetSelectedSensorPosition(0, 0, 10);
+    _talon.SetSelectedSensorPosition(0, 0, 10);
 }
 
 void Robot::AutonomousInit() {}
@@ -109,64 +114,64 @@ void Robot::AutonomousPeriodic() {}
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
     /* Get gamepad axis - forward stick is positive */
-    double leftYstick = -1.0 * _joy->GetY();
-    double RightYstick = -1.0 * _joy->GetRawAxis(5);
+    double leftYstick = -_joy.GetY();
+    double RightYstick = -_joy.GetRawAxis(5);
     if (fabs(leftYstick) < 0.10) { leftYstick = 0;} /* deadband 10% */
     if (fabs(RightYstick) < 0.10) { RightYstick = 0;} /* deadband 10% */
 
     /* Get current Talon FX motor output */
-    double motorOutput = _talon->GetMotorOutputPercent();
+    double motorOutput = _talon.GetMotorOutputPercent();
     std::stringstream sb;
     /* Prepare line to print */
     sb << "\tOut%:" << motorOutput;
-    sb << "\tVel:" << _talon->GetSelectedSensorVelocity(0);
+    sb << "\tVel:" << _talon.GetSelectedSensorVelocity(0);
 
-    if(_joy->GetRawButton(2))
+    if(_joy.GetRawButton(2))
     {
         /* Zero the sensor */
-        _talon->SetSelectedSensorPosition(0, 0, 10);
+        _talon.SetSelectedSensorPosition(0, 0, 10);
     }
 
     /**
-     * Peform Motion Magic when Button 1 is held,
+     * Perform Motion Magic when Button 1 is held,
      * else run Percent Output, which can be used to confirm hardware setup.
      */
-    if (_joy->GetRawButton(1)) {
+    if (_joy.GetRawButton(1)) {
         /* Motion Magic */ 
         
         /*2048 ticks/rev * 10 Rotations in either direction */
         double targetPos = RightYstick * 2048 * 10.0;
-        _talon->Set(ControlMode::MotionMagic, targetPos);
+        _talon.Set(ControlMode::MotionMagic, targetPos);
 
         /* Append more signals to print when in speed mode */
-        sb << "\terr:" << _talon->GetClosedLoopError(0);
+        sb << "\terr:" << _talon.GetClosedLoopError(0);
         sb << "\ttrg:" << targetPos;
     } else {
         /* Percent Output */
 
-        _talon->Set(ControlMode::PercentOutput, leftYstick);
+        _talon.Set(ControlMode::PercentOutput, leftYstick);
     }
 
-    if(_joy->GetRawButtonPressed(6))
+    if(_joy.GetRawButtonPressed(6))
     {
         /* Increase smoothing */
         ++_smoothing;
         if(_smoothing > 8) _smoothing = 8;
         std::cout << "Smoothing is set to: " << _smoothing << std::endl;
-        _talon->ConfigMotionSCurveStrength(_smoothing, 0);
+        _talon.ConfigMotionSCurveStrength(_smoothing, 0);
     }
-    if(_joy->GetRawButtonPressed(5))
+    if(_joy.GetRawButtonPressed(5))
     {
         /* Decreasing smoothing */
         --_smoothing;
         if(_smoothing < 0) _smoothing = 0;
         std::cout << "Smoothing is set to: " << _smoothing << std::endl;
-        _talon->ConfigMotionSCurveStrength(_smoothing, 0);
+        _talon.ConfigMotionSCurveStrength(_smoothing, 0);
     }
     
 
     /* Instrumentation */
-    Instrum::Process(_talon, &sb);
+    Instrum::Process(_talon, sb);
 }
 
 void Robot::TestInit() {}

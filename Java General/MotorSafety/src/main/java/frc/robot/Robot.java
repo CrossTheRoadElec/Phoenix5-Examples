@@ -106,12 +106,6 @@ public class Robot extends TimedRobot {
      */
     _left.setInverted(false); // <<<<<< Adjust this until robot drives forward when stick is forward
     _rght.setInverted(true); // <<<<<< Adjust this until robot drives forward when stick is forward
-
-    /*
-     * diff drive assumes (by default) that right side must be negative to move
-     * forward. Change to 'false' so positive/green-LEDs moves robot forward
-     */
-    _drive.setRightSideInverted(false); // do not change this
   }
 
   @Override

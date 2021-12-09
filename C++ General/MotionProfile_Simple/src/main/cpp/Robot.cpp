@@ -27,7 +27,7 @@
 #include "PhysicsSim.h"
 
 void Robot::SimulationInit() {
-    PhysicsSim::GetInstance().AddTalonSRX(*_master, 0.75, 2000, true);
+    PhysicsSim::GetInstance().AddTalonSRX(_master, 0.75, 2000, true);
 }
 void Robot::SimulationPeriodic() {
     PhysicsSim::GetInstance().Run();
@@ -35,23 +35,13 @@ void Robot::SimulationPeriodic() {
 
 void Robot::RobotInit() 
 {
-    /* Construct global variables being used */
-    _master = new WPI_TalonSRX(0);
-    _joy = new frc::Joystick(0);
-    _bufferedStream = new BufferedTrajectoryPointStream();
-
-    _plotThread = new PlotThread(_master);
-
     /* Initialize buffer with MotionProfile */
     InitBuffer(kMotionProfile, kMotionProfileSz);
     _state = 0;
 
-
-    _configuration = new MotionProfileConfiguration();
-
-    _master->ConfigAllSettings(*_configuration);
-    _master->SetSensorPhase(true); //Flip this if you need to for your robot
-    _master->SetInverted(false);   //Flip this if you need to for your robot
+    _master.ConfigAllSettings(_configuration);
+    _master.SetSensorPhase(true); //Flip this if you need to for your robot
+    _master.SetInverted(false);   //Flip this if you need to for your robot
 }
 
 void Robot::AutonomousInit() {}
@@ -61,9 +51,9 @@ void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() 
 {
     /* get joystick button and stick */
-    bool bPrintValues = _joy->GetRawButton(2);
-    bool bFireMp = _joy->GetRawButton(1);
-    double axis = _joy->GetRawAxis(1);
+    bool bPrintValues = _joy.GetRawButton(2);
+    bool bFireMp = _joy.GetRawButton(1);
+    double axis = _joy.GetRawAxis(1);
 
     /* if button is up, just drive the motor in PercentOutput */
     if (bFireMp == false) {
@@ -73,7 +63,7 @@ void Robot::TeleopPeriodic()
     switch (_state) {
         /* drive master talon normally */
         case 0:
-            _master->Set(ControlMode::PercentOutput, axis);
+            _master.Set(ControlMode::PercentOutput, axis);
             if (bFireMp == true) {
                 /* go to MP logic */
                 _state = 1;
@@ -83,16 +73,16 @@ void Robot::TeleopPeriodic()
         /* fire the MP, and stop calling set() since that will cancel the MP */
         case 1:
             /* wait for 10 points to buffer in firmware, then transition to MP */
-            _master->StartMotionProfile(*_bufferedStream, 10, ControlMode::MotionProfile);
+            _master.StartMotionProfile(_bufferedStream, 10, ControlMode::MotionProfile);
             _state = 2;
             Instrum::PrintLine("MP started");
             break;
 
         /* wait for MP to finish */
         case 2:
-            std::cout << "Position: " << _master->GetSelectedSensorPosition() << ", Velocity: " << _master->GetSelectedSensorVelocity() << std::endl;
-            std::cout << "TarPos: " << _master->GetActiveTrajectoryPosition() << ", TarVel: " << _master->GetActiveTrajectoryVelocity() << std::endl;
-            if (_master->IsMotionProfileFinished()) {
+            std::cout << "Position: " << _master.GetSelectedSensorPosition() << ", Velocity: " << _master.GetSelectedSensorVelocity() << std::endl;
+            std::cout << "TarPos: " << _master.GetActiveTrajectoryPosition() << ", TarVel: " << _master.GetActiveTrajectoryVelocity() << std::endl;
+            if (_master.IsMotionProfileFinished()) {
                 Instrum::PrintLine("MP finished");
                 _state = 3;
             }
@@ -120,12 +110,12 @@ void Robot::InitBuffer(const double profile[][3], int totalCnt)
                            // automatically, you can alloc just one
 
     /* clear the buffer, in case it was used elsewhere */
-    _bufferedStream->Clear();
+    _bufferedStream.Clear();
 
     /* Insert every point into buffer, no limit on size */
     for (int i = 0; i < totalCnt; ++i) {
 
-        double direction = forward ? +1 : -1;
+        double direction = forward ? 1 : -1;
         double positionRot = profile[i][0];
         double velocityRPM = profile[i][1];
         int durationMilliseconds = (int) profile[i][2];
@@ -144,7 +134,7 @@ void Robot::InitBuffer(const double profile[][3], int totalCnt)
         point.isLastPoint = ((i + 1) == totalCnt); /* set this to true on the last point */
         point.arbFeedFwd = 0; /* you can add a constant offset to add to PID[0] output here */
 
-        _bufferedStream->Write(point);
+        _bufferedStream.Write(point);
     }
 }
 

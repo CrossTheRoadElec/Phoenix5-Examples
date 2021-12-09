@@ -55,19 +55,22 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
-    /* Hardware */
-	TalonFX _leftFront;    // Drivetrain
-	TalonFX _rightFront;  // Drivetrain
-	TalonFX _leftRear;     // Drivetrain
-	TalonFX _rightRear;    // Drivetrain
-    PigeonIMU _pidgey;      // Pigeon IMU used to enforce straight drive
+	/* Hardware */
+	WPI_TalonFX _leftFront;    // Drivetrain
+	WPI_TalonFX _rightFront;  // Drivetrain
+	WPI_TalonFX _leftRear;     // Drivetrain
+	WPI_TalonFX _rightRear;    // Drivetrain
+    WPI_PigeonIMU _pidgey;      // Pigeon IMU used to enforce straight drive
 	Joystick _driveStick;	// Joystick object on USB port 1
 
 	/** States for tracking whats controlling the drivetrain */
@@ -91,26 +94,45 @@ public class Robot extends TimedRobot {
 	
 	/** Count loops to print every second or so */
 	int _printLoops = 0;
+	
+	DrivebaseSimFX _driveSim;
 
-	public Robot() {
-        /* Init Hardware */
-		_leftFront = new TalonFX(1);
-		_rightFront = new TalonFX(2);
-		_leftRear = new TalonFX(3);
-		_rightRear = new TalonFX(2);
-		_pidgey = new PigeonIMU(3);             // Change ID accordingly 
-        
+	@Override
+	public void simulationPeriodic() {
+		_driveSim.run();
+	}
+
+	@Override
+	public void robotInit() {
+		/* Init Hardware */
+		_leftFront = new WPI_TalonFX(1);
+		_rightFront = new WPI_TalonFX(2);
+		_leftRear = new WPI_TalonFX(3);
+		_rightRear = new WPI_TalonFX(4);
+		_pidgey = new WPI_PigeonIMU(3);             // Change ID accordingly 
+		
 		/* Define joystick being used at USB port #0 on the Drivers Station */
 		_driveStick = new Joystick(0);	
+
+		_driveSim = new DrivebaseSimFX(_leftFront, _rightFront, _pidgey);
+		SmartDashboard.putData("Field", _driveSim.getField());
 	}
 	
-    public void teleopInit() {
-        /* Factory Default all Hardware to prevent unexpected behaviour */
-        _rightFront.configFactoryDefault();
-        _leftFront.configFactoryDefault();
-        _rightRear.configFactoryDefault();
-        _leftRear.configFactoryDefault();
-        _pidgey.configFactoryDefault();
+	public void teleopInit() {
+		/* Factory Default all Hardware to prevent unexpected behaviour */
+		_rightFront.configFactoryDefault();
+		_leftFront.configFactoryDefault();
+		_rightRear.configFactoryDefault();
+		_leftRear.configFactoryDefault();
+		_pidgey.configFactoryDefault();
+
+		_leftRear.follow(_leftFront);
+		_rightRear.follow(_rightFront);
+		
+		_leftFront.setInverted(TalonFXInvertType.CounterClockwise);
+		_leftRear.setInverted(TalonFXInvertType.FollowMaster);
+		_rightFront.setInverted(TalonFXInvertType.Clockwise);
+		_rightRear.setInverted(TalonFXInvertType.FollowMaster);
 		/*
 		 * Talon FX does not need sensor phase set for its integrated sensor
 		 * This is because it will always be correct if the selected feedback device is integrated sensor (default value)
@@ -118,22 +140,22 @@ public class Robot extends TimedRobot {
 		 * 
 		 * https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#sensor-phase
 		 */
-        // _rightFront.setSensorPhase(true);
-        // _leftFront.setSensorPhase(true);
+		// _rightFront.setSensorPhase(true);
+		// _leftFront.setSensorPhase(true);
 
-        /* nonzero to block the config until success, zero to skip checking */
-        final int kTimeoutMs = 30;
-    
-        /* reset heading, angle measurement wraps at plus/minus 23,040 degrees (64 rotations) */
-    	_pidgey.setFusedHeading(0.0, kTimeoutMs);
-		_goStraight = GoStraight.Off;    //Start example with GoStraight Off
-    }
+		/* nonzero to block the config until success, zero to skip checking */
+		final int kTimeoutMs = 30;
 	
-    /**
-     * This function is called periodically during operator control
-     */
-    public void teleopPeriodic() {
-    	/* get Pigeon status information from Pigeon API */
+		/* reset heading, angle measurement wraps at plus/minus 23,040 degrees (64 rotations) */
+		_pidgey.setFusedHeading(0.0, kTimeoutMs);
+		_goStraight = GoStraight.Off;    //Start example with GoStraight Off
+	}
+	
+	/**
+	 * This function is called periodically during operator control
+	 */
+	public void teleopPeriodic() {
+		/* get Pigeon status information from Pigeon API */
 		PigeonIMU.GeneralStatus genStatus = new PigeonIMU.GeneralStatus();
 		PigeonIMU.FusionStatus fusionStatus = new PigeonIMU.FusionStatus();
 		double [] xyz_dps = new double [3];
@@ -141,7 +163,7 @@ public class Robot extends TimedRobot {
 		_pidgey.getGeneralStatus(genStatus);
 		_pidgey.getRawGyro(xyz_dps);
 		_pidgey.getFusedHeading(fusionStatus);
-        double currentAngle = fusionStatus.heading;
+		double currentAngle = fusionStatus.heading;
 		boolean angleIsGood = (_pidgey.getState() == PigeonIMU.PigeonState.Ready) ? true : false;
 		double currentAngularRate = xyz_dps[2];
 		/* get input from gamepad */
@@ -214,9 +236,7 @@ public class Robot extends TimedRobot {
 
 		/* our right side motors need to drive negative to move robot forward */
 		_leftFront.set(TalonFXControlMode.PercentOutput, left);
-		_leftRear.set(TalonFXControlMode.PercentOutput, left);
-		_rightFront.set(TalonFXControlMode.PercentOutput, -1. * right);
-		_rightRear.set(TalonFXControlMode.PercentOutput, -1. * right);
+		_rightFront.set(TalonFXControlMode.PercentOutput, right);
 
 		/* Prints for debugging */
 		if (++_printLoops > 50){
@@ -233,10 +253,10 @@ public class Robot extends TimedRobot {
 		}
     }
 
-    /** 
-     * @param axisVal to deadband.
-     * @return 10% deadbanded joystick value
-     */
+	/** 
+	 * @param axisVal to deadband.
+	 * @return 10% deadbanded joystick value
+	 */
 	double Deadband(double axisVal) {
 		if (axisVal < -0.10)
 			return axisVal;

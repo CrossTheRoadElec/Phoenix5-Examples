@@ -80,12 +80,12 @@ public class Robot extends TimedRobot {
     Devices _currentDevice = Devices.TalonSRX;
 
     /** Hardware */
-    TalonSRX  _talon = new WPI_TalonSRX(1);
-    VictorSPX  _victor = new WPI_VictorSPX(2);
-    PigeonIMU  _pigeon = new PigeonIMU(3);
+    WPI_TalonSRX  _talon = new WPI_TalonSRX(1);
+    WPI_VictorSPX  _victor = new WPI_VictorSPX(2);
+    WPI_PigeonIMU  _pigeon = new WPI_PigeonIMU(new TalonSRX(17));
     CANifier  _canifier = new CANifier(4);
-    CANCoder _canCoder = new CANCoder(5);
-    TalonFX _fx = new TalonFX(6);
+    WPI_CANCoder _canCoder = new WPI_CANCoder(5);
+    WPI_TalonFX _fx = new WPI_TalonFX(6);
     
     Joystick _joy = new Joystick(0);
     

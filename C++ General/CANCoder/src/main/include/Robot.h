@@ -2,7 +2,7 @@
 #pragma once
 
 #include <frc/TimedRobot.h>
-#include <frc/WPILib.h>
+#include <frc/Joystick.h>
 #include <ctre/Phoenix.h>
 
 class Robot : public frc::TimedRobot {
@@ -20,6 +20,6 @@ class Robot : public frc::TimedRobot {
   void TestPeriodic() override;
 
 private:
-  CANCoder * _CANCoder;
-  frc::Joystick *_joy;
+  WPI_CANCoder _CANCoder{0, "fastfd"}; // Construct CANcoder on CANivore's CAN FD network
+  frc::Joystick _joy{0};
 };

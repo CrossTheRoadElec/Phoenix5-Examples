@@ -42,6 +42,6 @@ class Robot : public frc::TimedRobot {
 
 private:
   
-  FurElise *_music;
-  TalonFX *_talonFX;
+  FurElise _music;
+  TalonFX _talonFX{1};
 };

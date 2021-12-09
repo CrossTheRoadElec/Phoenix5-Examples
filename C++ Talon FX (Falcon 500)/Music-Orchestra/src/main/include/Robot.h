@@ -60,7 +60,7 @@ private:
 
 
     /* The orchestra object that holds all the instruments */
-    Orchestra *_orchestra;
+    Orchestra _orchestra;
 
     /* Talon FXs to play music through.  
     More complex music MIDIs will contain several tracks, requiring multiple instruments.  */
@@ -88,7 +88,7 @@ private:
     int _timeToPlayLoops = 0;
 
     /* joystick vars */
-    frc::Joystick *_joy;
+    frc::Joystick _joy{0};
     int _lastButton = 0;
     int _lastPOV = 0;
 };

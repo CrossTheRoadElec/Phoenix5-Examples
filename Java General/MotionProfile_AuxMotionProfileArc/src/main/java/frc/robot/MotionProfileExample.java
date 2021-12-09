@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj.Notifier;
 
 import com.ctre.phoenix.motion.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.IMotorController;
+import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 
 public class MotionProfileExample {
 	/**
@@ -44,7 +44,7 @@ public class MotionProfileExample {
 	 * or call set(), just get motion profile status and make decisions based on
 	 * motion profile.
 	 */
-	private IMotorController _motorController;
+	private BaseMotorController _motorController;
 	/**
 	 * State machine to make sure we let enough of the motion profile stream to
 	 * talon before we fire it.
@@ -105,7 +105,7 @@ public class MotionProfileExample {
 	 * @param talon
 	 *            reference to Talon object to fetch motion profile status from.
 	 */
-	public MotionProfileExample(IMotorController motorController) {
+	public MotionProfileExample(BaseMotorController motorController) {
 		_motorController = motorController;
 		/*
 		 * since our MP is 10ms per point, set the control frame rate and the

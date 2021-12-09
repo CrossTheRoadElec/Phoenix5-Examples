@@ -55,26 +55,27 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
+import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonFX _leftMaster = new TalonFX(2);
-	TalonFX _rightMaster = new TalonFX(1);
-	PigeonIMU _pidgey = new PigeonIMU(3);
+	WPI_TalonFX _leftMaster = new WPI_TalonFX(2, "FastFD");
+	WPI_TalonFX _rightMaster = new WPI_TalonFX(1, "FastFD");
+	WPI_Pigeon2 _pidgey = new WPI_Pigeon2(1, "FastFD");
 	Joystick _gamepad = new Joystick(0);
 
 	TalonFXInvertType _leftInvert = TalonFXInvertType.CounterClockwise; //Same as invert = "false"
@@ -92,10 +93,17 @@ public class Robot extends TimedRobot {
 	boolean _state = false;
 	double _targetAngle = 0;
 	int _printCount = 0;
+	
+	DrivebaseSimFX _driveSim = new DrivebaseSimFX(_leftMaster, _rightMaster, _pidgey);
+
+	@Override
+	public void simulationPeriodic() {
+		_driveSim.run();
+	}
 
 	@Override
 	public void robotInit() {
-		/* Not used in this example */
+		SmartDashboard.putData("Field", _driveSim.getField());
 	}
 	
 	@Override

@@ -9,8 +9,14 @@ FRCUserProgram
 bin
 obj
 .gradle
-.vscode
 build
 .classpath
 .project
 org.eclipse.buildship.core.prefs
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json

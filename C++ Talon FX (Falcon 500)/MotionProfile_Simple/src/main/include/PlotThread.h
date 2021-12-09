@@ -2,7 +2,6 @@
 
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <thread>
-#include <unistd.h>
 #include "ctre/Phoenix.h"
 
 class PlotThread
@@ -10,12 +9,12 @@ class PlotThread
 private:
     std::thread *_thread;
 public:
-    PlotThread(TalonFX *talon)
+    PlotThread(TalonFX* talon)
     {
         _thread = new std::thread(Run, talon);
     }
 
-    static void Run(TalonFX *_talon) 
+    static void Run(TalonFX* _talon) 
     {
         /**
 		 * Speed up network tables, this is a test project so eat up all of the network
@@ -24,7 +23,7 @@ public:
 
 		while (true) {
 			/* Yield for a Ms or so - this is not meant to be accurate */
-			usleep(1000);
+			std::this_thread::sleep_for(std::chrono::microseconds(1000));
 
 			/* Grab the latest signal update from our 1ms frame update */
 			double sen_pos = _talon->GetSelectedSensorPosition(0);

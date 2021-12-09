@@ -10,23 +10,19 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.TalonSRXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.sensors.BasePigeonSimCollection;
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.util.Units;
-import edu.wpi.first.wpiutil.math.VecBuilder;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -43,24 +39,26 @@ public class Robot extends TimedRobot {
   WPI_TalonSRX m_rightDrive = new WPI_TalonSRX(2);
   WPI_VictorSPX m_rightFollower = new WPI_VictorSPX(3);
 
-  // Object for simulated inputs into Talon.
+  /* Object for simulated inputs into Talon. */
   TalonSRXSimCollection m_leftDriveSim = m_leftDrive.getSimCollection();
   TalonSRXSimCollection m_rightDriveSim = m_rightDrive.getSimCollection();
 
-  //Use a standard analog gyro since Pigeon doesn't have sim support yet
-  AnalogGyro m_gyro = new AnalogGyro(1);
-  AnalogGyroSim m_gyroSim = new AnalogGyroSim(m_gyro);
+  WPI_PigeonIMU m_pigeon = new WPI_PigeonIMU(1);
+  /* Object for simulated inputs into Pigeon. */
+  BasePigeonSimCollection m_pigeonSim = m_pigeon.getSimCollection();
 
-  //These numbers are an example AndyMark Drivetrain with some additional weight.  This is a fairly light robot.
-  //Note you can utilize results from robot characterization instead of theoretical numbers.
-  //https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-characterization/introduction.html#introduction-to-robot-characterization
+  /*
+   * These numbers are an example AndyMark Drivetrain with some additional weight.  This is a fairly light robot.
+   * Note you can utilize results from robot characterization instead of theoretical numbers.
+   * https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-characterization/introduction.html#introduction-to-robot-characterization
+   */
   final int kCountsPerRev = 4096;  //Encoder counts per revolution of the motor shaft.
   final double kSensorGearRatio = 1; //Gear ratio is the ratio between the *encoder* and the wheels.  On the AndyMark drivetrain, encoders mount 1:1 with the gearbox shaft.
   final double kGearRatio = 10.71; //Switch kSensorGearRatio to this gear ratio if encoder is on the motor instead of on the gearbox.
   final double kWheelRadiusInches = 3;
   final int k100msPerSecond = 10;
 
-  //Simulation model of the drivetrain
+  /* Simulation model of the drivetrain */
   DifferentialDrivetrainSim m_driveSim = new DifferentialDrivetrainSim(
     DCMotor.getCIM(2),        //2 CIMS on each side of the drivetrain.
     kGearRatio,               //Standard AndyMark Gearing reduction.
@@ -69,19 +67,23 @@ public class Robot extends TimedRobot {
     Units.inchesToMeters(kWheelRadiusInches),  //Robot uses 3" radius (6" diameter) wheels.
     0.546,                    //Distance between wheels is _ meters.
     
-    // The standard deviations for measurement noise:
-    // x and y:          0.001 m
-    // heading:          0.001 rad
-    // l and r velocity: 0.1   m/s
-    // l and r position: 0.005 m
+    /*
+     * The standard deviations for measurement noise:
+     * x and y:          0.001 m
+     * heading:          0.001 rad
+     * l and r velocity: 0.1   m/s
+     * l and r position: 0.005 m
+     */
     null //VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005) //Uncomment this line to add measurement noise.
   );
 
   Field2d m_field = new Field2d();
-  // Creating my odometry object. Here,
-  // our starting pose is 5 meters along the long end of the field and in the
-  // center of the field along the short end, facing forward.
-  DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
+  /*
+   * Creating my odometry object. Here,
+   * our starting pose is 5 meters along the long end of the field and in the
+   * center of the field along the short end, facing forward.
+   */
+  DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_pigeon.getRotation2d());
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -101,34 +103,25 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putData("Field", m_field);
 
-    // These "Real" settings should be changed to match your robot.
-    if(isReal()){
-      // On our real robot, the left side is positive forward and
-      // sensor is in phase by default, so don't change it
-      m_leftDrive.setInverted(InvertType.None);
-      m_leftDrive.setSensorPhase(false);
-
-      // On the real robot, the right side sensor is already in phase but
-      // the right side output needs to be inverted so that positive is forward.
-      m_rightDrive.setInverted(InvertType.InvertMotorOutput);
-      m_rightDrive.setSensorPhase(false);
-    } else {
-      // Drive simulator expects positive motor outputs for forward
-      // and returns positive encoder values, so we don't need to
-      // invert or set sensor phase.
-      m_leftDrive.setInverted(InvertType.None);
-      m_leftDrive.setSensorPhase(false);
-      m_rightDrive.setInverted(InvertType.None);
-      m_rightDrive.setSensorPhase(false);
-    }
+    /* The left side is positive forward and sensor is in phase by default */
+    m_leftDrive.setInverted(InvertType.None);
+    m_leftDrive.setSensorPhase(false);
+    /*
+     * The right side sensor is also already in phase in phase but the
+     * output needs to be inverted so positive is forward
+     */
+    m_rightDrive.setInverted(InvertType.InvertMotorOutput);
+    m_rightDrive.setSensorPhase(false);
   }
 
   @Override
   public void robotPeriodic() {
-    // This will get the simulated sensor readings that we set
-    // in the previous article while in simulation, but will use
-    // real values on the robot itself.
-    m_odometry.update(m_gyro.getRotation2d(),
+    /*
+     * This will get the simulated sensor readings that we set
+     * in the previous article while in simulation, but will use
+     * real values on the robot itself.
+     */
+    m_odometry.update(m_pigeon.getRotation2d(),
                       nativeUnitsToDistanceMeters(m_leftDrive.getSelectedSensorPosition()),
                       nativeUnitsToDistanceMeters(m_rightDrive.getSelectedSensorPosition()));
     m_field.setRobotPose(m_odometry.getPoseMeters());
@@ -139,44 +132,76 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    double throttle = -m_gamepad.getY(Hand.kLeft);
-    double turn = m_gamepad.getX(Hand.kRight);
+    double throttle = -m_gamepad.getLeftY();
+    double turn = m_gamepad.getRightX();
 
-    //Basic Arcade Drive.  This can optionally be replaced with WPILib's DifferentialDrive class.
+    /* Basic Arcade Drive.  This can optionally be replaced with WPILib's DifferentialDrive class. */
     m_leftDrive.set(ControlMode.PercentOutput, throttle, DemandType.ArbitraryFeedForward, turn);
     m_rightDrive.set(ControlMode.PercentOutput, throttle, DemandType.ArbitraryFeedForward, -turn);
   }
 
   @Override 
   public void simulationPeriodic() {
-    // Set the inputs to the system. Note that we need to use
-    // the output voltage, NOT the percent output.
-    m_driveSim.setInputs(m_leftDrive.getMotorOutputVoltage(),
-                         m_rightDrive.getMotorOutputVoltage()); //Right side is inverted, so forward is negative voltage
-
-    // Advance the model by 20 ms. Note that if you are running this
-    // subsystem in a separate thread or have changed the nominal timestep
-    // of TimedRobot, this value needs to match it.
-    m_driveSim.update(0.02);
-
-    // Update all of our sensors.
-    m_leftDriveSim.setQuadratureRawPosition(
-                    distanceToNativeUnits(
-                    m_driveSim.getLeftPositionMeters()));
-    m_leftDriveSim.setQuadratureVelocity(
-                    velocityToNativeUnits(
-                    m_driveSim.getLeftVelocityMetersPerSecond()));
-    m_rightDriveSim.setQuadratureRawPosition(
-                    distanceToNativeUnits(
-                    m_driveSim.getRightPositionMeters()));
-    m_rightDriveSim.setQuadratureVelocity(
-                    velocityToNativeUnits(
-                    m_driveSim.getRightVelocityMetersPerSecond()));
-    m_gyroSim.setAngle(-m_driveSim.getHeading().getDegrees());
-
-    //Update other inputs to Talons
+    /* Pass the robot battery voltage to the simulated Talon SRXs */
     m_leftDriveSim.setBusVoltage(RobotController.getBatteryVoltage());
     m_rightDriveSim.setBusVoltage(RobotController.getBatteryVoltage());
+
+    /*
+     * CTRE simulation is low-level, so SimCollection inputs
+     * and outputs are not affected by SetInverted(). Only
+     * the regular user-level API calls are affected.
+     *
+     * WPILib expects +V to be forward.
+     * Positive motor output lead voltage is ccw. We observe
+     * on our physical robot that this is reverse for the
+     * right motor, so negate it.
+     *
+     * We are hard-coding the negation of the values instead of
+     * using getInverted() so we can catch a possible bug in the
+     * robot code where the wrong value is passed to setInverted().
+     */
+    m_driveSim.setInputs(m_leftDriveSim.getMotorOutputLeadVoltage(),
+                         -m_rightDriveSim.getMotorOutputLeadVoltage());
+
+    /*
+     * Advance the model by 20 ms. Note that if you are running this
+     * subsystem in a separate thread or have changed the nominal
+     * timestep of TimedRobot, this value needs to match it.
+     */
+    m_driveSim.update(0.02);
+
+    /*
+     * Update all of our sensors.
+     *
+     * Since WPILib's simulation class is assuming +V is forward,
+     * but -V is forward for the right motor, we need to negate the
+     * position reported by the simulation class. Basically, we
+     * negated the input, so we need to negate the output.
+     *
+     * We also observe on our physical robot that a positive voltage
+     * across the output leads results in a positive sensor velocity
+     * for both the left and right motors, so we do not need to negate
+     * the output any further.
+     * If we had observed that a positive voltage results in a negative
+     * sensor velocity, we would need to negate the output once more.
+     */
+    m_leftDriveSim.setQuadratureRawPosition(
+                    distanceToNativeUnits(
+                        m_driveSim.getLeftPositionMeters()
+                    ));
+    m_leftDriveSim.setQuadratureVelocity(
+                    velocityToNativeUnits(
+                        m_driveSim.getLeftVelocityMetersPerSecond()
+                    ));
+    m_rightDriveSim.setQuadratureRawPosition(
+                    distanceToNativeUnits(
+                        -m_driveSim.getRightPositionMeters()
+                    ));
+    m_rightDriveSim.setQuadratureVelocity(
+                    velocityToNativeUnits(
+                        -m_driveSim.getRightVelocityMetersPerSecond()
+                    ));
+    m_pigeonSim.setRawHeading(m_driveSim.getHeading().getDegrees());
   }
 
 

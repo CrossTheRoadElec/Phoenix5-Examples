@@ -37,7 +37,7 @@
  * 2.) Percent Output Drive Straight with quadrature difference
  * 
  * Controls:
- * Button 1: When pressed, zero heading. Set quadrature encoder's postions to 0.
+ * Button 1: When pressed, zero heading. Set quadrature encoder's positions to 0.
  * Button 2: When pressed, toggle between Arcade Drive and Drive Straight with quadrature difference
  * 	When toggling into Drive Straight, the current heading is saved and used as the 
  * 	closed loop target. Can be changed by toggling out and in again.
@@ -73,8 +73,8 @@ import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonSRX _leftMaster = new WPI_TalonSRX(2);
-	TalonSRX _rightMaster = new WPI_TalonSRX(1);
+	WPI_TalonSRX _leftMaster = new WPI_TalonSRX(2);
+	WPI_TalonSRX _rightMaster = new WPI_TalonSRX(1);
 	Joystick _gamepad = new Joystick(0);
 	
 	/** Latched values to detect on-press events for buttons */

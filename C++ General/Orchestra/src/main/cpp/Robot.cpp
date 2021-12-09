@@ -6,15 +6,14 @@
 /*----------------------------------------------------------------------------*/
 
 #include "Robot.h"
+#include <iostream>
 
 void Robot::RobotInit() {
-    _orchestra = new Orchestra();
-    _joy = new frc::Joystick(0);
     for(int i = 0; i < INSTRUMENT_COUNT; ++i) {
         /* Instantiate an instrument */
         _instruments[i] = new TalonFX(i + 1);
         /* Add instruments to orchestra */
-        _orchestra->AddInstrument(*_instruments[i]);
+        _orchestra.AddInstrument(*_instruments[i]);
     }
 
     {
@@ -36,39 +35,39 @@ void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
-    if(_joy->GetRawButton(1) && _lastButton != 1) {
+    if(_joy.GetRawButton(1) && _lastButton != 1) {
       /* Play the song */
-      _orchestra->Play();
+      _orchestra.Play();
       _lastButton = 1;
 
       std::cout << "Playing" << std::endl;
     }
-    if(_joy->GetRawButton(2) && _lastButton != 2) {
+    if(_joy.GetRawButton(2) && _lastButton != 2) {
       /* Pause */
-      _orchestra->Pause();
+      _orchestra.Pause();
       _lastButton = 2;
 
       std::cout << "Paused" << std::endl;
     }
-    if(_joy->GetRawButton(3) && _lastButton != 3) {
+    if(_joy.GetRawButton(3) && _lastButton != 3) {
       /* Stop */
-      _orchestra->Stop();
+      _orchestra.Stop();
       _lastButton = 3;
 
       std::cout << "Stopped" << std::endl;
     }
-    if(_joy->GetRawButton(4) && _lastButton != 4) {
+    if(_joy.GetRawButton(4) && _lastButton != 4) {
       /* Load selected song */
-      _orchestra->LoadMusic(_songs[_songSelection]);
+      _orchestra.LoadMusic(_songs[_songSelection]);
       _lastButton = 4;
 
       std::cout << "Loaded " << _songs[_songSelection] << std::endl;
     }
-    if(_joy->GetRawButton(5)) {
-        _orchestra->ClearInstruments();
+    if(_joy.GetRawButton(5)) {
+        _orchestra.ClearInstruments();
     }
 
-    int currentPOV = _joy->GetPOV();
+    int currentPOV = _joy.GetPOV();
     if(currentPOV == 90 && _lastPOV != 90) {
       _songSelection++;
       if(_songSelection >= (int)_songs.size()) _songSelection = 0;

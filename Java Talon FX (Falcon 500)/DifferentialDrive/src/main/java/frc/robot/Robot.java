@@ -36,6 +36,7 @@ import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -45,10 +46,12 @@ public class Robot extends TimedRobot {
     /*
      * --- [1] Update CAN Device IDs ------
      */
-    WPI_TalonFX _rghtFront = new WPI_TalonFX(1);
-    WPI_TalonFX _rghtFollower = new WPI_TalonFX(10);
-    WPI_TalonFX _leftFront = new WPI_TalonFX(2);
-    WPI_TalonFX _leftFollower = new WPI_TalonFX(20);
+    WPI_TalonFX _rghtFront = new WPI_TalonFX(1, "FastFD");
+    WPI_TalonFX _rghtFollower = new WPI_TalonFX(10, "FastFD");
+    WPI_TalonFX _leftFront = new WPI_TalonFX(2, "FastFD");
+    WPI_TalonFX _leftFollower = new WPI_TalonFX(20, "FastFD");
+
+    WPI_Pigeon2 _pidgey = new WPI_Pigeon2(1, "FastFD");
 
     DifferentialDrive _diffDrive = new DifferentialDrive(_leftFront, _rghtFront);
 
@@ -57,14 +60,21 @@ public class Robot extends TimedRobot {
     Faults _faults_L = new Faults();
     Faults _faults_R = new Faults();
 
+    DrivebaseSimFX _driveSim = new DrivebaseSimFX(_leftFront, _rghtFront, _pidgey);
+
+    @Override
+    public void simulationPeriodic() {
+        _driveSim.run();
+    }
+
     @Override
     public void teleopPeriodic() {
 
         String work = "";
 
         /* get gamepad stick values */
-        double forw = -1 * _joystick.getRawAxis(1); /* positive is forward */
-        double turn = +1 * _joystick.getRawAxis(2); /* positive is right */
+        double forw = -_joystick.getRawAxis(1); /* positive is forward */
+        double turn = -_joystick.getRawAxis(2); /* positive is right */
         boolean btn1 = _joystick.getRawButton(1); /* is button is down, print joystick values */
 
         /* deadband gamepad 10% */
@@ -141,11 +151,5 @@ public class Robot extends TimedRobot {
 		 */
         // _rghtFront.setSensorPhase(true);
         // _leftFront.setSensorPhase(true);
-
-        /*
-         * WPI drivetrain classes defaultly assume left and right are opposite. call
-         * this so we can apply + to both sides when moving forward. DO NOT CHANGE
-         */
-        _diffDrive.setRightSideInverted(false);
     }
 }

@@ -46,22 +46,36 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import frc.robot.sim.PhysicsSim;
+
 public class Robot extends TimedRobot {
 	/* Master Talons for arcade drive */
-	WPI_TalonFX _frontLeftMotor = new WPI_TalonFX(1);
-	WPI_TalonFX _frontRightMotor = new WPI_TalonFX(2);
+	WPI_TalonFX _frontLeftMotor = new WPI_TalonFX(1, "FastFD");
+	WPI_TalonFX _frontRightMotor = new WPI_TalonFX(2, "FastFD");
 
 	/* Follower Talons + Victors for six motor drives */
-	WPI_TalonFX _leftSlave1 = new WPI_TalonFX(5);
-	WPI_TalonFX _rightSlave1 = new WPI_TalonFX(7);
-	WPI_TalonFX _leftSlave2 = new WPI_TalonFX(4);
-	WPI_TalonFX _rightSlave2 = new WPI_TalonFX(17);
+	WPI_TalonFX _leftSlave1 = new WPI_TalonFX(5, "FastFD");
+	WPI_TalonFX _rightSlave1 = new WPI_TalonFX(7, "FastFD");
+	WPI_TalonFX _leftSlave2 = new WPI_TalonFX(4, "FastFD");
+	WPI_TalonFX _rightSlave2 = new WPI_TalonFX(17, "FastFD");
 
-    /* Construct drivetrain by providing master motor controllers */
+	/* Construct drivetrain by providing master motor controllers */
 	DifferentialDrive _drive = new DifferentialDrive(_frontLeftMotor, _frontRightMotor);
 
-    /* Joystick for control */
+	/* Joystick for control */
 	Joystick _joy = new Joystick(0);
+
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonFX(_frontLeftMotor, 0.5, 6800);
+		PhysicsSim.getInstance().addTalonFX(_frontRightMotor, 0.5, 6800);
+		PhysicsSim.getInstance().addTalonFX(_leftSlave1, 0.5, 6800);
+		PhysicsSim.getInstance().addTalonFX(_leftSlave2, 0.5, 6800);
+		PhysicsSim.getInstance().addTalonFX(_rightSlave1, 0.5, 6800);
+		PhysicsSim.getInstance().addTalonFX(_rightSlave2, 0.5, 6800);
+	}
+	public void simulationPeriodic() {
+		PhysicsSim.getInstance().run();
+	}
 
 	/**
 	 * This function is called once at the beginning during operator control
@@ -103,11 +117,6 @@ public class Robot extends TimedRobot {
 		 */
         // _frontLeftMotor.setSensorPhase(true);
         // _frontRightMotor.setSensorPhase(true);
-
-		/* diff drive assumes (by default) that 
-			right side must be negative to move forward.
-			Change to 'false' so positive/green-LEDs moves robot forward  */
-		_drive.setRightSideInverted(false); // do not change this
 	}
 
 	/**

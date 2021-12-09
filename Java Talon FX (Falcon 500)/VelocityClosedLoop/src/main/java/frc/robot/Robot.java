@@ -25,11 +25,11 @@
 /**
  * Description:
  * The VelocityClosedLoop example demonstrates the velocity closed-loop servo.
- * Tested with Logitech F350 USB Gamepad inserted into Driver Station]
+ * Tested with Logitech F350 USB Gamepad inserted into Driver Station.
  * 
  * Be sure to select the correct feedback sensor using configSelectedFeedbackSensor() below.
  * Use Percent Output Mode (Holding A and using Left Joystick) to confirm talon is driving 
- * forward (Green LED on Talon/Victor) when the postion sensor is moving in the postive 
+ * forward (Green LED on Talon/Victor) when the position sensor is moving in the positive 
  * direction. If this is not the case, flip the boolean input in setSensorPhase().
  * 
  * Controls:
@@ -48,13 +48,15 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+
+import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
-    /* Hardware */
-	TalonFX _talon = new TalonFX(1);
+	/* Hardware */
+	WPI_TalonFX _talon = new WPI_TalonFX(1, "FastFD");
     Joystick _joy = new Joystick(0);
     
     /* String for output */
@@ -63,8 +65,15 @@ public class Robot extends TimedRobot {
     /* Loop tracker for prints */
 	int _loops = 0;
 
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonFX(_talon, 0.75, 20660);
+	}
+	public void simulationPeriodic() {
+		PhysicsSim.getInstance().run();
+	}
+
 	public void robotInit() {
-        /* Factory Default all hardware to prevent unexpected behaviour */
+		/* Factory Default all hardware to prevent unexpected behaviour */
 		_talon.configFactoryDefault();
 		
 		/* Config neutral deadband to be the smallest possible */

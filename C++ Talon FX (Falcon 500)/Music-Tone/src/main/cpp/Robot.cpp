@@ -23,10 +23,7 @@
 
 #include "Robot.h"
 
-void Robot::RobotInit() {
-  _music = new FurElise();
-  _talonFX = new TalonFX(1);
-}
+void Robot::RobotInit() {}
 
 void Robot::AutonomousInit() {}
 void Robot::AutonomousPeriodic() {}
@@ -38,10 +35,10 @@ void Robot::TeleopPeriodic() {
     int dt = 20; // 20ms per loop
 
     /* what note to play during this 20ms slice? */
-    double freq = _music->GetMusicFrequency(dt);
+    double freq = _music.GetMusicFrequency(dt);
 
     /* update the FX. If the freq is 0, no-note is played */
-    _talonFX->Set(TalonFXControlMode::MusicTone, freq);
+    _talonFX.Set(TalonFXControlMode::MusicTone, freq);
 }
 
 void Robot::TestInit() {}

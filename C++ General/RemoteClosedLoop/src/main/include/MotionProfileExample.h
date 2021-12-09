@@ -23,10 +23,10 @@
  * [2] Instead of setting the sensor position to zero at the start of each MP, the program could offset the MP's position based on current position. 
  */
 
-#include "frc/WPILib.h"
 #include "ctre/Phoenix.h"
 #include "Instrumentation.h"
 #include "MotionProfile.h"
+#include "frc/Notifier.h"
 
 using namespace frc;
 
@@ -125,7 +125,7 @@ public:
 		_motorController.ChangeMotionControlFramePeriod(5);
 
 		/* start our tasking */
-		_notifer.StartPeriodic(0.005);
+		_notifer.StartPeriodic(units::time::millisecond_t{5});
 	}
 	/**
 	 * Called to clear Motion profile buffer and reset state info during

@@ -25,7 +25,7 @@
 /**
  * Description:
  * The MotionMagic_TalonFX_AuxStraightPigeon example demonstrates the Talon auxiliary and 
- * remote features to peform complex closed loops. This example has the robot performing 
+ * remote features to perform complex closed loops. This example has the robot performing 
  * Motion Magic with an auxiliary closed loop on Pigeon Yaw to keep the robot straight.
  * 
  * This example uses:
@@ -60,26 +60,27 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
+import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonFX _leftMaster = new TalonFX(2);
-	TalonFX _rightMaster = new TalonFX(1);
-	PigeonIMU _pidgey = new PigeonIMU(3);
+	WPI_TalonFX _leftMaster = new WPI_TalonFX(2, "fastfd");
+	WPI_TalonFX _rightMaster = new WPI_TalonFX(1, "fastfd");
+	WPI_Pigeon2 _pidgey = new WPI_Pigeon2(3, "fastfd");
 	Joystick _gamepad = new Joystick(0);
 
 	/** Invert Directions for Left and Right */
@@ -101,6 +102,13 @@ public class Robot extends TimedRobot {
 
 	/** How much smoothing [0,8] to use during MotionMagic */
 	int _smoothing;
+
+	DrivebaseSimFX _driveSim = new DrivebaseSimFX(_leftMaster, _rightMaster, _pidgey);
+
+	@Override 
+	public void simulationPeriodic() {
+		_driveSim.run();
+	}
 
 	@Override
 	public void robotInit() {
@@ -201,6 +209,8 @@ public class Robot extends TimedRobot {
 		_rightMaster.setStatusFramePeriod(StatusFrame.Status_10_Targets, 10, Constants.kTimeoutMs);
 		_leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kTimeoutMs);
 		_pidgey.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR , 5, Constants.kTimeoutMs);
+		
+		SmartDashboard.putData("Field", _driveSim.getField());
 	}
 
 	@Override

@@ -25,12 +25,12 @@
 /**
  * Description:
  * The MotionMagic_AuxStraightQuadrature example demonstrates the new Talon/Victor auxiliary and 
- * remote features used to peform complex closed loops. This example has the robot performing 
+ * remote features used to perform complex closed loops. This example has the robot performing 
  * Motion Magic with an auxiliary closed loop on Quadrature Difference to keep the robot straight.
  * 
  * This example uses:
  * - 2x Quad Encoder, one of both sides of robot for Auxiliary Closed Loop on heading
- * A Talon/Victor calculates the heading by taking the difference between both sesnors.
+ * A Talon/Victor calculates the heading by taking the difference between both sensors.
  * - 2x Quad Encoders, One on both sides of robot for Primary Closed Loop on Position
  * A Talon/Victor calculates the distance by taking the average between both sensors.
  * 
@@ -81,8 +81,8 @@ import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonSRX _leftMaster = new WPI_TalonSRX(2);
-	TalonSRX _rightMaster = new WPI_TalonSRX(1);
+	WPI_TalonSRX _leftMaster = new WPI_TalonSRX(2);
+	WPI_TalonSRX _rightMaster = new WPI_TalonSRX(1);
 	Joystick _gamepad = new Joystick(0);
 	
 	/** A couple latched values to detect on-press events for buttons */

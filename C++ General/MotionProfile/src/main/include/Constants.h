@@ -3,7 +3,7 @@
 enum Constants {
 
 	/** which Talon on CANBus*/
-	kTalonID = 0,
+	kTalonID = 1,
 
 	/* example Victor SPX follower */
 	kVictorFollower = 0,

@@ -3,6 +3,7 @@
 #include <frc/TimedRobot.h>
 #include <frc/Joystick.h>
 #include "ctre/Phoenix.h"
+#include "DrivebaseSimSRX.h"
 #include "PlotThread.h"
 #include "MasterProfileConfiguration.h"
 #include "FollowerProfileConfiguration.h"
@@ -10,6 +11,8 @@
 class Robot : public frc::TimedRobot
 {
 public:
+	void SimulationPeriodic() override;
+
 	void RobotInit() override;
 
 	void AutonomousInit() override;
@@ -24,18 +27,20 @@ public:
 private:
 	int _state;
 
-	TalonSRX *_rightMaster;
-	TalonSRX *_leftMaster;
+	WPI_TalonSRX _rightMaster{1};
+	WPI_TalonSRX _leftMaster{2};
 
-	MasterProfileConfiguration *_masterConfig;
-	FollowerProfileConfiguration *_followConfig;
+	WPI_PigeonIMU _pidgey{3};
 
-	PigeonIMU *_pidgey;
+	MasterProfileConfiguration _masterConfig{_leftMaster, _pidgey};
+	FollowerProfileConfiguration _followConfig;
 
-	frc::Joystick *_joystick;
+	frc::Joystick _joystick{0};
 
-	BufferedTrajectoryPointStream *_bufferedStream;
-	PlotThread *_plotThread;
+	BufferedTrajectoryPointStream _bufferedStream;
+	PlotThread _plotThread{&_rightMaster};
+
+	DrivebaseSimSRX _driveSim{_leftMaster, _rightMaster, _pidgey};
 
 	void InitBuffer(const double profile[][3], int totalCnt, double rotations);
 };

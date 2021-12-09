@@ -31,11 +31,13 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+
+import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
 	/*
@@ -55,13 +57,20 @@ public class Robot extends TimedRobot {
 	final NeutralMode kBrakeDurNeutral = NeutralMode.Coast;
 
 	/** Talon to control and monitor */
-	TalonFX _talon = new TalonFX(1); // <<< Choose the Talon ID - check in Tuner to see what ID it is.
+	WPI_TalonFX _talon = new WPI_TalonFX(1, "FastFD"); // <<< Choose the Talon ID - check in Tuner to see what ID it is.
 
 	/** user joystick for basic control */
 	Joystick _joy = new Joystick(0);
 
 	/** print every few loops */
 	int _loops = 0;
+
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonFX(_talon, 0.5, 6800);
+	}
+	public void simulationPeriodic() {
+		PhysicsSim.getInstance().run();
+	}
 
 	/**
 	 * This function is called once on roboRIO bootup Select the quadrature/mag
@@ -127,8 +136,8 @@ public class Robot extends TimedRobot {
 
 		/* get the selected sensor for PID0 */
 		double appliedMotorOutput = _talon.getMotorOutputPercent();
-		int selSenPos = _talon.getSelectedSensorPosition(0); /* position units */
-		int selSenVel = _talon.getSelectedSensorVelocity(0); /* position units per 100ms */
+		double selSenPos = _talon.getSelectedSensorPosition(0); /* position units */
+		double selSenVel = _talon.getSelectedSensorVelocity(0); /* position units per 100ms */
 
 		/* scaling depending on what user wants */
 		double pos_Rotations = (double) selSenPos / kUnitsPerRevolution;
@@ -145,8 +154,8 @@ public class Robot extends TimedRobot {
 		if (++_loops >= 10) {
 			_loops = 0;
 			System.out.printf("Motor-out: %.2f | ", appliedMotorOutput);
-			System.out.printf("Pos-units: %d | ", selSenPos);
-			System.out.printf("Vel-unitsPer100ms: %d | ", selSenVel);
+			System.out.printf("Pos-units: %.2f | ", selSenPos);
+			System.out.printf("Vel-unitsPer100ms: %.2f | ", selSenVel);
 			System.out.printf("Pos-Rotations:%.3f | ", pos_Rotations);
 			System.out.printf("Vel-RPS:%.1f | ", vel_RotPerSec);
 			System.out.printf("Vel-RPM:%.1f | ", vel_RotPerMin);

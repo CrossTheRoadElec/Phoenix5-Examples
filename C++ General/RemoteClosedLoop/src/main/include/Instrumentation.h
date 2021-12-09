@@ -23,7 +23,7 @@
 #include <iomanip> // using setw() for printing
 #include <iostream> // cout
 
-#include "frc/WPILib.h"
+#include "frc/Timer.h"
 #include "ctre/Phoenix.h"
 
 using namespace frc;
@@ -53,7 +53,7 @@ public:
 		const char delim[] = "\t";
 		const char endline[] = "\n";
 
-		double now = GetTime();
+		double now = GetTime().value();
 
 		if ((now - timeout) > 0.2) {
 			timeout = now;

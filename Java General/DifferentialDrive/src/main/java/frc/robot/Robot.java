@@ -151,11 +151,5 @@ public class Robot extends TimedRobot {
          */
         _rghtFront.setSensorPhase(true);
         _leftFront.setSensorPhase(true);
-
-        /*
-         * WPI drivetrain classes defaultly assume left and right are opposite. call
-         * this so we can apply + to both sides when moving forward. DO NOT CHANGE
-         */
-        _diffDrive.setRightSideInverted(false);
     }
 }

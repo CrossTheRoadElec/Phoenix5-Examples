@@ -28,8 +28,8 @@ class Robot : public frc::TimedRobot {
   void TestInit() override;
   void TestPeriodic() override;
 
-  Orchestra *_orchestra;
-  frc::Joystick *_joy;
+  Orchestra _orchestra;
+  frc::Joystick _joy{0};
   TalonFX *_instruments[INSTRUMENT_COUNT];
   std::vector<std::string> _songs;
 

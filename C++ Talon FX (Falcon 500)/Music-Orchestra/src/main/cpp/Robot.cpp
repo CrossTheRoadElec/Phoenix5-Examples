@@ -38,7 +38,7 @@
 
 int Robot::GetButton() {
     for (int i = 1; i < 9; ++i) {
-        if (_joy->GetRawButton(i)) {
+        if (_joy.GetRawButton(i)) {
             return i;
         }
     }
@@ -57,7 +57,7 @@ void Robot::LoadMusicSelection(int offset)
         _songSelection = SONG_COUNT - 1;
     }
     /* load the chirp file */
-    _orchestra->LoadMusic(_songs[_songSelection]); 
+    _orchestra.LoadMusic(_songs[_songSelection]); 
 
     /* print to console */
     printf("Song selected is: %s.  Press left/right on d-pad to change.\n", _songs[_songSelection].c_str());
@@ -69,16 +69,12 @@ void Robot::LoadMusicSelection(int offset)
 }
 
 void Robot::RobotInit() {
-    /* Create the orchestra with the TalonFX instruments */
-    _orchestra = new Orchestra();
-
-    _fxes = new TalonFX * [TALON_COUNT];
+    _fxes = new TalonFX* [TALON_COUNT];
     /* Initialize the TalonFX's to be used */
     for (int i = 0; i < TALON_COUNT; ++i) {
         _fxes[i] = new TalonFX(i+1);
-        _orchestra->AddInstrument(*_fxes[i]);
+        _orchestra.AddInstrument(*_fxes[i]);
     }
-    _joy = new frc::Joystick(0);
 }
 
 void Robot::AutonomousInit() {}
@@ -91,7 +87,7 @@ void Robot::TeleopInit() {
 void Robot::TeleopPeriodic() {
     /* poll gamepad */
     int btn = GetButton();
-    int currentPOV = _joy->GetPOV();
+    int currentPOV = _joy.GetPOV();
 
     /* if song selection changed, auto-play it */
     if (_timeToPlayLoops > 0) {
@@ -99,7 +95,7 @@ void Robot::TeleopPeriodic() {
         if (_timeToPlayLoops == 0) {
             /* scheduled play request */
             printf("Auto-playing song.\n");
-            _orchestra->Play();
+            _orchestra.Play();
         }
     }
 
@@ -110,21 +106,21 @@ void Robot::TeleopPeriodic() {
 
         switch (btn) {
             case 1: /* toggle play and paused */
-                if (_orchestra->IsPlaying()) {
-                    _orchestra->Pause();
+                if (_orchestra.IsPlaying()) {
+                    _orchestra.Pause();
                     printf("Song paused\n");
                 }  else {
-                    _orchestra->Play();
+                    _orchestra.Play();
                     printf("Playing song...\n");
                 }
                 break;
                 
             case 2: /* toggle play and stop */
-                if (_orchestra->IsPlaying()) {
-                    _orchestra->Stop();
+                if (_orchestra.IsPlaying()) {
+                    _orchestra.Stop();
                     printf("Song stopped.\n");
                 }  else {
-                    _orchestra->Play();
+                    _orchestra.Play();
                     printf("Playing song...\n");
                 }
                 break;

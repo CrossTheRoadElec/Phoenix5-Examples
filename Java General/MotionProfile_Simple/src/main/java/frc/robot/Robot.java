@@ -62,7 +62,7 @@ public class Robot extends TimedRobot {
     int _state = 0;
 
     /** a master talon, add followers if need be. */
-    TalonSRX _master = new WPI_TalonSRX(0);
+    WPI_TalonSRX _master = new WPI_TalonSRX(0);
 
     /** gamepad for control */
     Joystick _joy = new Joystick(0);

@@ -25,7 +25,7 @@
 /**
  * Description:
  * The PositionClosedLoop_AuxStraightPigeon example demonstrates the new Talon/Victor Auxiliary 
- * and Remote Features to peform more complex. This example has the robot performing Position 
+ * and Remote Features to perform more complex. This example has the robot performing Position 
  * Closed Loop with an auxiliary closed loop on Pigeon Yaw to keep the robot straight.
  * 
  * This example uses:
@@ -59,6 +59,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -69,14 +70,14 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonSRX _leftMaster = new TalonSRX(2);
-	TalonSRX _rightMaster = new TalonSRX(1);
-	PigeonIMU _pidgey = new PigeonIMU(3);
+	WPI_TalonSRX _leftMaster = new WPI_TalonSRX(2);
+	WPI_TalonSRX _rightMaster = new WPI_TalonSRX(1);
+	WPI_PigeonIMU _pidgey = new WPI_PigeonIMU(3);
 	Joystick _gamepad = new Joystick(0);
 	
 	/** Latched values to detect on-press events for buttons */
@@ -88,9 +89,16 @@ public class Robot extends TimedRobot {
 	boolean _state = false;
 	double _targetAngle = 0;
 
+	DrivebaseSimSRX _driveSim = new DrivebaseSimSRX(_leftMaster, _rightMaster, _pidgey);
+
+	@Override
+	public void simulationPeriodic() {
+		_driveSim.run();
+	}
+
 	@Override
 	public void robotInit() {
-		/* Not used in this example */
+		SmartDashboard.putData("Field", _driveSim.getField());
 	}
 
 	@Override

@@ -37,7 +37,7 @@
  * 2.) Percent Output Drive Straight with integrated sensor difference
  * 
  * Controls:
- * Button 1: When pressed, zero heading. Set integrated sensor's postions to 0.
+ * Button 1: When pressed, zero heading. Set integrated sensor's positions to 0.
  * Button 2: When pressed, toggle between Arcade Drive and Drive Straight with integrated sensor difference
  * 	When toggling into Drive Straight, the current heading is saved and used as the 
  * 	closed loop target. Can be changed by toggling out and in again.
@@ -64,13 +64,15 @@ import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+
+import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonFX _leftMaster = new TalonFX(2);
-	TalonFX _rightMaster = new TalonFX(1);
+	WPI_TalonFX _leftMaster = new WPI_TalonFX(2, "FastFD");
+	WPI_TalonFX _rightMaster = new WPI_TalonFX(1, "FastFD");
 	Joystick _gamepad = new Joystick(0);
 
 	/** Invert Directions for Left and Right */
@@ -89,6 +91,17 @@ public class Robot extends TimedRobot {
 	boolean _firstCall = false;
 	boolean _state = false;
 	double _targetAngle = 0;
+
+	@Override
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonFX(_leftMaster, 0.5, 6800);
+		PhysicsSim.getInstance().addTalonFX(_rightMaster, 0.5, 6800);
+	}
+
+	@Override
+	public void simulationPeriodic() {
+		PhysicsSim.getInstance().run();
+	}
 
 	@Override
 	public void robotInit() {
@@ -301,9 +314,9 @@ public class Robot extends TimedRobot {
 				Auxiliary is the other side's distance.
 
 					Phase | Term 0   |   Term 1  | Result
-				Sum:  -1 *((-)Master + (+)Aux   )| OK - magnitude will cancel each other out
-				Diff: -1 *((-)Master - (+)Aux   )| NOT OK - magnitude increases with forward distance.
-				Diff: -1 *((+)Aux    - (-)Master)| NOT OK - magnitude decreases with forward distance
+				Sum:  -((-)Master + (+)Aux   )| OK - magnitude will cancel each other out
+				Diff: -((-)Master - (+)Aux   )| NOT OK - magnitude increases with forward distance.
+				Diff: -((+)Aux    - (-)Master)| NOT OK - magnitude decreases with forward distance
 			*/
 
 			masterConfig.sum0Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local Integrated Sensor

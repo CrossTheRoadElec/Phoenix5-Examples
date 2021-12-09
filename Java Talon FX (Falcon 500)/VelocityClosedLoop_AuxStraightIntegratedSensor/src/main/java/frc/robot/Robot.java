@@ -25,7 +25,7 @@
 /**
  * Description:
  * The VelocityClosedLoop_AuxStraightIntegratedSensor example demonstrates the new Talon/Victor auxiliary
- * and remote features used to peform complex closed loops. This example has the robot performing 
+ * and remote features used to perform complex closed loops. This example has the robot performing 
  * Velocity closed loop with an auxiliary closed loop on integrated sensor difference (Heading)
  * to keep the robot straight.
  * 
@@ -64,20 +64,21 @@ import edu.wpi.first.wpilibj.Joystick;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
-import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
+import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	TalonFX _leftMaster = new TalonFX(2);
-	TalonFX _rightMaster = new TalonFX(1);
+	WPI_TalonFX _leftMaster = new WPI_TalonFX(2, "FastFD");
+	WPI_TalonFX _rightMaster = new WPI_TalonFX(1, "FastFD");
 	Joystick _gamepad = new Joystick(0);
 	
 	/** Latched values to detect on-press events for buttons */
@@ -97,6 +98,17 @@ public class Robot extends TimedRobot {
 	boolean _state = false;
 	double _lockedDistance = 0;
 	double _targetAngle = 0;
+
+	@Override
+	public void simulationInit() {
+		PhysicsSim.getInstance().addTalonFX(_leftMaster, 0.75, 20660);
+		PhysicsSim.getInstance().addTalonFX(_rightMaster, 0.75, 20660);
+	}
+
+	@Override
+	public void simulationPeriodic() {
+		PhysicsSim.getInstance().run();
+	}
 
 	@Override
 	public void robotInit() {
@@ -327,9 +339,9 @@ public class Robot extends TimedRobot {
 				Auxiliary is the other side's distance.
 
 					Phase | Term 0   |   Term 1  | Result
-				Sum:  -1 *((-)Master + (+)Aux   )| OK - magnitude will cancel each other out
-				Diff: -1 *((-)Master - (+)Aux   )| NOT OK - magnitude increases with forward distance.
-				Diff: -1 *((+)Aux    - (-)Master)| NOT OK - magnitude decreases with forward distance
+				Sum:  -((-)Master + (+)Aux   )| OK - magnitude will cancel each other out
+				Diff: -((-)Master - (+)Aux   )| NOT OK - magnitude increases with forward distance.
+				Diff: -((+)Aux    - (-)Master)| NOT OK - magnitude decreases with forward distance
 			*/
 
 			masterConfig.sum0Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local Integrated Sensor

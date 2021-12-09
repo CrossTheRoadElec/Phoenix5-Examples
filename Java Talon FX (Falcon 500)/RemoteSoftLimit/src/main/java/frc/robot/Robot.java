@@ -68,20 +68,29 @@ import com.ctre.phoenix.CANifierStatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.WPI_Pigeon2;
+
+import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
     /* Hardware */
-    TalonFX _motorCntrller = new TalonFX(1);	// Victor SPX can be used with remote sensor features.
+    WPI_TalonFX _motorCntrller = new WPI_TalonFX(1, "FastFD");	// Victor SPX can be used with remote sensor features.
     CANifier _canifLimits = new CANifier(0);	// Use this CANifier for remote limit switches
-    TalonFX _talonLimits = new TalonFX(2); 	// Use this Talon for remote limit switches
-    PigeonIMU _imu = new PigeonIMU(3);
+    WPI_TalonFX _talonLimits = new WPI_TalonFX(2, "FastFD"); 	// Use this Talon for remote limit switches
+    WPI_Pigeon2 _imu = new WPI_Pigeon2(3, "FastFD");
     Joystick _joy = new Joystick(0);
 
     /* a couple latched values to detect on-press events for buttons and POV */
     boolean[] _currentBtns = new boolean[Constants.kNumButtonsPlusOne];
     boolean[] _previousBtns = new boolean[Constants.kNumButtonsPlusOne];
+
+    public void simulationInit() {
+        PhysicsSim.getInstance().addTalonFX(_motorCntrller, 0.5, 2000);
+    }
+    public void simulationPeriodic() {
+        PhysicsSim.getInstance().run();
+    }
 
     void initRobot() {
         /* Set robot output to neutral at start */
@@ -91,7 +100,10 @@ public class Robot extends TimedRobot {
 		_motorCntrller.configFactoryDefault();
 		_canifLimits.configFactoryDefault();
 		_talonLimits.configFactoryDefault();
-		_imu.configFactoryDefault();
+        _imu.configFactoryDefault();
+        
+        /* Use the integrated sensor */
+        _talonLimits.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
 
         /* pick directions */
         _motorCntrller.setSensorPhase(true);
