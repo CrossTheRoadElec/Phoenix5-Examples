@@ -125,12 +125,12 @@ public class Robot extends TimedRobot {
 			/* Velocity Closed Loop */
 
 			/**
-			 * Convert 500 RPM to units / 100ms.
-			 * 2048 Units/Rev * 500 RPM / 600 100ms/min in either direction:
+			 * Convert 2000 RPM to units / 100ms.
+			 * 2048 Units/Rev * 2000 RPM / 600 100ms/min in either direction:
 			 * velocity setpoint is in units/100ms
 			 */
 			double targetVelocity_UnitsPer100ms = leftYstick * 2000.0 * 2048.0 / 600.0;
-			/* 500 RPM in either direction */
+			/* 2000 RPM in either direction */
 			_talon.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
 
 			/* Append more signals to print when in speed mode. */
