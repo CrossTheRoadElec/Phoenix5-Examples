@@ -23,7 +23,7 @@ public:
 	void TestPeriodic() override;
 
 private:
-	WPI_TalonFX _talon{1, "fastfd"}; // Put Talon FX on CANivore's faster CAN FD bus
+	WPI_TalonFX _talon{1, "rio"}; // Rename "rio" to match the CANivore device name if using a CANivore
 	frc::Joystick _joy{0};
 
 	int _smoothing;

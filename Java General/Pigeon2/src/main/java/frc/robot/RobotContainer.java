@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Pigeon2Subsystem m_pigeon2subsystem = new Pigeon2Subsystem(Constants.Pigeon2ID, "FastFD");
+  private final Pigeon2Subsystem m_pigeon2subsystem = new Pigeon2Subsystem(Constants.Pigeon2ID, "rio");
   private final Pigeon1Subsystem m_pigeon1subsystem = new Pigeon1Subsystem(new TalonSRX(Constants.Pigeon1ID));
   private final ReportingSubsystem m_reportingSubsystem = new ReportingSubsystem();
 

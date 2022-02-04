@@ -57,7 +57,7 @@ public class Robot extends TimedRobot {
 	final NeutralMode kBrakeDurNeutral = NeutralMode.Coast;
 
 	/** Talon to control and monitor */
-	WPI_TalonFX _talon = new WPI_TalonFX(1, "FastFD"); // <<< Choose the Talon ID - check in Tuner to see what ID it is.
+	WPI_TalonFX _talon = new WPI_TalonFX(1, "rio"); // <<< Choose the Talon ID - check in Tuner to see what ID it is.
 
 	/** user joystick for basic control */
 	Joystick _joy = new Joystick(0);

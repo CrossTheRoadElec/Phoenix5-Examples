@@ -57,7 +57,7 @@ import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
     /** Hardware */
-	WPI_TalonFX _talon = new WPI_TalonFX(2, "FastFD");
+	WPI_TalonFX _talon = new WPI_TalonFX(2, "rio");
 	Joystick _joy = new Joystick(0);
 	
     /** Used to create string thoughout loop */

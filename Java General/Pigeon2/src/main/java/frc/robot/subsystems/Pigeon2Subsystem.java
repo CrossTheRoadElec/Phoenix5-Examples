@@ -42,11 +42,9 @@ public class Pigeon2Subsystem extends PigeonSubsystem {
     retval += m_pigeonFaults.APIError ? "APIError, " : "";
     retval += m_pigeonFaults.AccelFault ? "AccelFault, " : "";
     retval += m_pigeonFaults.BootIntoMotion ? "BootIntoMotion, " : "";
-    retval += m_pigeonFaults.DataAcquiredLate ? "DataAcquiredLate, " : "";
     retval += m_pigeonFaults.GyroFault ? "GyroFault, " : "";
     retval += m_pigeonFaults.HardwareFault ? "HardwareFault, " : "";
     retval += m_pigeonFaults.MagnetometerFault ? "MagnetometerFault, " : "";
-    retval += m_pigeonFaults.MotionDriverTookTooLong ? "MotionDriverTookTooLong, " : "";
     retval += m_pigeonFaults.ResetDuringEn ? "ResetDuringEn, " : "";
     retval += m_pigeonFaults.SaturatedAccel ? "SaturatedAccel, " : "";
     retval += m_pigeonFaults.SaturatedMag ? "SaturatedMag, " : "";

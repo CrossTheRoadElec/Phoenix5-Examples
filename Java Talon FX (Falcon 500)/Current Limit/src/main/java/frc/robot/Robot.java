@@ -60,7 +60,7 @@ import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
     /* Hardware */
-	WPI_TalonFX _tal = new WPI_TalonFX(1, "FastFD");
+	WPI_TalonFX _tal = new WPI_TalonFX(1, "rio");
     Joystick _joy = new Joystick(0);
     
     /* Tracking variables */    

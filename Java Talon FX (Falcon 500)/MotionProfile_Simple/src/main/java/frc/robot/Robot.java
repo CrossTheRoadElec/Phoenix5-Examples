@@ -65,7 +65,7 @@ public class Robot extends TimedRobot {
     int _state = 0;
 
     /** a master talon, add followers if need be. */
-    WPI_TalonFX _master = new WPI_TalonFX(1, "FastFD");
+    WPI_TalonFX _master = new WPI_TalonFX(1, "rio");
 
     /** gamepad for control */
     Joystick _joy = new Joystick(0);

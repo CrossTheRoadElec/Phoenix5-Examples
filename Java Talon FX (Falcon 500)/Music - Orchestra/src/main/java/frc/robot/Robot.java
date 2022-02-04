@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
 
     /* Talon FXs to play music through.  
     More complex music MIDIs will contain several tracks, requiring multiple instruments.  */
-    WPI_TalonFX [] _fxes =  { new WPI_TalonFX(1, "FastFD"), new WPI_TalonFX(2, "FastFD") };
+    WPI_TalonFX [] _fxes =  { new WPI_TalonFX(1, "rio"), new WPI_TalonFX(2, "rio") };
 
     /* An array of songs that are available to be played, can you guess the song/artists? */
   String[] _songs = new String[] {

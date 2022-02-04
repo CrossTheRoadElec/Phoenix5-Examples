@@ -42,7 +42,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
  */
 public class Robot extends TimedRobot {
   final int PRINTOUT_DELAY = 100; // in Milliseconds
-  WPI_CANCoder _CANCoder = new WPI_CANCoder(0, "FastFD"); // Put CANcoder on the FD bus with CANivore for faster data acquisition
+  WPI_CANCoder _CANCoder = new WPI_CANCoder(0, "rio"); // Rename "rio" to match the CANivore device name if using a CANivore
   CANCoderConfiguration _canCoderConfiguration = new CANCoderConfiguration();
   Joystick joy = new Joystick(0);
 

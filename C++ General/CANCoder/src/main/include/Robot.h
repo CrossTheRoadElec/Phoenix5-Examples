@@ -20,6 +20,6 @@ class Robot : public frc::TimedRobot {
   void TestPeriodic() override;
 
 private:
-  WPI_CANCoder _CANCoder{0, "fastfd"}; // Construct CANcoder on CANivore's CAN FD network
+  WPI_CANCoder _CANCoder{0, "rio"}; // Rename "rio" to match the CANivore device name if using a CANivore
   frc::Joystick _joy{0};
 };

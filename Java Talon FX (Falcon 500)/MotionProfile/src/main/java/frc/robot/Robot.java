@@ -65,7 +65,7 @@ import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	WPI_TalonFX _talon = new WPI_TalonFX(1, "FastFD");	// Talon to Motion Profile
+	WPI_TalonFX _talon = new WPI_TalonFX(1, "rio");	// Talon to Motion Profile
 	Joystick _joy = new Joystick(0);	// Joystick for testing
 
 	/** Invert Directions for Left and Right */

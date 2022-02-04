@@ -69,8 +69,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	WPI_TalonFX _leftMaster = new WPI_TalonFX(2, "FastFD");
-	WPI_TalonFX _rightMaster = new WPI_TalonFX(1, "FastFD");
+	WPI_TalonFX _leftMaster = new WPI_TalonFX(2, "rio");
+	WPI_TalonFX _rightMaster = new WPI_TalonFX(1, "rio");
 	Joystick _gamepad = new Joystick(0);
 	
 	/** Latched values to detect on-press events for buttons and POV */

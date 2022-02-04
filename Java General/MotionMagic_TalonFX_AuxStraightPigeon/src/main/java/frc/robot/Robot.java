@@ -78,9 +78,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 public class Robot extends TimedRobot {
 	/** Hardware */
-	WPI_TalonFX _leftMaster = new WPI_TalonFX(2, "fastfd");
-	WPI_TalonFX _rightMaster = new WPI_TalonFX(1, "fastfd");
-	WPI_Pigeon2 _pidgey = new WPI_Pigeon2(3, "fastfd");
+	WPI_TalonFX _leftMaster = new WPI_TalonFX(2, "rio");
+	WPI_TalonFX _rightMaster = new WPI_TalonFX(1, "rio");
+	WPI_Pigeon2 _pidgey = new WPI_Pigeon2(3, "rio");
 	Joystick _gamepad = new Joystick(0);
 
 	/** Invert Directions for Left and Right */

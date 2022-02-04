@@ -75,10 +75,10 @@ import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
     /* Hardware */
-    WPI_TalonFX _motorCntrller = new WPI_TalonFX(1, "FastFD");	// Victor SPX can be used with remote sensor features.
+    WPI_TalonFX _motorCntrller = new WPI_TalonFX(1, "rio");	// Victor SPX can be used with remote sensor features.
     CANifier _canifLimits = new CANifier(0);	// Use this CANifier for remote limit switches
-    WPI_TalonFX _talonLimits = new WPI_TalonFX(2, "FastFD"); 	// Use this Talon for remote limit switches
-    WPI_Pigeon2 _imu = new WPI_Pigeon2(3, "FastFD");
+    WPI_TalonFX _talonLimits = new WPI_TalonFX(2, "rio"); 	// Use this Talon for remote limit switches
+    WPI_Pigeon2 _imu = new WPI_Pigeon2(3, "rio");
     Joystick _joy = new Joystick(0);
 
     /* a couple latched values to detect on-press events for buttons and POV */

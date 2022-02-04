@@ -50,14 +50,14 @@ import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
 	/* Master Talons for arcade drive */
-	WPI_TalonFX _frontLeftMotor = new WPI_TalonFX(1, "FastFD");
-	WPI_TalonFX _frontRightMotor = new WPI_TalonFX(2, "FastFD");
+	WPI_TalonFX _frontLeftMotor = new WPI_TalonFX(1, "rio");
+	WPI_TalonFX _frontRightMotor = new WPI_TalonFX(2, "rio");
 
 	/* Follower Talons + Victors for six motor drives */
-	WPI_TalonFX _leftSlave1 = new WPI_TalonFX(5, "FastFD");
-	WPI_TalonFX _rightSlave1 = new WPI_TalonFX(7, "FastFD");
-	WPI_TalonFX _leftSlave2 = new WPI_TalonFX(4, "FastFD");
-	WPI_TalonFX _rightSlave2 = new WPI_TalonFX(17, "FastFD");
+	WPI_TalonFX _leftSlave1 = new WPI_TalonFX(5, "rio");
+	WPI_TalonFX _rightSlave1 = new WPI_TalonFX(7, "rio");
+	WPI_TalonFX _leftSlave2 = new WPI_TalonFX(4, "rio");
+	WPI_TalonFX _rightSlave2 = new WPI_TalonFX(17, "rio");
 
 	/* Construct drivetrain by providing master motor controllers */
 	DifferentialDrive _drive = new DifferentialDrive(_frontLeftMotor, _frontRightMotor);

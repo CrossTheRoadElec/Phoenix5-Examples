@@ -40,7 +40,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 public class Robot extends TimedRobot {
 
   FurElise _music = new FurElise();
-  WPI_TalonFX _talonFX = new WPI_TalonFX(1, "FastFD");
+  WPI_TalonFX _talonFX = new WPI_TalonFX(1, "rio");
 
   @Override
   public void teleopPeriodic() {

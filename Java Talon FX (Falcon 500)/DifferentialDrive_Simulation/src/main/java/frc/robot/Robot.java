@@ -35,16 +35,16 @@ public class Robot extends TimedRobot {
   XboxController m_gamepad = new XboxController(0);
   XboxControllerSim m_gamepadSim = new XboxControllerSim(m_gamepad);
 
-  WPI_TalonFX m_leftDrive = new WPI_TalonFX(0, "FastFD");
-  WPI_TalonFX m_leftFollower = new WPI_TalonFX(1, "FastFD");
-  WPI_TalonFX m_rightDrive = new WPI_TalonFX(2, "FastFD");
-  WPI_TalonFX m_rightFollower = new WPI_TalonFX(3, "FastFD");
+  WPI_TalonFX m_leftDrive = new WPI_TalonFX(0, "rio");
+  WPI_TalonFX m_leftFollower = new WPI_TalonFX(1, "rio");
+  WPI_TalonFX m_rightDrive = new WPI_TalonFX(2, "rio");
+  WPI_TalonFX m_rightFollower = new WPI_TalonFX(3, "rio");
 
   /* Object for simulated inputs into Talon. */
   TalonFXSimCollection m_leftDriveSim = m_leftDrive.getSimCollection();
   TalonFXSimCollection m_rightDriveSim = m_rightDrive.getSimCollection();
 
-  WPI_Pigeon2 m_pigeon = new WPI_Pigeon2(1, "FastFD");
+  WPI_Pigeon2 m_pigeon = new WPI_Pigeon2(1, "rio");
   /* Object for simulated inputs into Pigeon. */
   BasePigeonSimCollection m_pigeonSim = m_pigeon.getSimCollection();
 

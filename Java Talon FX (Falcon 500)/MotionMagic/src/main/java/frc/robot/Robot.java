@@ -70,7 +70,7 @@ import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
 	/* Hardware */
-	WPI_TalonFX _talon = new WPI_TalonFX(1, "FastFD"); // Use the faster CanFD bus with a CANivore to reduce bandwidth utilization
+	WPI_TalonFX _talon = new WPI_TalonFX(1, "rio"); // Rename "rio" to match the CANivore device name if using a CANivore
 	Joystick _joy = new Joystick(0);
 
 	/* Used to build string throughout loop */
