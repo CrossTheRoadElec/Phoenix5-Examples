@@ -1,9 +1,9 @@
 #include "DrivebaseSimFX.h"
-#include <wpi/numbers>
+#include <units/constants.h>
 
 /**
  * Creates a new drivebase simualtor using Falcon 500 motors.
- * 
+ *
  * @param leftMaster the left master Falcon
  * @param rightMaster the right master Falcon
  * @param pidgey the Pigeon IMU
@@ -11,7 +11,7 @@
 DrivebaseSimFX::DrivebaseSimFX(WPI_TalonFX& leftMaster, WPI_TalonFX& rightMaster, WPI_PigeonIMU& pidgey)
 	: _leftMaster(leftMaster), _rightMaster(rightMaster), _pidgey(pidgey),
 	_leftMasterSim(leftMaster.GetSimCollection()), _rightMasterSim(rightMaster.GetSimCollection()), _pidgeySim(pidgey.GetSimCollection()),
-	_odometry{pidgey.GetRotation2d()}
+	_odometry{pidgey.GetRotation2d(), 0_m, 0_m}
 {}
 
 /**
@@ -93,14 +93,14 @@ void DrivebaseSimFX::Run() {
 // Helper methods to convert between meters and native units
 
 int DrivebaseSimFX::DistanceToNativeUnits(units::meter_t position){
-	double wheelRotations = position/(2 * wpi::numbers::pi * kWheelRadiusInches);
+	double wheelRotations = position/(2 * units::constants::pi * kWheelRadiusInches);
 	double motorRotations = wheelRotations * kSensorGearRatio;
 	int sensorCounts = (int)(motorRotations * kCountsPerRev);
 	return sensorCounts;
 }
 
 int DrivebaseSimFX::VelocityToNativeUnits(units::meters_per_second_t velocity){
-	auto wheelRotationsPerSecond = velocity/(2 * wpi::numbers::pi * kWheelRadiusInches);
+	auto wheelRotationsPerSecond = velocity/(2 * units::constants::pi * kWheelRadiusInches);
 	auto motorRotationsPerSecond = wheelRotationsPerSecond * kSensorGearRatio;
 	double motorRotationsPer100ms = motorRotationsPerSecond * 1_s / k100msPerSecond;
 	int sensorCountsPer100ms = (int)(motorRotationsPer100ms * kCountsPerRev);
@@ -110,6 +110,6 @@ int DrivebaseSimFX::VelocityToNativeUnits(units::meters_per_second_t velocity){
 units::meter_t DrivebaseSimFX::NativeUnitsToDistanceMeters(double sensorCounts){
 	double motorRotations = (double)sensorCounts / kCountsPerRev;
 	double wheelRotations = motorRotations / kSensorGearRatio;
-	units::meter_t position = wheelRotations * (2 * wpi::numbers::pi * kWheelRadiusInches);
+	units::meter_t position = wheelRotations * (2 * units::constants::pi * kWheelRadiusInches);
 	return position;
 }

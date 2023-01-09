@@ -39,7 +39,7 @@ public class DrivebaseSimSRX {
 		26.5,                     //Mass of the robot is 26.5 kg.
 		Units.inchesToMeters(kWheelRadiusInches),  //Robot uses 3" radius (6" diameter) wheels.
 		0.546,                    //Distance between wheels is _ meters.
-		
+
 		// The standard deviations for measurement noise:
 		// x and y:          0.001 m
 		// heading:          0.001 rad
@@ -50,7 +50,7 @@ public class DrivebaseSimSRX {
 
 	/**
 	 * Creates a new drivebase simualtor using Talon SRX motor controllers.
-	 * 
+	 *
 	 * @param leftMaster the left master Talon SRX
 	 * @param rightMaster the right master Talon SRX
 	 * @param pidgey the Pigeon IMU
@@ -67,7 +67,7 @@ public class DrivebaseSimSRX {
 		// Creating odometry object. Here,
 		// our starting pose is 5 meters along the long end of the field and in the
 		// center of the field along the short end, facing forward.
-		_odometry = new DifferentialDriveOdometry(_pidgey.getRotation2d());
+		_odometry = new DifferentialDriveOdometry(_pidgey.getRotation2d(), 0, 0);
 	}
 
 	/**
@@ -85,12 +85,12 @@ public class DrivebaseSimSRX {
 		// the output voltage, NOT the percent output.
 		_driveSim.setInputs(_leftMasterSim.getMotorOutputLeadVoltage(),
 							-_rightMasterSim.getMotorOutputLeadVoltage()); //Right side is inverted, so forward is negative voltage
-	
+
 		// Advance the model by 20 ms. Note that if you are running this
 		// subsystem in a separate thread or have changed the nominal timestep
 		// of TimedRobot, this value needs to match it.
 		_driveSim.update(0.02);
-	
+
 		// Update all of our sensors.
 		_leftMasterSim.setQuadratureRawPosition(
 						distanceToNativeUnits(
@@ -105,11 +105,11 @@ public class DrivebaseSimSRX {
 						velocityToNativeUnits(
 						-_driveSim.getRightVelocityMetersPerSecond()));
 		_pidgeySim.setRawHeading(_driveSim.getHeading().getDegrees());
-	
+
 		//Update other inputs to Talons
 		_leftMasterSim.setBusVoltage(RobotController.getBatteryVoltage());
 		_rightMasterSim.setBusVoltage(RobotController.getBatteryVoltage());
-		
+
 		// This will get the simulated sensor readings that we set
 		// in the previous article while in simulation, but will use
 		// real values on the robot itself.
@@ -120,14 +120,14 @@ public class DrivebaseSimSRX {
 	}
 
 	// Helper methods to convert between meters and native units
-  
+
 	private int distanceToNativeUnits(double positionMeters){
 		double wheelRotations = positionMeters/(2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
 		double motorRotations = wheelRotations * kSensorGearRatio;
 		int sensorCounts = (int)(motorRotations * kCountsPerRev);
 		return sensorCounts;
 	}
-  
+
 	private int velocityToNativeUnits(double velocityMetersPerSecond){
 		double wheelRotationsPerSecond = velocityMetersPerSecond/(2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
 		double motorRotationsPerSecond = wheelRotationsPerSecond * kSensorGearRatio;
@@ -135,7 +135,7 @@ public class DrivebaseSimSRX {
 		int sensorCountsPer100ms = (int)(motorRotationsPer100ms * kCountsPerRev);
 		return sensorCountsPer100ms;
 	}
-  
+
 	private double nativeUnitsToDistanceMeters(double sensorCounts){
 		double motorRotations = (double)sensorCounts / kCountsPerRev;
 		double wheelRotations = motorRotations / kSensorGearRatio;

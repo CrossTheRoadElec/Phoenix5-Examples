@@ -1,9 +1,9 @@
 #include "DrivebaseSimSRX.h"
-#include <wpi/numbers>
+#include <units/constants.h>
 
 /**
  * Creates a new drivebase simualtor using Talon SRX motor controllers.
- * 
+ *
  * @param leftMaster the left master Talon SRX
  * @param rightMaster the right master Talon SRX
  * @param pidgey the Pigeon IMU
@@ -11,7 +11,7 @@
 DrivebaseSimSRX::DrivebaseSimSRX(WPI_TalonSRX& leftMaster, WPI_TalonSRX& rightMaster, WPI_PigeonIMU& pidgey)
 	: _leftMaster(leftMaster), _rightMaster(rightMaster), _pidgey(pidgey),
 	_leftMasterSim(leftMaster.GetSimCollection()), _rightMasterSim(rightMaster.GetSimCollection()), _pidgeySim(pidgey.GetSimCollection()),
-	_odometry{pidgey.GetRotation2d()}
+	_odometry{pidgey.GetRotation2d(), 0_m, 0_m}
 {}
 
 /**
@@ -67,14 +67,14 @@ void DrivebaseSimSRX::Run() {
 // Helper methods to convert between meters and native units
 
 int DrivebaseSimSRX::DistanceToNativeUnits(double positionMeters){
-	double wheelRotations = positionMeters/(2 * wpi::numbers::pi * kWheelRadiusInches.convert<units::meter>().to<double>());
+	double wheelRotations = positionMeters/(2 * units::constants::pi * kWheelRadiusInches.convert<units::meter>().to<double>());
 	double motorRotations = wheelRotations * kSensorGearRatio;
 	int sensorCounts = (int)(motorRotations * kCountsPerRev);
 	return sensorCounts;
 }
 
 int DrivebaseSimSRX::VelocityToNativeUnits(double velocityMetersPerSecond){
-	double wheelRotationsPerSecond = velocityMetersPerSecond/(2 * wpi::numbers::pi * kWheelRadiusInches.convert<units::meter>().to<double>());
+	double wheelRotationsPerSecond = velocityMetersPerSecond/(2 * units::constants::pi * kWheelRadiusInches.convert<units::meter>().to<double>());
 	double motorRotationsPerSecond = wheelRotationsPerSecond * kSensorGearRatio;
 	double motorRotationsPer100ms = motorRotationsPerSecond / k100msPerSecond;
 	int sensorCountsPer100ms = (int)(motorRotationsPer100ms * kCountsPerRev);
@@ -84,6 +84,6 @@ int DrivebaseSimSRX::VelocityToNativeUnits(double velocityMetersPerSecond){
 double DrivebaseSimSRX::NativeUnitsToDistanceMeters(double sensorCounts){
 	double motorRotations = (double)sensorCounts / kCountsPerRev;
 	double wheelRotations = motorRotations / kSensorGearRatio;
-	double positionMeters = wheelRotations * (2 * wpi::numbers::pi * kWheelRadiusInches.convert<units::meter>().to<double>());
+	double positionMeters = wheelRotations * (2 * units::constants::pi * kWheelRadiusInches.convert<units::meter>().to<double>());
 	return positionMeters;
 }

@@ -91,7 +91,7 @@ public:
 	 * Gets called once for each new packet from the DS.
 	 */
 	void TeleopPeriodic(void) {
-		float angle = gyro.GetAngle();
+		auto angle = gyro.GetRotation2d();
 		//std::cout << "Angle : " << angle << std::endl;
 		m_robotDrive.DriveCartesian(			Db(m_driveStick.GetX()),
 												Db(m_driveStick.GetY()),

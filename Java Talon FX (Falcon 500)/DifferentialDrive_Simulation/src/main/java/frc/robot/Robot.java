@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
     26.5,                     //Mass of the robot is 26.5 kg.
     Units.inchesToMeters(kWheelRadiusInches),  //Robot uses 3" radius (6" diameter) wheels.
     0.546,                    //Distance between wheels is _ meters.
-    
+
     /*
      * The standard deviations for measurement noise:
      * x and y:          0.001 m
@@ -84,7 +84,7 @@ public class Robot extends TimedRobot {
    * our starting pose is 5 meters along the long end of the field and in the
    * center of the field along the short end, facing forward.
    */
-  DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_pigeon.getRotation2d());
+  DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_pigeon.getRotation2d(), 0, 0);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -117,7 +117,7 @@ public class Robot extends TimedRobot {
      * Talon FX does not need sensor phase set for its integrated sensor
      * This is because it will always be correct if the selected feedback device is integrated sensor (default value)
      * and the user calls getSelectedSensor* to get the sensor's position/velocity.
-     * 
+     *
      * https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#sensor-phase
      */
     //m_leftDrive.setSensorPhase(false);
@@ -150,7 +150,7 @@ public class Robot extends TimedRobot {
     m_rightDrive.set(ControlMode.PercentOutput, throttle, DemandType.ArbitraryFeedForward, -turn);
   }
 
-  @Override 
+  @Override
   public void simulationPeriodic() {
     /* Pass the robot battery voltage to the simulated Talon FXs */
     m_leftDriveSim.setBusVoltage(RobotController.getBatteryVoltage());

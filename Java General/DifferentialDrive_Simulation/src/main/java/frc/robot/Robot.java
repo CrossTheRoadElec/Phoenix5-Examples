@@ -66,7 +66,7 @@ public class Robot extends TimedRobot {
     26.5,                     //Mass of the robot is 26.5 kg.
     Units.inchesToMeters(kWheelRadiusInches),  //Robot uses 3" radius (6" diameter) wheels.
     0.546,                    //Distance between wheels is _ meters.
-    
+
     /*
      * The standard deviations for measurement noise:
      * x and y:          0.001 m
@@ -83,7 +83,7 @@ public class Robot extends TimedRobot {
    * our starting pose is 5 meters along the long end of the field and in the
    * center of the field along the short end, facing forward.
    */
-  DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_pigeon.getRotation2d());
+  DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_pigeon.getRotation2d(), 0, 0);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -140,7 +140,7 @@ public class Robot extends TimedRobot {
     m_rightDrive.set(ControlMode.PercentOutput, throttle, DemandType.ArbitraryFeedForward, -turn);
   }
 
-  @Override 
+  @Override
   public void simulationPeriodic() {
     /* Pass the robot battery voltage to the simulated Talon SRXs */
     m_leftDriveSim.setBusVoltage(RobotController.getBatteryVoltage());

@@ -2,14 +2,14 @@
 #include <frc/kinematics/DifferentialDriveOdometry.h>
 #include <frc/simulation/DifferentialDrivetrainSim.h>
 #include <frc/smartdashboard/Field2d.h>
-#include <units/units.h>
+
 #include "ctre/Phoenix.h"
 
 class DrivebaseSimSRX {
 public:
 	/**
 	 * Creates a new drivebase simualtor using Talon SRX motor controllers.
-	 * 
+	 *
 	 * @param leftMaster the left master Talon SRX
 	 * @param rightMaster the right master Talon SRX
 	 * @param pidgey the Pigeon IMU
@@ -52,7 +52,7 @@ private:
 		26.5_kg,                     //Mass of the robot is 26.5 kg.
 		kWheelRadiusInches,          //Robot uses 3" radius (6" diameter) wheels.
 		0.546_m,                     //Distance between wheels is _ meters.
-		
+
 		// The standard deviations for measurement noise:
 		// x and y:          0.001 m
 		// heading:          0.001 rad

@@ -67,7 +67,7 @@ public class DrivebaseSimFX {
 		// Creating odometry object. Here,
 		// our starting pose is 5 meters along the long end of the field and in the
 		// center of the field along the short end, facing forward.
-		_odometry = new DifferentialDriveOdometry(_pidgey.getRotation2d());
+		_odometry = new DifferentialDriveOdometry(_pidgey.getRotation2d(), 0 ,0);
 	}
 
 	/**
