@@ -33,11 +33,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    # Declares the repository safe and not under dubious ownership.
-    - name: Add repository to git safe directories
-      working-directory: ${{{{ matrix.directory }}}}}}
-      run: git config --global --add safe.directory $GITHUB_WORKSPACE
-
     # Grant execute permission for gradlew
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
