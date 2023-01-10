@@ -35,11 +35,11 @@ jobs:
 
     # Grant execute permission for gradlew
     - name: Grant execute permission for gradlew
-      run: cd ${{{{ matrix.directory }}}} && chmod +x gradlew
+      run: cd "${{{{ matrix.directory }}}}" && chmod +x gradlew
 
     # Runs a single command using the runners shell
     - name: Compile and run tests on robot code for project ${{{{ matrix.project-name }}}}
-      run: cd ${{{{ matrix.directory }}}} && ./gradlew build
+      run: cd "${{{{ matrix.directory }}}}" && ./gradlew build
 """
 
 PROJECT_MATRIX_TEMPLATE = """
