@@ -1,7 +1,6 @@
 #include "Tasks/TaskMeasurePulseSensors.h"
 #include "ctre/Phoenix.h"
-#if defined (_WIN32) || defined (_WIN64)
-#else
+#if defined (__ROBORIO__)
 #include "FRC_NetworkCommunication/CANSessionMux.h"
 #endif
 #include "Platform/Platform.h"
@@ -36,8 +35,7 @@ void TaskMeasurePulseSensors::OnLoop() {
 	uint8_t data = 0;
 	int status = 0;
 	data = (uint64_t) (_dutyCycleAndPeriods[3][0] * 1000);
-#if defined (_WIN32) || defined (_WIN64)
-#else
+#if defined (__ROBORIO__)
 	FRC_NetworkCommunication_CANSessionMux_sendMessage(0x1E040000, &data, 4, 0,
 			&status);
 #endif
