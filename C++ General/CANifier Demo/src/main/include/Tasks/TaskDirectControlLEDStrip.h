@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ctre/phoenix/Tasking/ILoopable.h"
+#include "ctre/phoenix/tasking/ILoopable.h"
 
 class TaskDirectControlLEDStrip: public ctre::phoenix::tasking::ILoopable {
 public:
