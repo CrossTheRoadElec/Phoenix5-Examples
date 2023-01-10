@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ctre/phoenix/Tasking/ILoopable.h"
+#include "ctre/phoenix/tasking/ILoopable.h"
 #include "ctre/phoenix/CANifier.h"
 
 class TaskMeasurePulseSensors: public ctre::phoenix::tasking::ILoopable {
