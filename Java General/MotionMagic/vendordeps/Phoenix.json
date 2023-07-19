@@ -48,7 +48,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro",
+            "groupId": "com.ctre.phoenix6",
             "artifactId": "tools",
             "version": "23.2.1",
             "isJar": false,
@@ -61,7 +61,7 @@
             "simMode": "hwsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "tools-sim",
             "version": "23.2.1",
             "isJar": false,
@@ -74,7 +74,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "simTalonSRX",
             "version": "23.2.1",
             "isJar": false,
@@ -87,7 +87,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "simTalonFX",
             "version": "23.2.1",
             "isJar": false,
@@ -100,7 +100,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "simVictorSPX",
             "version": "23.2.1",
             "isJar": false,
@@ -113,7 +113,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "simPigeonIMU",
             "version": "23.2.1",
             "isJar": false,
@@ -126,7 +126,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "simCANCoder",
             "version": "23.2.1",
             "isJar": false,
@@ -139,7 +139,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "simProTalonFX",
             "version": "23.2.1",
             "isJar": false,
@@ -152,7 +152,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "simProCANcoder",
             "version": "23.2.1",
             "isJar": false,
@@ -165,7 +165,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "simProPigeon2",
             "version": "23.2.1",
             "isJar": false,
@@ -225,7 +225,7 @@
             "simMode": "hwsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro",
+            "groupId": "com.ctre.phoenix6",
             "artifactId": "tools",
             "version": "23.2.1",
             "libName": "CTRE_PhoenixTools",
@@ -285,7 +285,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "tools-sim",
             "version": "23.2.1",
             "libName": "CTRE_PhoenixTools_Sim",
@@ -300,7 +300,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "simTalonSRX",
             "version": "23.2.1",
             "libName": "CTRE_SimTalonSRX",
@@ -315,7 +315,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "simTalonFX",
             "version": "23.2.1",
             "libName": "CTRE_SimTalonFX",
@@ -330,7 +330,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "simVictorSPX",
             "version": "23.2.1",
             "libName": "CTRE_SimVictorSPX",
@@ -345,7 +345,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "simPigeonIMU",
             "version": "23.2.1",
             "libName": "CTRE_SimPigeonIMU",
@@ -360,7 +360,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "simCANCoder",
             "version": "23.2.1",
             "libName": "CTRE_SimCANCoder",
@@ -375,7 +375,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "simProTalonFX",
             "version": "23.2.1",
             "libName": "CTRE_SimProTalonFX",
@@ -390,7 +390,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "simProCANcoder",
             "version": "23.2.1",
             "libName": "CTRE_SimProCANcoder",
@@ -405,7 +405,7 @@
             "simMode": "swsim"
         },
         {
-            "groupId": "com.ctre.phoenixpro.sim",
+            "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "simProPigeon2",
             "version": "23.2.1",
             "libName": "CTRE_SimProPigeon2",
