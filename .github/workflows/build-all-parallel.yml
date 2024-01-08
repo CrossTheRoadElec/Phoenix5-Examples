@@ -234,7 +234,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # This grabs the WPILib docker container
-    container: wpilib/roborio-cross-ubuntu:2023-22.04
+    container: wpilib/roborio-cross-ubuntu:2024-22.04
 
     steps:
     - uses: actions/checkout@v3
