@@ -45,14 +45,14 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(m_joy, Constants.ZeroPigeonYaws).whenPressed(
+    new JoystickButton(m_joy, Constants.ZeroPigeonYaws).onTrue(
         ()->{
-          m_pigeon2subsystem.setYaw(0); 
+          m_pigeon2subsystem.setYaw(0);
           m_pigeon1subsystem.setYaw(0);
           m_pigeon2subsystem.setAccumZ(0);
           m_pigeon1subsystem.setAccumZ(0);
         });
-    new JoystickButton(m_joy, Constants.AddPigeonYaws).whenPressed(
+    new JoystickButton(m_joy, Constants.AddPigeonYaws).onTrue(
       ()->{
         m_pigeon2subsystem.addYaw(10);
         m_pigeon1subsystem.addYaw(10);
