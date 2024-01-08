@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.subsystems.CANdleSystem;
 import frc.robot.commands.CANdleConfigCommands;
 import frc.robot.commands.CANdlePrintCommands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 
@@ -37,9 +38,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(joy, Constants.BlockButton).onTrue(m_candleSubsystem::setColors, m_candleSubsystem);
-    new JoystickButton(joy, Constants.IncrementAnimButton).onTrue(m_candleSubsystem::incrementAnimation, m_candleSubsystem);
-    new JoystickButton(joy, Constants.DecrementAnimButton).onTrue(m_candleSubsystem::decrementAnimation, m_candleSubsystem);
+    new JoystickButton(joy, Constants.BlockButton).onTrue(new RunCommand(m_candleSubsystem::setColors, m_candleSubsystem));
+    new JoystickButton(joy, Constants.IncrementAnimButton).onTrue(new RunCommand(m_candleSubsystem::incrementAnimation, m_candleSubsystem));
+    new JoystickButton(joy, Constants.DecrementAnimButton).onTrue(new RunCommand(m_candleSubsystem::decrementAnimation, m_candleSubsystem));
 
     new POVButton(joy, Constants.MaxBrightnessAngle).onTrue(new CANdleConfigCommands.ConfigBrightness(m_candleSubsystem, 1.0));
     new POVButton(joy, Constants.MidBrightnessAngle).onTrue(new CANdleConfigCommands.ConfigBrightness(m_candleSubsystem, 0.3));
