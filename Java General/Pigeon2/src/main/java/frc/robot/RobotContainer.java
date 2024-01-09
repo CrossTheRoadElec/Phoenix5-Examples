@@ -13,12 +13,16 @@ import frc.robot.subsystems.Pigeon1Subsystem;
 import frc.robot.subsystems.Pigeon2Subsystem;
 import frc.robot.subsystems.ReportingSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -29,9 +33,12 @@ public class RobotContainer {
 
   private final XboxController m_joy = new XboxController(0);
 
-  private final ReportingCommand m_reportingCommand = new ReportingCommand(m_reportingSubsystem, m_pigeon2subsystem, m_pigeon1subsystem);
+  private final ReportingCommand m_reportingCommand = new ReportingCommand(m_reportingSubsystem, m_pigeon2subsystem,
+      m_pigeon1subsystem);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     m_reportingSubsystem.setDefaultCommand(m_reportingCommand);
     // Configure the button bindings
@@ -39,27 +46,30 @@ public class RobotContainer {
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be created by
+   * Use this method to define your button->command mappings. Buttons can be
+   * created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+   * it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(m_joy, Constants.ZeroPigeonYaws).whenPressed(
-        ()->{
-          m_pigeon2subsystem.setYaw(0); 
-          m_pigeon1subsystem.setYaw(0);
-          m_pigeon2subsystem.setAccumZ(0);
-          m_pigeon1subsystem.setAccumZ(0);
-        });
-    new JoystickButton(m_joy, Constants.AddPigeonYaws).whenPressed(
-      ()->{
-        m_pigeon2subsystem.addYaw(10);
-        m_pigeon1subsystem.addYaw(10);
-        m_pigeon2subsystem.setAccumZ(5);
-        m_pigeon1subsystem.setAccumZ(5);
-      }
-    );
+    new JoystickButton(m_joy, Constants.ZeroPigeonYaws).onTrue(
+        new RunCommand(
+            () -> {
+              m_pigeon2subsystem.setYaw(0);
+              m_pigeon1subsystem.setYaw(0);
+              m_pigeon2subsystem.setAccumZ(0);
+              m_pigeon1subsystem.setAccumZ(0);
+            }));
+    new JoystickButton(m_joy, Constants.AddPigeonYaws).onTrue(
+        new RunCommand(
+            () -> {
+              m_pigeon2subsystem.addYaw(10);
+              m_pigeon1subsystem.addYaw(10);
+              m_pigeon2subsystem.setAccumZ(5);
+              m_pigeon1subsystem.setAccumZ(5);
+            }));
   }
 
   /**

@@ -14,8 +14,8 @@
 RobotContainer::RobotContainer() {
   // Initialize all of your commands and subsystems here
   m_subsystem.SetDefaultCommand(frc2::RunCommand([this] {
-      m_subsystem.UpdateSetLed([this]{return m_joy.GetLeftTriggerAxis();}, 
-                              [this]{return m_joy.GetRightTriggerAxis();}, 
+      m_subsystem.UpdateSetLed([this]{return m_joy.GetLeftTriggerAxis();},
+                              [this]{return m_joy.GetRightTriggerAxis();},
                               [this]{return m_joy.GetLeftX();},
                               [this]{return m_joy.GetRightY();});
     },
@@ -29,19 +29,19 @@ RobotContainer::RobotContainer() {
 void RobotContainer::ConfigureButtonBindings() {
   // Configure your button bindings here
 
-  frc2::JoystickButton(&m_joy, nextAnimID).WhenPressed([this]{m_subsystem.IncrementAnimation();});
-  frc2::JoystickButton(&m_joy, prevAnimID).WhenPressed([this]{m_subsystem.DecrementAnimation();});
-  frc2::JoystickButton(&m_joy, setLedID).WhenPressed([this]{m_subsystem.SetColors();});
-  
-  frc2::JoystickButton(&m_joy, printBusVID).WhenPressed(CANdlePrintCommands::PrintVBat(&m_subsystem));
-  frc2::JoystickButton(&m_joy, print5VID).WhenPressed(CANdlePrintCommands::Print5V(&m_subsystem));
-  frc2::JoystickButton(&m_joy, printCurrentID).WhenPressed(CANdlePrintCommands::PrintCurrent(&m_subsystem));
-  frc2::JoystickButton(&m_joy, printTemperatureID).WhenPressed(CANdlePrintCommands::PrintTemperature(&m_subsystem));
-  frc2::JoystickButton(&m_joy, printModulatedOutput).WhenPressed(CANdlePrintCommands::PrintModulatedOutput(&m_subsystem));
+  frc2::JoystickButton(&m_joy, nextAnimID).OnTrue(frc2::RunCommand{[this]{m_subsystem.IncrementAnimation();}, {&m_subsystem}}.ToPtr());
+  frc2::JoystickButton(&m_joy, prevAnimID).OnTrue(frc2::RunCommand{[this]{m_subsystem.DecrementAnimation();}, {&m_subsystem}}.ToPtr());
+  frc2::JoystickButton(&m_joy, setLedID).OnTrue(frc2::RunCommand{[this]{m_subsystem.SetColors();}, {&m_subsystem}}.ToPtr());
 
-  frc2::POVButton(&m_joy, configMaxBrightness).WhenPressed(CANdleConfigCommands::ConfigBrightness(&m_subsystem, 1));
-  frc2::POVButton(&m_joy, configMidBrightness).WhenPressed(CANdleConfigCommands::ConfigBrightness(&m_subsystem, 0.5));
-  frc2::POVButton(&m_joy, configOffBrigthness).WhenPressed(CANdleConfigCommands::ConfigBrightness(&m_subsystem, 0));
+  frc2::JoystickButton(&m_joy, printBusVID).OnTrue(CANdlePrintCommands::PrintVBat(&m_subsystem).ToPtr());
+  frc2::JoystickButton(&m_joy, print5VID).OnTrue(CANdlePrintCommands::Print5V(&m_subsystem).ToPtr());
+  frc2::JoystickButton(&m_joy, printCurrentID).OnTrue(CANdlePrintCommands::PrintCurrent(&m_subsystem).ToPtr());
+  frc2::JoystickButton(&m_joy, printTemperatureID).OnTrue(CANdlePrintCommands::PrintTemperature(&m_subsystem).ToPtr());
+  frc2::JoystickButton(&m_joy, printModulatedOutput).OnTrue(CANdlePrintCommands::PrintModulatedOutput(&m_subsystem).ToPtr());
+
+  frc2::POVButton(&m_joy, configMaxBrightness).OnTrue(CANdleConfigCommands::ConfigBrightness(&m_subsystem, 1).ToPtr());
+  frc2::POVButton(&m_joy, configMidBrightness).OnTrue(CANdleConfigCommands::ConfigBrightness(&m_subsystem, 0.5).ToPtr());
+  frc2::POVButton(&m_joy, configOffBrigthness).OnTrue(CANdleConfigCommands::ConfigBrightness(&m_subsystem, 0).ToPtr());
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
